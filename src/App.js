@@ -15,15 +15,15 @@ class NameForm extends React.Component {
   }
 
   handleSubmit(event) {
-    alert('A name was submitted: ' + this.state.value);
+    alert('A query was submitted: ' + this.state.value);
     event.preventDefault();
   }
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit} style={{'paddingTop': 500}}>
         <label>
-          Name:
+          Query:
           <input type="text" value={this.state.value} onChange={this.handleChange} />
         </label>
         <input type="submit" value="Submit" />
@@ -35,6 +35,7 @@ class NameForm extends React.Component {
 function App() {
   return (
     <div className="App">
+      <h4> Census GPT </h4>
       <NameForm />
     </div>
   );
