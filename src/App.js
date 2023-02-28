@@ -1,42 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
-class NameForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {value: ''};
+function SearchForm() {
+  const [query, setQuery] =  useState('');
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleChange(event) {
-    this.setState({value: event.target.value});
-  }
-
-  handleSubmit(event) {
-    alert('A query was submitted: ' + this.state.value);
-    event.preventDefault();
-  }
-
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit} style={{'paddingTop': 500}}>
-        <label>
-          Query:
-          <input type="text" value={this.state.value} onChange={this.handleChange} />
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-    );
-  }
+  return (
+    <form onSubmit={() => {}} style={{'paddingTop': 300}}>
+      <label>
+        Query:
+        <input type="text" value={query} onChange={e => setQuery(e.target.value)} />
+      </label>
+      <input type="submit" value="Submit" />
+    </form>
+  );
 }
 
 function App() {
   return (
     <div className="App">
-      <h4> Census GPT </h4>
-      <NameForm />
+      <h2 style={{'paddingTop': 200}}> Census GPT </h2>
+      <SearchForm />
     </div>
   );
 }
