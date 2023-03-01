@@ -21,9 +21,9 @@ function SearchForm() {
 function App() {
   const mapContainer = useRef(null);
   const map = useRef(null);
-  const [lng, setLng] = useState(-101.299591);
-  const [lat, setLat] = useState(47.116386);
-  const [zoom, setZoom] = useState(5);
+  const [lng, setLng] = useState(-122.431297);
+  const [lat, setLat] = useState(37.773972);
+  const [zoom, setZoom] = useState(11);
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
