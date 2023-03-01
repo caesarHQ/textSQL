@@ -201,6 +201,7 @@ Use this to find out what feature info is pulled for each zipcode from the vecto
 
   return (
     <div className="App">
+      <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css" rel="stylesheet" />
       <h2 style={{'paddingTop': 200}}> Census GPT </h2>
       <SearchForm />
       <div ref={mapContainer} className="map-container" />
