@@ -12,13 +12,24 @@ function SearchForm() {
   const [query, setQuery] =  useState('');
 
   return (
-    <form onSubmit={() => {}} style={{'paddingTop': 300}}>
-      <label>
-        Query:
-        <input type="text" value={query} onChange={e => setQuery(e.target.value)} />
+    <div>
+      <label htmlFor="search" className="block text-sm font-medium text-gray-700">
+        Search
       </label>
-      <input type="submit" value="Submit" />
-    </form>
+      <div className="relative mt-1 flex items-center">
+        <input
+          type="text"
+          name="search"
+          id="search"
+          className="block w-1/2 rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+        <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
+          <kbd className="inline-flex items-center rounded border border-gray-200 px-2 font-sans text-sm font-medium text-gray-400">
+            ⌘K
+          </kbd>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -27,7 +38,7 @@ function App() {
   const map = useRef(null);
   const [lng, setLng] = useState(-122.431297);
   const [lat, setLat] = useState(37.773972);
-  const [zoom, setZoom] = useState(11);
+  const [zoom, setZoom] = useState(3.5);
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
@@ -36,7 +47,7 @@ function App() {
       style: 'mapbox://styles/mapbox/light-v11',
       center: [lng, lat],
       zoom: zoom,
-      minZoom: 5,
+      minZoom: 3,
       projection: 'albers'
     });
 
@@ -210,8 +221,13 @@ Use this to find out what feature info is pulled for each zipcode from the vecto
         <h2 style={{'paddingTop': 200}}> Census GPT </h2>
         <SearchForm />
       </div>
-      <div className="bg-gray-50 px-4 py-5 sm:p-6">
-        <div ref={mapContainer} className="map-container" />
+      <div className="bg-gray-50 px-4 py-5 sm:p-6 flex">
+        <div className="overflow-hidden rounded-lg bg-white shadow w-2/5">
+          <div className="px-4 py-5 sm:p-6"><div ref={mapContainer} className="map-container" /></div>
+        </div>
+        <div className="overflow-hidden rounded-lg bg-white shadow w-3/5">
+          <div className="px-4 py-5 sm:p-6"><div ref={mapContainer} className="map-container" /></div>
+        </div>
       </div>
     </div>
     </div>
