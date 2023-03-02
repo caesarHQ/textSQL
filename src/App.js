@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import mapboxgl from '!mapbox-gl';
 import './App.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
+// eslint-disable-next-line import/no-webpack-loader-syntax
 import Map, {Layer, Source} from 'react-map-gl';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg';
