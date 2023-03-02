@@ -8,37 +8,52 @@ mapboxgl.accessToken = 'pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoN
 // eslint-disable-next-line import/no-webpack-loader-syntax
 mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
-function SearchForm() {
-  const [query, setQuery] =  useState('');
-
-  return (
-    <div>
-      <label htmlFor="search" className="block text-sm font-medium text-gray-700">
-        Search
-      </label>
-      <div className="relative mt-1 flex items-center">
-        <input
-          type="text"
-          name="search"
-          id="search"
-          className="block w-1/2 rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-        />
-        <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-          <kbd className="inline-flex items-center rounded border border-gray-200 px-2 font-sans text-sm font-medium text-gray-400">
-            ⌘K
-          </kbd>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function App() {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [lng, setLng] = useState(-122.431297);
   const [lat, setLat] = useState(37.773972);
   const [zoom, setZoom] = useState(3.5);
+  const [query, setQuery] =  useState('');
+  const [sql, setSQL] = useState('');
+  const [zipcodesFormatted, setZipcodesFormatted] = useState([]);
+
+  const handleSearchChange = (event) => {
+    const { value } = event.target;
+    console.log(value);
+    setQuery(value);
+  }
+
+  const getZipcodesMapboxFormatted = (result) => {
+    let a = result.map(x => "<at><openparen>" + x[0] + "<closeparen>")
+
+    console.log("A", a)
+
+    return a
+  }
+
+  const handleSearchClick = (event) => {
+    console.log("Search is clicked")
+    const options = {
+      method: 'POST',
+      headers: {'content-type': 'application/json'},
+      body: '{"natural_language_query":"' + query + '"}'
+    };
+    
+    fetch('https://ama-api.onrender.com/api/text_to_sql', options)
+      .then(response => response.json())
+      .then(response => {
+        setSQL(response.sql_query)
+        console.log(response)
+       
+        setZipcodesFormatted(x => [...x, getZipcodesMapboxFormatted(response.result)])
+        setTimeout( () => console.log("NEW FORMATTED ZIPS", zipcodesFormatted), 2000)
+      })
+      .catch(err => console.error(err));
+  }
+
+  let zipcodes_to_render_str = ["<at><openparen>94102<closeparen>", "<at><openparen>94103<closeparen>", "<at><openparen>94105<closeparen>", "<at><openparen>94107<closeparen>", "<at><openparen>94108<closeparen>", "<at><openparen>94109<closeparen>", "<at><openparen>94111<closeparen>"];
+   
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
@@ -59,8 +74,8 @@ function App() {
 
 
     // Zipcode in the feature are formatting like  "<at><openparen>94102<closeparen>"
-    let zipcodes_to_render_str_2 = ["<at><openparen>94102<closeparen>", "<at><openparen>94103<closeparen>", "<at><openparen>94105<closeparen>", "<at><openparen>94107<closeparen>", "<at><openparen>94108<closeparen>", "<at><openparen>94109<closeparen>", "<at><openparen>94111<closeparen>"];
    
+   // let zipcodes_to_render_str_2 = ["<at><openparen>94102<closeparen>", "<at><openparen>94103<closeparen>", "<at><openparen>94105<closeparen>", "<at><openparen>94107<closeparen>", "<at><openparen>94108<closeparen>", "<at><openparen>94109<closeparen>", "<at><openparen>94111<closeparen>"];
 
     map.current.on('load', function () {
       console.log("LOAD is called!")
@@ -87,7 +102,7 @@ function App() {
         'filter': [
           'in',
           ['get', 'Name'],
-          ['literal', zipcodes_to_render_str_2],     // Zip code in the feature is formatted like this:  <at><openparen>94105<closeparen>
+          ['literal', zipcodesFormatted],     // Zip code in the feature is formatted like this:  <at><openparen>94105<closeparen>
         ] 
        });
 
@@ -218,19 +233,42 @@ Use this to find out what feature info is pulled for each zipcode from the vecto
       <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css" rel="stylesheet" />
       <div className="overflow-hidden rounded-lg bg-white shadow">
       <div className="px-4 py-5 sm:px-6">
-        <h2 style={{'paddingTop': 200}}> Census GPT </h2>
-        <SearchForm />
+        <h1 className="text-4xl font-bold mb-8">Census GPT</h1>
+        <div>
+          <label htmlFor="search" className="block text-sm font-medium text-gray-700">
+            Search
+          </label>
+          <div className="relative mt-1 flex items-center">
+            <input
+              type="text"
+              name="search"
+              id="search"
+              className="block w-1/2 rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              value={query}
+              onChange={handleSearchChange}
+            />
+            <button
+              type="button"
+              className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-2"
+              onClick={handleSearchClick}
+            >
+              Search
+            </button>
+          </div>
+        </div>
       </div>
       <div className="bg-gray-50 px-4 py-5 sm:p-6 flex">
-        <div className="overflow-hidden rounded-lg bg-white shadow w-2/5">
-          <div className="px-4 py-5 sm:p-6"><div ref={mapContainer} className="map-container" /></div>
-        </div>
-        <div className="overflow-hidden rounded-lg bg-white shadow w-3/5">
-          <div className="px-4 py-5 sm:p-6"><div ref={mapContainer} className="map-container" /></div>
-        </div>
+          <div className="overflow-hidden rounded-lg bg-white shadow w-2/5">
+          <div className="p-4">
+            <pre className="bg-gray-100 rounded-md p-2 overflow-auto"><code className="text-sm text-gray-800 language-sql">{sql}</code></pre>
+          </div>
+          </div>
+          <div className="overflow-hidden rounded-lg bg-white shadow w-3/5">
+            <div className="px-4 py-5 sm:p-6"><div ref={mapContainer} className="map-container" /></div>
+          </div>
       </div>
     </div>
-    </div>
+  </div>
   );
 }
 
