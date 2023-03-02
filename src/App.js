@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import mapboxgl from '!mapbox-gl';
 import './App.css';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import Map, {Layer, Source} from 'react-map-gl';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg';
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -16,7 +17,7 @@ function App() {
   const [zoom, setZoom] = useState(3.5);
   const [query, setQuery] =  useState('');
   const [sql, setSQL] = useState('');
-  const [zipcodesFormatted, setZipcodesFormatted] = useState([]);
+  const [zipcodesFormatted, setZipcodesFormatted] = useState([])
 
   const handleSearchChange = (event) => {
     const { value } = event.target;
@@ -45,26 +46,28 @@ function App() {
       .then(response => {
         setSQL(response.sql_query)
         console.log(response)
-       
-        setZipcodesFormatted(x => [...x, getZipcodesMapboxFormatted(response.result)])
-        setTimeout( () => console.log("NEW FORMATTED ZIPS", zipcodesFormatted), 2000)
+        let x = getZipcodesMapboxFormatted(response.result)
+        console.log("X ======>>", x)
+        setZipcodesFormatted(x)
       })
       .catch(err => console.error(err));
   }
+
+  console.log("NEW FORMATTED ZIPS", zipcodesFormatted)
 
   let zipcodes_to_render_str = ["<at><openparen>94102<closeparen>", "<at><openparen>94103<closeparen>", "<at><openparen>94105<closeparen>", "<at><openparen>94107<closeparen>", "<at><openparen>94108<closeparen>", "<at><openparen>94109<closeparen>", "<at><openparen>94111<closeparen>"];
    
 
   useEffect(() => {
-    if (map.current) return; // initialize map only once
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
-      center: [lng, lat],
-      zoom: zoom,
-      minZoom: 3,
-      projection: 'albers'
-    });
+    // if (map.current) return; // initialize map only once
+    // map.current = new mapboxgl.Map({
+    //   container: mapContainer.current,
+    //   style: 'mapbox://styles/mapbox/light-v11',
+    //   center: [lng, lat],
+    //   zoom: zoom,
+    //   minZoom: 3,
+    //   projection: 'albers'
+    // });
 
     // DO NOT REMOVE
 
@@ -77,124 +80,124 @@ function App() {
    
    // let zipcodes_to_render_str_2 = ["<at><openparen>94102<closeparen>", "<at><openparen>94103<closeparen>", "<at><openparen>94105<closeparen>", "<at><openparen>94107<closeparen>", "<at><openparen>94108<closeparen>", "<at><openparen>94109<closeparen>", "<at><openparen>94111<closeparen>"];
 
-    map.current.on('load', function () {
-      console.log("LOAD is called!")
+  //   map.current.on('load', function () {
+  //     console.log("LOAD is called!")
 
-      map.current.addSource('zips-kml', {
-        type: 'vector',
-        url: 'mapbox://darsh99137.4nf1q4ec'
-      });
+  //     map.current.addSource('zips-kml', {
+  //       type: 'vector',
+  //       url: 'mapbox://darsh99137.4nf1q4ec'
+  //     });
 
-      map.current.addLayer({
-        'id': 'zips-kml',
-        'type': 'fill',
-        'source': 'zips-kml',
-        'minzoom': 3,
-        'layout': {
-            'visibility': 'visible'
-        },
-        'paint': {
-            'fill-outline-color': 'black',
-            'fill-opacity': 0.65,
-            'fill-color': "#F00"
-        },
-        'source-layer': 'Layer_0',
-        'filter': [
-          'in',
-          ['get', 'Name'],
-          ['literal', zipcodesFormatted],     // Zip code in the feature is formatted like this:  <at><openparen>94105<closeparen>
-        ] 
-       });
-
-
-
-      /*   DO NOT REMOVE
-
-     //  Use this for overlaying zipcode numbers on each of the zip codes
+  //     map.current.addLayer({
+  //       'id': 'zips-kml',
+  //       'type': 'fill',
+  //       'source': 'zips-kml',
+  //       'minzoom': 3,
+  //       'layout': {
+  //           'visibility': 'visible'
+  //       },
+  //       'paint': {
+  //           'fill-outline-color': 'black',
+  //           'fill-opacity': 0.65,
+  //           'fill-color': "#F00"
+  //       },
+  //       'source-layer': 'Layer_0',
+  //       'filter': [
+  //         'in',
+  //         ['get', 'Name'],
+  //         ['literal', zipcodesFormatted],     // Zip code in the feature is formatted like this:  <at><openparen>94105<closeparen>
+  //       ] 
+  //      });
 
 
 
-      var zips_tiles = {
-        'ac-zips': {
-            'source-layer': 'ac-b0n2k5',
-            'url': 'darsh99137.67h8ttal',
-        },
-        'nopr-zips': {
-            'source-layer': 'nopr-aab0hu',
-            'url': 'darsh99137.4a95ht04',
-        },
-        'stuv-zips': {
-            'source-layer': 'stuv-bdvekc',
-            'url': 'darsh99137.4qk2dlxt',
-        },
-        'klm-zips': {
-            'source-layer': 'klm-1cyylf',
-            'url': 'darsh99137.c10a4dg9',
-        },
-        'dfghi-zips': {
-            'source-layer': 'dfghi-9jmprs',
-            'url': 'darsh99137.45692mm0',
-        },
-        'w-zips': {
-            'source-layer': 'w-6rljid',
-            'url': 'darsh99137.4c878s8r',
-        }
-    };
-    var zip_labels = [];
-    Object.keys(zips_tiles).map(function (key) {
-      map.current.addSource(key, {
-          type: 'vector',
-          url: 'mapbox://' + zips_tiles[key]['url']
-      });
-      map.current.addLayer({
-          'id': key + '-label',
-          'type': 'symbol',
-          'source': key,
-          'minzoom': 5,
-          'layout': {
-              'visibility': 'visible',
-              'text-field': '{ZCTA5CE10}'
-          },
-          'source-layer': zips_tiles[key]['source-layer']
-      });
-      zip_labels.push(key + '-label');
-  });
+  //     /*   DO NOT REMOVE
 
-  */
-
-  /*    DO NOT REMOVE
-
-       // Use this for hella zoomed coloring of zipcodes
-
-      // Might need to check the filter againg
+  //    //  Use this for overlaying zipcode numbers on each of the zip codes
 
 
-      map.current.addSource('zips', {
-        type: 'vector',
-        url: 'mapbox://jn1532.2z2q31r2'
-      });
 
-       map.current.addLayer({
-        'id': 'Zip',
-        'type': 'fill',
-        'source': 'zips',
-        'layout': {
-            'visibility': 'visible'
-        },
-        'minzoom': 2,
-        'maxzoom': 8,
-        'paint': {
-            'fill-outline-color': '#696969',
-            'fill-color': "#F00",
-            'fill-opacity': .65
-        },
-        'source-layer': 'zip5_topo_color-2bf335'
-    },
-    'water' /// 'water'   helps the transparency
-    );
-    */
+  //     var zips_tiles = {
+  //       'ac-zips': {
+  //           'source-layer': 'ac-b0n2k5',
+  //           'url': 'darsh99137.67h8ttal',
+  //       },
+  //       'nopr-zips': {
+  //           'source-layer': 'nopr-aab0hu',
+  //           'url': 'darsh99137.4a95ht04',
+  //       },
+  //       'stuv-zips': {
+  //           'source-layer': 'stuv-bdvekc',
+  //           'url': 'darsh99137.4qk2dlxt',
+  //       },
+  //       'klm-zips': {
+  //           'source-layer': 'klm-1cyylf',
+  //           'url': 'darsh99137.c10a4dg9',
+  //       },
+  //       'dfghi-zips': {
+  //           'source-layer': 'dfghi-9jmprs',
+  //           'url': 'darsh99137.45692mm0',
+  //       },
+  //       'w-zips': {
+  //           'source-layer': 'w-6rljid',
+  //           'url': 'darsh99137.4c878s8r',
+  //       }
+  //   };
+  //   var zip_labels = [];
+  //   Object.keys(zips_tiles).map(function (key) {
+  //     map.current.addSource(key, {
+  //         type: 'vector',
+  //         url: 'mapbox://' + zips_tiles[key]['url']
+  //     });
+  //     map.current.addLayer({
+  //         'id': key + '-label',
+  //         'type': 'symbol',
+  //         'source': key,
+  //         'minzoom': 5,
+  //         'layout': {
+  //             'visibility': 'visible',
+  //             'text-field': '{ZCTA5CE10}'
+  //         },
+  //         'source-layer': zips_tiles[key]['source-layer']
+  //     });
+  //     zip_labels.push(key + '-label');
+  // });
 
-    })
+  // */
+
+  // /*    DO NOT REMOVE
+
+  //      // Use this for hella zoomed coloring of zipcodes
+
+  //     // Might need to check the filter againg
+
+
+  //     map.current.addSource('zips', {
+  //       type: 'vector',
+  //       url: 'mapbox://jn1532.2z2q31r2'
+  //     });
+
+  //      map.current.addLayer({
+  //       'id': 'Zip',
+  //       'type': 'fill',
+  //       'source': 'zips',
+  //       'layout': {
+  //           'visibility': 'visible'
+  //       },
+  //       'minzoom': 2,
+  //       'maxzoom': 8,
+  //       'paint': {
+  //           'fill-outline-color': '#696969',
+  //           'fill-color': "#F00",
+  //           'fill-opacity': .65
+  //       },
+  //       'source-layer': 'zip5_topo_color-2bf335'
+  //   },
+  //   'water' /// 'water'   helps the transparency
+  //   );
+  //   */
+
+  //   })
 
 
 
@@ -227,6 +230,28 @@ Use this to find out what feature info is pulled for each zipcode from the vecto
   */
 
   });
+
+  
+  const parkLayer =   {
+    'id': 'zips-kml',
+    'type': 'fill',
+    'source': 'zips-kml',
+    'minzoom': 3,
+    'layout': {
+        'visibility': 'visible'
+    },
+    'paint': {
+        'fill-outline-color': 'black',
+        'fill-opacity': 0.65,
+        'fill-color': "#F00"
+    },
+    'source-layer': 'Layer_0',
+    'filter': [
+      'in',
+      ['get', 'Name'],
+      ['literal', zipcodesFormatted],     // Zip code in the feature is formatted like this:  <at><openparen>94105<closeparen>
+    ] 
+   };
 
   return (
     <div className="App">
@@ -263,8 +288,21 @@ Use this to find out what feature info is pulled for each zipcode from the vecto
             <pre className="bg-gray-100 rounded-md p-2 overflow-auto"><code className="text-sm text-gray-800 language-sql">{sql}</code></pre>
           </div>
           </div>
-          <div className="overflow-hidden rounded-lg bg-white shadow w-3/5">
-            <div className="px-4 py-5 sm:p-6"><div ref={mapContainer} className="map-container" /></div>
+          <div className="overflow-hidden rounded-lg bg-white shadow w-3/5 h-screen">
+            <Map
+              mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
+              initialViewState={{
+                longitude: -122.4,
+                latitude: 37.8,
+                zoom: 14
+              }}
+              style={{width: '100%'}}
+              mapStyle="mapbox://styles/mapbox/light-v11"
+            >
+              <Source id="zips-kml" type="vector" url="mapbox://darsh99137.4nf1q4ec">
+                <Layer {...parkLayer} />
+              </Source>
+            </Map>;
           </div>
       </div>
     </div>

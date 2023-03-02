@@ -2014,6 +2014,11 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/geojson@*":
+  version "7946.0.10"
+  resolved "https://registry.npmjs.org/@types/geojson/-/geojson-7946.0.10.tgz"
+  integrity sha512-Nmh0K3iWQJzniTuPRcJn5hxXkfB1T1pgB89SBig5PlJQU5yocazeu4jATJlaA0GYFKWMqDdvYemoSnF2pXgLVA==
+
 "@types/graceful-fs@^4.1.2":
   version "4.1.6"
   resolved "https://registry.npmjs.org/@types/graceful-fs/-/graceful-fs-4.1.6.tgz"
@@ -2069,6 +2074,13 @@
   version "0.0.29"
   resolved "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
+
+"@types/mapbox-gl@^2.6.0":
+  version "2.7.10"
+  resolved "https://registry.npmjs.org/@types/mapbox-gl/-/mapbox-gl-2.7.10.tgz"
+  integrity sha512-nMVEcu9bAcenvx6oPWubQSPevsekByjOfKjlkr+8P91vawtkxTnopDoXXq1Qn/f4cg3zt0Z2W9DVsVsKRNXJTw==
+  dependencies:
+    "@types/geojson" "*"
 
 "@types/mime@*":
   version "3.0.1"
@@ -6418,7 +6430,7 @@ makeerror@1.0.12:
   dependencies:
     tmpl "1.0.5"
 
-mapbox-gl@^2.13.0:
+mapbox-gl@*, mapbox-gl@^2.13.0:
   version "2.13.0"
   resolved "https://registry.npmjs.org/mapbox-gl/-/mapbox-gl-2.13.0.tgz"
   integrity sha512-G8pU1/I9HC7xNbhKPKFtRkdUDkWJBNbYPMeRjBig3lPaYtvHPIaFmXMR6BDyZ/gnwodElrwMZGdGsoH8kecX8w==
@@ -7853,6 +7865,13 @@ react-is@^18.0.0:
   resolved "https://registry.npmjs.org/react-is/-/react-is-18.2.0.tgz"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
 
+react-map-gl@^7.0.21:
+  version "7.0.21"
+  resolved "https://registry.npmjs.org/react-map-gl/-/react-map-gl-7.0.21.tgz"
+  integrity sha512-Cmokphv6VHfRJsHVjCtn7nw5mf8rl89CHdvPSaif0OWZZqe+pxM2/5hEr4EvPWeTokRPCo1XTrBpGbShkEuktQ==
+  dependencies:
+    "@types/mapbox-gl" "^2.6.0"
+
 react-refresh@^0.11.0, "react-refresh@>=0.10.0 <1.0.0":
   version "0.11.0"
   resolved "https://registry.npmjs.org/react-refresh/-/react-refresh-0.11.0.tgz"
@@ -7913,7 +7932,7 @@ react-scripts@5.0.1:
   optionalDependencies:
     fsevents "^2.3.2"
 
-"react@^16 || ^17 || ^18", react@^18.0.0, react@^18.2.0, "react@>= 16":
+"react@^16 || ^17 || ^18", react@^18.0.0, react@^18.2.0, "react@>= 16", react@>=16.3.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
