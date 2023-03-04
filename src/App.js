@@ -91,7 +91,8 @@ function App() {
   const [zoom, setZoom] = useState(3.5);
   const [query, setQuery] =  useState('');
   const [sql, setSQL] = useState('');
-  const [zipcodesFormatted, setZipcodesFormatted] = useState(["<at><openparen>94102<closeparen>", "<at><openparen>94539<closeparen>"])
+  const [zipcodesFormatted, setZipcodesFormatted] = useState([])
+  const [zipcodes, setZipcodes] = useState([])
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
   const [statusCode, setStatusCode] = useState(0)
@@ -123,6 +124,27 @@ function App() {
     return result.values.map(x => "<at><openparen>" + x[zipcode_index] + "<closeparen>")
   }
 
+  const getZipcodes = (result) => {
+    // schema for Result:
+  
+    // result: {
+    //     "column_names": [
+    //         "zip_code",
+    //         "total_crime"
+    //     ],
+    //     "values": [
+    //         [
+    //             "94536",
+    //             "12710"
+    //         ]
+    //     ]
+    // }
+     
+      let zipcode_index = result.column_names.indexOf("zip_code")
+      if (zipcode_index == -1 || !result.values) return []
+      return result.values.map(x => x[zipcode_index])
+    }
+
   const handleSearchClick = (event) => {
     const options = {
       method: 'POST',
@@ -137,10 +159,12 @@ function App() {
         setStatusCode(response.status)
         setSQL(response.sql_query)
         console.log("Backend Response ==>", response)
+        setZipcodes()
         let x = getZipcodesMapboxFormatted(response.result)
         setColumns(response.result.column_names)
         setRows(response.result.values)
         setZipcodesFormatted(x)
+        setZipcodes(getZipcodes(response.result))
       })
      .catch(err => {
       setStatusCode(500)
@@ -150,7 +174,6 @@ function App() {
   }
 
   // let zipcodes_to_render_str = ["<at><openparen>94102<closeparen>", "<at><openparen>94103<closeparen>", "<at><openparen>94105<closeparen>", "<at><openparen>94107<closeparen>", "<at><openparen>94108<closeparen>", "<at><openparen>94109<closeparen>", "<at><openparen>94111<closeparen>"];
-  let zipcodesStr = ["94107", "94102"];
 
   const zipcodeLayerLow =   {
     'id': 'zips-kml',
@@ -188,7 +211,7 @@ function App() {
       'circle-opacity': 0.4,
       },
     'source-layer': 'zip5_topo_color-2bf335',
-    'filter': ["in", ["get", "ZIP5"], ["literal", zipcodesStr]]
+    'filter': ["in", ["get", "ZIP5"], ["literal", zipcodes]]
 };
   return (
     <div className="App">
