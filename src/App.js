@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import Map, {Layer, Source} from 'react-map-gl';
+
 import { XCircleIcon } from '@heroicons/react/20/solid'
-// added the following 6 lines.
 import mapboxgl from 'mapbox-gl';
 import { zipcodesToLatLong } from './zipcodes';
+import bbox from '@turf/bbox';
+import * as turf from '@turf/turf'
 
 // The following is required to stop "npm build" from transpiling mapbox code.
 // notice the exclamation point in the import.
@@ -82,11 +84,6 @@ function Table(props) {
 }
 
 function App() {
-  const mapContainer = useRef(null);
-  const map = useRef(null);
-  const [lng, setLng] = useState(-122.431297);
-  const [lat, setLat] = useState(37.773972);
-  const [zoom, setZoom] = useState(3.5);
   const [query, setQuery] =  useState('');
   const [sql, setSQL] = useState('');
   const [zipcodesFormatted, setZipcodesFormatted] = useState([])
@@ -95,20 +92,28 @@ function App() {
   const [rows, setRows] = useState([]);
   const [statusCode, setStatusCode] = useState(0)
   const [errorMessage, setErrorMessage] = useState('');
+  const [viewState, setViewState] = useState({
+    longitude: -98.2177715,
+    latitude: 38.651327165999525,
+    zoom: 3.1
+  })
+  const [tanuj, setTanuj] = useState(0);
 
-  const test_table = {
-    'column_names': ['zip_code', 'median_income_for_workers'],
-    'values': [
-      ['95070', '122646'],
-      ['94065',	'122534'],
-      ['94123',	'115363'],
-      ['95030', '113910'],
-      ['96129', '110500'],
-      ['93244', '109940'],
-      ['94107', '107950'],
-      ['95134', '107236']
-    ]
-  }
+  const mapRef = useRef();
+
+  // const test_table = {
+  //   'column_names': ['zip_code', 'median_income_for_workers'],
+  //   'values': [
+  //     ['95070', '122646'],
+  //     ['94065',	'122534'],
+  //     ['94123',	'115363'],
+  //     ['95030', '113910'],
+  //     ['96129', '110500'],
+  //     ['93244', '109940'],
+  //     ['94107', '107950'],
+  //     ['95134', '107236']
+  //   ]
+  // }
 
   const handleSearchChange = (event) => {
     const { value } = event.target;
@@ -139,7 +144,18 @@ function App() {
   const getZipcodes = (result) => { 
       let zipcode_index = result.column_names.indexOf("zip_code")
       if (zipcode_index == -1 || !result.values) return []
-      return result.values.map(x => x[zipcode_index])
+
+      return result.values.map(x => {
+        let zipcode = x[zipcode_index]
+        let lat = zipcodesToLatLong[zipcode] ? zipcodesToLatLong[zipcode].lat : 0
+        let long = zipcodesToLatLong[zipcode] ? zipcodesToLatLong[zipcode].long : 0
+
+        return {
+          'zipcode': x[zipcode_index],
+          'lat': lat,
+          'long': long
+        }
+      })
     }
 
   const handleSearchClick = (event) => {
@@ -150,13 +166,18 @@ function App() {
     };
 
     // Hardcoded test data for testing
-    // 
+    
     // setStatusCode(200)
+    // console.log("a")
     // setColumns(test_table.column_names)
+    // console.log("b")
     // setRows(test_table.values)
+    // console.log("c")
     // setZipcodesFormatted(getZipcodesMapboxFormatted(test_table))
+    // console.log("d")
     // setZipcodes(getZipcodes(test_table))
 
+   
 
     fetch('https://ama-api.onrender.com/api/text_to_sql', options)
       .then(response => response.json())
@@ -167,6 +188,27 @@ function App() {
         setColumns(response.result.column_names)
         setRows(response.result.values)
         setZipcodesFormatted(getZipcodesMapboxFormatted(response.result))
+
+        let responseZipcodes = getZipcodes(response.result)
+        
+        if (responseZipcodes.length == 1) {
+          responseZipcodes.push({
+            'zipcode': responseZipcodes[0].zipcode,
+            'lat': responseZipcodes[0].lat+0.1,
+            'long': responseZipcodes[0].long,
+          })
+        }
+
+        let [minLng, minLat, maxLng, maxLat] = bbox(turf.lineString(responseZipcodes.map(z => [z.long, z.lat])));
+    
+        mapRef.current.fitBounds(
+          [
+            [minLng, minLat],
+            [maxLng, maxLat]
+          ],
+          {padding: '100', duration: 1000}
+        );
+
         setZipcodes(getZipcodes(response.result))
       })
      .catch(err => {
@@ -178,14 +220,11 @@ function App() {
 
 
   const zipcodeFeatures = zipcodes.map((z) => {
-    let lat = zipcodesToLatLong[z].lat
-    let long = zipcodesToLatLong[z].long
-
     return {
       "type": "Feature",
       "geometry": {
           "type": "Point",
-          "coordinates": [long, lat]
+          "coordinates": [z.long, z.lat]
       }
     }
   })
@@ -201,7 +240,7 @@ function App() {
     },
     'paint': {
         'fill-outline-color': 'black',
-        'fill-opacity': 0.7,
+        'fill-opacity': 0.9,
         'fill-color': "#006AF9"
     },
     'source-layer': 'Layer_0',
@@ -218,12 +257,11 @@ function App() {
     'layout': {
         'visibility': 'visible'
     },
-    'minzoom': 1,
     'maxzoom': 8,
     'paint': {
       'circle-radius': 10,
       'circle-color': "#006AF9",
-      'circle-opacity': 0.8,
+      'circle-opacity': 1,
     }
 };
   return (
@@ -265,15 +303,10 @@ function App() {
           </div>
           <div className="overflow-hidden rounded-lg bg-white shadow w-3/5 h-screen">
             <Map
+              ref={mapRef}
               mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
-              initialViewState={{
-                longitude: -122.4,
-                latitude: 37.8,
-                zoom: 3
-              }}
               style={{width: '100%'}}
               mapStyle="mapbox://styles/mapbox/dark-v11"
-              onZoom={(e) => { console.log(e.viewState.zoom); }}
             >
               <Source id="zips-kml" type="vector" url="mapbox://darsh99137.4nf1q4ec">
                 <Layer {...zipcodeLayerLow} />
@@ -290,147 +323,6 @@ function App() {
 }
 
 export default App;
-
-//   useEffect(() => {
-//     // if (map.current) return; // initialize map only once
-//     // map.current = new mapboxgl.Map({
-//     //   container: mapContainer.current,
-//     //   style: 'mapbox://styles/mapbox/light-v11',
-//     //   center: [lng, lat],
-//     //   zoom: zoom,
-//     //   minZoom: 3,
-//     //   projection: 'albers'
-//     // });
-
-//     // DO NOT REMOVE
-
-//     // let zipcodes_to_render_int = [94102, 94103, 94105, 94107, 94108, 94109, 94111];
-
-//     // let zipcodes_to_render_str = ["94102", "94103", "94105", "94107", "94108", "94109", "94111"];
-
-
-//     // Zipcode in the feature are formatting like  "<at><openparen>94102<closeparen>"
-   
-//    // let zipcodes_to_render_str_2 = ["<at><openparen>94102<closeparen>", "<at><openparen>94103<closeparen>", "<at><openparen>94105<closeparen>", "<at><openparen>94107<closeparen>", "<at><openparen>94108<closeparen>", "<at><openparen>94109<closeparen>", "<at><openparen>94111<closeparen>"];
-
-//   //   map.current.on('load', function () {
-//   //     console.log("LOAD is called!")
-
-//   //     map.current.addSource('zips-kml', {
-//   //       type: 'vector',
-//   //       url: 'mapbox://darsh99137.4nf1q4ec'
-//   //     });
-
-//   //     map.current.addLayer({
-//   //       'id': 'zips-kml',
-//   //       'type': 'fill',
-//   //       'source': 'zips-kml',
-//   //       'minzoom': 3,
-//   //       'layout': {
-//   //           'visibility': 'visible'
-//   //       },
-//   //       'paint': {
-//   //           'fill-outline-color': 'black',
-//   //           'fill-opacity': 0.65,
-//   //           'fill-color': "#F00"
-//   //       },
-//   //       'source-layer': 'Layer_0',
-//   //       'filter': [
-//   //         'in',
-//   //         ['get', 'Name'],
-//   //         ['literal', zipcodesFormatted],     // Zip code in the feature is formatted like this:  <at><openparen>94105<closeparen>
-//   //       ] 
-//   //      });
-
-
-
-//   //     /*   DO NOT REMOVE
-
-//   //    //  Use this for overlaying zipcode numbers on each of the zip codes
-
-
-
-//   //     var zips_tiles = {
-//   //       'ac-zips': {
-//   //           'source-layer': 'ac-b0n2k5',
-//   //           'url': 'darsh99137.67h8ttal',
-//   //       },
-//   //       'nopr-zips': {
-//   //           'source-layer': 'nopr-aab0hu',
-//   //           'url': 'darsh99137.4a95ht04',
-//   //       },
-//   //       'stuv-zips': {
-//   //           'source-layer': 'stuv-bdvekc',
-//   //           'url': 'darsh99137.4qk2dlxt',
-//   //       },
-//   //       'klm-zips': {
-//   //           'source-layer': 'klm-1cyylf',
-//   //           'url': 'darsh99137.c10a4dg9',
-//   //       },
-//   //       'dfghi-zips': {
-//   //           'source-layer': 'dfghi-9jmprs',
-//   //           'url': 'darsh99137.45692mm0',
-//   //       },
-//   //       'w-zips': {
-//   //           'source-layer': 'w-6rljid',
-//   //           'url': 'darsh99137.4c878s8r',
-//   //       }
-//   //   };
-//   //   var zip_labels = [];
-//   //   Object.keys(zips_tiles).map(function (key) {
-//   //     map.current.addSource(key, {
-//   //         type: 'vector',
-//   //         url: 'mapbox://' + zips_tiles[key]['url']
-//   //     });
-//   //     map.current.addLayer({
-//   //         'id': key + '-label',
-//   //         'type': 'symbol',
-//   //         'source': key,
-//   //         'minzoom': 5,
-//   //         'layout': {
-//   //             'visibility': 'visible',
-//   //             'text-field': '{ZCTA5CE10}'
-//   //         },
-//   //         'source-layer': zips_tiles[key]['source-layer']
-//   //     });
-//   //     zip_labels.push(key + '-label');
-//   // });
-
-//   // */
-
-//   // /*    DO NOT REMOVE
-
-//   //      // Use this for hella zoomed coloring of zipcodes
-
-//   //     // Might need to check the filter againg
-
-
-//   //     map.current.addSource('zips', {
-//   //       type: 'vector',
-//   //       url: 'mapbox://jn1532.2z2q31r2'
-//   //     });
-
-//   //      map.current.addLayer({
-//   //       'id': 'Zip',
-//   //       'type': 'fill',
-//   //       'source': 'zips',
-//   //       'layout': {
-//   //           'visibility': 'visible'
-//   //       },
-//   //       'minzoom': 2,
-//   //       'maxzoom': 8,
-//   //       'paint': {
-//   //           'fill-outline-color': '#696969',
-//   //           'fill-color': "#F00",
-//   //           'fill-opacity': .65
-//   //       },
-//   //       'source-layer': 'zip5_topo_color-2bf335'
-//   //   },
-//   //   'water' /// 'water'   helps the transparency
-//   //   );
-//   //   */
-
-//   //   })
 
 // /* DO NOT REMOVE
 
