@@ -267,7 +267,7 @@ function App() {
   return (
     <div className="App">
       <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css" rel="stylesheet" />
-      <div className="overflow-hidden rounded-lg bg-white shadow">
+      <div className="overflow-hidden rounded-lg bg-white shadow md:h-screen">
       <div className="px-4 py-5 sm:px-6">
         <h1 className="text-4xl font-bold mb-8">Census GPT</h1>
         <div>
@@ -293,15 +293,15 @@ function App() {
           </div>
         </div>
       </div>
-      <div className="bg-gray-50 px-4 py-5 sm:p-6 flex">
-          <div className="overflow-hidden rounded-lg bg-white shadow w-2/5">
+      <div className="bg-gray-50 px-4 h-full sm:p-6 flex flex-col md:flex-row md:pb-[200px]">
+          <div className="overflow-hidden rounded-lg h-[40vh] md:h-full bg-white shadow flex-grow-[0] w-full mr-8 mb-8">
           <div className="p-4">
             <pre align="left" className="bg-gray-100 rounded-md p-2 overflow-auto"><code className="text-sm text-gray-800 language-sql">{sql}</code></pre>
           </div>
           {statusCode == 500 ? <ErrorMessage errorMessage={errorMessage}/> : <></>}
           <Table columns={columns} values={rows}/>
           </div>
-          <div className="overflow-hidden rounded-lg bg-white shadow w-3/5 h-screen">
+          <div className="overflow-hidden rounded-lg bg-white shadow flex-grow-[2] h-[70vh] md:h-full w-full">
             <Map
               ref={mapRef}
               mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
