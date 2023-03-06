@@ -4,6 +4,7 @@ import Map, {Layer, Source} from 'react-map-gl';
 import { XCircleIcon } from '@heroicons/react/20/solid'
 // added the following 6 lines.
 import mapboxgl from 'mapbox-gl';
+import { zipcodesToLatLong } from './zipcodes';
 
 // The following is required to stop "npm build" from transpiling mapbox code.
 // notice the exclamation point in the import.
@@ -64,9 +65,6 @@ function Table(props) {
   let columns = props.columns
   let values = props.values
 
-  const people = [
-    { name: 'Lindsay Walton', title: 'Front-end Developer', email: 'lindsay.walton@example.com', role: 'Member' },
-  ]
   return (
 <div className="px-4 sm:px-6 lg:px-8">
       <div className="mt-8 flow-root">
@@ -98,34 +96,26 @@ function App() {
   const [statusCode, setStatusCode] = useState(0)
   const [errorMessage, setErrorMessage] = useState('');
 
+  const test_table = {
+    'column_names': ['zip_code', 'median_income_for_workers'],
+    'values': [
+      ['95070', '122646'],
+      ['94065',	'122534'],
+      ['94123',	'115363'],
+      ['95030', '113910'],
+      ['96129', '110500'],
+      ['93244', '109940'],
+      ['94107', '107950'],
+      ['95134', '107236']
+    ]
+  }
+
   const handleSearchChange = (event) => {
     const { value } = event.target;
     setQuery(value);
   }
 
-  const getZipcodesMapboxFormatted = (result) => {
   // schema for Result:
-
-  // result: {
-  //     "column_names": [
-  //         "zip_code",
-  //         "total_crime"
-  //     ],
-  //     "values": [
-  //         [
-  //             "94536",
-  //             "12710"
-  //         ]
-  //     ]
-  // }
-   
-    let zipcode_index = result.column_names.indexOf("zip_code")
-    if (zipcode_index == -1 || !result.values) return []
-    return result.values.map(x => "<at><openparen>" + x[zipcode_index] + "<closeparen>")
-  }
-
-  const getZipcodes = (result) => {
-    // schema for Result:
   
     // result: {
     //     "column_names": [
@@ -139,7 +129,14 @@ function App() {
     //         ]
     //     ]
     // }
-     
+
+  const getZipcodesMapboxFormatted = (result) => {
+    let zipcode_index = result.column_names.indexOf("zip_code")
+    if (zipcode_index == -1 || !result.values) return []
+    return result.values.map(x => "<at><openparen>" + x[zipcode_index] + "<closeparen>")
+  }
+
+  const getZipcodes = (result) => { 
       let zipcode_index = result.column_names.indexOf("zip_code")
       if (zipcode_index == -1 || !result.values) return []
       return result.values.map(x => x[zipcode_index])
@@ -152,18 +149,24 @@ function App() {
       body: '{"natural_language_query":"' + query + '"}'
     };
 
-    // what zipcode in the city of philadelphia, PA has the highest female population?
+    // Hardcoded test data for testing
+    // 
+    // setStatusCode(200)
+    // setColumns(test_table.column_names)
+    // setRows(test_table.values)
+    // setZipcodesFormatted(getZipcodesMapboxFormatted(test_table))
+    // setZipcodes(getZipcodes(test_table))
+
+
     fetch('https://ama-api.onrender.com/api/text_to_sql', options)
       .then(response => response.json())
       .then(response => {
         setStatusCode(response.status)
         setSQL(response.sql_query)
         console.log("Backend Response ==>", response)
-        setZipcodes()
-        let x = getZipcodesMapboxFormatted(response.result)
         setColumns(response.result.column_names)
         setRows(response.result.values)
-        setZipcodesFormatted(x)
+        setZipcodesFormatted(getZipcodesMapboxFormatted(response.result))
         setZipcodes(getZipcodes(response.result))
       })
      .catch(err => {
@@ -173,19 +176,32 @@ function App() {
     });
   }
 
-  // let zipcodes_to_render_str = ["<at><openparen>94102<closeparen>", "<at><openparen>94103<closeparen>", "<at><openparen>94105<closeparen>", "<at><openparen>94107<closeparen>", "<at><openparen>94108<closeparen>", "<at><openparen>94109<closeparen>", "<at><openparen>94111<closeparen>"];
+
+  const zipcodeFeatures = zipcodes.map((z) => {
+    let lat = zipcodesToLatLong[z].lat
+    let long = zipcodesToLatLong[z].long
+
+    return {
+      "type": "Feature",
+      "geometry": {
+          "type": "Point",
+          "coordinates": [long, lat]
+      }
+    }
+  })
+
 
   const zipcodeLayerLow =   {
     'id': 'zips-kml',
     'type': 'fill',
     'source': 'zips-kml',
-    'minzoom': 3,
+    'minzoom': 5,
     'layout': {
         'visibility': 'visible'
     },
     'paint': {
         'fill-outline-color': 'black',
-        'fill-opacity': 0.50,
+        'fill-opacity': 0.7,
         'fill-color': "#006AF9"
     },
     'source-layer': 'Layer_0',
@@ -196,22 +212,19 @@ function App() {
     ] 
    };
 
-  const zipcodeLayerHigh = {
+   const zipcodeLayerHigh = {
     'id': 'Zip',
     'type': 'circle',
-    'source': 'zips',
     'layout': {
         'visibility': 'visible'
     },
     'minzoom': 1,
-    'maxzoom': 10,
+    'maxzoom': 8,
     'paint': {
-      'circle-radius': 15,
+      'circle-radius': 10,
       'circle-color': "#006AF9",
-      'circle-opacity': 0.4,
-      },
-    'source-layer': 'zip5_topo_color-2bf335',
-    'filter': ["in", ["get", "ZIP5"], ["literal", zipcodes]]
+      'circle-opacity': 0.8,
+    }
 };
   return (
     <div className="App">
@@ -265,7 +278,7 @@ function App() {
               <Source id="zips-kml" type="vector" url="mapbox://darsh99137.4nf1q4ec">
                 <Layer {...zipcodeLayerLow} />
               </Source>
-              <Source id="zip-zoomed-out" type="vector" url="mapbox://jn1532.2z2q31r2">
+              <Source id="zip-zoomed-out" type="geojson" data={{type: 'FeatureCollection', features: zipcodeFeatures}}>
                 <Layer {...zipcodeLayerHigh} />
               </Source>
             </Map>;
@@ -277,8 +290,6 @@ function App() {
 }
 
 export default App;
-
-
 
 //   useEffect(() => {
 //     // if (map.current) return; // initialize map only once
