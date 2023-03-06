@@ -245,7 +245,7 @@ function App() {
       <div className="bg-gray-50 px-4 py-5 sm:p-6 flex">
           <div className="overflow-hidden rounded-lg bg-white shadow w-2/5">
           <div className="p-4">
-            <pre className="bg-gray-100 rounded-md p-2 overflow-auto"><code className="text-sm text-gray-800 language-sql">{sql}</code></pre>
+            <pre align="left" className="bg-gray-100 rounded-md p-2 overflow-auto"><code className="text-sm text-gray-800 language-sql">{sql}</code></pre>
           </div>
           {statusCode == 500 ? <ErrorMessage errorMessage={errorMessage}/> : <></>}
           <Table columns={columns} values={rows}/>
