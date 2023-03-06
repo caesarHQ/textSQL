@@ -271,15 +271,15 @@ function App() {
       <div className="px-4 py-5 sm:px-6">
         <h1 className="text-4xl font-bold mb-8">Census GPT</h1>
         <div>
-          <label htmlFor="search" className="block text-sm font-medium text-gray-700">
-            Search
-          </label>
+          {/*<label htmlFor="search" className="block text-sm font-medium text-gray-700">*/}
+          {/*  Search*/}
+          {/*</label>*/}
           <div className="relative mt-1 flex justify-center">
             <input
               type="text"
               name="search"
               id="search"
-              className="block w-1/2 rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="block w-full md:w-1/2 rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               value={query}
               onChange={handleSearchChange}
             />
