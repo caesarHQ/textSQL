@@ -274,7 +274,7 @@ function App() {
           <label htmlFor="search" className="block text-sm font-medium text-gray-700">
             Search
           </label>
-          <div className="relative mt-1 flex items-center">
+          <div className="relative mt-1 flex justify-center">
             <input
               type="text"
               name="search"
