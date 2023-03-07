@@ -61,6 +61,7 @@ function Examples(props) {
         >
           <div className="min-w-0 flex-1">
             <a className="focus:outline-none" onClick={() => {
+                posthog.capture('example_clicked', { natural_language_query: q })
                 props.setQuery(q)
                 props.handleClick(q)
               }}>
@@ -220,6 +221,13 @@ function App() {
     fetch('https://ama-api.onrender.com/api/text_to_sql', options)
       .then(response => response.json())
       .then(response => {
+        if (!response || !response.sql_query || !response.result) {
+          posthog.capture('backend_error', response)
+          setErrorMessage("Something went wrong. Please try again or try a different query")
+          return
+        }
+
+        posthog.capture('backend_response', response)
         setStatusCode(response.status)
         setSQL(response.sql_query)
 
@@ -306,6 +314,7 @@ function App() {
         }
       })
      .catch(err => {
+      posthog.capture('backend_error', err)
       setStatusCode(500)
       setErrorMessage(err)
       console.error(err)
@@ -313,7 +322,7 @@ function App() {
   }
 
   const handleSearchClick = (event) => {
-    posthog.capture('search', { property: 'yooo1ooooo' })
+    posthog.capture('search_clicked', { natural_language_query: query })
     fetchBackend(query)
   }
 
