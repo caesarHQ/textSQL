@@ -132,6 +132,7 @@ function App() {
 
   const mapRef = useRef();
 
+  // Test data. Schema for response.result from fetch
   // const test_table = {
   //   'column_names': ['zip_code', 'median_income_for_workers'],
   //   'values': [
@@ -160,21 +161,6 @@ function App() {
     const { value } = event.target;
     setQuery(value);
   }
-
-  // schema for Result:
-  
-    // result: {
-    //     "column_names": [
-    //         "zip_code",
-    //         "total_crime"
-    //     ],
-    //     "values": [
-    //         [
-    //             "94536",
-    //             "12710"
-    //         ]
-    //     ]
-    // }
 
   const getZipcodesMapboxFormatted = (zips) => {
     return zips.map(x => "<at><openparen>" + x['zipcode'] + "<closeparen>")
@@ -252,53 +238,68 @@ function App() {
         // render cities layer on the map
         if (filteredColumns.indexOf("zip_code") == -1 && filteredColumns.indexOf("city") >= 0) {
           let responseCities = getCities(response.result)
-          // Fitbounds needs at least two geo coordinates. 
+
+          // Focus the map to relevant parts
+
           if (responseCities.length < 2) {
-            responseCities.push({
-              'city': responseCities[0].zipcode,
-              'lat': responseCities[0].lat+0.1,
-              'long': responseCities[0].long,
-            })
+            // Fitbounds needs at least two geo coordinates. 
+            // If less that 2 co-ordinates then use fly to.
+            mapRef.current.flyTo({
+              center: [responseCities[0].long, responseCities[0].lat],
+              essential: true // this animation is considered essential with respect to prefers-reduced-motion
+              });
+          } else {
+            
+            let [minLng, minLat, maxLng, maxLat] = bbox(turf.lineString(responseCities.map(c => [c.long, c.lat])));
+            mapRef.current.fitBounds(
+              [
+                [minLng, minLat],
+                [maxLng, maxLat]
+              ],
+              {padding: '100', duration: 1000}
+            );
           }
-
-          let [minLng, minLat, maxLng, maxLat] = bbox(turf.lineString(responseCities.map(c => [c.long, c.lat])));
-
-          mapRef.current.fitBounds(
-            [
-              [minLng, minLat],
-              [maxLng, maxLat]
-            ],
-            {padding: '100', duration: 1000}
-          );
   
           setCities(responseCities)
-
+          setZipcodes([]) // reset zipcode rendering
         } else {
           // render zipcodes layer on the map
+          
           let responseZipcodes = getZipcodes(response.result)
 
           setZipcodesFormatted(getZipcodesMapboxFormatted(responseZipcodes))
   
           // Fitbounds needs at least two geo coordinates. 
-          if (responseZipcodes.length == 1) {
-            responseZipcodes.push({
-              'zipcode': responseZipcodes[0].zipcode,
-              'lat': responseZipcodes[0].lat+0.1,
-              'long': responseZipcodes[0].long,
-            })
+          // if (responseZipcodes.length < 2) {
+          //   responseZipcodes.push({
+          //     'zipcode': responseZipcodes[0].zipcode,
+          //     'lat': responseZipcodes[0].lat+0.1,
+          //     'long': responseZipcodes[0].long,
+          //   })
+          // }
+  
+          // Fitbounds needs at least two geo coordinates. 
+          if (responseZipcodes.length < 2) {
+            // Fitbounds needs at least two geo coordinates. 
+            // If less that 2 co-ordinates then use fly to.
+            mapRef.current.flyTo({
+              center: [responseZipcodes[0].long, responseZipcodes[0].lat],
+              essential: true // this animation is considered essential with respect to prefers-reduced-motion
+              });
+          } else {
+            let [minLng, minLat, maxLng, maxLat] = bbox(turf.lineString(responseZipcodes.map(z => [z.long, z.lat])));
+      
+            mapRef.current.fitBounds(
+              [
+                [minLng, minLat],
+                [maxLng, maxLat]
+              ],
+              {padding: '100', duration: 1000}
+            );
           }
   
-          let [minLng, minLat, maxLng, maxLat] = bbox(turf.lineString(responseZipcodes.map(z => [z.long, z.lat])));
-      
-          mapRef.current.fitBounds(
-            [
-              [minLng, minLat],
-              [maxLng, maxLat]
-            ],
-            {padding: '100', duration: 1000}
-          );
-  
           setZipcodes(responseZipcodes)
+          setCities([]) // reset cities rendering
         }
       })
      .catch(err => {
