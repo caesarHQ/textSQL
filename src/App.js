@@ -124,6 +124,7 @@ function App() {
   const [rows, setRows] = useState([]);
   const [statusCode, setStatusCode] = useState(0)
   const [errorMessage, setErrorMessage] = useState('');
+  const [cities, setCities] = useState([]);
   const [viewState, setViewState] = useState({
     longitude: -98.2177715,
     latitude: 38.651327165999525,
@@ -176,13 +177,11 @@ function App() {
     //     ]
     // }
 
-  const getZipcodesMapboxFormatted = (result) => {
-    let zipcode_index = result.column_names.indexOf("zip_code")
-    if (zipcode_index == -1 || !result.values) return []
-    return result.values.map(x => "<at><openparen>" + x[zipcode_index] + "<closeparen>")
+  const getZipcodesMapboxFormatted = (zips) => {
+    return zips.map(x => "<at><openparen>" + x['zipcode'] + "<closeparen>")
   }
 
-  const getZipcodes = (result) => { 
+  const getZipcodesOld = (result) => { 
       let zipcode_index = result.column_names.indexOf("zip_code")
       if (zipcode_index == -1 || !result.values) return []
 
@@ -198,6 +197,14 @@ function App() {
         }
       })
     }
+
+  const getZipcodes = (result) => { 
+
+      let zipcode_index = result.column_names.indexOf("zip_code")
+      if (zipcode_index == -1 || !result.results) return []
+
+      return result.results.map(x => { return {'zipcode': x["zip_code"], 'lat': x["lat"], 'long': x["long"] }})
+  }
   
   const fetchBackend = (natural_language_query) => {
     const options = {
@@ -218,18 +225,57 @@ function App() {
     // console.log("d")
     // setZipcodes(getZipcodes(test_table))
 
+  let res = {
+      "result": {
+          "column_names": [
+              "zip_code",
+              "difference",
+              "lat",
+              "long"
+          ],
+          "results": [
+              {
+                  "difference": 0,
+                  "lat": 45.925286,
+                  "long": -89.499516,
+                  "zip_code": "54558"
+              },
+              {
+                "difference": 0,
+                "lat": 45.925286,
+                "long": -89.499516,
+                "zip_code": "54558"
+            }
+          ]
+      },
+      "sql_query": "SELECT zip_code, ABS(median_income_for_workers - (SELECT median_income_for_workers FROM acs_census_data ORDER BY ABS(median_income_for_workers - (SELECT AVG(median_income_for_workers) FROM acs_census_data)) LIMIT 1)) AS difference\nFROM acs_census_data\nWHERE median_income_for_workers IS NOT NULL\nORDER BY difference\nLIMIT 1"
+  }
+
     fetch('https://ama-api.onrender.com/api/text_to_sql', options)
       .then(response => response.json())
       .then(response => {
         setStatusCode(response.status)
         setSQL(response.sql_query)
+
         console.log("Backend Response ==>", response)
-        setColumns(response.result.column_names)
-        setRows(response.result.values)
-        setZipcodesFormatted(getZipcodesMapboxFormatted(response.result))
+
+        // filter out lat and long columns
+        let filteredColumns = response.result.column_names.filter(c => c != "lat" && c != "long")
+        setColumns(filteredColumns)
+
+        // fit the order of columns and filter out lat and long row values
+        let rows = response.result.results.map((value) => {
+          let row = []
+          // find each of the filtered column value in the object and push it into the row
+          filteredColumns.map(c => row.push(value[c]))
+          return row
+        })
+        setRows(rows)
 
         let responseZipcodes = getZipcodes(response.result)
-        
+
+        setZipcodesFormatted(getZipcodesMapboxFormatted(responseZipcodes))
+
         // Fitbounds needs at least two geo coordinates. 
         if (responseZipcodes.length == 1) {
           responseZipcodes.push({
@@ -249,7 +295,7 @@ function App() {
           {padding: '100', duration: 1000}
         );
 
-        setZipcodes(getZipcodes(response.result))
+        setZipcodes(responseZipcodes)
       })
      .catch(err => {
       setStatusCode(500)
@@ -273,8 +319,18 @@ function App() {
     }
   })
 
+  const citiesFeatures = cities.map((c) => {
+    return {
+      "type": "Feature",
+      "geometry": {
+          "type": "Point",
+          "coordinates": [c.long, c.lat]
+      }
+    }
+  })
 
-  const zipcodeLayerLow =   {
+
+const zipcodeLayerLow =   {
     'id': 'zips-kml',
     'type': 'fill',
     'source': 'zips-kml',
@@ -295,7 +351,7 @@ function App() {
     ] 
    };
 
-   const zipcodeLayerHigh = {
+ const zipcodeLayerHigh = {
     'id': 'Zip',
     'type': 'circle',
     'layout': {
@@ -308,6 +364,20 @@ function App() {
       'circle-opacity': 1,
     }
 };
+
+const citiesLayerHigh = {
+  'id': 'cities',
+  'type': 'circle',
+  'layout': {
+      'visibility': 'visible'
+  },
+  'paint': {
+    'circle-radius': 10,
+    'circle-color': "#006AF9",
+    'circle-opacity': 0.8,
+  }
+};
+
   return (
     <div className="App">
       <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css" rel="stylesheet" />
@@ -315,9 +385,6 @@ function App() {
       <div className="px-4 py-5 sm:px-6">
         <h1 className="text-4xl font-bold mb-8">Census GPT</h1>
         <div>
-          {/*<label htmlFor="search" className="block text-sm font-medium text-gray-700">*/}
-          {/*  Search*/}
-          {/*</label>*/}
           <div className="relative mt-1 flex justify-center">
             <input
               type="text"
@@ -359,6 +426,9 @@ function App() {
               </Source>
               <Source id="zip-zoomed-out" type="geojson" data={{type: 'FeatureCollection', features: zipcodeFeatures}}>
                 <Layer {...zipcodeLayerHigh} />
+              </Source>
+              <Source id="cities" type="geojson" data={{type: 'FeatureCollection', features: citiesFeatures}}>
+                <Layer {...citiesLayerHigh} />
               </Source>
             </Map>;
           </div>
