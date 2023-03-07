@@ -7,6 +7,9 @@ import mapboxgl from 'mapbox-gl';
 import { zipcodesToLatLong } from './zipcodes';
 import bbox from '@turf/bbox';
 import * as turf from '@turf/turf'
+import posthog from 'posthog-js'
+
+posthog.init('phc_iLMBZqxwjAjaKtgz29r4EWv18El2qg3BIJoOOpw7s2e', { api_host: 'https://app.posthog.com' })
 
 // The following is required to stop "npm build" from transpiling mapbox code.
 // notice the exclamation point in the import.
@@ -40,6 +43,35 @@ function TableRows(props) {
         </tr>
       ))}
     </tbody>
+  )
+}
+
+function Examples(props) {
+  const example_queries = [
+    "3 zipcodes in San Francisco that have the highest females?",
+    "Which zipcodes have the median income closest to the national median income?",
+    "Five zipcodes in New York City with the lowest crime?",
+    "Richest neighborhood in Houston, TX"
+  ]
+  return (
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {example_queries.map((q) => (
+        <div
+          key={q}
+          className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
+        >
+          <div className="min-w-0 flex-1">
+            <a className="focus:outline-none" onClick={() => {
+                props.setQuery(q)
+                props.handleClick(q)
+              }}>
+              <span className="absolute inset-0" aria-hidden="true" />
+              <p className="text-sm font-medium text-gray-900">{q}</p>
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
   )
 }
 
@@ -97,22 +129,31 @@ function App() {
     latitude: 38.651327165999525,
     zoom: 3.1
   })
-  const [tanuj, setTanuj] = useState(0);
 
   const mapRef = useRef();
 
   // const test_table = {
   //   'column_names': ['zip_code', 'median_income_for_workers'],
   //   'values': [
-  //     ['95070', '122646'],
-  //     ['94065',	'122534'],
-  //     ['94123',	'115363'],
-  //     ['95030', '113910'],
-  //     ['96129', '110500'],
-  //     ['93244', '109940'],
-  //     ['94107', '107950'],
-  //     ['95134', '107236']
-  //   ]
+  //         {
+  //           "female_pop": 42367,
+  //           "zip_code": "94112",
+  //           "zip_code_lat": 37.720375,
+  //           "zip_code_lon": -122.44295
+  //       },
+  //       {
+  //           "female_pop": 33067,
+  //           "zip_code": "94110",
+  //           "zip_code_lat": 37.750021,
+  //           "zip_code_lon": -122.415201
+  //       },
+  //       {
+  //           "female_pop": 30826,
+  //           "zip_code": "94122",
+  //           "zip_code_lat": 37.758797,
+  //           "zip_code_lon": -122.485128
+  //       }
+  //     ]
   // }
 
   const handleSearchChange = (event) => {
@@ -157,12 +198,12 @@ function App() {
         }
       })
     }
-
-  const handleSearchClick = (event) => {
+  
+  const fetchBackend = (natural_language_query) => {
     const options = {
       method: 'POST',
       headers: {'content-type': 'application/json'},
-      body: '{"natural_language_query":"' + query + '"}'
+      body: '{"natural_language_query":"' + natural_language_query + '"}'
     };
 
     // Hardcoded test data for testing
@@ -177,8 +218,6 @@ function App() {
     // console.log("d")
     // setZipcodes(getZipcodes(test_table))
 
-   
-
     fetch('https://ama-api.onrender.com/api/text_to_sql', options)
       .then(response => response.json())
       .then(response => {
@@ -191,6 +230,7 @@ function App() {
 
         let responseZipcodes = getZipcodes(response.result)
         
+        // Fitbounds needs at least two geo coordinates. 
         if (responseZipcodes.length == 1) {
           responseZipcodes.push({
             'zipcode': responseZipcodes[0].zipcode,
@@ -218,6 +258,10 @@ function App() {
     });
   }
 
+  const handleSearchClick = (event) => {
+    posthog.capture('search', { property: 'yooo1ooooo' })
+    fetchBackend(query)
+  }
 
   const zipcodeFeatures = zipcodes.map((z) => {
     return {
@@ -295,11 +339,13 @@ function App() {
       </div>
       <div className="bg-gray-50 px-4 h-full sm:p-6 flex flex-col md:flex-row md:pb-[200px]">
           <div className="overflow-hidden rounded-lg h-[40vh] md:h-full bg-white shadow flex-grow-[0] w-full mr-8 mb-8">
-          <div className="p-4">
-            <pre align="left" className="bg-gray-100 rounded-md p-2 overflow-auto"><code className="text-sm text-gray-800 language-sql">{sql}</code></pre>
-          </div>
-          {statusCode == 500 ? <ErrorMessage errorMessage={errorMessage}/> : <></>}
-          <Table columns={columns} values={rows}/>
+            {sql.length == 0 ? <Examples setQuery={setQuery} handleClick={fetchBackend}/> : <>
+              <div className="p-4">
+                <pre align="left" className="bg-gray-100 rounded-md p-2 overflow-auto"><code className="text-sm text-gray-800 language-sql">{sql}</code></pre>
+              </div>
+              {statusCode == 500 ? <ErrorMessage errorMessage={errorMessage}/> : <></>}
+              <Table columns={columns} values={rows}/>
+            </> }
           </div>
           <div className="overflow-hidden rounded-lg bg-white shadow flex-grow-[2] h-[70vh] md:h-full w-full">
             <Map
