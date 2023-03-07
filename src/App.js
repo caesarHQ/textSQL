@@ -192,6 +192,8 @@ function App() {
       body: '{"natural_language_query":"' + natural_language_query + '"}'
     };
 
+    natural_language_query = cleanupQuery(natural_language_query)
+   
   let res = {
       "result": {
           "column_names": [
@@ -394,6 +396,16 @@ const citiesLayer = {
     'circle-opacity': 0.8,
   }
 };
+
+const cleanupQuery = (q) => {
+  let cleanedQuery = q.replaceAll("area", "zipcode")
+  cleanedQuery = cleanedQuery.replaceAll("areas", "zipcodes")
+  cleanedQuery = cleanedQuery.replaceAll("neighborhood", "zipcode")
+  cleanedQuery = cleanedQuery.replace("neighborhoods", "zipcodes")
+  cleanedQuery = cleanedQuery.replace("part of", "zipcode of")
+  cleanedQuery = cleanedQuery.replace("parts of", "zipcodes of")
+  return cleanedQuery
+}
 
   return (
     <div className="App">
