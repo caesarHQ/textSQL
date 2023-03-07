@@ -182,81 +182,9 @@ function App() {
     let city_index = result.column_names.indexOf("city")
     if (city_index == -1 || !result.results) return []
 
-    return result.results
+    return result.results.map(x => { return {'city': x["city"], 'lat': x["lat"], 'long': x["long"] }})
 }
 
-useEffect(() => {
-  if (mapRef.current) {
-    mapRef.current.on('mousemove', (e) => {
-      let features = mapRef.current.queryRenderedFeatures(e.point)
-      if (features && features.length > 0) {
-        if(features[0].source == 'cities') {
-          let index = features[0].properties.index
-          let {lat, long, ...cityData} = cities[index]
-          console.log("City Data: ", cityData)
-          // new mapRef.Popup()
-          // .setLngLat([long, lat])
-          // .setHTML(JSON.stringify(cityData))
-          // .addTo(mapRef.current);
-        }
-      }
-    });
-  }
-
-}, [mapRef, cities])
-
-// const onMapLoad = React.useCallback(() => {
-//   mapRef.current.on('mousemove', (e) => {
-//     let features = mapRef.current.queryRenderedFeatures(e.point)
-//     if (features && features.length >= 0) {
-//       if(features[0].source == 'cities') {
-//         let index = features[0].properties.index
-//         console.log("Index => ", index, cities)
-//         // let {lat, long, ...cityData} = cities[index]
-//         // console.log("City Data: ", cityData)
-//       }
-//     }
-//     // console.log("Hola", e.point)
-//     // console.log("Source", mapRef.current.queryRenderedFeatures(e.point)[0].source)
-//     // console.log("Properties", mapRef.current.queryRenderedFeatures(e.point)[0].properties)
-//   });
-// }, [cities]);
-
-// useEffect(() => {
-//   mapRef.current.on('mousemove', (e) => {
-
-//     console.log("Hola", e.point)
-//     console.log("Hola 2", mapRef.queryRenderedFeatures(e.point))
-//     // const features = map.queryRenderedFeatures(e.point);
-     
-//     // // Limit the number of properties we're displaying for
-//     // // legibility and performance
-//     // const displayProperties = [
-//     // 'type',
-//     // 'properties',
-//     // 'id',
-//     // 'layer',
-//     // 'source',
-//     // 'sourceLayer',
-//     // 'state'
-//     // ];
-     
-//     // const displayFeatures = features.map((feat) => {
-//     // const displayFeat = {};
-//     // displayProperties.forEach((prop) => {
-//     // displayFeat[prop] = feat[prop];
-//     // });
-//     // return displayFeat;
-//     // });
-     
-//     // // Write object as string with an indent of two spaces.
-//     // document.getElementById('features').innerHTML = JSON.stringify(
-//     // displayFeatures,
-//     // null,
-//     // 2
-//     // );
-//     });
-// })
   const fetchBackend = (natural_language_query) => {
     const options = {
       method: 'POST',
@@ -264,8 +192,6 @@ useEffect(() => {
       body: '{"natural_language_query":"' + natural_language_query + '"}'
     };
 
-    natural_language_query = cleanupQuery(natural_language_query)
-   
   let res = {
       "result": {
           "column_names": [
@@ -344,8 +270,7 @@ useEffect(() => {
               {padding: '100', duration: 1000}
             );
           }
-          
-          console.log("Setting Cities ==>")
+  
           setCities(responseCities)
           setZipcodes([]) // reset zipcode rendering
         } else {
@@ -401,26 +326,23 @@ useEffect(() => {
     fetchBackend(query)
   }
 
-  const zipcodeFeatures = zipcodes.map((z, index) => {
+  const zipcodeFeatures = zipcodes.map((z) => {
     return {
       "type": "Feature",
       "geometry": {
           "type": "Point",
           "coordinates": [z.long, z.lat]
-      },
-      "properties": {"index": index}
+      }
     }
   })
 
-  const citiesFeatures = cities.map((c, index) => {
-    console.log("Cities ==-=--=====", cities)
+  const citiesFeatures = cities.map((c) => {
     return {
       "type": "Feature",
       "geometry": {
           "type": "Point",
           "coordinates": [c.long, c.lat]
-      },
-      "properties": {"index": index}
+      }
     }
   })
 
@@ -473,16 +395,6 @@ const citiesLayer = {
   }
 };
 
-const cleanupQuery = (q) => {
-  let cleanedQuery = q.replaceAll("area", "zipcode")
-  cleanedQuery = cleanedQuery.replaceAll("areas", "zipcodes")
-  cleanedQuery = cleanedQuery.replaceAll("neighborhood", "zipcode")
-  cleanedQuery = cleanedQuery.replace("neighborhoods", "zipcodes")
-  cleanedQuery = cleanedQuery.replace("part of", "zipcode of")
-  cleanedQuery = cleanedQuery.replace("parts of", "zipcodes of")
-  return cleanedQuery
-}
-
   return (
     <div className="App">
       <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css" rel="stylesheet" />
@@ -510,7 +422,7 @@ const cleanupQuery = (q) => {
         </div>
       </div>
       <div className="bg-gray-50 px-4 h-full sm:p-6 flex flex-col md:flex-row md:pb-[200px]">
-          <div className="overflow-hidden rounded-lg h-[40vh] md:h-full bg-white shadow flex-grow-[0] w-full mr-8 mb-8">
+          <div className="rounded-lg overflow-y-scroll max-h-[60vh] md:h-full bg-white shadow flex-grow-[0] w-full mr-8 mb-8">
             {sql.length == 0 ? <Examples setQuery={setQuery} handleClick={fetchBackend}/> : <>
               <div className="p-4">
                 <pre align="left" className="bg-gray-100 rounded-md p-2 overflow-auto"><code className="text-sm text-gray-800 language-sql">{sql}</code></pre>
