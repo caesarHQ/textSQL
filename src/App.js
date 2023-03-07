@@ -4,7 +4,6 @@ import Map, {Layer, Source} from 'react-map-gl';
 
 import { XCircleIcon } from '@heroicons/react/20/solid'
 import mapboxgl from 'mapbox-gl';
-import { zipcodesToLatLong } from './zipcodes';
 import bbox from '@turf/bbox';
 import * as turf from '@turf/turf'
 import posthog from 'posthog-js'
@@ -181,23 +180,6 @@ function App() {
     return zips.map(x => "<at><openparen>" + x['zipcode'] + "<closeparen>")
   }
 
-  const getZipcodesOld = (result) => { 
-      let zipcode_index = result.column_names.indexOf("zip_code")
-      if (zipcode_index == -1 || !result.values) return []
-
-      return result.values.map(x => {
-        let zipcode = x[zipcode_index]
-        let lat = zipcodesToLatLong[zipcode] ? zipcodesToLatLong[zipcode].lat : 0
-        let long = zipcodesToLatLong[zipcode] ? zipcodesToLatLong[zipcode].long : 0
-
-        return {
-          'zipcode': x[zipcode_index],
-          'lat': lat,
-          'long': long
-        }
-      })
-    }
-
   const getZipcodes = (result) => { 
 
       let zipcode_index = result.column_names.indexOf("zip_code")
@@ -206,24 +188,19 @@ function App() {
       return result.results.map(x => { return {'zipcode': x["zip_code"], 'lat': x["lat"], 'long': x["long"] }})
   }
   
+  const getCities = (result) => { 
+    let city_index = result.column_names.indexOf("city")
+    if (city_index == -1 || !result.results) return []
+
+    return result.results.map(x => { return {'city': x["city"], 'lat': x["lat"], 'long': x["long"] }})
+}
+
   const fetchBackend = (natural_language_query) => {
     const options = {
       method: 'POST',
       headers: {'content-type': 'application/json'},
       body: '{"natural_language_query":"' + natural_language_query + '"}'
     };
-
-    // Hardcoded test data for testing
-    
-    // setStatusCode(200)
-    // console.log("a")
-    // setColumns(test_table.column_names)
-    // console.log("b")
-    // setRows(test_table.values)
-    // console.log("c")
-    // setZipcodesFormatted(getZipcodesMapboxFormatted(test_table))
-    // console.log("d")
-    // setZipcodes(getZipcodes(test_table))
 
   let res = {
       "result": {
@@ -272,30 +249,57 @@ function App() {
         })
         setRows(rows)
 
-        let responseZipcodes = getZipcodes(response.result)
+        // render cities layer on the map
+        if (filteredColumns.indexOf("zip_code") == -1 && filteredColumns.indexOf("city") >= 0) {
+          let responseCities = getCities(response.result)
+          // Fitbounds needs at least two geo coordinates. 
+          if (responseCities.length < 2) {
+            responseCities.push({
+              'city': responseCities[0].zipcode,
+              'lat': responseCities[0].lat+0.1,
+              'long': responseCities[0].long,
+            })
+          }
 
-        setZipcodesFormatted(getZipcodesMapboxFormatted(responseZipcodes))
+          let [minLng, minLat, maxLng, maxLat] = bbox(turf.lineString(responseCities.map(c => [c.long, c.lat])));
 
-        // Fitbounds needs at least two geo coordinates. 
-        if (responseZipcodes.length == 1) {
-          responseZipcodes.push({
-            'zipcode': responseZipcodes[0].zipcode,
-            'lat': responseZipcodes[0].lat+0.1,
-            'long': responseZipcodes[0].long,
-          })
+          mapRef.current.fitBounds(
+            [
+              [minLng, minLat],
+              [maxLng, maxLat]
+            ],
+            {padding: '100', duration: 1000}
+          );
+  
+          setCities(responseCities)
+
+        } else {
+          // render zipcodes layer on the map
+          let responseZipcodes = getZipcodes(response.result)
+
+          setZipcodesFormatted(getZipcodesMapboxFormatted(responseZipcodes))
+  
+          // Fitbounds needs at least two geo coordinates. 
+          if (responseZipcodes.length == 1) {
+            responseZipcodes.push({
+              'zipcode': responseZipcodes[0].zipcode,
+              'lat': responseZipcodes[0].lat+0.1,
+              'long': responseZipcodes[0].long,
+            })
+          }
+  
+          let [minLng, minLat, maxLng, maxLat] = bbox(turf.lineString(responseZipcodes.map(z => [z.long, z.lat])));
+      
+          mapRef.current.fitBounds(
+            [
+              [minLng, minLat],
+              [maxLng, maxLat]
+            ],
+            {padding: '100', duration: 1000}
+          );
+  
+          setZipcodes(responseZipcodes)
         }
-
-        let [minLng, minLat, maxLng, maxLat] = bbox(turf.lineString(responseZipcodes.map(z => [z.long, z.lat])));
-    
-        mapRef.current.fitBounds(
-          [
-            [minLng, minLat],
-            [maxLng, maxLat]
-          ],
-          {padding: '100', duration: 1000}
-        );
-
-        setZipcodes(responseZipcodes)
       })
      .catch(err => {
       setStatusCode(500)
@@ -372,7 +376,7 @@ const citiesLayerHigh = {
       'visibility': 'visible'
   },
   'paint': {
-    'circle-radius': 10,
+    'circle-radius': 18,
     'circle-color': "#006AF9",
     'circle-opacity': 0.8,
   }
