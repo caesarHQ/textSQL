@@ -182,9 +182,81 @@ function App() {
     let city_index = result.column_names.indexOf("city")
     if (city_index == -1 || !result.results) return []
 
-    return result.results.map(x => { return {'city': x["city"], 'lat': x["lat"], 'long': x["long"] }})
+    return result.results
 }
 
+useEffect(() => {
+  if (mapRef.current) {
+    mapRef.current.on('mousemove', (e) => {
+      let features = mapRef.current.queryRenderedFeatures(e.point)
+      if (features && features.length > 0) {
+        if(features[0].source == 'cities') {
+          let index = features[0].properties.index
+          let {lat, long, ...cityData} = cities[index]
+          console.log("City Data: ", cityData)
+          // new mapRef.Popup()
+          // .setLngLat([long, lat])
+          // .setHTML(JSON.stringify(cityData))
+          // .addTo(mapRef.current);
+        }
+      }
+    });
+  }
+
+}, [mapRef, cities])
+
+// const onMapLoad = React.useCallback(() => {
+//   mapRef.current.on('mousemove', (e) => {
+//     let features = mapRef.current.queryRenderedFeatures(e.point)
+//     if (features && features.length >= 0) {
+//       if(features[0].source == 'cities') {
+//         let index = features[0].properties.index
+//         console.log("Index => ", index, cities)
+//         // let {lat, long, ...cityData} = cities[index]
+//         // console.log("City Data: ", cityData)
+//       }
+//     }
+//     // console.log("Hola", e.point)
+//     // console.log("Source", mapRef.current.queryRenderedFeatures(e.point)[0].source)
+//     // console.log("Properties", mapRef.current.queryRenderedFeatures(e.point)[0].properties)
+//   });
+// }, [cities]);
+
+// useEffect(() => {
+//   mapRef.current.on('mousemove', (e) => {
+
+//     console.log("Hola", e.point)
+//     console.log("Hola 2", mapRef.queryRenderedFeatures(e.point))
+//     // const features = map.queryRenderedFeatures(e.point);
+     
+//     // // Limit the number of properties we're displaying for
+//     // // legibility and performance
+//     // const displayProperties = [
+//     // 'type',
+//     // 'properties',
+//     // 'id',
+//     // 'layer',
+//     // 'source',
+//     // 'sourceLayer',
+//     // 'state'
+//     // ];
+     
+//     // const displayFeatures = features.map((feat) => {
+//     // const displayFeat = {};
+//     // displayProperties.forEach((prop) => {
+//     // displayFeat[prop] = feat[prop];
+//     // });
+//     // return displayFeat;
+//     // });
+     
+//     // // Write object as string with an indent of two spaces.
+//     // document.getElementById('features').innerHTML = JSON.stringify(
+//     // displayFeatures,
+//     // null,
+//     // 2
+//     // );
+//     });
+// })
   const fetchBackend = (natural_language_query) => {
     const options = {
       method: 'POST',
@@ -272,7 +344,8 @@ function App() {
               {padding: '100', duration: 1000}
             );
           }
-  
+          
+          console.log("Setting Cities ==>")
           setCities(responseCities)
           setZipcodes([]) // reset zipcode rendering
         } else {
@@ -328,23 +401,26 @@ function App() {
     fetchBackend(query)
   }
 
-  const zipcodeFeatures = zipcodes.map((z) => {
+  const zipcodeFeatures = zipcodes.map((z, index) => {
     return {
       "type": "Feature",
       "geometry": {
           "type": "Point",
           "coordinates": [z.long, z.lat]
-      }
+      },
+      "properties": {"index": index}
     }
   })
 
-  const citiesFeatures = cities.map((c) => {
+  const citiesFeatures = cities.map((c, index) => {
+    console.log("Cities ==-=--=====", cities)
     return {
       "type": "Feature",
       "geometry": {
           "type": "Point",
           "coordinates": [c.long, c.lat]
-      }
+      },
+      "properties": {"index": index}
     }
   })
 
