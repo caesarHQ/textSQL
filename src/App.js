@@ -382,7 +382,7 @@ const zipcodeLayerLow =   {
     }
 };
 
-const citiesLayerHigh = {
+const citiesLayer = {
   'id': 'cities',
   'type': 'circle',
   'layout': {
@@ -435,8 +435,13 @@ const citiesLayerHigh = {
             <Map
               ref={mapRef}
               mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
-              style={{width: '100%'}}
+              style={{width: '100%', height:'100%'}}
               mapStyle="mapbox://styles/mapbox/dark-v11"
+              initialViewState={{
+                longitude: -100,
+                latitude: 40,
+                zoom: 3.5
+              }}
             >
               <Source id="zips-kml" type="vector" url="mapbox://darsh99137.4nf1q4ec">
                 <Layer {...zipcodeLayerLow} />
@@ -445,7 +450,7 @@ const citiesLayerHigh = {
                 <Layer {...zipcodeLayerHigh} />
               </Source>
               <Source id="cities" type="geojson" data={{type: 'FeatureCollection', features: citiesFeatures}}>
-                <Layer {...citiesLayerHigh} />
+                <Layer {...citiesLayer} />
               </Source>
             </Map>;
           </div>
