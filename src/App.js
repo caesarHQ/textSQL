@@ -434,7 +434,7 @@ const citiesLayer = {
             />
             <button
               type="button"
-              className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ml-2"
+              className="text-white bg-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-blue-700 ml-3"
               onClick={handleSearchClick}
             >
               Search
