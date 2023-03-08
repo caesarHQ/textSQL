@@ -497,9 +497,9 @@ const citiesLayer = {
         </div>
       </div>
       <div className="bg-gray-50 px-4 h-full sm:p-6 flex flex-col md:flex-row md:pb-[200px]">
-          <div className="rounded-lg overflow-y-scroll max-h-[60vh] md:h-full bg-white shadow flex-grow-[0] w-full mr-8 mb-8">
+          <div className="rounded-lg overflow-y-scroll max-h-[60vh] h-full md:h-full max-h-full bg-white shadow flex-grow-[0] w-full mr-8 mb-8">
             <LoadingSpinner isLoading={isLoading}/>
-            {sql.length == 0 ? <Examples setQuery={setQuery} handleClick={fetchBackend}/> : <>
+            {sql.length == 0 && !isLoading? <Examples setQuery={setQuery} handleClick={fetchBackend}/> : isLoading ? <> </> : <>
               <div className="p-4">
                 <pre align="left" className="bg-gray-100 rounded-md p-2 overflow-auto"><code className="text-sm text-gray-800 language-sql">{sql}</code></pre>
               </div>
