@@ -62,11 +62,12 @@ function Examples(props) {
   ]
   const advanced_example_queries = [
     "3 neighborhoods in San Francisco that have the highest female to male ratio",
-    "Which area in San Francisco has the highest racial diversity and what is the racial distribution of that area",
+    "Which area in San Francisco has the highest of racial and what is the percentage population of each race in that area",
     "Which 5 areas have the median income closest to the national median income?"
   ]
   return (
     <div> 
+      <p class="my-2 font-medium"> Try these: </p>
       <div >
         <p className="my-4"> Basic </p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -161,7 +162,7 @@ function Table(props) {
   );
 }
 
-function App() {
+function App(props) {
   const [query, setQuery] =  useState('');
   const [sql, setSQL] = useState('');
   const [zipcodesFormatted, setZipcodesFormatted] = useState([])
@@ -395,6 +396,7 @@ function App() {
   }
 
   const handleSearchClick = (event) => {
+    window.history.replaceState(null, "Census GPT", "/?s="  + encodeURIComponent(query))
     posthog.capture('search_clicked', { natural_language_query: query })
     fetchBackend(query)
   }
@@ -479,6 +481,7 @@ const citiesLayer = {
               type="text"
               name="search"
               id="search"
+              placeholder="Ask anything about US Demographics..."
               className="block w-full md:w-1/2 rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               value={query}
               onChange={handleSearchChange}
