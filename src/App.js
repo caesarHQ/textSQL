@@ -239,12 +239,24 @@ function App() {
     if (city_index == -1 || !result.results) return []
 
     return result.results.map(x => { return {'city': x["city"], 'lat': x["lat"], 'long': x["long"] }})
-}
+  }
+
+  const cleanupQuery = (q) => {
+    let cleanedQuery = q.replaceAll("area", "zipcode")
+    cleanedQuery = cleanedQuery.replaceAll("areas", "zipcodes")
+    cleanedQuery = cleanedQuery.replaceAll("neighborhood", "zipcode")
+    cleanedQuery = cleanedQuery.replace("neighborhoods", "zipcodes")
+    cleanedQuery = cleanedQuery.replace("part of", "zipcode of")
+    cleanedQuery = cleanedQuery.replace("parts of", "zipcodes of")
+    return cleanedQuery
+  }
 
   const fetchBackend = (natural_language_query) => {
     setIsLoading(true)
     clearMapLayers() // clear previous layers
 
+    natural_language_query = cleanupQuery(natural_language_query)
+    
     const options = {
       method: 'POST',
       headers: {'content-type': 'application/json'},
