@@ -62,7 +62,7 @@ function Examples(props) {
   ]
   const advanced_example_queries = [
     "3 neighborhoods in San Francisco that have the highest female to male ratio",
-    "Which area in San Francisco has the highest of racial and what is the percentage population of each race in that area",
+    "Which area in San Francisco has the highest racial diversity and what is the percentage population of each race in that area",
     "Which 5 areas have the median income closest to the national median income?"
   ]
   return (
@@ -503,6 +503,7 @@ const citiesLayer = {
           <div className="rounded-lg overflow-y-scroll max-h-[60vh] h-full md:h-full md:max-h-full bg-white shadow flex-grow-[0] w-full mr-8 mb-8">
             <LoadingSpinner isLoading={isLoading}/>
             {sql.length == 0 && !isLoading? <Examples setQuery={setQuery} handleClick={fetchBackend}/> : isLoading ? <> </> : <>
+              <p class="my-2 font-medium"> {query} </p>
               <div className="p-4">
                 <pre align="left" className="bg-gray-100 rounded-md p-2 overflow-auto"><code className="text-sm text-gray-800 language-sql">{sql}</code></pre>
               </div>
