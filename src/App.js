@@ -476,7 +476,10 @@ const citiesLayer = {
       <div className="px-4 py-5 sm:px-6">
         <h1 className="text-4xl font-bold mb-8">Census GPT</h1>
         <div>
-          <div className="relative mt-1 flex justify-center">
+          <form className="relative mt-1 flex justify-center" onSubmit={(event) => {
+          event.preventDefault()
+              handleSearchClick(event)
+          }}>
             <input
               type="text"
               name="search"
@@ -493,7 +496,7 @@ const citiesLayer = {
             >
               Search
             </button>
-          </div>
+          </form>
         </div>
       </div>
       <div className="bg-gray-50 px-4 h-full sm:p-6 flex flex-col md:flex-row md:pb-[200px]">
