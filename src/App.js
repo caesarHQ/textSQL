@@ -140,6 +140,17 @@ function App() {
   const [cities, setCities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const queryParameters = new URLSearchParams(window.location.search)
+  const urlSearch = queryParameters.get("s")
+
+  useEffect(() => {
+    if (urlSearch && urlSearch.length > 0) {
+      posthog.capture('search_clicked', { natural_language_query: urlSearch })
+      setQuery(urlSearch)
+      fetchBackend(urlSearch)
+    }
+  }, [urlSearch])
+
   const mapRef = useRef();
 
   // Test data. Schema for response.result from fetch
