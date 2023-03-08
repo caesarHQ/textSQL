@@ -151,6 +151,12 @@ function App() {
     }
   }, [urlSearch])
 
+  const clearMapLayers = () => {
+    setCities([])
+    setZipcodes([])
+    setZipcodesFormatted([])
+  }
+
   const mapRef = useRef();
 
   // Test data. Schema for response.result from fetch
@@ -204,6 +210,7 @@ function App() {
 
   const fetchBackend = (natural_language_query) => {
     setIsLoading(true)
+    clearMapLayers() // clear previous layers
 
     const options = {
       method: 'POST',
@@ -293,7 +300,7 @@ function App() {
   
           setCities(responseCities)
           setZipcodes([]) // reset zipcode rendering
-        } else {
+        } else if (filteredColumns.indexOf("zip_code") >= 0 ){
           // render zipcodes layer on the map
           
           let responseZipcodes = getZipcodes(response.result)
