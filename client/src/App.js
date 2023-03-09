@@ -173,6 +173,7 @@ function App(props) {
   const [errorMessage, setErrorMessage] = useState('');
   const [cities, setCities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [title, setTitle] = useState('');
 
   const queryParameters = new URLSearchParams(window.location.search)
   const urlSearch = queryParameters.get("s")
@@ -221,6 +222,7 @@ function App(props) {
   const handleSearchChange = (event) => {
     const { value } = event.target;
     setQuery(value);
+    setTitle('');
   }
 
   const getZipcodesMapboxFormatted = (zips) => {
@@ -397,6 +399,7 @@ function App(props) {
 
   const handleSearchClick = (event) => {
     window.history.replaceState(null, "Census GPT", "/?s="  + encodeURIComponent(query))
+    setTitle(query)
     posthog.capture('search_clicked', { natural_language_query: query })
     fetchBackend(query)
   }
@@ -505,7 +508,7 @@ const citiesLayer = {
               {/*spinner*/}
             <LoadingSpinner isLoading={isLoading}/>
             {sql.length == 0 && !isLoading? <Examples setQuery={setQuery} handleClick={fetchBackend}/> : isLoading ? <> </> : <>
-              <p class="my-2 font-medium"> {query} </p>
+              <p class="my-2 font-medium"> {title} </p>
               <div className="p-4">
                 <pre align="left" className="bg-gray-100 rounded-md p-2 overflow-auto"><code className="text-sm text-gray-800 language-sql">{sql}</code></pre>
               </div>
