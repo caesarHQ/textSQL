@@ -6,7 +6,7 @@ from .lat_lon import zip_lat_lon, city_lat_lon
 from collections import OrderedDict
 
 
-openai.api_key = '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'
+openai.api_key = 'OPENAI_KEY'
 
 
 DEFAULT_MESSAGES = [
