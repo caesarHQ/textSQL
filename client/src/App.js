@@ -477,7 +477,7 @@ const citiesLayer = {
         <h1 className="text-4xl font-bold mb-8">Census GPT</h1>
         <GitHubButton href="https://github.com/caesarhq/textSQL" data-size="large" aria-label="Star caesarhq/textSQL on GitHub">Github</GitHubButton>
         <div>
-          <form className="relative mt-1 flex justify-center" onSubmit={(event) => {
+          <form autocomplete="off" className="relative mt-1 flex justify-center" onSubmit={(event) => {
           event.preventDefault()
               handleSearchClick(event)
           }}>
