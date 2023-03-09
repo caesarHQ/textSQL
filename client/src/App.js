@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import Map, {Layer, Source} from 'react-map-gl';
-
+import GitHubButton from 'react-github-btn'
 import { XCircleIcon } from '@heroicons/react/20/solid'
 import mapboxgl from 'mapbox-gl';
 import bbox from '@turf/bbox';
@@ -475,6 +475,7 @@ const citiesLayer = {
       <div className="overflow-hidden rounded-lg bg-white shadow md:h-screen">
       <div className="px-4 py-5 sm:px-6">
         <h1 className="text-4xl font-bold mb-8">Census GPT</h1>
+        <GitHubButton href="https://github.com/caesarhq/textSQL" data-size="large" aria-label="Star caesarhq/textSQL on GitHub">Github</GitHubButton>
         <div>
           <form className="relative mt-1 flex justify-center" onSubmit={(event) => {
           event.preventDefault()
