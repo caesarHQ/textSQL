@@ -67,6 +67,14 @@ DEFAULT_MESSAGES = [
         "role": "assistant",
         "content": "SELECT acs_census_data.city, acs_census_data.state, SUM(female_population) AS city_female_population\nFROM acs_census_data\nWHERE female_population IS NOT NULL\nGROUP BY acs_census_data.city\nORDER BY female_population DESC\nLIMIT 5"
     },
+    {
+        "role": "user",
+        "content": "Which city in Washington has the highest population?"
+    },
+    {
+        "role": "assistant",
+        "content": "SELECT city, state, SUM(total_population) AS total_city_population\nFROM acs_census_data\nWHERE state = 'WA'\nGROUP BY city, state\nORDER BY total_city_population DESC\nLIMIT 1"
+    }
 ]
 
 
