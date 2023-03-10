@@ -1,5 +1,5 @@
 # create python venv named venv
-python -m venv ./venv
+python3 -m venv ./venv
 
 # activate venv
 source venv/bin/activate
