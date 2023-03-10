@@ -119,7 +119,7 @@ function App(props) {
 
         // Set the state for SQL and Status Code
         setStatusCode(response.status)
-          response = responseOuter;
+          responseOuter = response
         setSQL(response.sql_query)
 
         console.log("Backend Response ==>", response)
