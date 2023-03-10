@@ -7,7 +7,7 @@ code for CensusGPT.com
 
 
 <h3 align="center">
-  <a href="censusgpt.com"><b>Website</b></a> &bull;
+  <a href="https://censusgpt.com/" target="_blank"> Website </a>&bull;
   <a href="https://t.co/FuOOcB6aGr"><b>Join the Discord Server</b></a> &bull;
 </h3>
 
