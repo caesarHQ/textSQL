@@ -76,6 +76,10 @@ function App(props) {
     setTitle('');
   }
 
+  const handleClearSearch = () => {
+    setQuery('');
+  }
+
   const fetchBackend = (natural_language_query) => {
     
     // Don't send a request if the query is empty!
@@ -233,7 +237,10 @@ function App(props) {
       <div className="overflow-hidden rounded-lg bg-white shadow md:h-screen">
       <div className="px-4 py-5 sm:px-6">
       <h1 className="text-4xl font-bold mb-6" 
-    onClick={() => window.location.reload()} 
+    onClick={() => {
+      window.location.assign('/');
+      handleClearSearch();
+    }} 
     style={{ cursor: 'pointer' }}
 >
     Census GPT
