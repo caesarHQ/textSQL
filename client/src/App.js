@@ -233,7 +233,12 @@ function App(props) {
       <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css" rel="stylesheet" />
       <div className="overflow-hidden rounded-lg bg-white shadow md:h-screen">
       <div className="px-4 py-5 sm:px-6">
-        <h1 className="text-4xl font-bold mb-6">Census GPT</h1>
+      <h1 className="text-4xl font-bold mb-6" 
+    onClick={() => window.location.reload()} 
+    style={{ cursor: 'pointer' }}
+>
+    Census GPT
+</h1>
           <div className="inline-flex gap-x-1.5 align-middle justify-center mb-3">
         <GithubButton />
           <DiscordButton />
