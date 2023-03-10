@@ -19,6 +19,6 @@ export const GithubButton = () => {
         onClick={() => window.open('https://github.com/caesarhq/textSQL','_blank')}
       >
          <BsGithub />
-        Github
+        Star on GitHub
       </button>
 }
