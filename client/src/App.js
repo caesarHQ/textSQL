@@ -19,6 +19,7 @@ import { cleanupQuery, getCities, getZipcodes, getZipcodesMapboxFormatted } from
 import { zipcodeFeatures, citiesFeatures, zipcodeLayerHigh, zipcodeLayerLow, citiesLayer } from './mapbox-ui-config'
 
 import './css/App.css';
+import {DiscordButton, GithubButton} from "./Discord";
 
 // Init posthog
 posthog.init('phc_iLMBZqxwjAjaKtgz29r4EWv18El2qg3BIJoOOpw7s2e', { api_host: 'https://app.posthog.com' })
@@ -232,8 +233,11 @@ function App(props) {
       <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css" rel="stylesheet" />
       <div className="overflow-hidden rounded-lg bg-white shadow md:h-screen">
       <div className="px-4 py-5 sm:px-6">
-        <h1 className="text-4xl font-bold mb-8">Census GPT</h1>
-        <GitHubButton href="https://github.com/caesarhq/textSQL" data-size="large" aria-label="Star caesarhq/textSQL on GitHub">Github</GitHubButton>
+        <h1 className="text-4xl font-bold mb-6">Census GPT</h1>
+          <div className="inline-flex gap-x-1.5 align-middle justify-center mb-3">
+        <GithubButton />
+          <DiscordButton />
+              </div>
         <div>
           <form autoComplete={"off"} className="relative mt-1 flex justify-center" onSubmit={(event) => {
           event.preventDefault()
