@@ -8,7 +8,7 @@ Demo on US Census Data: [CensusGPT.com](https://censusgpt.com)
 
 <h3 align="center">
   <a href="https://censusgpt.com/" target="_blank"> Website </a>&bull;
-  <a href="https://t.co/FuOOcB6aGr"><b>Join the Discord Server</b></a> &bull;
+  <a href="https://t.co/FuOOcB6aGr"><b>Join the Discord Server</b></a>
 </h3>
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
