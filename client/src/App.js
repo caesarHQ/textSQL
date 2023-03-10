@@ -90,8 +90,9 @@ function App(props) {
     if (urlSearch && urlSearch.length > 0) {
       posthog.capture('search_clicked', { natural_language_query: urlSearch })
       setQuery(urlSearch)
+        fetchBackend(urlSearch)
     }
-  }, [urlSearch])
+  }, [urlSearch, fetchBackend])
 
   const clearMapLayers = () => {
     setCities([])
