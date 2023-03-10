@@ -255,6 +255,11 @@ function App(props) {
   }
 
   const fetchBackend = (natural_language_query) => {
+    
+    // Don't send a request if the query is empty!
+    natural_language_query = natural_language_query.trim()
+    if (natural_language_query.length == 0) return;
+
     setIsLoading(true)
     clearMapLayers() // clear previous layers
 
@@ -266,31 +271,31 @@ function App(props) {
       body: '{"natural_language_query":"' + natural_language_query + '"}'
     };
 
-  let res = {
-      "result": {
-          "column_names": [
-              "zip_code",
-              "difference",
-              "lat",
-              "long"
-          ],
-          "results": [
-              {
-                  "difference": 0,
-                  "lat": 45.925286,
-                  "long": -89.499516,
-                  "zip_code": "54558"
-              },
-              {
-                "difference": 0,
-                "lat": 45.925286,
-                "long": -89.499516,
-                "zip_code": "54558"
-            }
-          ]
-      },
-      "sql_query": "SELECT zip_code, ABS(median_income_for_workers - (SELECT median_income_for_workers FROM acs_census_data ORDER BY ABS(median_income_for_workers - (SELECT AVG(median_income_for_workers) FROM acs_census_data)) LIMIT 1)) AS difference\nFROM acs_census_data\nWHERE median_income_for_workers IS NOT NULL\nORDER BY difference\nLIMIT 1"
-  }
+  // let res = {
+  //     "result": {
+  //         "column_names": [
+  //             "zip_code",
+  //             "difference",
+  //             "lat",
+  //             "long"
+  //         ],
+  //         "results": [
+  //             {
+  //                 "difference": 0,
+  //                 "lat": 45.925286,
+  //                 "long": -89.499516,
+  //                 "zip_code": "54558"
+  //             },
+  //             {
+  //               "difference": 0,
+  //               "lat": 45.925286,
+  //               "long": -89.499516,
+  //               "zip_code": "54558"
+  //           }
+  //         ]
+  //     },
+  //     "sql_query": "SELECT zip_code, ABS(median_income_for_workers - (SELECT median_income_for_workers FROM acs_census_data ORDER BY ABS(median_income_for_workers - (SELECT AVG(median_income_for_workers) FROM acs_census_data)) LIMIT 1)) AS difference\nFROM acs_census_data\nWHERE median_income_for_workers IS NOT NULL\nORDER BY difference\nLIMIT 1"
+  // }
 
     fetch('https://ama-api.onrender.com/api/text_to_sql', options)
       .then(response => response.json())
