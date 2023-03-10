@@ -55,7 +55,7 @@ Currently, textSQL only supports visualizing zipcodes and cities on the map usin
 
 #### Datasets: 
 
-A lot of the users of this project have asked for historical census data (trends), weather, health, transportation and real-estate data. Feel free to create a pull request or drop a link to your dataset in this Discord. 
+A lot of the users of this project have asked for historical census data (trends), weather, health, transportation and real-estate data. Feel free to create a pull request or drop a link to your dataset in this [Discord](https://discord.gg/JZtxhZQQus). 
 
 More data → Better CensusGPT
 
