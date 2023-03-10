@@ -234,7 +234,7 @@ function App(props) {
       <div className="overflow-hidden rounded-lg bg-white shadow md:h-screen">
       <div className="px-4 py-5 sm:px-6">
         <h1 className="text-4xl font-bold mb-8">Census GPT</h1>
-        <GitHubButton href="https://github.com/caesarhq/textSQL" data-size="large" aria-label="Star caesarhq/textSQL on GitHub">Github</GitHubButton>
+        <a class="github-button" href="https://github.com/caesarHQ/textSQL" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star caesarHQ/textSQL on GitHub">Star on GitHub</a>
         <div>
           <form autoComplete={"off"} className="relative mt-1 flex justify-center" onSubmit={(event) => {
           event.preventDefault()
