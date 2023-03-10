@@ -4,6 +4,7 @@ import mapboxgl from 'mapbox-gl';
 import bbox from '@turf/bbox';
 import posthog from 'posthog-js'
 import * as turf from '@turf/turf'
+import { FaTimes } from 'react-icons/fa'
 
 // Components
 import Table from './components/table'
@@ -250,7 +251,7 @@ function App(props) {
           <DiscordButton />
               </div>
         <div>
-          <form autoComplete={"off"} className="relative mt-1 flex justify-center" onSubmit={(event) => {
+          <form autoComplete={"off"} className="relative mt-1 form flex justify-center" onSubmit={(event) => {
           event.preventDefault()
               handleSearchClick(event)
           }}>
@@ -259,10 +260,18 @@ function App(props) {
               name="search"
               id="search"
               placeholder="Ask anything about US Demographics..."
-              className="block w-full md:w-1/2 rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="block w-full rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               value={query}
               onChange={handleSearchChange}
             />
+            {query && (
+              <button
+                className="absolute top-0 right-20 mt-3 mr-6 text-gray-400 hover:text-gray-500 focus:outline-none"
+                onClick={handleClearSearch}
+              >
+                <FaTimes />
+              </button>
+            )}
             <button
               type="submit"
               className="text-white bg-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 ml-3"
