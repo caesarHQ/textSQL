@@ -15,7 +15,7 @@ const Examples = (props) => {
     ]
     const advanced_example_queries = [
         "3 neighborhoods in San Francisco that have the highest female to male ratio",
-        "Which area in San Francisco has the highest racial diversity and what is the percentage population of each race in that area",
+        "Which area in San Francisco has the highest racial diversity and what is the percentage population of each race in that area?",
         // "Which 5 areas have the median income closest to the national median income?"
     ]
     return (
