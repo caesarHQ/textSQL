@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Map, {Layer, Source} from 'react-map-gl';
-import GitHubButton from 'react-github-btn'
 import mapboxgl from 'mapbox-gl';
 import bbox from '@turf/bbox';
 import posthog from 'posthog-js'
@@ -81,7 +80,7 @@ function App(props) {
     
     // Don't send a request if the query is empty!
     natural_language_query = natural_language_query.trim()
-    if (natural_language_query.length == 0) return;
+    if (!natural_language_query.length) return;
 
     // Set the loading state
     setIsLoading(true)
@@ -126,7 +125,7 @@ function App(props) {
         console.log("Backend Response ==>", response)
 
         // Filter out lat and long columns
-        let filteredColumns = response.result.column_names.filter(c => c != "lat" && c != "long")
+        let filteredColumns = response.result.column_names.filter(c => c !== "lat" && c !== "long")
         setColumns(filteredColumns)
 
         // Fit the order of columns and filter out lat and long row values
@@ -139,11 +138,11 @@ function App(props) {
         setRows(rows)
 
         // render cities layer on the map
-        if (filteredColumns.indexOf("zip_code") == -1 && filteredColumns.indexOf("city") >= 0) {
+        if (filteredColumns.indexOf("zip_code") === -1 && filteredColumns.indexOf("city") >= 0) {
           // Get the cities
           let responseCities = getCities(response.result)
           console.log(responseCities)
-          if (responseCities.length == 0) {
+          if (!responseCities.length) {
               setErrorMessage("No results were returned")
               setCities([])
               setZipcodes([]) // reset cities rendering
@@ -179,7 +178,7 @@ function App(props) {
           setZipcodesFormatted(getZipcodesMapboxFormatted(responseZipcodes))
   
           // Fitbounds needs at least two geo coordinates.
-          if (responseZipcodes.length == 0) {
+          if (!responseZipcodes.length) {
             setErrorMessage("No results were returned")
             setZipcodes([])
             setCities([]) // reset cities rendering
@@ -254,7 +253,7 @@ function App(props) {
             />
             <button
               type="submit"
-              className="text-white bg-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-blue-700 ml-3"
+              className="text-white bg-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 ml-3"
             >
               Search
             </button>
@@ -265,12 +264,12 @@ function App(props) {
           <div className="rounded-lg overflow-y-scroll max-h-[60vh] h-full md:h-full md:max-h-full bg-white shadow flex-grow-[0] w-full mr-8 mb-8">
               {/*spinner*/}
             <LoadingSpinner isLoading={isLoading}/>
-            {sql.length == 0 && !isLoading? <Examples postHogInstance={posthog} setQuery={setQuery} handleClick={fetchBackend}/> : isLoading ? <> </> : <>
+            {sql.length === 0 && !isLoading? <Examples postHogInstance={posthog} setQuery={setQuery} handleClick={fetchBackend}/> : isLoading ? <> </> : <>
               <p class="my-2 font-medium"> {title} </p>
               <div className="p-4">
                 <pre align="left" className="bg-gray-100 rounded-md p-2 overflow-auto"><code className="text-sm text-gray-800 language-sql">{sql}</code></pre>
               </div>
-              {statusCode == 500 ? <ErrorMessage errorMessage={errorMessage}/> : <></>}
+              {statusCode === 500 ? <ErrorMessage errorMessage={errorMessage}/> : <></>}
               <Table columns={columns} values={rows}/>
             </> }
           </div>
