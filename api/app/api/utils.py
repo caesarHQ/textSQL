@@ -105,7 +105,7 @@ def is_read_only_query(sql_query: str):
     Returns True if the query is read-only, False otherwise.
     """
     # List of SQL statements that modify data in the database
-    modifying_statements = ["INSERT", "UPDATE", "DELETE", "DROP"]
+    modifying_statements = ["INSERT", "UPDATE", "DELETE", "DROP", "CREATE", "ALTER", "GRANT"]
     
     # Check if the query contains any modifying statements
     for statement in modifying_statements:
