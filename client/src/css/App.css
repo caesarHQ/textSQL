@@ -40,3 +40,8 @@
     transform: rotate(360deg);
   }
 }
+
+.form {
+  margin-left: 23rem;
+  margin-right: 23rem;
+}
