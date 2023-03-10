@@ -35,7 +35,7 @@ function TableRows(props) {
       {props.values.map((row, i) => (
         <tr key={"row"+i}>
           {row.map((rowValue) => (
-            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-left font-medium text-gray-900 sm:pl-0">
             {rowValue}
             </td>
           ))}
@@ -325,9 +325,12 @@ function App(props) {
         if (filteredColumns.indexOf("zip_code") == -1 && filteredColumns.indexOf("city") >= 0) {
           let responseCities = getCities(response.result)
 
+            console.log(responseCities)
+            if (responseCities.length == 0) {
+                setErrorMessage("No results were returned")
+            }
           // Focus the map to relevant parts
-
-          if (responseCities.length < 2) {
+          else if (responseCities.length < 2) {
             // Fitbounds needs at least two geo coordinates. 
             // If less that 2 co-ordinates then use fly to.
             mapRef.current.flyTo({
@@ -364,8 +367,12 @@ function App(props) {
           //   })
           // }
   
-          // Fitbounds needs at least two geo coordinates. 
-          if (responseZipcodes.length < 2) {
+          // Fitbounds needs at least two geo coordinates.
+
+            if (responseZipcodes.length == 0) {
+                setErrorMessage("No results were returned")
+            }
+          else if (responseZipcodes.length < 2) {
             // Fitbounds needs at least two geo coordinates. 
             // If less that 2 co-ordinates then use fly to.
             mapRef.current.flyTo({
