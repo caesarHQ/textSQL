@@ -47,7 +47,11 @@ function App(props) {
   const [cities, setCities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState('');
-
+  
+  useEffect(() => {
+    document.title = query || 'Census GPT';
+  }, [query]);
+  
   const queryParameters = new URLSearchParams(window.location.search)
   const urlSearch = queryParameters.get("s")
 
