@@ -19,6 +19,13 @@ mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worke
 // mapboxgl.accessToken = 'pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg';
 // mapboxgl.workerClass = require("worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker").default;
 
+let api_endpoint = 'https://ama-api.onrender.com'
+
+if (process.env.REACT_APP_HOST_ENV === 'dev') {
+  api_endpoint = 'http://localhost:9000'
+}
+
+
 function TableHeader(props) {
   return (
     <thead>
@@ -297,7 +304,7 @@ function App(props) {
   //     "sql_query": "SELECT zip_code, ABS(median_income_for_workers - (SELECT median_income_for_workers FROM acs_census_data ORDER BY ABS(median_income_for_workers - (SELECT AVG(median_income_for_workers) FROM acs_census_data)) LIMIT 1)) AS difference\nFROM acs_census_data\nWHERE median_income_for_workers IS NOT NULL\nORDER BY difference\nLIMIT 1"
   // }
 
-    fetch('https://ama-api.onrender.com/api/text_to_sql', options)
+    fetch(api_endpoint + '/api/text_to_sql', options)
       .then(response => response.json())
       .then(response => {
         setIsLoading(false)

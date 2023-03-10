@@ -3,10 +3,11 @@ from typing import List, Dict
 from app.config import engine
 from sqlalchemy import text
 from .lat_lon import zip_lat_lon, city_lat_lon
+from ..config import OPENAI_KEY
 from collections import OrderedDict
 
 
-openai.api_key = 'OPENAI_KEY'
+openai.api_key = OPENAI_KEY
 
 
 DEFAULT_MESSAGES = [
@@ -209,6 +210,12 @@ def execute_sql(sql_query: str):
                     state = row[state_idx]
                     lat = city_lat_lon.get(state, {}).get(city, {}).get('lat')
                     lon = city_lat_lon.get(state, {}).get(city, {}).get('lon')
+
+                    if "St." in city:
+                        new_city = city.replace("St.", "Saint")
+                        lat = city_lat_lon.get(state, {}).get(new_city, {}).get('lat')
+                        lon = city_lat_lon.get(state, {}).get(new_city, {}).get('lon')
+
                     row.append(lat)
                     row.append(lon)
 

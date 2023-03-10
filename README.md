@@ -2,7 +2,9 @@
 
 code for CensusGPT.com
 
-Roadmap:
+##### Roadmap:
 - Add barchart, pie charts in the UI
 - More data from census.gov
 - Parallel prompts
+
+##### Development: 
