@@ -36,6 +36,36 @@ if (process.env.REACT_APP_HOST_ENV === 'dev') {
   api_endpoint = 'http://localhost:9000'
 }
 
+const SearchButton = (props) => {
+    const {value, onSearchChange, onClear} = props;
+          return <div className="flex rounded-md shadow-sm w-full md:max-w-lg">
+        <div className="relative flex flex-grow items-stretch focus-within:z-10  ">
+          {/*<input*/}
+          {/*  type="email"*/}
+          {/*  name="email"*/}
+          {/*  id="email"*/}
+          {/*  className="block w-full rounded-none rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"*/}
+          {/*  placeholder="John Smith"*/}
+          {/*/>*/}
+
+            <input
+            type="text"
+            name="search"
+            id="search"
+            placeholder="Ask anything about US Demographics..."
+            className="block w-full rounded-none rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            value={value}
+            onChange={onSearchChange} />
+        </div>
+        <button
+          type="button"
+          className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+          onClick={onClear}
+        >
+  <FaTimes />
+        </button>
+      </div>
+}
 function App(props) {
   const [query, setQuery] =  useState('');
   const [sql, setSQL] = useState('');
@@ -251,27 +281,28 @@ function App(props) {
           <DiscordButton />
               </div>
         <div>
-          <form autoComplete={"off"} className="relative mt-1 form flex justify-center" onSubmit={(event) => {
+          <form autoComplete={"off"} className="mt-1 flex justify-center" onSubmit={(event) => {
           event.preventDefault()
               handleSearchClick(event)
           }}>
-            <input
-              type="text"
-              name="search"
-              id="search"
-              placeholder="Ask anything about US Demographics..."
-              className="block w-full rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              value={query}
-              onChange={handleSearchChange}
-            />
-            {query && (
-              <button
-                className="absolute top-0 right-20 mt-3 mr-6 text-gray-400 hover:text-gray-500 focus:outline-none"
-                onClick={handleClearSearch}
-              >
-                <FaTimes />
-              </button>
-            )}
+              <SearchButton value={query} onSearchChange={handleSearchChange} onClear={handleClearSearch}/>
+            {/*<input*/}
+            {/*  type="text"*/}
+            {/*  name="search"*/}
+            {/*  id="search"*/}
+            {/*  placeholder="Ask anything about US Demographics..."*/}
+            {/*  className="block w-full mr-2 rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm md:max-w-lg"*/}
+            {/*  value={query}*/}
+            {/*  onChange={handleSearchChange}*/}
+            {/*/>*/}
+            {/*{query && (*/}
+            {/*  <button*/}
+            {/*    className="right-20 text-gray-400 hover:text-gray-500 focus:outline-none"*/}
+            {/*    onClick={handleClearSearch}*/}
+            {/*  >*/}
+            {/*    <FaTimes />*/}
+            {/*  </button>*/}
+            {/*)}*/}
             <button
               type="submit"
               className="text-white bg-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 ml-3"
