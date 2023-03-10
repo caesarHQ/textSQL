@@ -29,7 +29,7 @@ These natural language questions get converted to SQL using GPT-3.5 and are then
 Here are some examples:
 
 * [🔍 Five cities with a population over 100,000 and lowest crime](https://censusgpt.com/?s=five%20cities%20with%20a%20population%20over%20100%2C000%20and%20lowest%20crime)
-* [🔍 10 highest income areas in california](https://censusgpt.com/?s=Which%20area%20in%20San%20Francisco%20has%20the%20highest%20racial%20diversity%20and%20what%20is%20the%20percentage%20population%20of%20each%20race%20in%20that%20area)
+* [🔍 10 highest income areas in california](https://censusgpt.com/?s=10%20highest%20income%20areas%20in%20california)
 
 <img width="1316" alt="Screenshot 2023-03-10 at 12 55 44 AM" src="https://user-images.githubusercontent.com/10172332/224270303-087495bd-2391-4e1f-a8ad-ef5ae49ace0c.png">
 
