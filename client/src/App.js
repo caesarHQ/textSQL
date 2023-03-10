@@ -206,8 +206,7 @@ function App(props) {
       .catch(err => {
           Sentry.setContext("queryContext", {
                 query: query,
-              ...responseOuter.results,
-              ...responseOuter.sql_query,
+              ...responseOuter,
             });
           Sentry.captureException(err)
         setIsLoading(false)
