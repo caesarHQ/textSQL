@@ -189,7 +189,6 @@ function App(props) {
     if (urlSearch && urlSearch.length > 0) {
       posthog.capture('search_clicked', { natural_language_query: urlSearch })
       setQuery(urlSearch)
-      fetchBackend(urlSearch)
     }
   }, [urlSearch])
 
@@ -517,9 +516,8 @@ const citiesLayer = {
               onChange={handleSearchChange}
             />
             <button
-              type="button"
+              type="submit"
               className="text-white bg-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-blue-700 ml-3"
-              onClick={handleSearchClick}
             >
               Search
             </button>
