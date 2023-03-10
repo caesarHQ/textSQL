@@ -204,12 +204,12 @@ function App(props) {
         }
       })
       .catch(err => {
-          Sentry.captureException(err, {
-            query: {
+          Sentry.setContext("queryContext", {
                 query: query,
-                ...responseOuter,
-            }
-          })
+              ...responseOuter.results,
+              ...responseOuter.sql_query,
+            });
+          Sentry.captureException(err)
         setIsLoading(false)
         posthog.capture('backend_error', {
             error: err,
