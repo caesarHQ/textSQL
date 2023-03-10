@@ -5,7 +5,7 @@
 
 ## Required configuration for development:
 - OpenAI Key
-- URL to the postgres DB
+- URL to the postgres DB (Read-only URL provided in `config.py`)
 
 Configure the above in `app/config.py`
 
