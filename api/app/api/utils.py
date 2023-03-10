@@ -41,7 +41,7 @@ DEFAULT_MESSAGES = [
     },
     {
         "role": "assistant",
-        "content": "SELECT city, sum(violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) as total_crime\nFROM crime_by_city\nGROUP BY city\nORDER BY total_crime DESC\nLIMIT 5"
+        "content": "SELECT city, sum(violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) as total_crime\nFROM crime_by_city\nGROUP BY city\nORDER BY total_crime DESC\nLIMIT 5;"
     },
     {
         "role": "user",
@@ -49,7 +49,7 @@ DEFAULT_MESSAGES = [
     },
     {
         "role": "assistant",
-        "content": "SELECT zip_code, (pop_75_to_84_years / total_population) * 100 AS percentage\nFROM acs_census_data\nWHERE total_population > 0\nORDER BY percentage DESC\nLIMIT 1"
+        "content": "SELECT zip_code, (pop_75_to_84_years / total_population) * 100 AS percentage\nFROM acs_census_data\nWHERE total_population > 0\nORDER BY percentage DESC\nLIMIT 1;"
     },
     {
         "role": "user",
@@ -57,7 +57,7 @@ DEFAULT_MESSAGES = [
     },
     {
         "role": "assistant",
-        "content": "SELECT acs_census_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN acs_census_data ON crime_by_city.city = acs_census_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY acs_census_data.county\nORDER BY total_arson DESC\nLIMIT 5"
+        "content": "SELECT acs_census_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN acs_census_data ON crime_by_city.city = acs_census_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY acs_census_data.county\nORDER BY total_arson DESC\nLIMIT 5;"
     },
     {
         "role": "user",
@@ -65,7 +65,7 @@ DEFAULT_MESSAGES = [
     },
     {
         "role": "assistant",
-        "content": "SELECT acs_census_data.city, acs_census_data.state, SUM(female_population) AS city_female_population\nFROM acs_census_data\nWHERE female_population IS NOT NULL\nGROUP BY acs_census_data.city\nORDER BY female_population DESC\nLIMIT 5"
+        "content": "SELECT acs_census_data.city, acs_census_data.state, SUM(female_population) AS city_female_population\nFROM acs_census_data\nWHERE female_population IS NOT NULL\nGROUP BY acs_census_data.city\nORDER BY female_population DESC\nLIMIT 5;"
     },
     {
         "role": "user",
@@ -73,7 +73,7 @@ DEFAULT_MESSAGES = [
     },
     {
         "role": "assistant",
-        "content": "SELECT city, state, SUM(total_population) AS total_city_population\nFROM acs_census_data\nWHERE state = 'WA'\nGROUP BY city, state\nORDER BY total_city_population DESC\nLIMIT 1"
+        "content": "SELECT city, state, SUM(total_population) AS total_city_population\nFROM acs_census_data\nWHERE state = 'WA'\nGROUP BY city, state\nORDER BY total_city_population DESC\nLIMIT 1;"
     }
 ]
 
@@ -264,8 +264,10 @@ def text_to_sql_with_retry(natural_language_query, k=3):
             assistant_message = get_assistant_message(messages=messages)
             assistant_message_content = assistant_message['message']['content']
 
+            # Ignore text after the SQL query terminator `;`
+            assistant_message_content = assistant_message_content.split(";")[0]
+
             # Remove prefix for corrected query assistant message
-            # split_corrected_query_message = assistant_message_content.split("the corrected query:")
             split_corrected_query_message = assistant_message_content.split(":")
             if len(split_corrected_query_message) > 1:
                 sql_query = split_corrected_query_message[1].strip()
