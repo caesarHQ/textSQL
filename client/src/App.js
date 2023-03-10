@@ -328,6 +328,8 @@ function App(props) {
             console.log(responseCities)
             if (responseCities.length == 0) {
                 setErrorMessage("No results were returned")
+                setCities([])
+                setZipcodes([]) // reset cities rendering
             }
           // Focus the map to relevant parts
           else if (responseCities.length < 2) {
@@ -371,6 +373,8 @@ function App(props) {
 
             if (responseZipcodes.length == 0) {
                 setErrorMessage("No results were returned")
+                setZipcodes([])
+                setCities([]) // reset cities rendering
             }
           else if (responseZipcodes.length < 2) {
             // Fitbounds needs at least two geo coordinates. 
