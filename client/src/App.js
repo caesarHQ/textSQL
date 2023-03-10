@@ -199,7 +199,9 @@ function App(props) {
       })
       .catch(err => {
         setIsLoading(false)
-        posthog.capture('backend_error', err)
+        posthog.capture('backend_error', {
+            error: err,
+        })
         setStatusCode(500)
         setErrorMessage(err)
         console.error(err)
