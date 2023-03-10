@@ -11,7 +11,7 @@ import Table from './components/table'
 import LoadingSpinner from './components/loadingSpinner'
 import Examples from './components/examples'
 import ErrorMessage from './components/error'
-
+import * as Sentry from "@sentry/react";
 // Utils
 import { cleanupQuery, getCities, getZipcodes, getZipcodesMapboxFormatted } from './utils'
 
@@ -94,6 +94,7 @@ function App(props) {
       body: '{"natural_language_query":"' + natural_language_query + '"}'
     };
 
+    let responseOuter = null;
     // Send the request
     fetch(api_endpoint + '/api/text_to_sql', options)
       .then(response => response.json())
@@ -114,6 +115,7 @@ function App(props) {
 
         // Set the state for SQL and Status Code
         setStatusCode(response.status)
+          response = responseOuter;
         setSQL(response.sql_query)
 
         console.log("Backend Response ==>", response)
@@ -198,6 +200,12 @@ function App(props) {
         }
       })
       .catch(err => {
+          Sentry.captureException(err, {
+            query: {
+                query: query,
+                ...responseOuter,
+            }
+          })
         setIsLoading(false)
         posthog.capture('backend_error', {
             error: err,
