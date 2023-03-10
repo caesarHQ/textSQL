@@ -24,7 +24,7 @@ Demo on US Census Data: [CensusGPT.com](https://censusgpt.com)
 ### How it works:
 With CensusGPT, ask any questions related to census data. 
 
-These natural language questions get converted to SQL using GPT-3.5. The SQL is then used to query the census database.
+These natural language questions get converted to SQL using GPT-3.5 and are then used to query the census database.
 
 Here are some examples:
 
