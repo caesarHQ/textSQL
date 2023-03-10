@@ -65,8 +65,7 @@ Users build complex queries progressively. They start with a simple query like _
 
 Turning search into a chat interface will allow the users to do just that -- iterate on a query and progressively build it.
 
-
-#### How to Contribute: 
+#### How to Contribute:
 
 Join our [discord](https://discord.gg/JZtxhZQQus)
 
@@ -76,4 +75,8 @@ ReadMe for the frontend [here](https://github.com/caesarHQ/textSQL/blob/main/cli
 
 <a href="https://github.com/caesarHQ/textSQL/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=caesarHQ/textSQL" />
-</a>
+</a>  
+
+### 
+
+**Note:** Census data, like any other dataset, has its limitations and potential biases. Some data may not be collected or reported uniformly across different regions or time periods, which can affect the comparability of results. Users should keep these limitations in mind when interpreting the results of their queries and exercise caution when making decisions based on census data.
