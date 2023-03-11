@@ -318,16 +318,6 @@ def text_to_sql_with_retry(natural_language_query, k=3, messages=None):
             assistant_message = get_assistant_message(messages=messages)
             sql_query = _clean_message_content(assistant_message['message']['content'])
 
-            # Ignore text after the SQL query terminator `;`
-            assistant_message_content = assistant_message_content.split(";")[0]
-
-            # Remove prefix for corrected query assistant message
-            split_corrected_query_message = assistant_message_content.split(":")
-            if len(split_corrected_query_message) > 1:
-                sql_query = split_corrected_query_message[1].strip()
-            else:
-                sql_query = assistant_message_content
-
             response = execute_sql(sql_query)
             # Generated SQL query did not produce exception. Return result
             return response, sql_query
