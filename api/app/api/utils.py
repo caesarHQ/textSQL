@@ -270,7 +270,7 @@ def text_to_sql_parallel(natural_language_query, k=3):
     jobs = []
     for _ in range(k):
         jobs.append(joblib.delayed(get_assistant_message)(0, "gpt-3.5-turbo", messages))
-    assistant_messages = joblib.Parallel(n_jobs=k, verbose=10)(jobs)
+    assistant_messages = joblib.Parallel(n_jobs=-1, verbose=10)(jobs)
 
     # Try each completion in order
     attempts_contexts = []
