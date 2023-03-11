@@ -1,6 +1,15 @@
 from os import getenv
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
+from sentry_sdk.integrations.flask import FlaskIntegration
+
+sentry_sdk.init(
+    dsn="https://0e7943646a4242138f99898cd421560e@o4504813129826304.ingest.sentry.io/4504817446617088",
+    integrations=[
+        FlaskIntegration(),
+    ],
+    traces_sample_rate=1.0
+)
 
 load_dotenv()
 
