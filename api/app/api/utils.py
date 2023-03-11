@@ -5,7 +5,6 @@ from sqlalchemy import text
 from .lat_lon import zip_lat_lon, city_lat_lon
 from ..config import OPENAI_KEY
 from collections import OrderedDict
-import joblib
 
 
 openai.api_key = OPENAI_KEY
@@ -75,15 +74,7 @@ DEFAULT_MESSAGES = [
     {
         "role": "assistant",
         "content": "SELECT city, state, SUM(total_population) AS total_city_population\nFROM acs_census_data\nWHERE state = 'WA'\nGROUP BY city, state\nORDER BY total_city_population DESC\nLIMIT 1;"
-    },
-    {
-        "role": "user",
-        "content": "Which area in San Francisco has the highest racial diversity and what is the percentage population of each race in that area?"
-    },
-    {
-        "role": "assistant",
-        "content": "SELECT zip_code, \n       (white_population / NULLIF(total_population, 0)) * 100 AS white_percentage,\n       (black_population / NULLIF(total_population, 0)) * 100 AS black_percentage,\n       (native_american_population / NULLIF(total_population, 0)) * 100 AS native_american_percentage,\n       (asian_population / NULLIF(total_population, 0)) * 100 AS asian_percentage,\n       (two_or_more_population / NULLIF(total_population, 0)) * 100 AS two_or_more_percentage,\n       (hispanic_population / NULLIF(total_population, 0)) * 100 AS hispanic_percentage\nFROM acs_census_data\nWHERE city = 'San Francisco'\nORDER BY (white_population + black_population + native_american_population + asian_population + two_or_more_population + hispanic_population) DESC\nLIMIT 1;"
-    },
+    }
 ]
 
 
@@ -249,16 +240,15 @@ def execute_sql(sql_query: str):
             'results': results,
         }
 
+
         # return {
         #     'column_names': column_names,
         #     'values': values,
         # }
 
 
-def text_to_sql_parallel(natural_language_query, k=3):
-    """
-    Generates K SQL queries in parallel and returns the first one that does not produce an exception.
-    """
+
+def text_to_sql_with_retry(natural_language_query, k=3):
     content = MSG_WITH_SCHEMA_AND_WARNINGS.format(natural_language_query=natural_language_query)
     messages = DEFAULT_MESSAGES.copy()
     messages.append({
@@ -266,56 +256,23 @@ def text_to_sql_parallel(natural_language_query, k=3):
         "content": content
     })
 
-    # Create K completions in parallel
-    jobs = []
-    for _ in range(k):
-        jobs.append(joblib.delayed(get_assistant_message)(0, "gpt-3.5-turbo", messages))
-    assistant_messages = joblib.Parallel(n_jobs=-1, verbose=10)(jobs)
-
-    # Try each completion in order
-    attempts_contexts = []
-    for assistant_message in assistant_messages:
-        sql_query = _clean_message_content(assistant_message['message']['content'])
-
-        try:
-            response = execute_sql(sql_query)
-            # Generated SQL query did not produce exception. Return result
-            return response, sql_query, messages
-        except Exception as e:
-            attempts_context = messages.copy()
-            attempts_context.append({
-                "role": "assistant",
-                "content": assistant_message['message']['content']
-            })
-            attempts_context.append({
-                "role": "user",
-                "content": MSG_WITH_ERROR_TRY_AGAIN.format(error_message=str(e))
-            })
-            attempts_contexts.append(attempts_context)
-
-        # No valid completions from initial batch. Return first attempt context
-        return None, None, attempts_contexts[0]
-
-
-def text_to_sql_with_retry(natural_language_query, k=3, messages=None):
-    """
-    Tries to take a natural language query and generate valid SQL to answer it K times
-    """
-    if not messages:
-        content = MSG_WITH_SCHEMA_AND_WARNINGS.format(natural_language_query=natural_language_query)
-        messages = DEFAULT_MESSAGES.copy()
-        messages.append({
-            "role": "user",
-            "content": content
-        })
-
     assistant_message = None
 
     for _ in range(k):
 
         try:
             assistant_message = get_assistant_message(messages=messages)
-            sql_query = _clean_message_content(assistant_message['message']['content'])
+            assistant_message_content = assistant_message['message']['content']
+
+            # Ignore text after the SQL query terminator `;`
+            assistant_message_content = assistant_message_content.split(";")[0]
+
+            # Remove prefix for corrected query assistant message
+            split_corrected_query_message = assistant_message_content.split(":")
+            if len(split_corrected_query_message) > 1:
+                sql_query = split_corrected_query_message[1].strip()
+            else:
+                sql_query = assistant_message_content
 
             response = execute_sql(sql_query)
             # Generated SQL query did not produce exception. Return result
@@ -333,19 +290,3 @@ def text_to_sql_with_retry(natural_language_query, k=3, messages=None):
 
     print("Could not generate SQL query after {k} tries.".format(k=k))
     return None, None
-
-
-def _clean_message_content(assistant_message_content):
-    """
-    Cleans message content to extract the SQL query
-    """
-    # Ignore text after the SQL query terminator `;`
-    assistant_message_content = assistant_message_content.split(";")[0]
-
-    # Remove prefix for corrected query assistant message
-    split_corrected_query_message = assistant_message_content.split(":")
-    if len(split_corrected_query_message) > 1:
-        sql_query = split_corrected_query_message[1].strip()
-    else:
-        sql_query = assistant_message_content
-    return sql_query
