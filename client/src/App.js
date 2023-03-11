@@ -49,7 +49,7 @@ posthog.init('phc_iLMBZqxwjAjaKtgz29r4EWv18El2qg3BIJoOOpw7s2e', {
 // eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
 mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 
-let api_endpoint = 'https://ama-api.onrender.com'
+let api_endpoint = 'https://text-sql-be.onrender.com'
 
 if (process.env.REACT_APP_HOST_ENV === 'dev') {
     api_endpoint = 'http://localhost:9000'
