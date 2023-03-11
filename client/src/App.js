@@ -291,7 +291,7 @@ function App(props) {
                     error: err,
                 })
                 setStatusCode(500)
-                setErrorMessage(err)
+                setErrorMessage(err.message || err)
                 console.error(err)
             })
     }
