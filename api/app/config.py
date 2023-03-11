@@ -23,4 +23,4 @@ class FlaskAppConfig:
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
 
 
-engine = create_engine(DB_URL, echo=True)
+engine = create_engine(DB_URL, echo=True, connect_args={"pool_size": 120, "timeout": 30})
