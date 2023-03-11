@@ -5,11 +5,11 @@
 export const zipcodeFeatures = (zipcodes) => {
     return zipcodes.map((z) => {
         return {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [z.long, z.lat]
-            }
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [z.long, z.lat],
+            },
         }
     })
 }
@@ -17,61 +17,61 @@ export const zipcodeFeatures = (zipcodes) => {
 export const citiesFeatures = (cities) => {
     return cities.map((c) => {
         return {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [c.long, c.lat]
-            }
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [c.long, c.lat],
+            },
         }
     })
 }
 
 export const zipcodeLayerLow = (zipcodesFormatted) => {
     return {
-        'id': 'zips-kml',
-        'type': 'fill',
-        'source': 'zips-kml',
-        'minzoom': 5,
-        'layout': {
-            'visibility': 'visible'
+        id: 'zips-kml',
+        type: 'fill',
+        source: 'zips-kml',
+        minzoom: 5,
+        layout: {
+            visibility: 'visible',
         },
-        'paint': {
+        paint: {
             'fill-outline-color': 'black',
             'fill-opacity': 0.9,
-            'fill-color': "#006AF9"
+            'fill-color': '#006AF9',
         },
         'source-layer': 'Layer_0',
-        'filter': [
+        filter: [
             'in',
             ['get', 'Name'],
-            ['literal', zipcodesFormatted],     // Zip code in the feature is formatted like this:  <at><openparen>94105<closeparen>
-        ]
+            ['literal', zipcodesFormatted], // Zip code in the feature is formatted like this:  <at><openparen>94105<closeparen>
+        ],
     }
-};
+}
 
 export const zipcodeLayerHigh = {
-    'id': 'Zip',
-    'type': 'circle',
-    'layout': {
-        'visibility': 'visible'
+    id: 'Zip',
+    type: 'circle',
+    layout: {
+        visibility: 'visible',
     },
-    'maxzoom': 8,
-    'paint': {
+    maxzoom: 8,
+    paint: {
         'circle-radius': 10,
-        'circle-color': "#006AF9",
+        'circle-color': '#006AF9',
         'circle-opacity': 1,
-    }
-};
+    },
+}
 
 export const citiesLayer = {
-    'id': 'cities',
-    'type': 'circle',
-    'layout': {
-        'visibility': 'visible'
+    id: 'cities',
+    type: 'circle',
+    layout: {
+        visibility: 'visible',
     },
-    'paint': {
+    paint: {
         'circle-radius': 18,
-        'circle-color': "#006AF9",
+        'circle-color': '#006AF9',
         'circle-opacity': 0.8,
-    }
-};
+    },
+}
