@@ -92,7 +92,7 @@ function App(props) {
       setQuery(urlSearch)
         fetchBackend(urlSearch)
     }
-  }, [urlSearch, fetchBackend])
+  }, [urlSearch])
 
   const clearMapLayers = () => {
     setCities([])
@@ -314,7 +314,7 @@ function App(props) {
         </div>
       </div>
       <div className="bg-gray-50 px-4 h-full sm:p-6 flex flex-col md:flex-row md:pb-[200px]">
-          <div className="rounded-lg overflow-y-scroll max-h-[60vh] h-full md:h-full md:max-h-full bg-white shadow flex-grow-[0] w-full mr-8 mb-8">
+          <div className="rounded-lg overflow-y-scroll max-h-[45vh] h-full md:h-full md:max-h-full bg-white shadow flex-grow-[0] w-full mr-8 mb-8">
               {/*spinner*/}
             <LoadingSpinner isLoading={isLoading}/>
             {sql.length === 0 && !isLoading? <Examples postHogInstance={posthog} setQuery={setQuery} handleClick={fetchBackend}/> : isLoading ? <> </> : <>
