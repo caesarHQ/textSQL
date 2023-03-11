@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, make_response, request
 from .utils import text_to_sql_with_retry
 from .lat_lon import zip_lat_lon
+from sentry_sdk import capture_exception
 
 
 bp = Blueprint('api_bp', __name__)
@@ -21,6 +22,7 @@ def text_to_sql():
     try:
         result, sql_query = text_to_sql_with_retry(natural_language_query)
     except Exception as e:
+        capture_exception(e)
         error_msg = f'Error processing request: {str(e)}'
         return make_response(jsonify({'error': error_msg}), 500)
 
@@ -41,7 +43,8 @@ def zip_to_lat_lon():
     try:
         lat = zip_lat_lon[zip_code]['lat']
         lon = zip_lat_lon[zip_code]['lon']
-    except KeyError:
+    except KeyError as e:
+        capture_exception(e)
         error_msg = f'Invalid zip_code: {zip_code}'
         return make_response(jsonify({'error': error_msg}), 400)
 
