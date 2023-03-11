@@ -27,10 +27,16 @@
     "web-vitals": "^3.0.4",
     "worker-loader": "^3.0.8"
   },
+  "devDependencies": {
+    "eslint": "^8.36.0",
+    "eslint-plugin-only-warn": "^1.1.0",
+    "eslint-plugin-react": "^7.32.2"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "dev": "REACT_APP_HOST_ENV=dev react-scripts start",
+    "lint": "eslint ./ --ext js,jsx,ts,tsx",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
