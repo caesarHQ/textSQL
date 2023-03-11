@@ -14,5 +14,6 @@ def get_response(message: str) -> str:
         response = requests.post(url, json=payload, headers=headers)
         data = response.json()["result"]["results"]
         headers = response.json()["result"]["column_names"]
-        table = tabulate([d.values() for d in data], headers=headers)
+        table_data = [[d.get(header, "") for header in headers] for d in data]
+        table = tabulate(table_data, headers=headers)
         return "```\n" + table + "\n```"
