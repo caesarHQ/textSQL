@@ -12,6 +12,8 @@ import LoadingSpinner from './components/loadingSpinner'
 import Examples from './components/examples'
 import ErrorMessage from './components/error'
 import * as Sentry from '@sentry/react'
+import toast, { Toaster } from "react-hot-toast"
+
 // Utils
 import {
     cleanupQuery,
@@ -31,6 +33,9 @@ import {
 
 import './css/App.css'
 import { DiscordButton, GithubButton } from './Discord'
+import {notify} from "./Toast";
+import {useDebouncedCallback} from "use-debounce";
+import {useSearchParams} from "react-router-dom";
 
 // Init posthog
 posthog.init('phc_iLMBZqxwjAjaKtgz29r4EWv18El2qg3BIJoOOpw7s2e', {
@@ -84,6 +89,7 @@ const SearchButton = (props) => {
     )
 }
 function App(props) {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [query, setQuery] = useState('')
     const [sql, setSQL] = useState('')
     const [zipcodesFormatted, setZipcodesFormatted] = useState([])
@@ -99,6 +105,13 @@ function App(props) {
     useEffect(() => {
         document.title = query || 'Census GPT'
     }, [query])
+
+    useEffect(() => {
+        if (errorMessage !== '') {
+            console.log(errorMessage);
+            notify(errorMessage)
+        }
+    }, [errorMessage])
 
     const queryParameters = new URLSearchParams(window.location.search)
     const urlSearch = queryParameters.get('s')
@@ -278,27 +291,28 @@ function App(props) {
                     error: err,
                 })
                 setStatusCode(500)
-                setErrorMessage(err)
+                setErrorMessage(err.message || err)
                 console.error(err)
             })
     }
 
+    const debouncedFetchBackend = useDebouncedCallback((query) => {
+            fetchBackend(query)
+    }, 100);
+
     useEffect(() => {
-        if (urlSearch && urlSearch.length > 0) {
+        const queryFromURL = searchParams.get('s');
+        if (queryFromURL != query) {
             posthog.capture('search_clicked', {
                 natural_language_query: urlSearch,
             })
             setQuery(urlSearch)
-            fetchBackend(urlSearch)
+            debouncedFetchBackend(urlSearch)
         }
-    }, [urlSearch, fetchBackend])
+    }, [searchParams])
 
     const handleSearchClick = (event) => {
-        window.history.replaceState(
-            null,
-            'Census GPT',
-            '/?s=' + encodeURIComponent(query)
-        )
+        setSearchParams(`?${new URLSearchParams({ s: query })}`)
         setTitle(query)
         posthog.capture('search_clicked', { natural_language_query: query })
         fetchBackend(query)
@@ -326,6 +340,7 @@ function App(props) {
                         <GithubButton />
                         <DiscordButton />
                     </div>
+                    <Toaster />
                     <div>
                         <form
                             autoComplete={'off'}
@@ -391,11 +406,11 @@ function App(props) {
                                         </code>
                                     </pre>
                                 </div>
-                                {statusCode === 500 ? (
-                                    <ErrorMessage errorMessage={errorMessage} />
-                                ) : (
-                                    <></>
-                                )}
+                                {/*{statusCode === 500 ? (*/}
+                                {/*    <ErrorMessage errorMessage={errorMessage} />*/}
+                                {/*) : (*/}
+                                {/*    <></>*/}
+                                {/*)}*/}
                                 <Table columns={columns} values={rows} />
                             </>
                         )}
