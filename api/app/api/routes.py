@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, make_response, request
-from .utils import text_to_sql_with_retry
+from .utils import text_to_sql_with_retry, text_to_sql_parallel
 from .lat_lon import zip_lat_lon
 from sentry_sdk import capture_exception
 
@@ -20,6 +20,11 @@ def text_to_sql():
         return make_response(jsonify({'error': error_msg}), 400)
 
     try:
+        # LM outputs are non-deterministic, so same natural language query may result in different SQL queries (some of which may be invalid)
+        # Generate queries in parallel and use the first one that works
+        # result, sql_query, messages = text_to_sql_parallel(natural_language_query)
+        # if result is None or sql_query is None:
+        #     result, sql_query = text_to_sql_with_retry(natural_language_query, messages=messages)
         result, sql_query = text_to_sql_with_retry(natural_language_query)
     except Exception as e:
         capture_exception(e)
