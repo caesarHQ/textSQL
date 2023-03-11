@@ -103,16 +103,6 @@ function App(props) {
     const queryParameters = new URLSearchParams(window.location.search)
     const urlSearch = queryParameters.get('s')
 
-    useEffect(() => {
-        if (urlSearch && urlSearch.length > 0) {
-            posthog.capture('search_clicked', {
-                natural_language_query: urlSearch,
-            })
-            setQuery(urlSearch)
-            fetchBackend(urlSearch)
-        }
-    }, [urlSearch, fetchBackend])
-
     const clearMapLayers = () => {
         setCities([])
         setZipcodes([])
@@ -292,6 +282,16 @@ function App(props) {
                 console.error(err)
             })
     }
+
+    useEffect(() => {
+        if (urlSearch && urlSearch.length > 0) {
+            posthog.capture('search_clicked', {
+                natural_language_query: urlSearch,
+            })
+            setQuery(urlSearch)
+            fetchBackend(urlSearch)
+        }
+    }, [urlSearch, fetchBackend])
 
     const handleSearchClick = (event) => {
         window.history.replaceState(
