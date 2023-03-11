@@ -406,11 +406,11 @@ function App(props) {
                                         </code>
                                     </pre>
                                 </div>
-                                {statusCode === 500 ? (
-                                    <ErrorMessage errorMessage={errorMessage} />
-                                ) : (
-                                    <></>
-                                )}
+                                {/*{statusCode === 500 ? (*/}
+                                {/*    <ErrorMessage errorMessage={errorMessage} />*/}
+                                {/*) : (*/}
+                                {/*    <></>*/}
+                                {/*)}*/}
                                 <Table columns={columns} values={rows} />
                             </>
                         )}
