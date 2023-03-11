@@ -1,5 +1,6 @@
 from os import getenv
 from sqlalchemy import create_engine
+from sqlalchemy.pool import QueuePool
 import sentry_sdk
 from dotenv import load_dotenv
 from sentry_sdk.integrations.flask import FlaskIntegration
@@ -23,4 +24,4 @@ class FlaskAppConfig:
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
 
 
-engine = create_engine(DB_URL, echo=True)
+engine = create_engine(DB_URL, echo=True, pool_size=100, poolclass=QueuePool, max_overflow=10)
