@@ -12,6 +12,8 @@ def get_response(message: str) -> str:
         headers = {"Content-Type": "application/json"}
 
         response = requests.post(url, json=payload, headers=headers)
+        if response.json()["result"] is None:
+            return "Sorry, I couldn't find any results for that query"
         data = response.json()["result"]["results"]
         headers = response.json()["result"]["column_names"]
         table_data = [[d.get(header, "") for header in headers] for d in data]
