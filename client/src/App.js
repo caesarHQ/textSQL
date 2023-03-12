@@ -12,7 +12,7 @@ import LoadingSpinner from './components/loadingSpinner'
 import Examples from './components/examples'
 import ErrorMessage from './components/error'
 import * as Sentry from '@sentry/react'
-import toast, { Toaster } from "react-hot-toast"
+import toast, { Toaster } from 'react-hot-toast'
 
 // Utils
 import {
@@ -32,10 +32,10 @@ import {
 } from './mapbox-ui-config'
 
 import './css/App.css'
-import { DiscordButton, GithubButton, ContributeButton } from './Discord'
-import {notify} from "./Toast";
-import {useDebouncedCallback} from "use-debounce";
-import {useSearchParams} from "react-router-dom";
+import { DiscordButton, GithubButton } from './Discord'
+import { notify } from './Toast'
+import { useDebouncedCallback } from 'use-debounce'
+import { useSearchParams } from 'react-router-dom'
 
 // Init posthog
 posthog.init('phc_iLMBZqxwjAjaKtgz29r4EWv18El2qg3BIJoOOpw7s2e', {
@@ -89,7 +89,7 @@ const SearchButton = (props) => {
     )
 }
 function App(props) {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams()
     const [query, setQuery] = useState('')
     const [sql, setSQL] = useState('')
     const [zipcodesFormatted, setZipcodesFormatted] = useState([])
@@ -108,7 +108,7 @@ function App(props) {
 
     useEffect(() => {
         if (errorMessage !== '') {
-            console.log(errorMessage);
+            console.log(errorMessage)
             notify(errorMessage)
         }
     }, [errorMessage])
@@ -152,7 +152,10 @@ function App(props) {
         const options = {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({natural_language_query, table_names: ["crime_by_city", "acs_census_data"]}),
+            body: JSON.stringify({
+                natural_language_query,
+                table_names: ['crime_by_city', 'acs_census_data'],
+            }),
         }
 
         let responseOuter = null
@@ -297,11 +300,11 @@ function App(props) {
     }
 
     const debouncedFetchBackend = useDebouncedCallback((query) => {
-            fetchBackend(query)
-    }, 100);
+        fetchBackend(query)
+    }, 100)
 
     useEffect(() => {
-        const queryFromURL = searchParams.get('s');
+        const queryFromURL = searchParams.get('s')
         if (queryFromURL != query) {
             posthog.capture('search_clicked', {
                 natural_language_query: urlSearch,

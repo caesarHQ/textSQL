@@ -1,0 +1,20 @@
+name: JS Pipeline
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  test:
+    name: Check the source code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install packages
+        run: npm ci
+        working-directory: ./client
+      - name: Prettier
+        run: npm run format
+        working-directory: ./client
+      - name: Lint
+        run: npm run lint
+        working-directory: ./client
