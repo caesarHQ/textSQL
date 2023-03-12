@@ -5,6 +5,7 @@ import bbox from '@turf/bbox'
 import posthog from 'posthog-js'
 import * as turf from '@turf/turf'
 import { FaTimes } from 'react-icons/fa'
+import Plot from 'react-plotly.js'
 
 // Components
 import Table from './components/table'
@@ -14,8 +15,6 @@ import ErrorMessage from './components/error'
 import * as Sentry from '@sentry/react'
 import toast, { Toaster } from 'react-hot-toast'
 import Disclaimer from './components/disclaimer'
-
-import Plot from 'react-plotly.js';
 
 // Utils
 import {
@@ -33,6 +32,11 @@ import {
     zipcodeLayerLow,
     citiesLayer,
 } from './mapbox-ui-config'
+
+// Plotly UI configuration
+import {
+    getPlotConfig
+} from './plotly-ui-config'
 
 import './css/App.css'
 import {
@@ -118,6 +122,17 @@ const SearchButton = (props) => {
         </button>
     )
 }
+const DataPlot = (props) => {
+    let config = getPlotConfig(props.rows, props.cols, props.query)
+
+    return (
+      <Plot
+        data={config.data}
+        layout={config.layout}
+        style={{ width: '100%', height: '100%' }}
+      />
+    );
+};
 
 function App(props) {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -234,90 +249,90 @@ function App(props) {
                 console.log("Cols=>", columns)
                 // render cities layer on the map
 
-                // if (
-                //     filteredColumns.indexOf('zip_code') === -1 &&
-                //     filteredColumns.indexOf('city') >= 0
-                // ) {
-                //     // Get the cities
-                //     let responseCities = getCities(response.result)
-                //     console.log(responseCities)
-                //     if (!responseCities.length) {
-                //         setErrorMessage('No results were returned')
-                //         setCities([])
-                //         setZipcodes([]) // reset cities rendering
-                //     } else if (responseCities.length < 2) {
-                //         // Focus the map to relevant parts
-                //         // Fitbounds needs at least two geo coordinates.
-                //         // If less that 2 co-ordinates then use fly to.
-                //         mapRef.current.flyTo({
-                //             center: [
-                //                 responseCities[0].long,
-                //                 responseCities[0].lat,
-                //             ],
-                //             essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-                //         })
-                //     } else {
-                //         let [minLng, minLat, maxLng, maxLat] = bbox(
-                //             turf.lineString(
-                //                 responseCities.map((c) => [c.long, c.lat])
-                //             )
-                //         )
-                //         mapRef.current.fitBounds(
-                //             [
-                //                 [minLng, minLat],
-                //                 [maxLng, maxLat],
-                //             ],
-                //             { padding: '100', duration: 1000 }
-                //         )
-                //     }
+                if (
+                    filteredColumns.indexOf('zip_code') === -1 &&
+                    filteredColumns.indexOf('city') >= 0
+                ) {
+                    // Get the cities
+                    let responseCities = getCities(response.result)
+                    console.log(responseCities)
+                    if (!responseCities.length) {
+                        setErrorMessage('No results were returned')
+                        setCities([])
+                        setZipcodes([]) // reset cities rendering
+                    } else if (responseCities.length < 2) {
+                        // Focus the map to relevant parts
+                        // Fitbounds needs at least two geo coordinates.
+                        // If less that 2 co-ordinates then use fly to.
+                        mapRef.current.flyTo({
+                            center: [
+                                responseCities[0].long,
+                                responseCities[0].lat,
+                            ],
+                            essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+                        })
+                    } else {
+                        let [minLng, minLat, maxLng, maxLat] = bbox(
+                            turf.lineString(
+                                responseCities.map((c) => [c.long, c.lat])
+                            )
+                        )
+                        mapRef.current.fitBounds(
+                            [
+                                [minLng, minLat],
+                                [maxLng, maxLat],
+                            ],
+                            { padding: '100', duration: 1000 }
+                        )
+                    }
 
-                //     // Set the cities into the state
-                //     setCities(responseCities)
+                    // Set the cities into the state
+                    setCities(responseCities)
 
-                //     // reset zipcode rendering
-                //     setZipcodes([])
+                    // reset zipcode rendering
+                    setZipcodes([])
 
-                //     setShowMap(true)
-                // } else if (filteredColumns.indexOf('zip_code') >= 0) {
-                //     // Render zipcodes layer on the map
-                //     let responseZipcodes = getZipcodes(response.result)
-                //     setZipcodesFormatted(
-                //         getZipcodesMapboxFormatted(responseZipcodes)
-                //     )
+                    setShowMap(true)
+                } else if (filteredColumns.indexOf('zip_code') >= 0) {
+                    // Render zipcodes layer on the map
+                    let responseZipcodes = getZipcodes(response.result)
+                    setZipcodesFormatted(
+                        getZipcodesMapboxFormatted(responseZipcodes)
+                    )
 
-                //     // Fitbounds needs at least two geo coordinates.
-                //     if (!responseZipcodes.length) {
-                //         setErrorMessage('No results were returned')
-                //         setZipcodes([])
-                //         setCities([]) // reset cities rendering
-                //     } else if (responseZipcodes.length < 2) {
-                //         // Fitbounds needs at least two geo coordinates.
-                //         // If less that 2 co-ordinates then use fly to.
-                //         mapRef.current.flyTo({
-                //             center: [
-                //                 responseZipcodes[0].long,
-                //                 responseZipcodes[0].lat,
-                //             ],
-                //             essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-                //         })
-                //     } else {
-                //         let [minLng, minLat, maxLng, maxLat] = bbox(
-                //             turf.lineString(
-                //                 responseZipcodes.map((z) => [z.long, z.lat])
-                //             )
-                //         )
-                //         mapRef.current.fitBounds(
-                //             [
-                //                 [minLng, minLat],
-                //                 [maxLng, maxLat],
-                //             ],
-                //             { padding: '100', duration: 1000 }
-                //         )
-                //     }
-                //     setShowMap(true)
-                //     setZipcodes(responseZipcodes)
-                //     setCities([]) // reset cities rendering
-                // }
+                    // Fitbounds needs at least two geo coordinates.
+                    if (!responseZipcodes.length) {
+                        setErrorMessage('No results were returned')
+                        setZipcodes([])
+                        setCities([]) // reset cities rendering
+                    } else if (responseZipcodes.length < 2) {
+                        // Fitbounds needs at least two geo coordinates.
+                        // If less that 2 co-ordinates then use fly to.
+                        mapRef.current.flyTo({
+                            center: [
+                                responseZipcodes[0].long,
+                                responseZipcodes[0].lat,
+                            ],
+                            essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+                        })
+                    } else {
+                        let [minLng, minLat, maxLng, maxLat] = bbox(
+                            turf.lineString(
+                                responseZipcodes.map((z) => [z.long, z.lat])
+                            )
+                        )
+                        mapRef.current.fitBounds(
+                            [
+                                [minLng, minLat],
+                                [maxLng, maxLat],
+                            ],
+                            { padding: '100', duration: 1000 }
+                        )
+                    }
+                    setShowMap(true)
+                    setZipcodes(responseZipcodes)
+                    setCities([]) // reset cities rendering
+                }
             })
             .catch((err) => {
                 Sentry.setContext('queryContext', {
@@ -356,6 +371,9 @@ function App(props) {
         posthog.capture('search_clicked', { natural_language_query: query })
         fetchBackend(query)
     }
+
+    console.log("APP rows", rows)
+    console.log("APP cols", columns)
 
     return (
         <div className="App bg-white dark:bg-dark-900 dark:text-white">
@@ -448,7 +466,7 @@ function App(props) {
                         )}
                     </div>
                     <div className="overflow-hidden rounded-lg shadow flex-grow-[2] h-[70vh] md:h-full w-full">
-                        <Map
+                        { showMap ? <Map
                             ref={mapRef}
                             mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
                             style={{ width: '100%', height: '100%' }}
@@ -488,7 +506,7 @@ function App(props) {
                             >
                                 <Layer {...citiesLayer} />
                             </Source>
-                        </Map>
+                        </Map> : <> <DataPlot cols={columns} rows={rows} query={query}/> </>}
                     </div>
                 </div>
             </div>
