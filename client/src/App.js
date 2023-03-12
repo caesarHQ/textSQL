@@ -340,6 +340,7 @@ function App(props) {
                         Census GPT
                     </h1>
                     <div className="inline-flex gap-x-1.5 align-middle justify-center mb-3">
+                        {/* <ContributeButton /> */}
                         <GithubButton />
                         <DiscordButton />
                     </div>
