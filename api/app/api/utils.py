@@ -7,107 +7,7 @@ from ..config import OPENAI_KEY
 from collections import OrderedDict
 import joblib
 
-
 openai.api_key = OPENAI_KEY
-
-
-DEFAULT_MESSAGES = [
-    {
-        "role": "system",
-        "content": (
-                "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command, generally about crime, demographics, and population."
-                "\n"
-                "The following are schemas of tables you can query:\n"
-                "---------------------\n"
-                "Schema of table 'crime_by_city':\n"
-                "Table 'crime_by_city' has columns: city (TEXT), violent_crime (DOUBLE_PRECISION), murder_and_nonnegligent_manslaughter (DOUBLE_PRECISION), rape (DOUBLE_PRECISION), robbery (DOUBLE_PRECISION), aggravated_assault (DOUBLE_PRECISION), property_crime (DOUBLE_PRECISION), burglary (DOUBLE_PRECISION), larceny_theft (DOUBLE_PRECISION), motor_vehicle_theft (DOUBLE_PRECISION), arson (DOUBLE_PRECISION), state (TEXT)."
-                "\n\n"
-                "Schema of table 'acs_census_data':\n"
-                "Table 'acs_census_data' has columns: total_population (DOUBLE_PRECISION), elderly_population (DOUBLE_PRECISION), male_population (DOUBLE_PRECISION), female_population (DOUBLE_PRECISION), white_population (DOUBLE_PRECISION), black_population (DOUBLE_PRECISION), native_american_population (DOUBLE_PRECISION), asian_population (DOUBLE_PRECISION), two_or_more_population (DOUBLE_PRECISION), hispanic_population (DOUBLE_PRECISION), adult_population (DOUBLE_PRECISION), citizen_adult_population (DOUBLE_PRECISION), average_household_size (DOUBLE_PRECISION), pop_under_5_years (DOUBLE_PRECISION), pop_5_to_9_years (DOUBLE_PRECISION), pop_10_to_14_years (DOUBLE_PRECISION), pop_15_to_19_years (DOUBLE_PRECISION), pop_20_to_24_years (DOUBLE_PRECISION), pop_25_to_34_years (DOUBLE_PRECISION), pop_35_to_44_years (DOUBLE_PRECISION), pop_45_to_54_years (DOUBLE_PRECISION), pop_55_to_59_years (DOUBLE_PRECISION), pop_60_to_64_years (DOUBLE_PRECISION), pop_65_to_74_years (DOUBLE_PRECISION), pop_75_to_84_years (DOUBLE_PRECISION), pop_85_years_and_over (DOUBLE_PRECISION), per_capita_income (DOUBLE_PRECISION), median_income_for_workers (DOUBLE_PRECISION), zip_code (TEXT), city (TEXT), state (TEXT), county (TEXT), lat (DOUBLE_PRECISION), lon (DOUBLE_PRECISION)."
-                "\n\n"
-                "---------------------\n"
-                "Use state abbreviations for states."
-                " Table 'crime_by_city' does not have columns 'zip_code' or 'county'."
-                " Do not use ambiguous column names."
-                " For example, 'city' can be ambiguous because both tables 'acs_census_data' and 'crime_by_city' have a column named 'city'."
-                " Always specify the table where you are using the column."
-                " If you include a 'city' column in the result table, include a 'state' column too."
-                " If you include a 'county' column in the result table, include a 'state' column too."
-                " Make sure each value in the result table is not null.\n"
-            )
-    },
-    {
-        "role": "user",
-        "content": "Which top 5 cities have the most total crime?"
-    },
-    {
-        "role": "assistant",
-        "content": "SELECT city, sum(violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) as total_crime\nFROM crime_by_city\nGROUP BY city\nORDER BY total_crime DESC\nLIMIT 5;"
-    },
-    {
-        "role": "user",
-        "content": "What zip code has the highest percentage of people of age 75?"
-    },
-    {
-        "role": "assistant",
-        "content": "SELECT zip_code, (pop_75_to_84_years / total_population) * 100 AS percentage\nFROM acs_census_data\nWHERE total_population > 0\nORDER BY percentage DESC\nLIMIT 1;"
-    },
-    {
-        "role": "user",
-        "content": "Which 5 counties have the most arson?"
-    },
-    {
-        "role": "assistant",
-        "content": "SELECT acs_census_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN acs_census_data ON crime_by_city.city = acs_census_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY acs_census_data.county\nORDER BY total_arson DESC\nLIMIT 5;"
-    },
-    {
-        "role": "user",
-        "content": "Which 5 cities have the most females?"
-    },
-    {
-        "role": "assistant",
-        "content": "SELECT acs_census_data.city, acs_census_data.state, SUM(female_population) AS city_female_population\nFROM acs_census_data\nWHERE female_population IS NOT NULL\nGROUP BY acs_census_data.city\nORDER BY female_population DESC\nLIMIT 5;"
-    },
-    {
-        "role": "user",
-        "content": "Which city in Washington has the highest population?"
-    },
-    {
-        "role": "assistant",
-        "content": "SELECT city, state, SUM(total_population) AS total_city_population\nFROM acs_census_data\nWHERE state = 'WA'\nGROUP BY city, state\nORDER BY total_city_population DESC\nLIMIT 1;"
-    },
-    {
-        "role": "user",
-        "content": "Which area in San Francisco has the highest racial diversity and what is the percentage population of each race in that area?"
-    },
-    {
-        "role": "assistant",
-        "content": "SELECT zip_code, \n       (white_population / NULLIF(total_population, 0)) * 100 AS white_percentage,\n       (black_population / NULLIF(total_population, 0)) * 100 AS black_percentage,\n       (native_american_population / NULLIF(total_population, 0)) * 100 AS native_american_percentage,\n       (asian_population / NULLIF(total_population, 0)) * 100 AS asian_percentage,\n       (two_or_more_population / NULLIF(total_population, 0)) * 100 AS two_or_more_percentage,\n       (hispanic_population / NULLIF(total_population, 0)) * 100 AS hispanic_percentage\nFROM acs_census_data\nWHERE city = 'San Francisco'\nORDER BY (white_population + black_population + native_american_population + asian_population + two_or_more_population + hispanic_population) DESC\nLIMIT 1;"
-    },
-]
-
-
-MSG_WITH_SCHEMA_AND_WARNINGS = (
-    "Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}"
-    "The following are schemas of tables you can query:\n"
-    "---------------------\n"
-    "Schema of table 'crime_by_city':\n"
-    "Table 'crime_by_city' has columns: city (TEXT), violent_crime (DOUBLE_PRECISION), murder_and_nonnegligent_manslaughter (DOUBLE_PRECISION), rape (DOUBLE_PRECISION), robbery (DOUBLE_PRECISION), aggravated_assault (DOUBLE_PRECISION), property_crime (DOUBLE_PRECISION), burglary (DOUBLE_PRECISION), larceny_theft (DOUBLE_PRECISION), motor_vehicle_theft (DOUBLE_PRECISION), arson (DOUBLE_PRECISION), state (TEXT)."
-    "\n\n"
-    "Schema of table 'acs_census_data':\n"
-    "Table 'acs_census_data' has columns: total_population (DOUBLE_PRECISION), elderly_population (DOUBLE_PRECISION), male_population (DOUBLE_PRECISION), female_population (DOUBLE_PRECISION), white_population (DOUBLE_PRECISION), black_population (DOUBLE_PRECISION), native_american_population (DOUBLE_PRECISION), asian_population (DOUBLE_PRECISION), two_or_more_population (DOUBLE_PRECISION), hispanic_population (DOUBLE_PRECISION), adult_population (DOUBLE_PRECISION), citizen_adult_population (DOUBLE_PRECISION), average_household_size (DOUBLE_PRECISION), pop_under_5_years (DOUBLE_PRECISION), pop_5_to_9_years (DOUBLE_PRECISION), pop_10_to_14_years (DOUBLE_PRECISION), pop_15_to_19_years (DOUBLE_PRECISION), pop_20_to_24_years (DOUBLE_PRECISION), pop_25_to_34_years (DOUBLE_PRECISION), pop_35_to_44_years (DOUBLE_PRECISION), pop_45_to_54_years (DOUBLE_PRECISION), pop_55_to_59_years (DOUBLE_PRECISION), pop_60_to_64_years (DOUBLE_PRECISION), pop_65_to_74_years (DOUBLE_PRECISION), pop_75_to_84_years (DOUBLE_PRECISION), pop_85_years_and_over (DOUBLE_PRECISION), per_capita_income (DOUBLE_PRECISION), median_income_for_workers (DOUBLE_PRECISION), zip_code (TEXT), city (TEXT), state (TEXT), county (TEXT), lat (DOUBLE_PRECISION), lon (DOUBLE_PRECISION)."
-    "\n\n"
-    "---------------------\n"
-    "Use state abbreviations for states."
-    " Table 'crime_by_city' does not have columns 'zip_code' or 'county'."
-    " Do not use ambiguous column names."
-    " For example, 'city' can be ambiguous because both tables 'acs_census_data' and 'crime_by_city' have a column named 'city'."
-    " Always specify the table where you are using the column."
-    " If you include a 'city' column in the result table, include a 'state' column too."
-    " If you include a 'county' column in the result table, include a 'state' columntoo."
-    " Make sure each value in the result table is not null.\n"
-)
-
 
 MSG_WITH_ERROR_TRY_AGAIN = (
     "Try again. "
@@ -115,6 +15,107 @@ MSG_WITH_ERROR_TRY_AGAIN = (
     "{error_message}"
 )
 
+def generate_msg_with_schemas(table_names: List[str]):
+    table_name_to_msg = {
+        'crime_by_city': (
+            "Schema of table 'crime_by_city':\n"
+            "Table 'crime_by_city' has columns: city (TEXT), violent_crime (DOUBLE_PRECISION), murder_and_nonnegligent_manslaughter (DOUBLE_PRECISION), rape (DOUBLE_PRECISION), robbery (DOUBLE_PRECISION), aggravated_assault (DOUBLE_PRECISION), property_crime (DOUBLE_PRECISION), burglary (DOUBLE_PRECISION), larceny_theft (DOUBLE_PRECISION), motor_vehicle_theft (DOUBLE_PRECISION), arson (DOUBLE_PRECISION), state (TEXT)."
+        ),
+        'acs_census_data': (
+            "Schema of table 'acs_census_data':\n"
+            "Table 'acs_census_data' has columns: total_population (DOUBLE_PRECISION), elderly_population (DOUBLE_PRECISION), male_population (DOUBLE_PRECISION), female_population (DOUBLE_PRECISION), white_population (DOUBLE_PRECISION), black_population (DOUBLE_PRECISION), native_american_population (DOUBLE_PRECISION), asian_population (DOUBLE_PRECISION), two_or_more_population (DOUBLE_PRECISION), hispanic_population (DOUBLE_PRECISION), adult_population (DOUBLE_PRECISION), citizen_adult_population (DOUBLE_PRECISION), average_household_size (DOUBLE_PRECISION), pop_under_5_years (DOUBLE_PRECISION), pop_5_to_9_years (DOUBLE_PRECISION), pop_10_to_14_years (DOUBLE_PRECISION), pop_15_to_19_years (DOUBLE_PRECISION), pop_20_to_24_years (DOUBLE_PRECISION), pop_25_to_34_years (DOUBLE_PRECISION), pop_35_to_44_years (DOUBLE_PRECISION), pop_45_to_54_years (DOUBLE_PRECISION), pop_55_to_59_years (DOUBLE_PRECISION), pop_60_to_64_years (DOUBLE_PRECISION), pop_65_to_74_years (DOUBLE_PRECISION), pop_75_to_84_years (DOUBLE_PRECISION), pop_85_years_and_over (DOUBLE_PRECISION), per_capita_income (DOUBLE_PRECISION), median_income_for_workers (DOUBLE_PRECISION), zip_code (TEXT), city (TEXT), state (TEXT), county (TEXT), lat (DOUBLE_PRECISION), lon (DOUBLE_PRECISION)."
+        )
+    }
+
+    return "\n\n".join(map(lambda table_name: table_name_to_msg[table_name], table_names))
+
+def make_default_messages(table_names: List[str]):
+    return [
+        {
+            "role": "system",
+            "content": (
+                    "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command, generally about crime, demographics, and population."
+                    "\n"
+                    "The following are schemas of tables you can query:\n"
+                    "---------------------\n" + generate_msg_with_schemas(table_names) +
+                    "\n\n"
+                    "---------------------\n"
+                    "Use state abbreviations for states."
+                    " Table 'crime_by_city' does not have columns 'zip_code' or 'county'."
+                    " Do not use ambiguous column names."
+                    " For example, 'city' can be ambiguous because both tables 'acs_census_data' and 'crime_by_city' have a column named 'city'."
+                    " Always specify the table where you are using the column."
+                    " If you include a 'city' column in the result table, include a 'state' column too."
+                    " If you include a 'county' column in the result table, include a 'state' column too."
+                    " Make sure each value in the result table is not null.\n"
+            )
+        },
+        {
+            "role": "user",
+            "content": "Which top 5 cities have the most total crime?"
+        },
+        {
+            "role": "assistant",
+            "content": "SELECT city, sum(violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) as total_crime\nFROM crime_by_city\nGROUP BY city\nORDER BY total_crime DESC\nLIMIT 5;"
+        },
+        {
+            "role": "user",
+            "content": "What zip code has the highest percentage of people of age 75?"
+        },
+        {
+            "role": "assistant",
+            "content": "SELECT zip_code, (pop_75_to_84_years / total_population) * 100 AS percentage\nFROM acs_census_data\nWHERE total_population > 0\nORDER BY percentage DESC\nLIMIT 1;"
+        },
+        {
+            "role": "user",
+            "content": "Which 5 counties have the most arson?"
+        },
+        {
+            "role": "assistant",
+            "content": "SELECT acs_census_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN acs_census_data ON crime_by_city.city = acs_census_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY acs_census_data.county\nORDER BY total_arson DESC\nLIMIT 5;"
+        },
+        {
+            "role": "user",
+            "content": "Which 5 cities have the most females?"
+        },
+        {
+            "role": "assistant",
+            "content": "SELECT acs_census_data.city, acs_census_data.state, SUM(female_population) AS city_female_population\nFROM acs_census_data\nWHERE female_population IS NOT NULL\nGROUP BY acs_census_data.city\nORDER BY female_population DESC\nLIMIT 5;"
+        },
+        {
+            "role": "user",
+            "content": "Which city in Washington has the highest population?"
+        },
+        {
+            "role": "assistant",
+            "content": "SELECT city, state, SUM(total_population) AS total_city_population\nFROM acs_census_data\nWHERE state = 'WA'\nGROUP BY city, state\nORDER BY total_city_population DESC\nLIMIT 1;"
+        },
+        {
+            "role": "user",
+            "content": "Which area in San Francisco has the highest racial diversity and what is the percentage population of each race in that area?"
+        },
+        {
+            "role": "assistant",
+            "content": "SELECT zip_code, \n       (white_population / NULLIF(total_population, 0)) * 100 AS white_percentage,\n       (black_population / NULLIF(total_population, 0)) * 100 AS black_percentage,\n       (native_american_population / NULLIF(total_population, 0)) * 100 AS native_american_percentage,\n       (asian_population / NULLIF(total_population, 0)) * 100 AS asian_percentage,\n       (two_or_more_population / NULLIF(total_population, 0)) * 100 AS two_or_more_percentage,\n       (hispanic_population / NULLIF(total_population, 0)) * 100 AS hispanic_percentage\nFROM acs_census_data\nWHERE city = 'San Francisco'\nORDER BY (white_population + black_population + native_american_population + asian_population + two_or_more_population + hispanic_population) DESC\nLIMIT 1;"
+        },
+    ]
+
+def make_msg_with_schema_and_warnings(table_names: List[str]):
+    return (
+            "Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}"
+            "The following are schemas of tables you can query:\n"
+            "---------------------\n" + generate_msg_with_schemas(table_names) +
+            "\n\n"
+            "---------------------\n"
+            "Use state abbreviations for states."
+            " Table 'crime_by_city' does not have columns 'zip_code' or 'county'."
+            " Do not use ambiguous column names."
+            " For example, 'city' can be ambiguous because both tables 'acs_census_data' and 'crime_by_city' have a column named 'city'."
+            " Always specify the table where you are using the column."
+            " If you include a 'city' column in the result table, include a 'state' column too."
+            " If you include a 'county' column in the result table, include a 'state' columntoo."
+            " Make sure each value in the result table is not null.\n"
+    )
 
 def is_read_only_query(sql_query: str):
     """
@@ -123,12 +124,12 @@ def is_read_only_query(sql_query: str):
     """
     # List of SQL statements that modify data in the database
     modifying_statements = ["INSERT", "UPDATE", "DELETE", "DROP", "CREATE", "ALTER", "GRANT", "TRUNCATE"]
-    
+
     # Check if the query contains any modifying statements
     for statement in modifying_statements:
         if statement in sql_query.upper():
             return False
-    
+
     # If no modifying statements are found, the query is read-only
     return True
 
@@ -138,15 +139,15 @@ class NotReadOnlyException(Exception):
 
 
 def get_assistant_message(
+        messages: List[Dict[str, str]],
         temperature: int = 0,
         model: str = "gpt-3.5-turbo",
-        messages: List[Dict[str, str]] = DEFAULT_MESSAGES,
-        ) -> str:
+) -> str:
     res = openai.ChatCompletion.create(
-            model=model,
-            temperature=temperature,
-            messages=messages
-        )
+        model=model,
+        temperature=temperature,
+        messages=messages
+    )
     # completion = res['choices'][0]['message']['content']
     assistant_message = res['choices'][0]
     return assistant_message
@@ -161,11 +162,10 @@ class NullValueException(Exception):
 
 
 def execute_sql(sql_query: str):
-     
-     if not is_read_only_query(sql_query):
-         raise NotReadOnlyException("Only read-only queries are allowed.")
+    if not is_read_only_query(sql_query):
+        raise NotReadOnlyException("Only read-only queries are allowed.")
 
-     with engine.connect() as connection:
+    with engine.connect() as connection:
         sql_text = text(sql_query)
 
         # result = connection.execute(sql_text, {'param': 'value'})
@@ -174,7 +174,7 @@ def execute_sql(sql_query: str):
         column_names = list(result.keys())
         if 'state' not in column_names and any(c in column_names for c in ['city', 'county']):
             CityOrCountyWithoutStateException("Include 'state' in the result table, too.")
-            
+
         rows = [list(r) for r in result.all()]
 
         # Check for null values
@@ -182,7 +182,6 @@ def execute_sql(sql_query: str):
             for value in row:
                 if value is None:
                     raise NullValueException("Make sure each value in the result table is not null.")
-
 
         # Add lat and lon to zip_code
         zip_code_idx = None
@@ -236,7 +235,6 @@ def execute_sql(sql_query: str):
                     row.append(lat)
                     row.append(lon)
 
-
         results = []
         for row in rows:
             result = OrderedDict()
@@ -249,19 +247,18 @@ def execute_sql(sql_query: str):
             'results': results,
         }
 
-
         # return {
         #     'column_names': column_names,
         #     'values': values,
         # }
 
 
-def text_to_sql_parallel(natural_language_query, k=3):
+def text_to_sql_parallel(natural_language_query, table_names, k=3):
     """
     Generates K SQL queries in parallel and returns the first one that does not produce an exception.
     """
-    content = MSG_WITH_SCHEMA_AND_WARNINGS.format(natural_language_query=natural_language_query)
-    messages = DEFAULT_MESSAGES.copy()
+    content = make_msg_with_schema_and_warnings(table_names).format(natural_language_query=natural_language_query)
+    messages = make_default_messages(table_names).copy()
     messages.append({
         "role": "user",
         "content": content
@@ -270,7 +267,7 @@ def text_to_sql_parallel(natural_language_query, k=3):
     # Create K completions in parallel
     jobs = []
     for _ in range(k):
-        jobs.append(joblib.delayed(get_assistant_message)(0, "gpt-3.5-turbo", messages))
+        jobs.append(joblib.delayed(get_assistant_message)(messages, 0, "gpt-3.5-turbo"))
     assistant_messages = joblib.Parallel(n_jobs=k, verbose=10)(jobs)
 
     # Try each completion in order
@@ -298,13 +295,13 @@ def text_to_sql_parallel(natural_language_query, k=3):
         return None, None, attempts_contexts[0]
 
 
-def text_to_sql_with_retry(natural_language_query, k=3, messages=None):
+def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=None):
     """
     Tries to take a natural language query and generate valid SQL to answer it K times
     """
     if not messages:
-        content = MSG_WITH_SCHEMA_AND_WARNINGS.format(natural_language_query=natural_language_query)
-        messages = DEFAULT_MESSAGES.copy()
+        content = make_msg_with_schema_and_warnings(table_names).format(natural_language_query=natural_language_query)
+        messages = make_default_messages(table_names).copy()
         messages.append({
             "role": "user",
             "content": content
@@ -315,13 +312,13 @@ def text_to_sql_with_retry(natural_language_query, k=3, messages=None):
     for _ in range(k):
 
         try:
-            assistant_message = get_assistant_message(messages=messages)
+            assistant_message = get_assistant_message(messages)
             sql_query = _clean_message_content(assistant_message['message']['content'])
 
             response = execute_sql(sql_query)
             # Generated SQL query did not produce exception. Return result
             return response, sql_query
-        
+
         except Exception as e:
             messages.append({
                 "role": "assistant",
