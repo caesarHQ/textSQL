@@ -23,7 +23,7 @@ def generate_msg_with_schemas(table_names: List[str]):
         ),
         'acs_census_data': (
             "Schema of table 'acs_census_data':\n"
-            "Table 'acs_census_data' has columns: total_population (DOUBLE_PRECISION), elderly_population (DOUBLE_PRECISION), male_population (DOUBLE_PRECISION), female_population (DOUBLE_PRECISION), white_population (DOUBLE_PRECISION), black_population (DOUBLE_PRECISION), native_american_population (DOUBLE_PRECISION), asian_population (DOUBLE_PRECISION), two_or_more_population (DOUBLE_PRECISION), hispanic_population (DOUBLE_PRECISION), adult_population (DOUBLE_PRECISION), citizen_adult_population (DOUBLE_PRECISION), average_household_size (DOUBLE_PRECISION), pop_under_5_years (DOUBLE_PRECISION), pop_5_to_9_years (DOUBLE_PRECISION), pop_10_to_14_years (DOUBLE_PRECISION), pop_15_to_19_years (DOUBLE_PRECISION), pop_20_to_24_years (DOUBLE_PRECISION), pop_25_to_34_years (DOUBLE_PRECISION), pop_35_to_44_years (DOUBLE_PRECISION), pop_45_to_54_years (DOUBLE_PRECISION), pop_55_to_59_years (DOUBLE_PRECISION), pop_60_to_64_years (DOUBLE_PRECISION), pop_65_to_74_years (DOUBLE_PRECISION), pop_75_to_84_years (DOUBLE_PRECISION), pop_85_years_and_over (DOUBLE_PRECISION), per_capita_income (DOUBLE_PRECISION), median_income_for_workers (DOUBLE_PRECISION), zip_code (TEXT), city (TEXT), state (TEXT), county (TEXT), lat (DOUBLE_PRECISION), lon (DOUBLE_PRECISION)."
+            "Table 'acs_census_data' has columns: total_population (DOUBLE_PRECISION), elderly_population (DOUBLE_PRECISION), male_population (DOUBLE_PRECISION), female_population (DOUBLE_PRECISION), white_population (DOUBLE_PRECISION), black_population (DOUBLE_PRECISION), native_american_population (DOUBLE_PRECISION), asian_population (DOUBLE_PRECISION), two_or_more_population (DOUBLE_PRECISION), hispanic_population (DOUBLE_PRECISION), adult_population (DOUBLE_PRECISION), citizen_adult_population (DOUBLE_PRECISION), average_household_size (DOUBLE_PRECISION), population_under_5_years (DOUBLE_PRECISION), population_5_to_9_years (DOUBLE_PRECISION), population_10_to_14_years (DOUBLE_PRECISION), population_15_to_19_years (DOUBLE_PRECISION), population_20_to_24_years (DOUBLE_PRECISION), population_25_to_34_years (DOUBLE_PRECISION), population_35_to_44_years (DOUBLE_PRECISION), population_45_to_54_years (DOUBLE_PRECISION), population_55_to_59_years (DOUBLE_PRECISION), population_60_to_64_years (DOUBLE_PRECISION), population_65_to_74_years (DOUBLE_PRECISION), population_75_to_84_years (DOUBLE_PRECISION), population_85_years_and_over (DOUBLE_PRECISION), per_capita_income (DOUBLE_PRECISION), median_income_for_workers (DOUBLE_PRECISION), zip_code (TEXT), city (TEXT), state (TEXT), county (TEXT), lat (DOUBLE_PRECISION), lon (DOUBLE_PRECISION)."
         )
     }
 
@@ -64,7 +64,7 @@ def make_default_messages(table_names: List[str]):
         },
         {
             "role": "assistant",
-            "content": "SELECT zip_code, (pop_75_to_84_years / total_population) * 100 AS percentage\nFROM acs_census_data\nWHERE total_population > 0\nORDER BY percentage DESC\nLIMIT 1;"
+            "content": "SELECT zip_code, (population_75_to_84_years / total_population) * 100 AS percentage\nFROM acs_census_data\nWHERE total_population > 0\nORDER BY percentage DESC\nLIMIT 1;"
         },
         {
             "role": "user",
