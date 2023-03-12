@@ -3,7 +3,6 @@ from .utils import text_to_sql_with_retry, text_to_sql_parallel
 from .lat_lon import zip_lat_lon
 from sentry_sdk import capture_exception
 
-
 bp = Blueprint('api_bp', __name__)
 
 
@@ -14,9 +13,14 @@ def text_to_sql():
     """
     request_body = request.get_json()
     natural_language_query = request_body.get('natural_language_query')
+    table_names = request_body.get('table_names')
 
     if not natural_language_query:
         error_msg = 'natural_language_query is missing from request body'
+        return make_response(jsonify({'error': error_msg}), 400)
+
+    if not table_names or len(table_names) == 0:
+        error_msg = 'non-empty table_names array is missing from request body'
         return make_response(jsonify({'error': error_msg}), 400)
 
     try:
@@ -25,7 +29,7 @@ def text_to_sql():
         # result, sql_query, messages = text_to_sql_parallel(natural_language_query)
         # if result is None or sql_query is None:
         #     result, sql_query = text_to_sql_with_retry(natural_language_query, messages=messages)
-        result, sql_query = text_to_sql_with_retry(natural_language_query)
+        result, sql_query = text_to_sql_with_retry(natural_language_query, table_names)
     except Exception as e:
         capture_exception(e)
         error_msg = f'Error processing request: {str(e)}'
