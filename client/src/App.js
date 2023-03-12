@@ -370,9 +370,6 @@ function App(props) {
         fetchBackend(query)
     }
 
-    console.log("APP rows", rows)
-    console.log("APP cols", columns)
-
     return (
         <div className="App bg-white dark:bg-dark-900 dark:text-white">
             <link
