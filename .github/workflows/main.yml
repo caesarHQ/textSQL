@@ -13,8 +13,8 @@ jobs:
         run: npm ci
         working-directory: ./client
       - name: Prettier
-        run: npm run format
+        run: npm run format:fix
         working-directory: ./client
       - name: Lint
-        run: npm run lint
+        run: npm run lint:fix
         working-directory: ./client
