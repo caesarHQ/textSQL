@@ -9,7 +9,10 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 load_dotenv()
 
 ENV = getenv("ENVIRONMENT") or "unknown"
-DB_URL = "postgresql://census_data_user:BvgUaxoocxdDrJ9Mam4HHkacPBWLYYt9@dpg-cg59te3hp8u9l20dqd40-b.replica-cyan.oregon-postgres.render.com/census_data"
+if ENV == "production":
+    DB_URL = "postgresql://census_data_user:BvgUaxoocxdDrJ9Mam4HHkacPBWLYYt9@dpg-cg59te3hp8u9l20dqd40-b.replica-cyan.oregon-postgres.render.com/census_data"
+else:
+    DB_URL = "postgresql://census_data_user:3PjePE3hVzm2m2UFPywLTLfIiC6w28HB@dpg-cg73gvhmbg5ab7mrk8qg-b.replica-cyan.oregon-postgres.render.com/census_data_w0ix"
 OPENAI_KEY = getenv("OPENAI_KEY")
 
 sentry_sdk.init(
