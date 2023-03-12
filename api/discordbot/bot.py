@@ -1,6 +1,7 @@
 import discord
 import responses
-
+from discord import app_commands
+from discord import Interaction
 
 async def send_message(message, user_message, is_private):
     try:
@@ -11,15 +12,23 @@ async def send_message(message, user_message, is_private):
         print(e)
 
 
+
+
 def run_discord_bot():
     TOKEN = 'DISCORD_BOT_TOKEN'
     intents = discord.Intents.default()
     intents.message_content = True
     client = discord.Client(intents=intents)
+    tree = app_commands.CommandTree(client)
 
     @client.event
     async def on_ready():
         print(f'{client.user} is now running!')
+
+    @tree.command(name="query", description="Query census gpt")
+    async def query_command(interaction: Interaction):
+        await interaction.response.defer()
+        await interaction.response.send_message("Hello!")
 
     @client.event
     async def on_message(message):
