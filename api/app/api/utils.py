@@ -166,10 +166,13 @@ def execute_sql(sql_query: str):
         raise NotReadOnlyException("Only read-only queries are allowed.")
 
     with engine.connect() as connection:
-        sql_text = text(sql_query)
-
-        # result = connection.execute(sql_text, {'param': 'value'})
-        result = connection.execute(sql_text)
+        connection = connection.execution_options(
+            postgresql_readonly=True
+        )
+        with connection.begin():
+            sql_text = text(sql_query)
+            # result = connection.execute(sql_text, {'param': 'value'})
+            result = connection.execute(sql_text)
 
         column_names = list(result.keys())
         if 'state' not in column_names and any(c in column_names for c in ['city', 'county']):
