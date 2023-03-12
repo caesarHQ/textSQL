@@ -15,6 +15,8 @@ import * as Sentry from '@sentry/react'
 import toast, { Toaster } from 'react-hot-toast'
 import Disclaimer from './components/disclaimer'
 
+import Plot from 'react-plotly.js';
+
 // Utils
 import {
     cleanupQuery,
@@ -129,6 +131,7 @@ function App(props) {
     const [cities, setCities] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [title, setTitle] = useState('')
+    const [showMap, setShowMap] = useState(false)
 
     useEffect(() => {
         document.title = query || 'Census GPT'
@@ -227,88 +230,94 @@ function App(props) {
                 })
                 setTableInfo({ rows, columns: filteredColumns })
 
+                console.log("Rows=>", rows)
+                console.log("Cols=>", columns)
                 // render cities layer on the map
-                if (
-                    filteredColumns.indexOf('zip_code') === -1 &&
-                    filteredColumns.indexOf('city') >= 0
-                ) {
-                    // Get the cities
-                    let responseCities = getCities(response.result)
-                    console.log(responseCities)
-                    if (!responseCities.length) {
-                        setErrorMessage('No results were returned')
-                        setCities([])
-                        setZipcodes([]) // reset cities rendering
-                    } else if (responseCities.length < 2) {
-                        // Focus the map to relevant parts
-                        // Fitbounds needs at least two geo coordinates.
-                        // If less that 2 co-ordinates then use fly to.
-                        mapRef.current.flyTo({
-                            center: [
-                                responseCities[0].long,
-                                responseCities[0].lat,
-                            ],
-                            essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-                        })
-                    } else {
-                        let [minLng, minLat, maxLng, maxLat] = bbox(
-                            turf.lineString(
-                                responseCities.map((c) => [c.long, c.lat])
-                            )
-                        )
-                        mapRef.current.fitBounds(
-                            [
-                                [minLng, minLat],
-                                [maxLng, maxLat],
-                            ],
-                            { padding: '100', duration: 1000 }
-                        )
-                    }
 
-                    // Set the cities into the state
-                    setCities(responseCities)
+                // if (
+                //     filteredColumns.indexOf('zip_code') === -1 &&
+                //     filteredColumns.indexOf('city') >= 0
+                // ) {
+                //     // Get the cities
+                //     let responseCities = getCities(response.result)
+                //     console.log(responseCities)
+                //     if (!responseCities.length) {
+                //         setErrorMessage('No results were returned')
+                //         setCities([])
+                //         setZipcodes([]) // reset cities rendering
+                //     } else if (responseCities.length < 2) {
+                //         // Focus the map to relevant parts
+                //         // Fitbounds needs at least two geo coordinates.
+                //         // If less that 2 co-ordinates then use fly to.
+                //         mapRef.current.flyTo({
+                //             center: [
+                //                 responseCities[0].long,
+                //                 responseCities[0].lat,
+                //             ],
+                //             essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+                //         })
+                //     } else {
+                //         let [minLng, minLat, maxLng, maxLat] = bbox(
+                //             turf.lineString(
+                //                 responseCities.map((c) => [c.long, c.lat])
+                //             )
+                //         )
+                //         mapRef.current.fitBounds(
+                //             [
+                //                 [minLng, minLat],
+                //                 [maxLng, maxLat],
+                //             ],
+                //             { padding: '100', duration: 1000 }
+                //         )
+                //     }
 
-                    // reset zipcode rendering
-                    setZipcodes([])
-                } else if (filteredColumns.indexOf('zip_code') >= 0) {
-                    // Render zipcodes layer on the map
-                    let responseZipcodes = getZipcodes(response.result)
-                    setZipcodesFormatted(
-                        getZipcodesMapboxFormatted(responseZipcodes)
-                    )
+                //     // Set the cities into the state
+                //     setCities(responseCities)
 
-                    // Fitbounds needs at least two geo coordinates.
-                    if (!responseZipcodes.length) {
-                        setErrorMessage('No results were returned')
-                        setZipcodes([])
-                        setCities([]) // reset cities rendering
-                    } else if (responseZipcodes.length < 2) {
-                        // Fitbounds needs at least two geo coordinates.
-                        // If less that 2 co-ordinates then use fly to.
-                        mapRef.current.flyTo({
-                            center: [
-                                responseZipcodes[0].long,
-                                responseZipcodes[0].lat,
-                            ],
-                            essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-                        })
-                    } else {
-                        let [minLng, minLat, maxLng, maxLat] = bbox(
-                            turf.lineString(
-                                responseZipcodes.map((z) => [z.long, z.lat])
-                            )
-                        )
-                        mapRef.current.fitBounds(
-                            [
-                                [minLng, minLat],
-                                [maxLng, maxLat],
-                            ],
-                            { padding: '100', duration: 1000 }
-                        )
-                    }
-                    setZipcodes(responseZipcodes)
-                    setCities([]) // reset cities rendering
-                }
+                //     // reset zipcode rendering
+                //     setZipcodes([])
+
+                //     setShowMap(true)
+                // } else if (filteredColumns.indexOf('zip_code') >= 0) {
+                //     // Render zipcodes layer on the map
+                //     let responseZipcodes = getZipcodes(response.result)
+                //     setZipcodesFormatted(
+                //         getZipcodesMapboxFormatted(responseZipcodes)
+                //     )
+
+                //     // Fitbounds needs at least two geo coordinates.
+                //     if (!responseZipcodes.length) {
+                //         setErrorMessage('No results were returned')
+                //         setZipcodes([])
+                //         setCities([]) // reset cities rendering
+                //     } else if (responseZipcodes.length < 2) {
+                //         // Fitbounds needs at least two geo coordinates.
+                //         // If less that 2 co-ordinates then use fly to.
+                //         mapRef.current.flyTo({
+                //             center: [
+                //                 responseZipcodes[0].long,
+                //                 responseZipcodes[0].lat,
+                //             ],
+                //             essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+                //         })
+                //     } else {
+                //         let [minLng, minLat, maxLng, maxLat] = bbox(
+                //             turf.lineString(
+                //                 responseZipcodes.map((z) => [z.long, z.lat])
+                //             )
+                //         )
+                //         mapRef.current.fitBounds(
+                //             [
+                //                 [minLng, minLat],
+                //                 [maxLng, maxLat],
+                //             ],
+                //             { padding: '100', duration: 1000 }
+                //         )
+                //     }
+                //     setShowMap(true)
+                //     setZipcodes(responseZipcodes)
+                //     setCities([]) // reset cities rendering
+                // }
             })
             .catch((err) => {
                 Sentry.setContext('queryContext', {
@@ -480,7 +489,6 @@ function App(props) {
                                 <Layer {...citiesLayer} />
                             </Source>
                         </Map>
-                        ;
                     </div>
                 </div>
             </div>
