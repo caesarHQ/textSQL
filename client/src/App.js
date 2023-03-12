@@ -245,10 +245,8 @@ function App(props) {
                 })
                 setTableInfo({ rows, columns: filteredColumns })
 
-                console.log("Rows=>", rows)
-                console.log("Cols=>", columns)
+               
                 // render cities layer on the map
-
                 if (
                     filteredColumns.indexOf('zip_code') === -1 &&
                     filteredColumns.indexOf('city') >= 0
