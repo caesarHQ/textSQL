@@ -5,18 +5,21 @@ import sentry_sdk
 from dotenv import load_dotenv
 from sentry_sdk.integrations.flask import FlaskIntegration
 
+
+load_dotenv()
+
+ENV = getenv("ENVIRONMENT")
+DB_URL = "postgresql://census_data_user:BvgUaxoocxdDrJ9Mam4HHkacPBWLYYt9@dpg-cg59te3hp8u9l20dqd40-b.replica-cyan.oregon-postgres.render.com/census_data"
+OPENAI_KEY = getenv("OPENAI_KEY")
+
 sentry_sdk.init(
     dsn="https://0e7943646a4242138f99898cd421560e@o4504813129826304.ingest.sentry.io/4504817446617088",
+    environment=ENV or 'development',
     integrations=[
         FlaskIntegration(),
     ],
     traces_sample_rate=1.0
 )
-
-load_dotenv()
-
-DB_URL = "postgresql://census_data_user:BvgUaxoocxdDrJ9Mam4HHkacPBWLYYt9@dpg-cg59te3hp8u9l20dqd40-b.replica-cyan.oregon-postgres.render.com/census_data"
-OPENAI_KEY = getenv("OPENAI_KEY")
 
 class FlaskAppConfig:
     CORS_HEADERS = 'Content-Type'
