@@ -152,7 +152,7 @@ function App(props) {
         const options = {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
-            body: '{"natural_language_query":"' + natural_language_query + '"}',
+            body: JSON.stringify({natural_language_query, table_names: ["crime_by_city", "acs_census_data"]}),
         }
 
         let responseOuter = null
