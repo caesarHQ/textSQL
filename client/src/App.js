@@ -32,7 +32,7 @@ import {
 } from './mapbox-ui-config'
 
 import './css/App.css'
-import { DiscordButton, GithubButton } from './Discord'
+import { DiscordButton, GithubButton, ContributeButton } from './Discord'
 import {notify} from "./Toast";
 import {useDebouncedCallback} from "use-debounce";
 import {useSearchParams} from "react-router-dom";
@@ -337,6 +337,7 @@ function App(props) {
                         Census GPT
                     </h1>
                     <div className="inline-flex gap-x-1.5 align-middle justify-center mb-3">
+                        {/* <ContributeButton /> */}
                         <GithubButton />
                         <DiscordButton />
                     </div>
