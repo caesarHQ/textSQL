@@ -33,15 +33,23 @@ import {
 } from './mapbox-ui-config'
 
 import './css/App.css'
-import { ContributeButton, DarkModeButton, DiscordButton, GithubButton } from './Discord'
+import {
+    ContributeButton,
+    DarkModeButton,
+    DiscordButton,
+    GithubButton,
+} from './Discord'
 import { notify } from './Toast'
 import { useDebouncedCallback } from 'use-debounce'
 import { useSearchParams } from 'react-router-dom'
 import SyntaxHighlighter from 'react-syntax-highlighter'
-import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs'
+import { AiOutlineSearch } from 'react-icons/ai'
 
 // Add system dark mode
-localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+localStorage.theme === 'dark' ||
+(!('theme' in localStorage) &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches)
     ? document.documentElement.classList.add('dark')
     : document.documentElement.classList.remove('dark')
 
@@ -63,7 +71,7 @@ if (process.env.REACT_APP_HOST_ENV === 'dev') {
     api_endpoint = 'http://localhost:9000'
 }
 
-const SearchButton = (props) => {
+const SearchInput = (props) => {
     const { value, onSearchChange, onClear } = props
     return (
         <div className="flex rounded-md shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900  dark:text-white">
@@ -96,6 +104,19 @@ const SearchButton = (props) => {
         </div>
     )
 }
+
+const SearchButton = (props) => {
+    return (
+        <button
+            type="submit"
+            className="text-white bg-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 ml-3"
+        >
+            <span className="hidden md:block">Search</span>
+            <AiOutlineSearch className="md:hidden" />
+        </button>
+    )
+}
+
 function App(props) {
     const [searchParams, setSearchParams] = useSearchParams()
     const [query, setQuery] = useState('')
@@ -204,7 +225,7 @@ function App(props) {
                     filteredColumns.map((c) => row.push(value[c]))
                     return row
                 })
-                setTableInfo({ rows, columns: filteredColumns });
+                setTableInfo({ rows, columns: filteredColumns })
 
                 // render cities layer on the map
                 if (
@@ -361,34 +382,12 @@ function App(props) {
                                 handleSearchClick(event)
                             }}
                         >
-                            <SearchButton
+                            <SearchInput
                                 value={query}
                                 onSearchChange={handleSearchChange}
                                 onClear={handleClearSearch}
                             />
-                            {/*<input*/}
-                            {/*  type="text"*/}
-                            {/*  name="search"*/}
-                            {/*  id="search"*/}
-                            {/*  placeholder="Ask anything about US Demographics..."*/}
-                            {/*  className="block w-full mr-2 rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm md:max-w-lg"*/}
-                            {/*  value={query}*/}
-                            {/*  onChange={handleSearchChange}*/}
-                            {/*/>*/}
-                            {/*{query && (*/}
-                            {/*  <button*/}
-                            {/*    className="right-20 text-gray-400 hover:text-gray-500 focus:outline-none"*/}
-                            {/*    onClick={handleClearSearch}*/}
-                            {/*  >*/}
-                            {/*    <FaTimes />*/}
-                            {/*  </button>*/}
-                            {/*)}*/}
-                            <button
-                                type="submit"
-                                className="text-white bg-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md border border-gray-300 dark:border-none px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 ml-3"
-                            >
-                                Search
-                            </button>
+                            <SearchButton />
                         </form>
                         <Disclaimer />
                     </div>
@@ -407,23 +406,35 @@ function App(props) {
                             <> </>
                         ) : (
                             <>
-                                <p class="font-medium"> {title} </p>
-                                    <pre
-                                        align="left"
-                                        className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
-                                    >
-                                        <code className="text-sm text-dark-800 dark:text-white">
-                                            <SyntaxHighlighter language='sql' style={hybrid} customStyle={{ color: undefined, background: undefined, margin: undefined, padding: '1rem' }}>
-                                                {sql}
-                                            </SyntaxHighlighter>
-                                        </code>
-                                    </pre>
+                                <p class="my-2 font-medium"> {title} </p>
+                                <pre
+                                    align="left"
+                                    className="rounded-md bg-gray-100 dark:bg-gray-800 dark:text-white"
+                                >
+                                    <code className="text-sm text-gray-800 dark:text-white">
+                                        <SyntaxHighlighter
+                                            language="sql"
+                                            style={hybrid}
+                                            customStyle={{
+                                                color: undefined,
+                                                background: undefined,
+                                                margin: undefined,
+                                                padding: '1rem',
+                                            }}
+                                        >
+                                            {sql}
+                                        </SyntaxHighlighter>
+                                    </code>
+                                </pre>
                                 {/*{statusCode === 500 ? (*/}
                                 {/*    <ErrorMessage errorMessage={errorMessage} />*/}
                                 {/*) : (*/}
                                 {/*    <></>*/}
                                 {/*)}*/}
-                                <Table columns={tableInfo.columns} values={tableInfo.rows} />
+                                <Table
+                                    columns={tableInfo.columns}
+                                    values={tableInfo.rows}
+                                />
                             </>
                         )}
                     </div>

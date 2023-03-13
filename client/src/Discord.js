@@ -1,5 +1,12 @@
 import { useState } from 'react'
-import { BsArrowUp, BsDiscord, BsGithub, BsMoonFill, BsSunFill, BsUpload } from 'react-icons/bs'
+import {
+    BsArrowUp,
+    BsDiscord,
+    BsGithub,
+    BsMoonFill,
+    BsSunFill,
+    BsUpload,
+} from 'react-icons/bs'
 
 const HeaderButton = ({ title, icon, onClick }) => (
     <button
@@ -14,18 +21,16 @@ const HeaderButton = ({ title, icon, onClick }) => (
 
 export const DiscordButton = () => (
     <HeaderButton
-        title='Discord'
+        title="Discord"
         icon={<BsDiscord />}
-        onClick={() =>
-            window.open('https://discord.gg/JZtxhZQQus', '_blank')
-        }
+        onClick={() => window.open('https://discord.gg/JZtxhZQQus', '_blank')}
     />
 )
 
 // "https://github.com/caesarhq/textSQL"
 export const GithubButton = () => (
     <HeaderButton
-        title='Star on GitHub'
+        title="Star on GitHub"
         icon={<BsGithub />}
         onClick={() =>
             window.open('https://github.com/caesarhq/textSQL', '_blank')
@@ -35,7 +40,7 @@ export const GithubButton = () => (
 
 export const ContributeButton = () => (
     <HeaderButton
-        title='Contribute Data'
+        title="Contribute Data"
         icon={<BsUpload />}
         onClick={() =>
             window.open('https://airtable.com/shrDKRRGyRCihWEZd', '_blank')
@@ -44,7 +49,9 @@ export const ContributeButton = () => (
 )
 
 export const DarkModeButton = () => {
-    const [darkMode, setDarkMode] = useState(document.documentElement.classList.contains('dark'))
+    const [darkMode, setDarkMode] = useState(
+        document.documentElement.classList.contains('dark')
+    )
     return (
         <HeaderButton
             icon={darkMode ? <BsSunFill /> : <BsMoonFill />}

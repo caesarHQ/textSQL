@@ -45,9 +45,7 @@ const Examples = (props) => {
                                         className="absolute inset-0"
                                         aria-hidden="true"
                                     />
-                                    <p className="text-sm font-medium">
-                                        {q}
-                                    </p>
+                                    <p className="text-sm font-medium">{q}</p>
                                 </p>
                             </div>
                             <svg
@@ -85,9 +83,7 @@ const Examples = (props) => {
                                         className="absolute inset-0"
                                         aria-hidden="true"
                                     />
-                                    <p className="text-sm font-medium">
-                                        {q}
-                                    </p>
+                                    <p className="text-sm font-medium">{q}</p>
                                 </p>
                             </div>
                             <svg

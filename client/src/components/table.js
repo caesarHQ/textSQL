@@ -15,39 +15,37 @@ const convertToTitleCase = (value) => {
 }
 
 const formatNumber = (value, col) => {
-
     // Format the number to have commas
-    if (col == "zip_code") {
+    if (col == 'zip_code') {
         // Don't format the zip code
         return value
     }
-    if (col.includes("date")) {
+    if (col.includes('date')) {
         // Don't format the date
         return value
     }
-    if (col.includes("time")) {
+    if (col.includes('time')) {
         // Don't format the time
         return value
     }
-    if (col.includes("percentage")) {
+    if (col.includes('percentage')) {
         let newValue = value.toString()
-        if (newValue.includes(".")) {
+        if (newValue.includes('.')) {
             // Round to 2 decimal places
-            newValue = newValue.slice(0, newValue.indexOf(".") + 3)
+            newValue = newValue.slice(0, newValue.indexOf('.') + 3)
         } else {
             // Add commas if no decimal places
             newValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
         }
-        newValue = newValue + "%" // Add the percentage sign
+        newValue = newValue + '%' // Add the percentage sign
         return newValue
     }
 
-    if (!value.toString().includes(".")) {
+    if (!value.toString().includes('.')) {
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     }
 
     return value
-
 }
 
 /**
@@ -115,7 +113,11 @@ const Table = (props) => {
                                 key={Math.random()}
                                 columns={columns}
                             />
-                            <TableRows key={Math.random()} columns={columns} values={values} />
+                            <TableRows
+                                key={Math.random()}
+                                columns={columns}
+                                values={values}
+                            />
                         </table>
                     </div>
                 </div>
