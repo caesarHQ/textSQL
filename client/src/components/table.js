@@ -15,6 +15,7 @@ const convertToTitleCase = (value) => {
 }
 
 const formatNumber = (value, col) => {
+
     // Format the number to have commas
     if (col == "zip_code") {
         // Don't format the zip code
@@ -40,7 +41,13 @@ const formatNumber = (value, col) => {
         newValue = newValue + "%" // Add the percentage sign
         return newValue
     }
-    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+    if (!value.toString().includes(".")) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    }
+
+    return value
+
 }
 
 /**
