@@ -304,11 +304,15 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             "role": "user",
             "content": make_rephrase_msg_with_schema_and_warnings(table_names).format(natural_language_query=natural_language_query)
         })
+        assistant_message = get_assistant_message(messages)
+        messages.append({
+            "role": "assistant",
+            "content": assistant_message['message']['content']
+        })
         messages.append({
             "role": "user",
             "content": content
         })
-
 
     assistant_message = None
 
