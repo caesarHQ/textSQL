@@ -8,7 +8,7 @@ const HeaderButton = ({ title, icon, onClick }) => (
         onClick={onClick}
     >
         {icon}
-        {title}
+        {title && <span className="hidden md:block">{title}</span>}
     </button>
 )
 
@@ -38,7 +38,7 @@ export const ContributeButton = () => (
         title='Contribute Data'
         icon={<BsUpload />}
         onClick={() =>
-            window.open('https://forms.gle/pCwQjCxa1yoKJGYR9', '_blank')
+            window.open('https://airtable.com/shrDKRRGyRCihWEZd', '_blank')
         }
     />
 )
