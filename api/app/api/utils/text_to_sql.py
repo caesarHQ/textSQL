@@ -1,13 +1,13 @@
+from collections import OrderedDict
+from typing import Dict, List
+
+import joblib
 import openai
-from typing import List, Dict
 from app.config import engine
 from sqlalchemy import text
-from .lat_lon import zip_lat_lon, city_lat_lon
-from ..config import OPENAI_KEY
-from collections import OrderedDict
-import joblib
 
-openai.api_key = OPENAI_KEY
+from .lat_lon import city_lat_lon, zip_lat_lon
+from .messages import get_assistant_message, clean_message_content
 
 MSG_WITH_ERROR_TRY_AGAIN = (
     "Try again. "
@@ -138,21 +138,6 @@ class NotReadOnlyException(Exception):
     pass
 
 
-def get_assistant_message(
-        messages: List[Dict[str, str]],
-        temperature: int = 0,
-        model: str = "gpt-3.5-turbo",
-) -> str:
-    res = openai.ChatCompletion.create(
-        model=model,
-        temperature=temperature,
-        messages=messages
-    )
-    # completion = res['choices'][0]['message']['content']
-    assistant_message = res['choices'][0]
-    return assistant_message
-
-
 class CityOrCountyWithoutStateException(Exception):
     pass
 
@@ -276,7 +261,7 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3):
     # Try each completion in order
     attempts_contexts = []
     for assistant_message in assistant_messages:
-        sql_query = _clean_message_content(assistant_message['message']['content'])
+        sql_query = clean_message_content(assistant_message['message']['content'])
 
         try:
             response = execute_sql(sql_query)
@@ -316,7 +301,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
 
         try:
             assistant_message = get_assistant_message(messages)
-            sql_query = _clean_message_content(assistant_message['message']['content'])
+            sql_query = clean_message_content(assistant_message['message']['content'])
 
             response = execute_sql(sql_query)
             # Generated SQL query did not produce exception. Return result
@@ -334,19 +319,3 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
 
     print("Could not generate SQL query after {k} tries.".format(k=k))
     return None, None
-
-
-def _clean_message_content(assistant_message_content):
-    """
-    Cleans message content to extract the SQL query
-    """
-    # Ignore text after the SQL query terminator `;`
-    assistant_message_content = assistant_message_content.split(";")[0]
-
-    # Remove prefix for corrected query assistant message
-    split_corrected_query_message = assistant_message_content.split(":")
-    if len(split_corrected_query_message) > 1:
-        sql_query = split_corrected_query_message[1].strip()
-    else:
-        sql_query = assistant_message_content
-    return sql_query
