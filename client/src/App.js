@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Fragment } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import Map, { Layer, Source } from 'react-map-gl'
 import mapboxgl from 'mapbox-gl'
 import bbox from '@turf/bbox'
