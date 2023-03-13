@@ -8,7 +8,7 @@ const HeaderButton = ({ title, icon, onClick }) => (
         onClick={onClick}
     >
         {icon}
-        {title}
+        {title && <span className="hidden md:block">{title}</span>}
     </button>
 )
 
