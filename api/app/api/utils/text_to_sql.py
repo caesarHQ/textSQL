@@ -102,12 +102,13 @@ def make_default_messages(table_names: List[str]):
 
 def make_rephrase_msg_with_schema_and_warnings(table_names: List[str]):
     return (
-            "Let's start with rephrasing the query to be more analytical. Use the schema context to rephrase the user question in a way that leads to optimal query results. correct read-only SQL to answer the following question/command: {natural_language_query}"
+            "Let's start by rephrasing the query to be more analytical. Use the schema context to rephrase the user question in a way that leads to optimal query results: {natural_language_query}"
             "The following are schemas of tables you can query:\n"
             "---------------------\n" + generate_msg_with_schemas(table_names) +
-            "\n\n"
+            "\n"
             "---------------------\n"
-            "Do not include any of the tabel names in the query. Just try to guess what a data analyst would structure the natural language query as if it knew these tables existed."
+            "Do not include any of the table names in the query."
+            " Ask the natural language query the way a data analyst, with knowledge of these tables, would."
     )
 
 def make_msg_with_schema_and_warnings(table_names: List[str]):
@@ -115,7 +116,7 @@ def make_msg_with_schema_and_warnings(table_names: List[str]):
             "Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}"
             "The following are schemas of tables you can query:\n"
             "---------------------\n" + generate_msg_with_schemas(table_names) +
-            "\n\n"
+            "\n"
             "---------------------\n"
             "Use state abbreviations for states."
             " Table 'crime_by_city' does not have columns 'zip_code' or 'county'."
