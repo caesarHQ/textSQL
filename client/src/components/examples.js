@@ -27,7 +27,7 @@ const Examples = (props) => {
                     {basic_example_queries.map((q) => (
                         <div
                             key={q}
-                            className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-800 px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
+                            className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white dark:bg-dark-800 px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
                         >
                             <div className="min-w-0 flex-1">
                                 <p
@@ -65,7 +65,7 @@ const Examples = (props) => {
                     {advanced_example_queries.map((q) => (
                         <div
                             key={q}
-                            className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-800 px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
+                            className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white dark:bg-dark-800 px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400"
                         >
                             <div className="min-w-0 flex-1">
                                 <p
