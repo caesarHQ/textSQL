@@ -19,7 +19,7 @@ const Examples = (props) => {
         // "Which 5 areas have the median income closest to the national median income?"
     ]
     return (
-        <div>
+        <div className={"pl-10 pr-10"}>
             <p className={'my-2 font-medium'}> Try these: </p>
             <div>
                 <p className="my-4"> Basic </p>

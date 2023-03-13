@@ -32,7 +32,7 @@ import {
 } from './mapbox-ui-config'
 
 import './css/App.css'
-import { DarkModeButton, DiscordButton, GithubButton } from './Discord'
+import { ContributeButton, DarkModeButton, DiscordButton, GithubButton } from './Discord'
 import { notify } from './Toast'
 import { useDebouncedCallback } from 'use-debounce'
 import { useSearchParams } from 'react-router-dom'
@@ -99,7 +99,7 @@ function App(props) {
     const [sql, setSQL] = useState('')
     const [zipcodesFormatted, setZipcodesFormatted] = useState([])
     const [zipcodes, setZipcodes] = useState([])
-    const [tableInfo, setTableInfo] = useState({rows: [], columns: []})
+    const [tableInfo, setTableInfo] = useState({ rows: [], columns: [] })
     const [statusCode, setStatusCode] = useState(0)
     const [errorMessage, setErrorMessage] = useState('')
     const [cities, setCities] = useState([])
@@ -201,7 +201,7 @@ function App(props) {
                     filteredColumns.map((c) => row.push(value[c]))
                     return row
                 })
-                setTableInfo({rows, columns: filteredColumns});
+                setTableInfo({ rows, columns: filteredColumns });
 
                 // render cities layer on the map
                 if (
@@ -343,7 +343,7 @@ function App(props) {
                         Census GPT
                     </h1>
                     <div className="inline-flex gap-x-1.5 align-middle justify-center mb-3">
-                        {/* <ContributeButton /> */}
+                        <ContributeButton />
                         <GithubButton />
                         <DiscordButton />
                         <DarkModeButton />

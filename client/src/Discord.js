@@ -36,9 +36,9 @@ export const GithubButton = () => (
 export const ContributeButton = () => (
     <HeaderButton
         title='Contribute Data'
-        button={<BsUpload />}
+        icon={<BsUpload />}
         onClick={() =>
-            window.open('', '_blank')
+            window.open('https://forms.gle/pCwQjCxa1yoKJGYR9', '_blank')
         }
     />
 )
