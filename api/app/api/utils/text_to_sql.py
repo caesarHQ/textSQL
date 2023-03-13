@@ -100,12 +100,23 @@ def make_default_messages(table_names: List[str]):
         },
     ]
 
+def make_rephrase_msg_with_schema_and_warnings(table_names: List[str]):
+    return (
+            "Let's start by rephrasing the query to be more analytical. Use the schema context to rephrase the user question in a way that leads to optimal query results: {natural_language_query}"
+            "The following are schemas of tables you can query:\n"
+            "---------------------\n" + generate_msg_with_schemas(table_names) +
+            "\n"
+            "---------------------\n"
+            "Do not include any of the table names in the query."
+            " Ask the natural language query the way a data analyst, with knowledge of these tables, would."
+    )
+
 def make_msg_with_schema_and_warnings(table_names: List[str]):
     return (
             "Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}"
             "The following are schemas of tables you can query:\n"
             "---------------------\n" + generate_msg_with_schemas(table_names) +
-            "\n\n"
+            "\n"
             "---------------------\n"
             "Use state abbreviations for states."
             " Table 'crime_by_city' does not have columns 'zip_code' or 'county'."
@@ -288,7 +299,14 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     Tries to take a natural language query and generate valid SQL to answer it K times
     """
     if not messages:
-        content = make_msg_with_schema_and_warnings(table_names).format(natural_language_query=natural_language_query)
+        # ask the assistant to rephrase before generating the query
+        rephrase = [{
+            "role": "user",
+            "content": make_rephrase_msg_with_schema_and_warnings(table_names).format(
+                natural_language_query=natural_language_query)
+        }]
+        assistant_message = get_assistant_message(rephrase)
+        content = make_msg_with_schema_and_warnings(table_names).format(natural_language_query=assistant_message['message']['content'])
         messages = make_default_messages(table_names).copy()
         messages.append({
             "role": "user",
@@ -298,7 +316,6 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     assistant_message = None
 
     for _ in range(k):
-
         try:
             assistant_message = get_assistant_message(messages)
             sql_query = clean_message_content(assistant_message['message']['content'])
