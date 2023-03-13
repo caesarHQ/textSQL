@@ -65,7 +65,7 @@ if (process.env.REACT_APP_HOST_ENV === 'dev') {
 const SearchButton = (props) => {
     const { value, onSearchChange, onClear } = props
     return (
-        <div className="flex rounded-md shadow-sm w-full md:max-w-lg bg-white dark:bg-gray-800 text-gray-900  dark:text-white placeholder:text-gray-400">
+        <div className="flex rounded-md shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900  dark:text-white">
             <div className="relative flex flex-grow items-stretch focus-within:z-10  ">
                 {/*<input*/}
                 {/*  type="email"*/}
@@ -80,14 +80,14 @@ const SearchButton = (props) => {
                     name="search"
                     id="search"
                     placeholder="Ask anything about US Demographics..."
-                    className="block w-full rounded-none rounded-l-md border-0 py-1.5 ring-1 ring-inset ring-gray-300 dark:ring-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-transparent"
+                    className="block w-full rounded-none rounded-l-md border-0 py-1.5 ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 sm:text-sm sm:leading-6 bg-transparent dark:placeholder-neutral-400"
                     value={value}
                     onChange={onSearchChange}
                 />
             </div>
             <button
                 type="button"
-                className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 dark:ring-gray-500 hover:bg-gray-50 hover:dark:bg-gray-700"
+                className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none hover:bg-gray-50 hover:dark:bg-dark-900 focus:outline-dark-300 outline-1 outline-dark-300"
                 onClick={onClear}
             >
                 <FaTimes />
@@ -327,7 +327,7 @@ function App(props) {
     }
 
     return (
-        <div className="App bg-white dark:bg-gray-900 dark:text-white">
+        <div className="App bg-white dark:bg-dark-900 dark:text-white">
             <link
                 href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
                 rel="stylesheet"
@@ -384,7 +384,7 @@ function App(props) {
                             {/*)}*/}
                             <button
                                 type="submit"
-                                className="text-white bg-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 ml-3"
+                                className="text-white bg-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md border border-gray-300 dark:border-none px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 ml-3"
                             >
                                 Search
                             </button>
@@ -405,12 +405,12 @@ function App(props) {
                             <> </>
                         ) : (
                             <>
-                                <p class="my-2 font-medium"> {title} </p>
+                                <p class="font-medium"> {title} </p>
                                     <pre
                                         align="left"
-                                        className="rounded-md bg-gray-100 dark:bg-gray-800 dark:text-white"
+                                        className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
                                     >
-                                        <code className="text-sm text-gray-800 dark:text-white">
+                                        <code className="text-sm text-dark-800 dark:text-white">
                                             <SyntaxHighlighter language='sql' style={hybrid} customStyle={{ color: undefined, background: undefined, margin: undefined, padding: '1rem' }}>
                                                 {sql}
                                             </SyntaxHighlighter>
