@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, Fragment } from 'react'
 import Map, { Layer, Source } from 'react-map-gl'
 import mapboxgl from 'mapbox-gl'
 import bbox from '@turf/bbox'
@@ -36,6 +36,8 @@ import { DarkModeButton, DiscordButton, GithubButton } from './Discord'
 import { notify } from './Toast'
 import { useDebouncedCallback } from 'use-debounce'
 import { useSearchParams } from 'react-router-dom'
+import SyntaxHighlighter from 'react-syntax-highlighter'
+import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 // Add system dark mode
 localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
@@ -63,7 +65,7 @@ if (process.env.REACT_APP_HOST_ENV === 'dev') {
 const SearchButton = (props) => {
     const { value, onSearchChange, onClear } = props
     return (
-        <div className="flex rounded-md shadow-sm w-full md:max-w-lg bg-white">
+        <div className="flex rounded-md shadow-sm w-full md:max-w-lg bg-white dark:bg-gray-800 text-gray-900  dark:text-white placeholder:text-gray-400">
             <div className="relative flex flex-grow items-stretch focus-within:z-10  ">
                 {/*<input*/}
                 {/*  type="email"*/}
@@ -78,14 +80,14 @@ const SearchButton = (props) => {
                     name="search"
                     id="search"
                     placeholder="Ask anything about US Demographics..."
-                    className="block w-full rounded-none rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-none rounded-l-md border-0 py-1.5 ring-1 ring-inset ring-gray-300 dark:ring-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 bg-transparent"
                     value={value}
                     onChange={onSearchChange}
                 />
             </div>
             <button
                 type="button"
-                className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 dark:ring-gray-500 hover:bg-gray-50 hover:dark:bg-gray-700"
                 onClick={onClear}
             >
                 <FaTimes />
@@ -392,7 +394,7 @@ function App(props) {
                     </div>
                 </div>
                 <div className="px-4 h-full sm:p-6 flex flex-col md:flex-row md:pb-[200px]">
-                    <div className="rounded-lg overflow-y-scroll max-h-[60vh] h-full md:h-full md:max-h-full shadow flex-grow-[0] w-full mr-8 mb-8">
+                    <div className="rounded-lg overflow-y-auto max-h-[60vh] h-full md:h-full md:max-h-full shadow flex-grow-[0] w-full mr-8 mb-8">
                         {/*spinner*/}
                         <LoadingSpinner isLoading={isLoading} />
                         {sql.length === 0 && !isLoading ? (
@@ -406,16 +408,16 @@ function App(props) {
                         ) : (
                             <>
                                 <p class="my-2 font-medium"> {title} </p>
-                                <div className="p-4">
                                     <pre
                                         align="left"
-                                        className="bg-gray-100 rounded-md p-2 overflow-auto"
+                                        className="rounded-md bg-gray-100 dark:bg-gray-800 dark:text-white"
                                     >
-                                        <code className="text-sm text-gray-800 language-sql">
-                                            {sql}
+                                        <code className="text-sm text-gray-800 dark:text-white">
+                                            <SyntaxHighlighter language='sql' style={hybrid} customStyle={{ color: undefined, background: undefined, margin: undefined, padding: '1rem' }}>
+                                                {sql}
+                                            </SyntaxHighlighter>
                                         </code>
                                     </pre>
-                                </div>
                                 {/*{statusCode === 500 ? (*/}
                                 {/*    <ErrorMessage errorMessage={errorMessage} />*/}
                                 {/*) : (*/}
