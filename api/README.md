@@ -35,4 +35,5 @@ $ ./scripts/dev.sh
 - Which zipcode in {City} has the most racial diversity and what is the racial distribution?
 - 10 highest crime cities in {State}
 - Which 20 zipcodes in {State} have median income that's closes to the national median income?
+- Which zipcode has a median income that is closest to the national median income?
 ```
