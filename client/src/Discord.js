@@ -38,7 +38,7 @@ export const ContributeButton = () => (
         title='Contribute Data'
         icon={<BsUpload />}
         onClick={() =>
-            window.open('https://forms.gle/pCwQjCxa1yoKJGYR9', '_blank')
+            window.open('https://airtable.com/shrDKRRGyRCihWEZd', '_blank')
         }
     />
 )
