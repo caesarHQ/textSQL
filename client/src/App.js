@@ -13,6 +13,7 @@ import Examples from './components/examples'
 import ErrorMessage from './components/error'
 import * as Sentry from '@sentry/react'
 import toast, { Toaster } from 'react-hot-toast'
+import Disclaimer from './components/disclaimer'
 
 // Utils
 import {
@@ -335,7 +336,7 @@ function App(props) {
             <div className="overflow-hidden rounded-lg shadow md:h-screen">
                 <div className="px-4 py-5 sm:px-6">
                     <h1
-                        className="text-4xl font-bold mb-6"
+                        className="text-4xl font-bold mb-2"
                         onClick={() => {
                             window.location.assign('/')
                             handleClearSearch()
@@ -389,6 +390,7 @@ function App(props) {
                                 Search
                             </button>
                         </form>
+                        <Disclaimer />
                     </div>
                 </div>
                 <div className="px-4 h-full sm:p-6 flex flex-col md:flex-row md:pb-[200px]">
