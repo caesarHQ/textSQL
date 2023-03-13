@@ -1,47 +1,62 @@
-import { BsArrowUp, BsDiscord, BsGithub, BsUpload } from 'react-icons/bs'
+import { useState } from 'react'
+import { BsArrowUp, BsDiscord, BsGithub, BsMoonFill, BsSunFill, BsUpload } from 'react-icons/bs'
 
-export const DiscordButton = () => {
-    return (
-        <button
-            type="button"
-            className="inline-flex items-center gap-x-1.5 rounded-md bg-[#ebf0f4] py-1.5 px-2.5 text-sm font-semibold text-[#24292f] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 "
-            onClick={() =>
-                window.open('https://discord.gg/JZtxhZQQus', '_blank')
-            }
-        >
-            <BsDiscord />
-            Discord
-        </button>
-    )
-}
+const HeaderButton = ({ title, icon, onClick }) => (
+    <button
+        type="button"
+        className="inline-flex items-center gap-x-1.5 rounded-md bg-[#ebf0f4] py-1.5 px-2.5 text-sm font-semibold text-[#24292f] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 "
+        onClick={onClick}
+    >
+        {icon}
+        {title}
+    </button>
+)
+
+export const DiscordButton = () => (
+    <HeaderButton
+        title='Discord'
+        icon={<BsDiscord />}
+        onClick={() =>
+            window.open('https://discord.gg/JZtxhZQQus', '_blank')
+        }
+    />
+)
+
 // "https://github.com/caesarhq/textSQL"
-export const GithubButton = () => {
-    return (
-        <button
-            type="button"
-            className="inline-flex items-center gap-x-1.5 rounded-md bg-[#ebf0f4] py-1.5 px-2.5 text-sm font-semibold text-[#24292f] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 "
-            onClick={() =>
-                window.open('https://github.com/caesarhq/textSQL', '_blank')
-            }
-        >
-            <BsGithub />
-            Star on GitHub
-        </button>
-    )
-}
+export const GithubButton = () => (
+    <HeaderButton
+        title='Star on GitHub'
+        icon={<BsGithub />}
+        onClick={() =>
+            window.open('https://github.com/caesarhq/textSQL', '_blank')
+        }
+    />
+)
 
+export const ContributeButton = () => (
+    <HeaderButton
+        title='Contribute Data'
+        button={<BsUpload />}
+        onClick={() =>
+            window.open('', '_blank')
+        }
+    />
+)
 
-export const ContributeButton = () => {
+export const DarkModeButton = () => {
+    const [darkMode, setDarkMode] = useState(document.documentElement.classList.contains('dark'))
     return (
-        <button
-            type="button"
-            className="inline-flex items-center gap-x-1.5 rounded-md bg-[#ebf0f4] py-1.5 px-2.5 text-sm font-semibold text-[#24292f] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 "
-            onClick={() =>
-                window.open('', '_blank')
-            }
-        >
-            <BsUpload />
-            Contribute Data
-        </button>
+        <HeaderButton
+            icon={darkMode ? <BsSunFill /> : <BsMoonFill />}
+            onClick={() => {
+                if (darkMode) {
+                    document.documentElement.classList.remove('dark')
+                    setDarkMode(false)
+                } else {
+                    document.documentElement.classList.add('dark')
+                    setDarkMode(true)
+                }
+            }}
+        />
     )
 }
