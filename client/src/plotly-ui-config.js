@@ -66,7 +66,7 @@ const isGeoColumn = (columnName) => {
             })
         }
 
-        layout = { title: query, barmode: 'stack'}
+        layout = { barmode: 'stack'}
     }
 
     return {data, layout}

@@ -130,7 +130,7 @@ const DataPlot = (props) => {
         data={config.data}
         layout={config.layout}
         style={{ width: '100%', height: '100%' }}
-        config = {{responsive: true}}
+        config = {{responsive: true, displayModeBar: false}}
       />
     );
 };
