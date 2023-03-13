@@ -9,10 +9,7 @@ import * as Sentry from '@sentry/react'
 import { BrowserTracing } from '@sentry/tracing'
 import {
     createBrowserRouter,
-    Route,
-    Router,
     RouterProvider,
-    Routes,
 } from 'react-router-dom'
 
 Sentry.init({
