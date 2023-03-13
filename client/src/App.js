@@ -39,6 +39,7 @@ import { useDebouncedCallback } from 'use-debounce'
 import { useSearchParams } from 'react-router-dom'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import {AiOutlineSearch} from "react-icons/ai";
 
 // Add system dark mode
 localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
@@ -63,7 +64,7 @@ if (process.env.REACT_APP_HOST_ENV === 'dev') {
     api_endpoint = 'http://localhost:9000'
 }
 
-const SearchButton = (props) => {
+const SearchInput = (props) => {
     const { value, onSearchChange, onClear } = props
     return (
         <div className="flex rounded-md shadow-sm w-full md:max-w-lg bg-white dark:bg-gray-800 text-gray-900  dark:text-white placeholder:text-gray-400">
@@ -96,6 +97,17 @@ const SearchButton = (props) => {
         </div>
     )
 }
+
+const SearchButton = (props) => {
+        return <button
+                                type="submit"
+                                className="text-white bg-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 ml-3"
+                            >
+                                <span className="hidden md:block">Search</span>
+                                <AiOutlineSearch className="md:hidden"/>
+                            </button>
+}
+
 function App(props) {
     const [searchParams, setSearchParams] = useSearchParams()
     const [query, setQuery] = useState('')
@@ -361,34 +373,12 @@ function App(props) {
                                 handleSearchClick(event)
                             }}
                         >
-                            <SearchButton
+                            <SearchInput
                                 value={query}
                                 onSearchChange={handleSearchChange}
                                 onClear={handleClearSearch}
                             />
-                            {/*<input*/}
-                            {/*  type="text"*/}
-                            {/*  name="search"*/}
-                            {/*  id="search"*/}
-                            {/*  placeholder="Ask anything about US Demographics..."*/}
-                            {/*  className="block w-full mr-2 rounded-md border-gray-300 pr-12 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm md:max-w-lg"*/}
-                            {/*  value={query}*/}
-                            {/*  onChange={handleSearchChange}*/}
-                            {/*/>*/}
-                            {/*{query && (*/}
-                            {/*  <button*/}
-                            {/*    className="right-20 text-gray-400 hover:text-gray-500 focus:outline-none"*/}
-                            {/*    onClick={handleClearSearch}*/}
-                            {/*  >*/}
-                            {/*    <FaTimes />*/}
-                            {/*  </button>*/}
-                            {/*)}*/}
-                            <button
-                                type="submit"
-                                className="text-white bg-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 ml-3"
-                            >
-                                Search
-                            </button>
+                            <SearchButton />
                         </form>
                         <Disclaimer />
                     </div>
