@@ -2,6 +2,13 @@
  * This file contains the UI configuration for the Plotly UI.
  */
 
+const isGeoColumn = (columnName) => {
+    if (columnName == 'zip_code' || columnName == 'city' || columnName == 'state') {
+        return true
+    }
+    return false
+}
+
  export const getPlotConfig = (rows, cols, query) => {
     let data = []
     let layout = {}
@@ -31,8 +38,8 @@
 
         data = [
             {
-                x: cols, 
-                y: rows[0],
+                x: isGeoColumn(cols[0]) ? cols.slice(1) : cols, 
+                y: isGeoColumn(cols[0]) ? rows[0].slice(1) : rows[0],
                 type: 'bar',
                 marker: { color: '#006AF9' }
             }
