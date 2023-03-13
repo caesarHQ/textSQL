@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, make_response, request
-from .utils import text_to_sql_with_retry, text_to_sql_parallel
-from .lat_lon import zip_lat_lon
+from .utils.text_to_sql import text_to_sql_with_retry, text_to_sql_parallel
+from .utils.table_selection import get_relevant_tables
+from .utils.lat_lon import zip_lat_lon
 from sentry_sdk import capture_exception
 
 bp = Blueprint('api_bp', __name__)
@@ -19,9 +20,9 @@ def text_to_sql():
         error_msg = 'natural_language_query is missing from request body'
         return make_response(jsonify({'error': error_msg}), 400)
 
-    if not table_names or len(table_names) == 0:
-        error_msg = 'non-empty table_names array is missing from request body'
-        return make_response(jsonify({'error': error_msg}), 400)
+    # if not table_names or len(table_names) == 0:
+    #     error_msg = 'non-empty table_names array is missing from request body'
+    #     return make_response(jsonify({'error': error_msg}), 400)
 
     try:
         # LM outputs are non-deterministic, so same natural language query may result in different SQL queries (some of which may be invalid)
@@ -29,6 +30,8 @@ def text_to_sql():
         # result, sql_query, messages = text_to_sql_parallel(natural_language_query)
         # if result is None or sql_query is None:
         #     result, sql_query = text_to_sql_with_retry(natural_language_query, messages=messages)
+        if not table_names:
+            table_names = get_relevant_tables(natural_language_query)
         result, sql_query = text_to_sql_with_retry(natural_language_query, table_names)
     except Exception as e:
         capture_exception(e)
