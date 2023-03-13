@@ -11,7 +11,7 @@ import {
 const HeaderButton = ({ title, icon, onClick }) => (
     <button
         type="button"
-        className="inline-flex items-center gap-x-1.5 rounded-md bg-[#ebf0f4] py-1.5 px-2.5 text-sm font-semibold text-[#24292f] shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 "
+        className="inline-flex items-center gap-x-1.5 rounded-md bg-[#ebf0f4] dark:bg-dark-800 py-1.5 px-2.5 text-sm font-semibold text-[#24292f] dark:text-neutral-200 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 "
         onClick={onClick}
     >
         {icon}

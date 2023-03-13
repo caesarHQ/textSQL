@@ -77,7 +77,7 @@ const TableHeader = (props) => {
  */
 const TableRows = (props) => {
     return (
-        <tbody key={Math.random()} className="divide-y divide-gray-200">
+        <tbody key={Math.random()}>
             {props.values.map((row, i) => (
                 <tr key={'row' + i}>
                     {row.map((rowValue, columnIndex) => (
@@ -104,11 +104,11 @@ const Table = (props) => {
     let values = props.values
 
     return (
-        <div className="px-4 sm:px-6 lg:px-8 dark:bg-gray-800 dark:text-white rounded-lg">
+        <div className="px-4 sm:px-6 lg:px-8 dark:bg-dark-800 dark:text-white rounded-lg">
             <div className="mt-8 flow-root">
                 <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <table className="min-w-full divide-y divide-gray-300">
+                        <table className="min-w-full divide-y divide-dark-300">
                             <TableHeader
                                 key={Math.random()}
                                 columns={columns}
