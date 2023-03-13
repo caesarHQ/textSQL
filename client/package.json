@@ -28,7 +28,8 @@
     "turf": "^3.0.14",
     "use-debounce": "^9.0.3",
     "web-vitals": "^3.0.4",
-    "worker-loader": "^3.0.8"
+    "worker-loader": "^3.0.8",
+    "@turf/bbox": "^6.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
