@@ -29,6 +29,11 @@ const isGeoColumn = (columnName) => {
             }
         ];
 
+        layout = {
+            xaxis: {title: cols[0]},
+            yaxis: {title: cols[1]},
+        }
+
     } else if (rows.length == 1 && cols.length >= 1) {
         // N cols, 1 row ==> Bar chart
         // columns is X axis, row 1 is Y axis 
@@ -42,7 +47,7 @@ const isGeoColumn = (columnName) => {
                 marker: { color: '#006AF9' }
             }
         ];
-        
+
     } else {
         // N cols, N rows ==> Stacked chart. 
         // column 0 is X axis, column 1 to N is Y axis
@@ -63,7 +68,10 @@ const isGeoColumn = (columnName) => {
             })
         }
 
-        layout = { barmode: 'stack'}
+        layout = {
+            barmode: 'stack',
+            xaxis: {title: cols[0]},
+        }
     }
 
     return {data, layout}
