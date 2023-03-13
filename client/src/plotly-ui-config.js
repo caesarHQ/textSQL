@@ -9,7 +9,7 @@ const isGeoColumn = (columnName) => {
     return false
 }
 
- export const getPlotConfig = (rows, cols, query) => {
+ export const getPlotConfig = (rows, cols) => {
     let data = []
     let layout = {}
 
@@ -28,8 +28,6 @@ const isGeoColumn = (columnName) => {
                 marker: { color: '#006AF9' }
             }
         ];
-        
-        layout = { title: query }
 
     } else if (rows.length == 1 && cols.length >= 1) {
         // N cols, 1 row ==> Bar chart
@@ -45,7 +43,6 @@ const isGeoColumn = (columnName) => {
             }
         ];
         
-        layout = { title: query }
     } else {
         // N cols, N rows ==> Stacked chart. 
         // column 0 is X axis, column 1 to N is Y axis

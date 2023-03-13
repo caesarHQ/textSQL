@@ -123,7 +123,7 @@ const SearchButton = (props) => {
     )
 }
 const DataPlot = (props) => {
-    let config = getPlotConfig(props.rows, props.cols, props.query)
+    let config = getPlotConfig(props.rows, props.cols)
 
     return (
       <Plot
@@ -502,7 +502,7 @@ function App(props) {
                             >
                                 <Layer {...citiesLayer} />
                             </Source>
-                        </Map> : <> <DataPlot cols={columns} rows={rows} query={query}/> </>}
+                        </Map> : <> <DataPlot cols={tableInfo.columns} rows={tableInfo.rows}/> </>}
                     </div>
                 </div>
             </div>
