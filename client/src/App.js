@@ -32,10 +32,15 @@ import {
 } from './mapbox-ui-config'
 
 import './css/App.css'
-import { DiscordButton, GithubButton } from './Discord'
+import { DarkModeButton, DiscordButton, GithubButton } from './Discord'
 import { notify } from './Toast'
 import { useDebouncedCallback } from 'use-debounce'
 import { useSearchParams } from 'react-router-dom'
+
+// Add system dark mode
+localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ? document.documentElement.classList.add('dark')
+    : document.documentElement.classList.remove('dark')
 
 // Init posthog
 posthog.init('phc_iLMBZqxwjAjaKtgz29r4EWv18El2qg3BIJoOOpw7s2e', {
@@ -58,7 +63,7 @@ if (process.env.REACT_APP_HOST_ENV === 'dev') {
 const SearchButton = (props) => {
     const { value, onSearchChange, onClear } = props
     return (
-        <div className="flex rounded-md shadow-sm w-full md:max-w-lg">
+        <div className="flex rounded-md shadow-sm w-full md:max-w-lg bg-white">
             <div className="relative flex flex-grow items-stretch focus-within:z-10  ">
                 {/*<input*/}
                 {/*  type="email"*/}
@@ -320,12 +325,12 @@ function App(props) {
     }
 
     return (
-        <div className="App">
+        <div className="App bg-white dark:bg-gray-900 dark:text-white">
             <link
                 href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
                 rel="stylesheet"
             />
-            <div className="overflow-hidden rounded-lg bg-white shadow md:h-screen">
+            <div className="overflow-hidden rounded-lg shadow md:h-screen">
                 <div className="px-4 py-5 sm:px-6">
                     <h1
                         className="text-4xl font-bold mb-6"
@@ -341,6 +346,7 @@ function App(props) {
                         {/* <ContributeButton /> */}
                         <GithubButton />
                         <DiscordButton />
+                        <DarkModeButton />
                     </div>
                     <Toaster />
                     <div>
@@ -383,8 +389,8 @@ function App(props) {
                         </form>
                     </div>
                 </div>
-                <div className="bg-gray-50 px-4 h-full sm:p-6 flex flex-col md:flex-row md:pb-[200px]">
-                    <div className="rounded-lg overflow-y-scroll max-h-[60vh] h-full md:h-full md:max-h-full bg-white shadow flex-grow-[0] w-full mr-8 mb-8">
+                <div className="px-4 h-full sm:p-6 flex flex-col md:flex-row md:pb-[200px]">
+                    <div className="rounded-lg overflow-y-scroll max-h-[60vh] h-full md:h-full md:max-h-full shadow flex-grow-[0] w-full mr-8 mb-8">
                         {/*spinner*/}
                         <LoadingSpinner isLoading={isLoading} />
                         {sql.length === 0 && !isLoading ? (
@@ -417,7 +423,7 @@ function App(props) {
                             </>
                         )}
                     </div>
-                    <div className="overflow-hidden rounded-lg bg-white shadow flex-grow-[2] h-[70vh] md:h-full w-full">
+                    <div className="overflow-hidden rounded-lg shadow flex-grow-[2] h-[70vh] md:h-full w-full">
                         <Map
                             ref={mapRef}
                             mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
