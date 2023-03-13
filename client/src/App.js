@@ -409,7 +409,7 @@ function App(props) {
                                 <p class="my-2 font-medium"> {title} </p>
                                 <pre
                                     align="left"
-                                    className="rounded-md bg-gray-100 dark:bg-gray-800 dark:text-white"
+                                    className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
                                 >
                                     <code className="text-sm text-gray-800 dark:text-white">
                                         <SyntaxHighlighter
