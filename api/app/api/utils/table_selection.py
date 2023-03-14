@@ -1,7 +1,7 @@
 import json
 from typing import List
 from .messages import get_assistant_message, extract_code_from_markdown
-from .table_details import table_details
+from .table_details import get_table_schemas
 
 
 MSG_WITH_DESCRIPTIONS = (
@@ -26,7 +26,7 @@ DEFAULT_MESSAGES = [
                 " Write your answer in markdown format."
                 "\n"
                 "The following are descriptions of available tables:\n"
-                + json.dumps(table_details, indent=4) 
+                + get_table_schemas()
             )
     },
     {
@@ -62,7 +62,7 @@ def get_relevant_tables(natural_language_query) -> List[str]:
     """
     content = MSG_WITH_DESCRIPTIONS.format(
         natural_language_query=natural_language_query,
-        table_details=json.dumps(table_details)
+        table_details=get_table_schemas()
         )
 
     messages = DEFAULT_MESSAGES.copy()

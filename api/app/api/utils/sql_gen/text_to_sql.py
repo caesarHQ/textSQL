@@ -8,7 +8,7 @@ from sqlalchemy import text
 
 from ..lat_lon import city_lat_lon, zip_lat_lon
 from ..messages import get_assistant_message, clean_message_content
-from ..table_details import table_details
+from ..table_details import get_table_schemas
 
 
 MSG_WITH_ERROR_TRY_AGAIN = (
@@ -16,14 +16,6 @@ MSG_WITH_ERROR_TRY_AGAIN = (
     "The SQL query you just generated resulted in the following error message:\n"
     "{error_message}"
 )
-
-def get_table_schemas(table_names: List[str]):
-    tables_list = []
-    for table in table_details['tables']:
-        if table['name'] in table_names:
-            tables_list.append(table)
-
-    return json.dumps(tables_list, indent=4)
 
 
 def make_default_messages(schemas: str):
