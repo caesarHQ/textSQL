@@ -6,8 +6,8 @@ import openai
 from app.config import engine
 from sqlalchemy import text
 
-from .lat_lon import city_lat_lon, zip_lat_lon
-from .messages import get_assistant_message, clean_message_content
+from ..lat_lon import city_lat_lon, zip_lat_lon
+from ..messages import get_assistant_message, clean_message_content
 
 MSG_WITH_ERROR_TRY_AGAIN = (
     "Try again. "
