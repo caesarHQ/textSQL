@@ -7,7 +7,7 @@ from app.config import engine
 from sqlalchemy import text
 
 from ..lat_lon import city_lat_lon, zip_lat_lon
-from ..messages import get_assistant_message, clean_message_content
+from ..messages import get_assistant_message, clean_message_content, extract_code_from_markdown
 from ..table_details import get_table_schemas
 
 
@@ -36,7 +36,8 @@ def make_default_messages(schemas: str):
                     " Always specify the table where you are using the column."
                     " If you include a 'city' column in the result table, include a 'state' column too."
                     " If you include a 'county' column in the result table, include a 'state' column too."
-                    " Make sure each value in the result table is not null.\n"
+                    " Make sure each value in the result table is not null."
+                    " Write your answer in markdown format.\n"
             )
         },
         {
@@ -45,7 +46,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "SELECT city, sum(violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) as total_crime\nFROM crime_by_city\nGROUP BY city\nORDER BY total_crime DESC\nLIMIT 5;"
+            "content": "```SELECT city, sum(violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) as total_crime\nFROM crime_by_city\nGROUP BY city\nORDER BY total_crime DESC\nLIMIT 5;```"
         },
         {
             "role": "user",
@@ -53,7 +54,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "SELECT zip_code, (population_75_to_84_years / total_population) * 100 AS percentage\nFROM demographic_data\nWHERE total_population > 0\nORDER BY percentage DESC\nLIMIT 1;"
+            "content": "```SELECT zip_code, (population_75_to_84_years / total_population) * 100 AS percentage\nFROM demographic_data\nWHERE total_population > 0\nORDER BY percentage DESC\nLIMIT 1;```"
         },
         {
             "role": "user",
@@ -61,7 +62,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "SELECT demographic_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN demographic_data ON crime_by_city.city = demographic_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY demographic_data.county\nORDER BY total_arson DESC\nLIMIT 5;"
+            "content": "```SELECT demographic_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN demographic_data ON crime_by_city.city = demographic_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY demographic_data.county\nORDER BY total_arson DESC\nLIMIT 5;```"
         },
         {
             "role": "user",
@@ -69,7 +70,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "SELECT demographic_data.city, demographic_data.state, SUM(female_population) AS city_female_population\nFROM demographic_data\nWHERE female_population IS NOT NULL\nGROUP BY demographic_data.city\nORDER BY female_population DESC\nLIMIT 5;"
+            "content": "```SELECT demographic_data.city, demographic_data.state, SUM(female_population) AS city_female_population\nFROM demographic_data\nWHERE female_population IS NOT NULL\nGROUP BY demographic_data.city\nORDER BY female_population DESC\nLIMIT 5;```"
         },
         {
             "role": "user",
@@ -77,7 +78,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "SELECT city, state, SUM(total_population) AS total_city_population\nFROM demographic_data\nWHERE state = 'WA'\nGROUP BY city, state\nORDER BY total_city_population DESC\nLIMIT 1;"
+            "content": "```SELECT city, state, SUM(total_population) AS total_city_population\nFROM demographic_data\nWHERE state = 'WA'\nGROUP BY city, state\nORDER BY total_city_population DESC\nLIMIT 1;```"
         },
         {
             "role": "user",
@@ -85,7 +86,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "SELECT zip_code, \n       (white_population / NULLIF(total_population, 0)) * 100 AS white_percentage,\n       (black_population / NULLIF(total_population, 0)) * 100 AS black_percentage,\n       (native_american_population / NULLIF(total_population, 0)) * 100 AS native_american_percentage,\n       (asian_population / NULLIF(total_population, 0)) * 100 AS asian_percentage,\n       (two_or_more_population / NULLIF(total_population, 0)) * 100 AS two_or_more_percentage,\n       (hispanic_population / NULLIF(total_population, 0)) * 100 AS hispanic_percentage\nFROM demographic_data\nWHERE city = 'San Francisco'\nORDER BY (white_population + black_population + native_american_population + asian_population + two_or_more_population + hispanic_population) DESC\nLIMIT 1;"
+            "content": "```SELECT zip_code, \n       (white_population / NULLIF(total_population, 0)) * 100 AS white_percentage,\n       (black_population / NULLIF(total_population, 0)) * 100 AS black_percentage,\n       (native_american_population / NULLIF(total_population, 0)) * 100 AS native_american_percentage,\n       (asian_population / NULLIF(total_population, 0)) * 100 AS asian_percentage,\n       (two_or_more_population / NULLIF(total_population, 0)) * 100 AS two_or_more_percentage,\n       (hispanic_population / NULLIF(total_population, 0)) * 100 AS hispanic_percentage\nFROM demographic_data\nWHERE city = 'San Francisco'\nORDER BY (white_population + black_population + native_american_population + asian_population + two_or_more_population + hispanic_population) DESC\nLIMIT 1;```"
         },
         {
             "role": "user",
@@ -93,7 +94,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "SELECT zip_code, SUM(masters_degree + professional_school_degree + doctorate_degree) AS total_highly_educated_population \nFROM demographic_data \nWHERE state = 'CA' \nGROUP BY zip_code \nORDER BY total_highly_educated_population DESC \nLIMIT 1"
+            "content": "```SELECT zip_code, SUM(masters_degree + professional_school_degree + doctorate_degree) AS total_highly_educated_population \nFROM demographic_data \nWHERE state = 'CA' \nGROUP BY zip_code \nORDER BY total_highly_educated_population DESC \nLIMIT 1```"
         }
     ]
 
@@ -124,7 +125,8 @@ def make_msg_with_schema_and_warnings():
             " Always specify the table where you are using the column."
             " If you include a 'city' column in the result table, include a 'state' column too."
             " If you include a 'county' column in the result table, include a 'state' columntoo."
-            " Make sure each value in the result table is not null.\n"
+            " Make sure each value in the result table is not null."
+            " Write your answer in markdown format.\n"
     )
 
 def is_read_only_query(sql_query: str):
@@ -263,7 +265,8 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3):
     # Try each completion in order
     attempts_contexts = []
     for assistant_message in assistant_messages:
-        sql_query = clean_message_content(assistant_message['message']['content'])
+        # sql_query = clean_message_content(assistant_message['message']['content'])
+        sql_query = extract_code_from_markdown(assistant_message['message']['content'])
 
         try:
             response = execute_sql(sql_query)
@@ -315,7 +318,8 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     for _ in range(k):
         try:
             assistant_message = get_assistant_message(messages)
-            sql_query = clean_message_content(assistant_message['message']['content'])
+            # sql_query = clean_message_content(assistant_message['message']['content'])
+            sql_query = extract_code_from_markdown(assistant_message['message']['content'])
 
             response = execute_sql(sql_query)
             # Generated SQL query did not produce exception. Return result
