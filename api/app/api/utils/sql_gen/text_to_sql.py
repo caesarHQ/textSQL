@@ -3,7 +3,6 @@ import json
 from typing import Dict, List
 
 import joblib
-import openai
 from app.config import engine
 from sqlalchemy import text
 
@@ -169,7 +168,6 @@ def execute_sql(sql_query: str):
         )
         with connection.begin():
             sql_text = text(sql_query)
-            # result = connection.execute(sql_text, {'param': 'value'})
             result = connection.execute(sql_text)
 
         column_names = list(result.keys())
@@ -192,10 +190,7 @@ def execute_sql(sql_query: str):
             zip_code_idx = None
 
         if zip_code_idx is not None:
-            # column_names.append("zip_code_lat")
-            # column_names.append("zip_code_lon")
             column_names.append("lat")
-            # column_names.append("lon")
             column_names.append("long")
             for row in rows:
                 zip_code = row[zip_code_idx]
@@ -217,10 +212,7 @@ def execute_sql(sql_query: str):
                 state_idx = None
 
             if city_idx is not None and state_idx is not None:
-                # column_names.append("city_lat")
-                # column_names.append("city_lon")
                 column_names.append("lat")
-                # column_names.append("lon")
                 column_names.append("long")
                 for row in rows:
                     city = row[city_idx]
@@ -247,11 +239,6 @@ def execute_sql(sql_query: str):
             'column_names': column_names,
             'results': results,
         }
-
-        # return {
-        #     'column_names': column_names,
-        #     'values': values,
-        # }
 
 
 def text_to_sql_parallel(natural_language_query, table_names, k=3):
