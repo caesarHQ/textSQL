@@ -7,7 +7,8 @@ export const VizSelector = (props) => {
 
     console.log("VIZ =>", chartClassName)
     return (
-      <span className="isolate inline-flex rounded-md shadow-sm">
+        <div className="absolute top-0 left-[40%]">
+      <span className="isolate inline-flex rounded-md shadow-sm ">
         <button
           type="button"
           className={mapClassName}
@@ -29,5 +30,6 @@ export const VizSelector = (props) => {
           Chart
         </button>
       </span>
+            </div>
     )
   }

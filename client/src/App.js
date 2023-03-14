@@ -465,12 +465,11 @@ function App(props) {
                             </>
                         )}
                     </div>
-                    <div className="overflow-hidden rounded-lg shadow flex-grow-[2] h-[70vh] md:h-full w-full">
-                     <VizSelector selected={visualization} setSelected = {setVisualization}/>
+                    <div className="overflow-hidden rounded-lg shadow flex-grow-[2] h-[70vh] md:h-full w-full relative">
                         { visualization == 'map' ? <Map
                             ref={mapRef}
                             mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
-                            style={{ width: '100%', height: '100%' }}
+                            style={{ width: '100%', height: '100%'}}
                             mapStyle="mapbox://styles/mapbox/dark-v11"
                             initialViewState={{
                                 longitude: -100,
@@ -508,6 +507,7 @@ function App(props) {
                                 <Layer {...citiesLayer} />
                             </Source>
                         </Map> : <> <DataPlot cols={tableInfo.columns} rows={tableInfo.rows}/> </>}
+                        <VizSelector selected={visualization} setSelected = {setVisualization} />
                     </div>
                 </div>
             </div>
