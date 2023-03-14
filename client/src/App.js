@@ -15,6 +15,7 @@ import ErrorMessage from './components/error'
 import * as Sentry from '@sentry/react'
 import toast, { Toaster } from 'react-hot-toast'
 import Disclaimer from './components/disclaimer'
+import { VizSelector } from './components/vizSelector'
 
 // Utils
 import {
@@ -147,7 +148,7 @@ function App(props) {
     const [cities, setCities] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [title, setTitle] = useState('')
-    const [showMap, setShowMap] = useState(false)
+    const [visualization, setVisualization] = useState('map')
 
     useEffect(() => {
         document.title = query || 'Census GPT'
@@ -263,7 +264,7 @@ function App(props) {
                         // Focus the map to relevant parts
                         // Fitbounds needs at least two geo coordinates.
                         // If less that 2 co-ordinates then use fly to.
-                        mapRef.current.flyTo({
+                        mapRef && mapRef.current.flyTo({
                             center: [
                                 responseCities[0].long,
                                 responseCities[0].lat,
@@ -276,7 +277,7 @@ function App(props) {
                                 responseCities.map((c) => [c.long, c.lat])
                             )
                         )
-                        mapRef.current.fitBounds(
+                        mapRef && mapRef.current.fitBounds(
                             [
                                 [minLng, minLat],
                                 [maxLng, maxLat],
@@ -291,7 +292,7 @@ function App(props) {
                     // reset zipcode rendering
                     setZipcodes([])
 
-                    setShowMap(true)
+                    setVisualization('map')
                 } else if (filteredColumns.indexOf('zip_code') >= 0) {
                     // Render zipcodes layer on the map
                     let responseZipcodes = getZipcodes(response.result)
@@ -307,7 +308,7 @@ function App(props) {
                     } else if (responseZipcodes.length < 2) {
                         // Fitbounds needs at least two geo coordinates.
                         // If less that 2 co-ordinates then use fly to.
-                        mapRef.current.flyTo({
+                        mapRef && mapRef.current.flyTo({
                             center: [
                                 responseZipcodes[0].long,
                                 responseZipcodes[0].lat,
@@ -320,7 +321,7 @@ function App(props) {
                                 responseZipcodes.map((z) => [z.long, z.lat])
                             )
                         )
-                        mapRef.current.fitBounds(
+                        mapRef && mapRef.current.fitBounds(
                             [
                                 [minLng, minLat],
                                 [maxLng, maxLat],
@@ -328,9 +329,12 @@ function App(props) {
                             { padding: '100', duration: 1000 }
                         )
                     }
-                    setShowMap(true)
+                    setVisualization('map')
                     setZipcodes(responseZipcodes)
                     setCities([]) // reset cities rendering
+                } else {
+                    // No zipcodes or cities to render. Default to chart
+                    setVisualization('chart')
                 }
             })
             .catch((err) => {
@@ -462,7 +466,8 @@ function App(props) {
                         )}
                     </div>
                     <div className="overflow-hidden rounded-lg shadow flex-grow-[2] h-[70vh] md:h-full w-full">
-                        { showMap ? <Map
+                     <VizSelector selected={visualization} setSelected = {setVisualization}/>
+                        { visualization == 'map' ? <Map
                             ref={mapRef}
                             mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
                             style={{ width: '100%', height: '100%' }}
