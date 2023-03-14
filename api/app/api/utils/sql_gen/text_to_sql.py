@@ -27,22 +27,6 @@ def generate_msg_with_schemas(table_names: List[str]):
 
     return json.dumps(tables_list, indent=4)
 
-    # table_name_to_msg = {
-    #     'crime_by_city': (
-    #         "Schema of table 'crime_by_city':\n"
-    #         "Table 'crime_by_city' has columns: city (TEXT), violent_crime (DOUBLE_PRECISION), murder_and_nonnegligent_manslaughter (DOUBLE_PRECISION), rape (DOUBLE_PRECISION), robbery (DOUBLE_PRECISION), aggravated_assault (DOUBLE_PRECISION), property_crime (DOUBLE_PRECISION), burglary (DOUBLE_PRECISION), larceny_theft (DOUBLE_PRECISION), motor_vehicle_theft (DOUBLE_PRECISION), arson (DOUBLE_PRECISION), state (TEXT)."
-    #     ),
-    #     'demographic_data': (
-    #         "Schema of table 'demographic_data':\n"
-    #         "Table 'demographic_data' has columns: total_population (DOUBLE_PRECISION), elderly_population (DOUBLE_PRECISION), male_population (DOUBLE_PRECISION), female_population (DOUBLE_PRECISION), white_population (DOUBLE_PRECISION), black_population (DOUBLE_PRECISION), native_american_population (DOUBLE_PRECISION), asian_population (DOUBLE_PRECISION), two_or_more_population (DOUBLE_PRECISION), hispanic_population (DOUBLE_PRECISION), adult_population (DOUBLE_PRECISION), citizen_adult_population (DOUBLE_PRECISION), average_household_size (DOUBLE_PRECISION), population_under_5_years (DOUBLE_PRECISION), population_5_to_9_years (DOUBLE_PRECISION), population_10_to_14_years (DOUBLE_PRECISION), population_15_to_19_years (DOUBLE_PRECISION), population_20_to_24_years (DOUBLE_PRECISION), population_25_to_34_years (DOUBLE_PRECISION), population_35_to_44_years (DOUBLE_PRECISION), population_45_to_54_years (DOUBLE_PRECISION), population_55_to_59_years (DOUBLE_PRECISION), population_60_to_64_years (DOUBLE_PRECISION), population_65_to_74_years (DOUBLE_PRECISION), population_75_to_84_years (DOUBLE_PRECISION), population_85_years_and_over (DOUBLE_PRECISION), per_capita_income (DOUBLE_PRECISION), median_income_for_workers (DOUBLE_PRECISION), zip_code (TEXT), city (TEXT), state (TEXT), county (TEXT), lat (DOUBLE_PRECISION), lon (DOUBLE_PRECISION)"
-    #         ", no_schooling_completed (DOUBLE_PRECISION), nursery_school (DOUBLE_PRECISION), kindergarten (DOUBLE_PRECISION), grade_1 (DOUBLE_PRECISION), grade_2 (DOUBLE_PRECISION), grade_3 (DOUBLE_PRECISION), grade_4 (DOUBLE_PRECISION), grade_5 (DOUBLE_PRECISION), grade_6 (DOUBLE_PRECISION), grade_7 (DOUBLE_PRECISION), grade_8 (DOUBLE_PRECISION), grade_9 (DOUBLE_PRECISION), grade_10 (DOUBLE_PRECISION), grade_11 (DOUBLE_PRECISION), grade_12_no_diploma (DOUBLE_PRECISION),"
-    #         ", regular_high_school_diploma (DOUBLE_PRECISION), ged_or_alternative_credential (DOUBLE_PRECISION), some_college_less_than_1_year (DOUBLE_PRECISION), some_college_1_or_more_years_no_degree (DOUBLE_PRECISION), associates_degree (DOUBLE_PRECISION), bachelors_degree (DOUBLE_PRECISION)"
-    #         ", masters_degree (DOUBLE_PRECISION), professional_school_degree (DOUBLE_PRECISION), doctorate_degree (DOUBLE_PRECISION)"
-    #         "."
-    #     )
-    # }
-
-    return "\n\n".join(map(lambda table_name: table_name_to_msg[table_name], table_names))
 
 def make_default_messages(table_names: List[str]):
     return [
@@ -53,7 +37,7 @@ def make_default_messages(table_names: List[str]):
                     "\n"
                     "The following are tables you can query:\n"
                     "---------------------\n"
-                    + generate_msg_with_schemas(table_names) +
+                    "{schemas}"
                     "\n\n"
                     "---------------------\n"
                     "Use state abbreviations for states."
@@ -116,24 +100,24 @@ def make_default_messages(table_names: List[str]):
         },
     ]
 
-def make_rephrase_msg_with_schema_and_warnings(table_names: List[str]):
+def make_rephrase_msg_with_schema_and_warnings():
     return (
             "Let's start by rephrasing the query to be more analytical. Use the schema context to rephrase the user question in a way that leads to optimal query results: {natural_language_query}"
             "The following are schemas of tables you can query:\n"
             "---------------------\n"
-            + generate_msg_with_schemas(table_names) +
+            "{schemas}"
             "\n"
             "---------------------\n"
             "Do not include any of the table names in the query."
             " Ask the natural language query the way a data analyst, with knowledge of these tables, would."
     )
 
-def make_msg_with_schema_and_warnings(table_names: List[str]):
+def make_msg_with_schema_and_warnings():
     return (
             "Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}"
             "The following are schemas of tables you can query:\n"
             "---------------------\n"
-            + generate_msg_with_schemas(table_names) +
+            "{schemas}"
             "\n"
             "---------------------\n"
             "Use state abbreviations for states."
@@ -274,7 +258,10 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3):
     """
     Generates K SQL queries in parallel and returns the first one that does not produce an exception.
     """
-    content = make_msg_with_schema_and_warnings(table_names).format(natural_language_query=natural_language_query)
+    content = make_msg_with_schema_and_warnings().format(
+        natural_language_query=natural_language_query,
+        schemas=generate_msg_with_schemas(table_names),
+        )
     messages = make_default_messages(table_names).copy()
     messages.append({
         "role": "user",
@@ -320,11 +307,16 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
         # ask the assistant to rephrase before generating the query
         rephrase = [{
             "role": "user",
-            "content": make_rephrase_msg_with_schema_and_warnings(table_names).format(
-                natural_language_query=natural_language_query)
+            "content": make_rephrase_msg_with_schema_and_warnings().format(
+                natural_language_query=natural_language_query,
+                schemas=generate_msg_with_schemas(table_names)
+                )
         }]
         assistant_message = get_assistant_message(rephrase)
-        content = make_msg_with_schema_and_warnings(table_names).format(natural_language_query=assistant_message['message']['content'])
+        content = make_msg_with_schema_and_warnings().format(
+            natural_language_query=assistant_message['message']['content'],
+            schemas=generate_msg_with_schemas(table_names)
+            )
         messages = make_default_messages(table_names).copy()
         messages.append({
             "role": "user",
