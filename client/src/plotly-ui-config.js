@@ -41,7 +41,7 @@ const isGeoColumn = (columnName) => {
 
         data = [
             {
-                x: isGeoColumn(cols[0]) ? cols.slice(1).toString() : cols.toString(),
+                x: isGeoColumn(cols[0]) ? '\b' + cols.slice(1) : '\b' + cols,
                 y: isGeoColumn(cols[0]) ? rows[0].slice(1) : rows[0],
                 type: 'bar',
                 marker: { color: '#006AF9' }
