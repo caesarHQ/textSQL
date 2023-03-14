@@ -41,17 +41,15 @@ We're splitting the roadmap for this project broadly into three categories
 
 #### Visualizations: 
 
-Currently, textSQL only supports visualizing zipcodes and cities on the map using [Mapbox](https://mapbox.com). But data can be visualized in many other interesting ways like Bar Charts, Heatmaps and Pie charts. Not every kind of data can be (or should be) visualized on a map. For example, a query like _"What percent of total crime in San Francisco is burglary vs in New York City"_ is perfect for visualizing as a stacked bar chart, but really hard to visualize on map.
+Currently, textSQL only supports visualizing zipcodes and cities on an interactive map and bar chart using [Mapbox](https://www.mapbox.com/) + [Plotly](https://plotly.com/). But data can be visualized in other interesting ways such as Heatmaps and Pie charts. Not every kind of data can be (or should be) visualized on a map. For example, a query like _"What percent of total crime in San Francisco is burglary vs in New York City"_ is perfect for visualizing as a stacked bar chart, but really hard to visualize on map.
+
+Bar Chart:
+
+<img width="500" alt="Top 5 richest cities in Washington" src="https://user-images.githubusercontent.com/102765426/224921440-48937efa-ccc2-4718-9f55-09008465f1ae.png">
 
 [coming soon] Heatmap: 
 
-<img width="396" alt="Screenshot 2023-03-10 at 12 58 33 AM" src="https://user-images.githubusercontent.com/10172332/224271087-58cdcfd9-8940-4543-a3a5-1119477bd209.png">
-
-[coming soon] Bar Chart:
-
-<img width="400" alt="Screenshot 2023-03-10 at 1 00 03 AM" src="https://user-images.githubusercontent.com/10172332/224271492-a8f71f0b-4ee3-4531-9117-900b4b758d73.png">
-
-
+<img width="480" alt="Screenshot 2023-03-10 at 12 58 33 AM" src="https://user-images.githubusercontent.com/10172332/224271087-58cdcfd9-8940-4543-a3a5-1119477bd209.png">
 
 #### Datasets: 
 
