@@ -6,7 +6,7 @@ def get_response(message: str) -> str:
 
     if p_message.startswith('!query'):
         natural_language_query = p_message.split('!query ')[-1]
-        url = "https://text-sql-be.onrender.com/api/text_to_sql"
+        url = "https://dev.text-sql-be.onrender.com/api/text_to_sql"
 
         payload = {"natural_language_query": natural_language_query}
         headers = {"Content-Type": "application/json"}
