@@ -24,6 +24,9 @@ DEFAULT_MESSAGES = [
                 " You respond in JSON format with your answer in a field named \"tables\" which is a list of strings."
                 " Respond with an empty list if you cannot identify any relevant tables."
                 " Write your answer in markdown format."
+                "\n"
+                "The following are descriptions of available tables:\n"
+                + json.dumps(table_details, indent=4) 
             )
     },
     {
