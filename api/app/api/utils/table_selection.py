@@ -12,7 +12,7 @@ MSG_WITH_DESCRIPTIONS = (
     "\n"
     "The following are descriptions of available tables:\n"
     "---------------------\n"
-    + json.dumps(table_details, indent=4) +
+    "{table_details}"
     "---------------------\n"
 )
 
@@ -75,7 +75,10 @@ def get_relevant_tables(natural_language_query) -> List[str]:
     """
     Identify relevant tables for answering a natural language query
     """
-    content = MSG_WITH_DESCRIPTIONS.format(natural_language_query=natural_language_query)
+    content = MSG_WITH_DESCRIPTIONS.format(
+        natural_language_query=natural_language_query,
+        table_details=json.dumps(table_details)
+        )
 
     messages = DEFAULT_MESSAGES.copy()
     messages.append({
