@@ -17,8 +17,7 @@ MSG_WITH_ERROR_TRY_AGAIN = (
     "{error_message}"
 )
 
-def generate_msg_with_schemas(table_names: List[str]):
-
+def get_table_schemas(table_names: List[str]):
     tables_list = []
     for table in table_details['tables']:
         if table['name'] in table_names:
@@ -27,7 +26,7 @@ def generate_msg_with_schemas(table_names: List[str]):
     return json.dumps(tables_list, indent=4)
 
 
-def make_default_messages(table_names: List[str]):
+def make_default_messages(schemas: str):
     return [
         {
             "role": "system",
@@ -36,8 +35,7 @@ def make_default_messages(table_names: List[str]):
                     "\n"
                     "The following are tables you can query:\n"
                     "---------------------\n"
-                    "{schemas}"
-                    "\n\n"
+                    + schemas +
                     "---------------------\n"
                     "Use state abbreviations for states."
                     " Table 'crime_by_city' does not have columns 'zip_code' or 'county'."
@@ -253,11 +251,12 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3):
     """
     Generates K SQL queries in parallel and returns the first one that does not produce an exception.
     """
+    schemas = get_table_schemas(table_names)
     content = make_msg_with_schema_and_warnings().format(
         natural_language_query=natural_language_query,
-        schemas=generate_msg_with_schemas(table_names),
+        schemas=schemas,
         )
-    messages = make_default_messages(table_names).copy()
+    messages = make_default_messages(schemas)
     messages.append({
         "role": "user",
         "content": content
@@ -300,19 +299,20 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     """
     if not messages:
         # ask the assistant to rephrase before generating the query
+        schemas = get_table_schemas(table_names)
         rephrase = [{
             "role": "user",
             "content": make_rephrase_msg_with_schema_and_warnings().format(
                 natural_language_query=natural_language_query,
-                schemas=generate_msg_with_schemas(table_names)
+                schemas=schemas
                 )
         }]
         assistant_message = get_assistant_message(rephrase)
         content = make_msg_with_schema_and_warnings().format(
             natural_language_query=assistant_message['message']['content'],
-            schemas=generate_msg_with_schemas(table_names)
+            schemas=schemas
             )
-        messages = make_default_messages(table_names).copy()
+        messages = make_default_messages(schemas)
         messages.append({
             "role": "user",
             "content": content
