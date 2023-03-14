@@ -53,7 +53,7 @@ Bar Chart:
 
 #### Datasets: 
 
-A lot of the users of this project have asked for historical census data (trends), weather, health, transportation and real-estate data. Feel free to create a pull request or drop a link to your dataset in this [Discord](https://discord.gg/JZtxhZQQus). 
+A lot of the users of this project have asked for historical census data (trends), weather, health, transportation and real-estate data. Feel free to create a pull request, drop a link to your dataset in our [Discord](https://discord.gg/JZtxhZQQus), or contribute data via our [dedicated submission form](https://airtable.com/shrDKRRGyRCihWEZd).
 
 More data → Better CensusGPT
 
