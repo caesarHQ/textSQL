@@ -79,7 +79,6 @@ def get_relevant_tables(natural_language_query) -> List[str]:
     """
     Identify relevant tables for answering a natural language query
     """
-    natural_language_query = "Which city has the guys with the biggest dicks?"
 
     content = MSG_WITH_DESCRIPTIONS.format(natural_language_query=natural_language_query)
 
