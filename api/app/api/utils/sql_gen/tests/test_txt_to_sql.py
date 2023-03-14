@@ -9,7 +9,7 @@ Res = Dict[str, Union[List[OrderedDict[str, Any]], List[str]]]
 
 inputs: List[Tuple[str, Callable[[str, Res], str], int]] = [
     (
-        "What are the three highest income zipcodes in San Jose",
+        "What are the three highest income zip codes in San Jose",
         [lambda result: any(sub_result.get('zip_code', None) == '95113' for sub_result in result),lambda result: all(sub_result.get('zip_code', None) != '94105' for sub_result in result)],
     ),
     (

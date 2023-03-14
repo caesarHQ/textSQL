@@ -91,12 +91,20 @@ def make_default_messages(table_names: List[str]):
         },
         {
             "role": "user",
-            "content": "Which area in San Francisco has the highest racial diversity and what is the percentage population of each race in that area?"
+            "content": "Which zip code in San Francisco has the highest racial diversity and what is the percentage population of each race in that zip code?"
         },
         {
             "role": "assistant",
             "content": "SELECT zip_code, \n       (white_population / NULLIF(total_population, 0)) * 100 AS white_percentage,\n       (black_population / NULLIF(total_population, 0)) * 100 AS black_percentage,\n       (native_american_population / NULLIF(total_population, 0)) * 100 AS native_american_percentage,\n       (asian_population / NULLIF(total_population, 0)) * 100 AS asian_percentage,\n       (two_or_more_population / NULLIF(total_population, 0)) * 100 AS two_or_more_percentage,\n       (hispanic_population / NULLIF(total_population, 0)) * 100 AS hispanic_percentage\nFROM demographic_data\nWHERE city = 'San Francisco'\nORDER BY (white_population + black_population + native_american_population + asian_population + two_or_more_population + hispanic_population) DESC\nLIMIT 1;"
         },
+        {
+            "role": "user",
+            "content": "Zip code in California with the most advanced degree holders"
+        },
+        {
+            "role": "assistant",
+            "content": "SELECT zip_code, SUM(masters_degree + professional_school_degree + doctorate_degree) AS total_highly_educated_population \nFROM demographic_data \nWHERE state = 'CA' \nGROUP BY zip_code \nORDER BY total_highly_educated_population DESC \nLIMIT 1"
+        }
     ]
 
 def make_rephrase_msg_with_schema_and_warnings():
