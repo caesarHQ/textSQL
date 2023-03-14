@@ -22,7 +22,7 @@ const isGeoColumn = (columnName) => {
 
         data = [
             {
-                x: rows.map(x => x[0].toString()),  // convert to string. otherwise plotly treats 941002 as 94.1k 
+                x: rows.map(x => '\b' + x[0]),  // convert to string. otherwise plotly treats 941002 as 94.1k 
                 y: rows.map(x => x[1]),
                 type: 'bar',
                 marker: { color: '#006AF9' }
@@ -30,7 +30,10 @@ const isGeoColumn = (columnName) => {
         ];
 
         layout = {
-            xaxis: {title: cols[0]},
+            xaxis: {
+                title: cols[0],
+                tickmode: 'auto'
+            },
             yaxis: {title: cols[1]},
         }
 
@@ -41,7 +44,7 @@ const isGeoColumn = (columnName) => {
 
         data = [
             {
-                x: isGeoColumn(cols[0]) ? cols.slice(1) : cols, 
+                x: isGeoColumn(cols[0]) ? cols.slice(1).toString() : cols.toString(),
                 y: isGeoColumn(cols[0]) ? rows[0].slice(1) : rows[0],
                 type: 'bar',
                 marker: { color: '#006AF9' }
@@ -61,7 +64,7 @@ const isGeoColumn = (columnName) => {
             }
 
             data.push({
-                x: rows.map(x => x[0].toString()),  // convert to string. otherwise plotly treats 941002 as 94.1k 
+                x: rows.map(x => '\b' + x[0]),  // convert to string. otherwise plotly treats 941002 as 94.1k 
                 y: rows.map(x => x[i]),
                 name: cols[i],
                 type: 'bar'
