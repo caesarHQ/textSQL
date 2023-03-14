@@ -378,21 +378,21 @@ function App(props) {
     }
 
     const [copied, setCopied] = useState(false)
-    const CopyToClipboard = (text) => {
+    const CopySqlToClipboard = (sql) => {
         const handleCopy = async () => {
             if ('clipboard' in navigator) {
                 setCopied(true)
                 setTimeout(() => setCopied(false), 1000)
-                return await navigator.clipboard.writeText(text.text.toString())
+                return await navigator.clipboard.writeText(sql.text)
             } else{
                 setCopied(true)
                 setTimeout(() => setCopied(false), 1000)
-                return document.execCommand('copy', true, text.text.toString())
+                return document.execCommand('copy', true, sql.text)
             }
         }
         
         return (
-            <button onClick={handleCopy} className='text-md absolute rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 bg-white dark:bg-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-700'>
+            <button onClick={handleCopy} className='absolute text-md rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 bg-white dark:bg-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-700'>
                 {copied ? <BsClipboard2Check /> : <BsClipboard2 />}
             </button>
         )
@@ -462,8 +462,8 @@ function App(props) {
                                     className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
                                 >
                                     <code className="text-sm text-gray-800 dark:text-white">
-                                        <div className='flex h-0 justify-end p-1'>
-                                            <CopyToClipboard text={sql} />
+                                        <div className='flex justify-end p-1 relative'>
+                                            <CopySqlToClipboard text={sql} />
                                         </div>
                                         <SyntaxHighlighter
                                             language="sql"
