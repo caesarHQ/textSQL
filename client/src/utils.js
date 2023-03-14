@@ -43,11 +43,11 @@ export const getCities = (result) => {
  * @returns {string} – The sanitized query
  */
 export const cleanupQuery = (q) => {
-    let cleanedQuery = q.replaceAll('area', 'zipcode')
-    cleanedQuery = cleanedQuery.replaceAll('areas', 'zipcodes')
-    cleanedQuery = cleanedQuery.replaceAll('neighborhood', 'zipcode')
-    cleanedQuery = cleanedQuery.replace('neighborhoods', 'zipcodes')
-    cleanedQuery = cleanedQuery.replace('part of', 'zipcode of')
-    cleanedQuery = cleanedQuery.replace('parts of', 'zipcodes of')
+    let cleanedQuery = q.replaceAll(/\barea\b/gi, 'zipcode')
+    cleanedQuery = cleanedQuery.replaceAll(/\bareas\b/gi, 'zipcodes')
+    cleanedQuery = cleanedQuery.replaceAll(/\bneighborhood\b/gi, 'zipcode')
+    cleanedQuery = cleanedQuery.replaceAll(/\bneighborhoods\b/gi, 'zipcodes')
+    cleanedQuery = cleanedQuery.replaceAll(/\bpart of\b/gi, 'zipcode of')
+    cleanedQuery = cleanedQuery.replaceAll(/\bparts of\b/gi, 'zipcodes of')
     return cleanedQuery
-}
+  }
