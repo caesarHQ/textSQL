@@ -30,10 +30,7 @@ const isGeoColumn = (columnName) => {
         ];
 
         layout = {
-            xaxis: {
-                title: cols[0],
-                tickmode: 'auto'
-            },
+            xaxis: {title: cols[0]},
             yaxis: {title: cols[1]},
         }
 
