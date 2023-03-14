@@ -52,6 +52,7 @@ import { useSearchParams } from 'react-router-dom'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { AiOutlineSearch } from 'react-icons/ai'
+import { BsClipboard2, BsClipboard2Check } from 'react-icons/bs'
 
 // Add system dark mode
 localStorage.theme === 'dark' ||
@@ -123,6 +124,7 @@ const SearchButton = (props) => {
         </button>
     )
 }
+
 const DataPlot = (props) => {
     let config = getPlotConfig(props.rows, props.cols)
 
@@ -375,6 +377,27 @@ function App(props) {
         fetchBackend(query)
     }
 
+    const [copied, setCopied] = useState(false)
+    const CopySqlToClipboard = (sql) => {
+        const handleCopy = async () => {
+            if ('clipboard' in navigator) {
+                setCopied(true)
+                setTimeout(() => setCopied(false), 1000)
+                return await navigator.clipboard.writeText(sql.text)
+            } else{
+                setCopied(true)
+                setTimeout(() => setCopied(false), 1000)
+                return document.execCommand('copy', true, sql.text)
+            }
+        }
+        
+        return (
+            <button onClick={handleCopy} className='absolute text-md rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 bg-white dark:bg-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-700'>
+                {copied ? <BsClipboard2Check /> : <BsClipboard2 />}
+            </button>
+        )
+    }
+
     return (
         <div className="App bg-white dark:bg-dark-900 dark:text-white">
             <link
@@ -433,12 +456,15 @@ function App(props) {
                             <> </>
                         ) : (
                             <>
-                                <p class="my-2 font-medium"> {title} </p>
+                                <p class="font-medium"> {title} </p>
                                 <pre
                                     align="left"
                                     className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
                                 >
                                     <code className="text-sm text-gray-800 dark:text-white">
+                                        <div className='flex justify-end p-1 relative'>
+                                            <CopySqlToClipboard text={sql} />
+                                        </div>
                                         <SyntaxHighlighter
                                             language="sql"
                                             style={hybrid}
