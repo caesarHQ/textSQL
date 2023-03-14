@@ -264,7 +264,7 @@ function App(props) {
                         // Focus the map to relevant parts
                         // Fitbounds needs at least two geo coordinates.
                         // If less that 2 co-ordinates then use fly to.
-                        mapRef && mapRef.current.flyTo({
+                        mapRef && mapRef.current && mapRef.current.flyTo({
                             center: [
                                 responseCities[0].long,
                                 responseCities[0].lat,
@@ -277,7 +277,7 @@ function App(props) {
                                 responseCities.map((c) => [c.long, c.lat])
                             )
                         )
-                        mapRef && mapRef.current.fitBounds(
+                        mapRef && mapRef.current && mapRef.current.fitBounds(
                             [
                                 [minLng, minLat],
                                 [maxLng, maxLat],
@@ -308,7 +308,7 @@ function App(props) {
                     } else if (responseZipcodes.length < 2) {
                         // Fitbounds needs at least two geo coordinates.
                         // If less that 2 co-ordinates then use fly to.
-                        mapRef && mapRef.current.flyTo({
+                        mapRef && mapRef.current && mapRef.current.flyTo({
                             center: [
                                 responseZipcodes[0].long,
                                 responseZipcodes[0].lat,
@@ -321,7 +321,7 @@ function App(props) {
                                 responseZipcodes.map((z) => [z.long, z.lat])
                             )
                         )
-                        mapRef && mapRef.current.fitBounds(
+                        mapRef && mapRef.current && mapRef.current.fitBounds(
                             [
                                 [minLng, minLat],
                                 [maxLng, maxLat],
