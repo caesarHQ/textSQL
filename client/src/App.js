@@ -52,12 +52,12 @@ import { useSearchParams } from 'react-router-dom'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { AiOutlineSearch } from 'react-icons/ai'
-import { BsClipboard2, BsClipboard2Check } from 'react-icons/bs'
+import { BsClipboard2, BsClipboard2Check, BsQuestionCircle } from 'react-icons/bs'
 
 // Add system dark mode
 localStorage.theme === 'dark' ||
-(!('theme' in localStorage) &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches)
+    (!('theme' in localStorage) &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)
     ? document.documentElement.classList.add('dark')
     : document.documentElement.classList.remove('dark')
 
@@ -104,7 +104,7 @@ const SearchInput = (props) => {
             </div>
             <button
                 type="button"
-                className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none hover:bg-gray-50 hover:dark:bg-dark-900 focus:outline-dark-300 outline-1 outline-dark-300"
+                className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none hover:bg-gray-50 hover:dark:bg-dark-900"
                 onClick={onClear}
             >
                 <FaTimes />
@@ -117,7 +117,7 @@ const SearchButton = (props) => {
     return (
         <button
             type="submit"
-            className="text-white bg-blue-600 focus:ring-4 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 ml-3"
+            className="text-white bg-blue-600 focus:ring-2 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 ml-3"
         >
             <span className="hidden md:block">Search</span>
             <AiOutlineSearch className="md:hidden" />
@@ -129,12 +129,12 @@ const DataPlot = (props) => {
     let config = getPlotConfig(props.rows, props.cols)
 
     return (
-      <Plot
-        data={config.data}
-        layout={config.layout}
-        style={{ width: '100%', height: '100%' }}
-        config = {{responsive: true, displayModeBar: false}}
-      />
+        <Plot
+            data={config.data}
+            layout={{ ...config.layout, paper_bgcolor: 'transparent', plot_bgcolor: 'transparent' }}
+            style={{ width: '100%', height: '100%' }}
+            config={{ responsive: true, displayModeBar: false }}
+        />
     );
 };
 
@@ -249,7 +249,6 @@ function App(props) {
                 })
                 setTableInfo({ rows, columns: filteredColumns })
 
-               
                 // render cities layer on the map
                 if (
                     filteredColumns.indexOf('zip_code') === -1 &&
@@ -384,13 +383,13 @@ function App(props) {
                 setCopied(true)
                 setTimeout(() => setCopied(false), 1000)
                 return await navigator.clipboard.writeText(sql.text)
-            } else{
+            } else {
                 setCopied(true)
                 setTimeout(() => setCopied(false), 1000)
                 return document.execCommand('copy', true, sql.text)
             }
         }
-        
+
         return (
             <button onClick={handleCopy} className='absolute text-md rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 bg-white dark:bg-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-700'>
                 {copied ? <BsClipboard2Check /> : <BsClipboard2 />}
@@ -398,71 +397,87 @@ function App(props) {
         )
     }
 
+    const [mobileHelpIsOpen, setMobileHelpIsOpen] = useState(true)
+    const [mobileTableIsOpen, setMobileTableIsOpen] = useState(false)
+    const [mobileSqlIsOpen, setMobileSqlIsOpen] = useState(false)
+    const mobileHelpRef = useRef();
+    const mobileTableRef = useRef();
+    const mobileSqlRef = useRef();
+
+    useEffect(() => {
+        if (!isLoading) {
+            setMobileHelpIsOpen(false)
+        }
+    }, [isLoading])
+
     return (
-        <div className="App bg-white dark:bg-dark-900 dark:text-white">
+        <div className="App bg-white dark:bg-dark-900 dark:text-white flex flex-col h-screen">
             <link
                 href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
                 rel="stylesheet"
             />
-            <div className="overflow-hidden rounded-lg shadow md:h-screen">
-                <div className="px-4 py-5 sm:px-6">
-                    <h1
-                        className="text-4xl font-bold mb-2"
-                        onClick={() => {
-                            window.location.assign('/')
-                            handleClearSearch()
-                        }}
-                        style={{ cursor: 'pointer' }}
-                    >
-                        Census GPT
-                    </h1>
-                    <div className="inline-flex gap-x-1.5 align-middle justify-center mb-3">
-                        <ContributeButton />
-                        <GithubButton />
-                        <DiscordButton />
-                        <DarkModeButton />
-                    </div>
-                    <Toaster />
-                    <div>
-                        <form
-                            autoComplete={'off'}
-                            className="mt-1 flex justify-center"
-                            onSubmit={(event) => {
-                                event.preventDefault()
-                                handleSearchClick(event)
-                            }}
-                        >
-                            <SearchInput
-                                value={query}
-                                onSearchChange={handleSearchChange}
-                                onClear={handleClearSearch}
-                            />
-                            <SearchButton />
-                        </form>
-                        <Disclaimer />
-                    </div>
+
+            <div className="absolute w-full sm:relative sm:flex flex-col p-2 sm:p-6 space-y-1.5 bg-gradient-to-b from-black to-transparent bg/10 backdrop-blur-sm pb-2.5 sm:from-white sm:dark:from-transparent z-50">
+                <h1
+                    className="text-4xl font-bold text-white sm:text-black dark:text-white"
+                    onClick={() => {
+                        window.location.assign('/')
+                        handleClearSearch()
+                    }}
+                    style={{ cursor: 'pointer' }}
+                >
+                    Census GPT
+                </h1>
+                <div className="inline-flex gap-x-1.5 align-middle justify-center">
+                    <ContributeButton />
+                    <GithubButton />
+                    <DiscordButton />
+                    <DarkModeButton />
                 </div>
-                <div className="px-4 h-full sm:p-6 flex flex-col md:flex-row md:pb-[200px]">
-                    <div className="rounded-lg overflow-y-auto max-h-[60vh] h-full md:h-full md:max-h-full shadow flex-grow-[0] w-full mr-8 mb-8">
-                        {/*spinner*/}
-                        <LoadingSpinner isLoading={isLoading} />
-                        {sql.length === 0 && !isLoading ? (
-                            <Examples
-                                postHogInstance={posthog}
-                                setQuery={setQuery}
-                                handleClick={fetchBackend}
-                            />
-                        ) : isLoading ? (
-                            <> </>
-                        ) : (
-                            <>
+                <Toaster />
+                <div className='hidden sm:block sm:px-6 sm:pb-2'>
+                    <form
+                        autoComplete={'off'}
+                        className="flex justify-center"
+                        onSubmit={(event) => {
+                            event.preventDefault()
+                            handleSearchClick(event)
+                        }}
+                    >
+                        <SearchInput
+                            value={query}
+                            onSearchChange={handleSearchChange}
+                            onClear={handleClearSearch}
+                        />
+                        <SearchButton />
+                    </form>
+                </div>
+                <Disclaimer />
+            </div>
+
+
+            <div className="flex flex-col lg:flex-row h-full w-full gap-6 sm:p-6">
+                <div className="hidden sm:flex sm:flex-col h-full w-full max-h-[23rem] lg:max-h-full overflow-y-auto">
+                    {/*spinner*/}
+                    <LoadingSpinner isLoading={isLoading} />
+                    {sql.length === 0 && !isLoading ? (
+                        <Examples
+                            postHogInstance={posthog}
+                            setQuery={setQuery}
+                            handleClick={fetchBackend}
+                        />
+                    ) : isLoading ? (
+                        <> </>
+                    ) : (
+                        <div className='flex flex-col space-y-4'>
+                            <div>
                                 <p class="font-medium"> {title} </p>
                                 <pre
                                     align="left"
                                     className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
                                 >
                                     <code className="text-sm text-gray-800 dark:text-white">
-                                        <div className='flex justify-end p-1 relative'>
+                                        <div className='flex justify-end p-1'>
                                             <CopySqlToClipboard text={sql} />
                                         </div>
                                         <SyntaxHighlighter
@@ -479,64 +494,153 @@ function App(props) {
                                         </SyntaxHighlighter>
                                     </code>
                                 </pre>
-                                {/*{statusCode === 500 ? (*/}
-                                {/*    <ErrorMessage errorMessage={errorMessage} />*/}
-                                {/*) : (*/}
-                                {/*    <></>*/}
-                                {/*)}*/}
-                                <Table
-                                    columns={tableInfo.columns}
-                                    values={tableInfo.rows}
-                                />
-                            </>
-                        )}
+                            </div>
+
+                            <Table
+                                columns={tableInfo.columns}
+                                values={tableInfo.rows}
+                            />
+                        </div>
+                    )}
+                </div>
+
+                <div className='flex flex-grow h-full w-full relative rounded-lg shadow overflow-hidden'>
+                    <div className='absolute top-24 sm:top-0 right-0 z-10 p-1'>
+                        <VizSelector
+                            selected={visualization} setSelected={setVisualization}
+                            tableRef={mobileTableRef} setTableIsOpen={setMobileTableIsOpen}
+                            sqlRef={mobileSqlRef} setSqlIsOpen={setMobileSqlIsOpen}
+                            mobileButtonsCanOpen={sql.length}
+                        />
                     </div>
-                    <div className="overflow-hidden rounded-lg shadow flex-grow-[2] h-[70vh] md:h-full w-full relative">
-                        { visualization == 'map' ? <Map
-                            ref={mapRef}
-                            mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
-                            style={{ width: '100%', height: '100%'}}
-                            mapStyle="mapbox://styles/mapbox/dark-v11"
-                            initialViewState={{
-                                longitude: -100,
-                                latitude: 40,
-                                zoom: 3.5,
-                            }}
-                        >
-                            <Source
-                                id="zips-kml"
-                                type="vector"
-                                url="mapbox://darsh99137.4nf1q4ec"
-                            >
-                                <Layer
-                                    {...zipcodeLayerLow(zipcodesFormatted)}
-                                />
-                            </Source>
-                            <Source
-                                id="zip-zoomed-out"
-                                type="geojson"
-                                data={{
-                                    type: 'FeatureCollection',
-                                    features: zipcodeFeatures(zipcodes),
+                    <div className="overflow-hidden sm:rounded-lg shadow flex h-full w-full relative">
+                        {visualization == 'map' ?
+                            <Map
+                                ref={mapRef}
+                                mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
+                                style={{ width: '100%', height: '100%' }}
+                                mapStyle="mapbox://styles/mapbox/dark-v11"
+                                initialViewState={{
+                                    longitude: -100,
+                                    latitude: 40,
+                                    zoom: 3.5,
                                 }}
                             >
-                                <Layer {...zipcodeLayerHigh} />
-                            </Source>
-                            <Source
-                                id="cities"
-                                type="geojson"
-                                data={{
-                                    type: 'FeatureCollection',
-                                    features: citiesFeatures(cities),
-                                }}
-                            >
-                                <Layer {...citiesLayer} />
-                            </Source>
-                        </Map> : <> <DataPlot cols={tableInfo.columns} rows={tableInfo.rows}/> </>}
-                        <VizSelector selected={visualization} setSelected = {setVisualization} />
+                                <Source
+                                    id="zips-kml"
+                                    type="vector"
+                                    url="mapbox://darsh99137.4nf1q4ec"
+                                >
+                                    <Layer
+                                        {...zipcodeLayerLow(zipcodesFormatted)}
+                                    />
+                                </Source>
+                                <Source
+                                    id="zip-zoomed-out"
+                                    type="geojson"
+                                    data={{
+                                        type: 'FeatureCollection',
+                                        features: zipcodeFeatures(zipcodes),
+                                    }}
+                                >
+                                    <Layer {...zipcodeLayerHigh} />
+                                </Source>
+                                <Source
+                                    id="cities"
+                                    type="geojson"
+                                    data={{
+                                        type: 'FeatureCollection',
+                                        features: citiesFeatures(cities),
+                                    }}
+                                >
+                                    <Layer {...citiesLayer} />
+                                </Source>
+                            </Map> :
+                            // following <div> helps plot better scale bar widths for responsiveness
+                            <div className='overflow-x-auto flex w-full overflow-hidden pb-32 sm:pb-0'>
+                                <DataPlot cols={tableInfo.columns} rows={tableInfo.rows} />
+                            </div>
+                        }
                     </div>
                 </div>
+
             </div>
+
+            {/* Mobile Search */}
+            <div className='absolute bottom-24 z-50 flex w-full justify-center sm:hidden'>
+                <div className='rounded-xl bg-white/10 dark:bg-black/20 w-9/12 p-2.5 backdrop-blur-lg'>
+                    <form
+                        autoComplete={'off'}
+                        className="flex justify-center"
+                        onSubmit={(event) => {
+                            event.preventDefault()
+                            handleSearchClick(event)
+                        }}
+                    >
+                        <SearchInput
+                            value={query}
+                            onSearchChange={handleSearchChange}
+                            onClear={handleClearSearch}
+                        />
+                        <SearchButton />
+                    </form>
+                </div>
+            </div>
+            <button className='absolute top-[6.5rem] text-white mx-4 text-xl sm:hidden z-40'
+                onClick={() => setMobileHelpIsOpen(!mobileHelpIsOpen)}
+            >
+                <BsQuestionCircle />
+            </button>
+            {mobileHelpIsOpen && (
+                <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileHelpRef.current && !mobileHelpRef.current.contains(e.target) && setMobileHelpIsOpen(false)}>
+                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 h-3/5 overflow-auto' ref={mobileHelpRef}>
+                        <Examples
+                            postHogInstance={posthog}
+                            setQuery={setQuery}
+                            handleClick={fetchBackend}
+                        />
+                    </div>
+                </div>
+            )}
+            {mobileTableIsOpen && sql.length && (
+                <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileTableRef.current && !mobileTableRef.current.contains(e.target) && setMobileTableIsOpen(false)}>
+                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 max-h-96 overflow-auto items-center justify-center' ref={mobileTableRef}>
+                        <Table
+                            columns={tableInfo.columns}
+                            values={tableInfo.rows}
+                        />
+                    </div>
+                </div>
+            )}
+            {mobileSqlIsOpen && sql.length && (
+                <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileSqlRef.current && !mobileSqlRef.current.contains(e.target) && setMobileSqlIsOpen(false)}>
+                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 max-h-96 overflow-auto' ref={mobileSqlRef}>
+                        <p class="font-medium"> {title} </p>
+                        <pre
+                            align="left"
+                            className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
+                        >
+                            <code className="text-sm text-gray-800 dark:text-white">
+                                <div className='flex justify-end p-1'>
+                                    <CopySqlToClipboard text={sql} />
+                                </div>
+                                <SyntaxHighlighter
+                                    language="sql"
+                                    style={hybrid}
+                                    customStyle={{
+                                        color: undefined,
+                                        background: undefined,
+                                        margin: undefined,
+                                        padding: '1rem',
+                                    }}
+                                >
+                                    {sql}
+                                </SyntaxHighlighter>
+                            </code>
+                        </pre>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
