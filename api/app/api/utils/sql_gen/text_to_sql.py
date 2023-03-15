@@ -337,3 +337,62 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
 
     print("Could not generate SQL query after {k} tries.".format(k=k))
     return None, None
+
+
+class NoMessagesException(Exception):
+    pass
+
+class LastMessageNotUserException(Exception):
+    pass
+
+
+def text_to_sql_chat_with_retry(messages, table_names=None):
+    """
+    Takes a series of messages and tries to respond to a natural language query with valid SQL
+    """
+    # TODO: add message validation: not empty, last message is user message, etc.
+    if not messages:
+        raise NoMessagesException("No messages provided.")
+    if messages[-1]["role"] != "user":
+        raise LastMessageNotUserException("Last message is not a user message.")
+    
+    # First question, prime with table schemas and rephrasing
+    if len(messages) == 1:
+        natural_language_query = messages[0]["content"]
+        # ask the assistant to rephrase before generating the query
+        schemas = get_table_schemas(table_names)
+        rephrase = [{
+            "role": "user",
+            "content": make_rephrase_msg_with_schema_and_warnings().format(
+                natural_language_query=natural_language_query,
+                schemas=schemas
+                )
+        }]
+        assistant_message = get_assistant_message(rephrase)
+        content = make_msg_with_schema_and_warnings().format(
+            natural_language_query=assistant_message['message']['content'],
+            schemas=schemas
+            )
+        # Don't return messages_copy to the front-end. It contains extra information for prompting
+        messages_copy = make_default_messages(schemas)
+        messages_copy.append({
+            "role": "user",
+            "content": content
+        })
+
+    # Send all messages
+    response, sql_query = text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=messages_copy)
+
+    if response is None and sql_query is None:
+        messages.append({
+            "role": "assistant",
+            "content": "Sorry, I wasn't able to answer that. Try rephrasing your question to make it more specific and easier to understand."
+        })
+
+    else:
+        messages.append({
+            "role": "assistant",
+            "content": sql_query
+        })
+
+    return response, sql_query, messages
