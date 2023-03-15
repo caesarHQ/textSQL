@@ -3,7 +3,7 @@ import dataclasses
 
 @dataclasses.dataclass
 class AcsFiveYear2021(db.Model):
-    __tablename__ = 'acs_census_data'
+    __tablename__ = 'demographic_data'
 
     # Zip code may start with 0's
     zip_code = db.Column(db.String, primary_key=True)

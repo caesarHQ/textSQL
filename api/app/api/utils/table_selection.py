@@ -1,6 +1,7 @@
 import json
 from typing import List
 from .messages import get_assistant_message, extract_code_from_markdown
+from .table_details import get_table_schemas
 
 
 MSG_WITH_DESCRIPTIONS = (
@@ -11,16 +12,7 @@ MSG_WITH_DESCRIPTIONS = (
     "\n"
     "The following are descriptions of available tables:\n"
     "---------------------\n"
-    "Description of table 'crime_by_city':\n"
-    "Table 'crime_by_city' has city-level crime data in the United States."
-    " It has numbers for violent crime, murder and nonnegligent manslaughter, rape, robbery, aggravated assault, property crime, burglary, larceny theft, motor vehicle theft, and arson."
-    "Table 'crime_by_city' has columns: city (TEXT), violent_crime (DOUBLE_PRECISION), murder_and_nonnegligent_manslaughter (DOUBLE_PRECISION), rape (DOUBLE_PRECISION), robbery (DOUBLE_PRECISION), aggravated_assault (DOUBLE_PRECISION), property_crime (DOUBLE_PRECISION), burglary (DOUBLE_PRECISION), larceny_theft (DOUBLE_PRECISION), motor_vehicle_theft (DOUBLE_PRECISION), arson (DOUBLE_PRECISION), state (TEXT)."
-
-    "\n\n"
-    "Description of table 'acs_census_data':\n"
-    "Table 'acs_census_data' has zip-code level data about average household sizes, income, and population grouped by gender, age, and race."
-    "Table 'acs_census_data' has columns: total_population (DOUBLE_PRECISION), elderly_population (DOUBLE_PRECISION), male_population (DOUBLE_PRECISION), female_population (DOUBLE_PRECISION), white_population (DOUBLE_PRECISION), black_population (DOUBLE_PRECISION), native_american_population (DOUBLE_PRECISION), asian_population (DOUBLE_PRECISION), two_or_more_population (DOUBLE_PRECISION), hispanic_population (DOUBLE_PRECISION), adult_population (DOUBLE_PRECISION), citizen_adult_population (DOUBLE_PRECISION), average_household_size (DOUBLE_PRECISION), population_under_5_years (DOUBLE_PRECISION), population_5_to_9_years (DOUBLE_PRECISION), population_10_to_14_years (DOUBLE_PRECISION), population_15_to_19_years (DOUBLE_PRECISION), population_20_to_24_years (DOUBLE_PRECISION), population_25_to_34_years (DOUBLE_PRECISION), population_35_to_44_years (DOUBLE_PRECISION), population_45_to_54_years (DOUBLE_PRECISION), population_55_to_59_years (DOUBLE_PRECISION), population_60_to_64_years (DOUBLE_PRECISION), population_65_to_74_years (DOUBLE_PRECISION), population_75_to_84_years (DOUBLE_PRECISION), population_85_years_and_over (DOUBLE_PRECISION), per_capita_income (DOUBLE_PRECISION), median_income_for_workers (DOUBLE_PRECISION), zip_code (TEXT), city (TEXT), state (TEXT), county (TEXT), lat (DOUBLE_PRECISION), lon (DOUBLE_PRECISION)."
-    "\n\n"
+    "{table_details}"
     "---------------------\n"
 )
 
@@ -34,18 +26,7 @@ DEFAULT_MESSAGES = [
                 " Write your answer in markdown format."
                 "\n"
                 "The following are descriptions of available tables:\n"
-                "---------------------\n"
-                "Description of table 'crime_by_city':\n"
-                "Table 'crime_by_city' has city-level crime data in the United States."
-                " It has numbers for violent crime, murder and nonnegligent manslaughter, rape, robbery, aggravated assault, property crime, burglary, larceny theft, motor vehicle theft, and arson."
-                "Table 'crime_by_city' has columns: city (TEXT), violent_crime (DOUBLE_PRECISION), murder_and_nonnegligent_manslaughter (DOUBLE_PRECISION), rape (DOUBLE_PRECISION), robbery (DOUBLE_PRECISION), aggravated_assault (DOUBLE_PRECISION), property_crime (DOUBLE_PRECISION), burglary (DOUBLE_PRECISION), larceny_theft (DOUBLE_PRECISION), motor_vehicle_theft (DOUBLE_PRECISION), arson (DOUBLE_PRECISION), state (TEXT)."
-
-                "\n\n"
-                "Description of table 'acs_census_data':\n"
-                "Table 'acs_census_data' has zip-code level data about average household sizes, income, and population grouped by gender, age, and race."
-                "Table 'acs_census_data' has columns: total_population (DOUBLE_PRECISION), elderly_population (DOUBLE_PRECISION), male_population (DOUBLE_PRECISION), female_population (DOUBLE_PRECISION), white_population (DOUBLE_PRECISION), black_population (DOUBLE_PRECISION), native_american_population (DOUBLE_PRECISION), asian_population (DOUBLE_PRECISION), two_or_more_population (DOUBLE_PRECISION), hispanic_population (DOUBLE_PRECISION), adult_population (DOUBLE_PRECISION), citizen_adult_population (DOUBLE_PRECISION), average_household_size (DOUBLE_PRECISION), population_under_5_years (DOUBLE_PRECISION), population_5_to_9_years (DOUBLE_PRECISION), population_10_to_14_years (DOUBLE_PRECISION), population_15_to_19_years (DOUBLE_PRECISION), population_20_to_24_years (DOUBLE_PRECISION), population_25_to_34_years (DOUBLE_PRECISION), population_35_to_44_years (DOUBLE_PRECISION), population_45_to_54_years (DOUBLE_PRECISION), population_55_to_59_years (DOUBLE_PRECISION), population_60_to_64_years (DOUBLE_PRECISION), population_65_to_74_years (DOUBLE_PRECISION), population_75_to_84_years (DOUBLE_PRECISION), population_85_years_and_over (DOUBLE_PRECISION), per_capita_income (DOUBLE_PRECISION), median_income_for_workers (DOUBLE_PRECISION), zip_code (TEXT), city (TEXT), state (TEXT), county (TEXT), lat (DOUBLE_PRECISION), lon (DOUBLE_PRECISION)."
-                "\n\n"
-                "---------------------\n"
+                + get_table_schemas()
             )
     },
     {
@@ -62,7 +43,7 @@ DEFAULT_MESSAGES = [
     },
     {
         "role": "assistant",
-        "content": '```\n{\n    "tables": ["acs_census_data"]\n}\n```'
+        "content": '```\n{\n    "tables": ["demographic_data"]\n}\n```'
     },
     {
         "role": "user",
@@ -70,7 +51,7 @@ DEFAULT_MESSAGES = [
     },
     {
         "role": "assistant",
-        "content": '```\n{\n    "tables": ["crime_by_city", "acs_census_data"]\n}\n```'
+        "content": '```\n{\n    "tables": ["crime_by_city", "demographic_data"]\n}\n```'
     },
 ]
 
@@ -79,9 +60,10 @@ def get_relevant_tables(natural_language_query) -> List[str]:
     """
     Identify relevant tables for answering a natural language query
     """
-    natural_language_query = "Which city has the guys with the biggest dicks?"
-
-    content = MSG_WITH_DESCRIPTIONS.format(natural_language_query=natural_language_query)
+    content = MSG_WITH_DESCRIPTIONS.format(
+        natural_language_query=natural_language_query,
+        table_details=get_table_schemas()
+        )
 
     messages = DEFAULT_MESSAGES.copy()
     messages.append({

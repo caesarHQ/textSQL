@@ -41,7 +41,7 @@ We're splitting the roadmap for this project broadly into three categories
 
 #### Visualizations: 
 
-Currently, textSQL only supports visualizing zipcodes and cities on an interactive map and bar chart using [Mapbox](https://www.mapbox.com/) + [Plotly](https://plotly.com/). But data can be visualized in other interesting ways such as Heatmaps and Pie charts. Not every kind of data can be (or should be) visualized on a map. For example, a query like _"What percent of total crime in San Francisco is burglary vs in New York City"_ is perfect for visualizing as a stacked bar chart, but really hard to visualize on map.
+Currently, textSQL only supports visualizing zip codes and cities on an interactive map and bar chart using [Mapbox](https://www.mapbox.com/) + [Plotly](https://plotly.com/). But data can be visualized in other interesting ways such as Heatmaps and Pie charts. Not every kind of data can be (or should be) visualized on a map. For example, a query like _"What percent of total crime in San Francisco is burglary vs in New York City"_ is perfect for visualizing as a stacked bar chart, but really hard to visualize on map.
 
 Bar Chart:
 
