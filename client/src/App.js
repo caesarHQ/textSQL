@@ -409,185 +409,76 @@ function App(props) {
     }
 
     return (
-        <div className="App bg-white dark:bg-dark-900 dark:text-white flex flex-col h-screen">
-            <link
-                href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
-                rel="stylesheet"
-            />
+        <main className='h-screen bg-white dark:bg-dark-900 dark:text-white'>
+            <div className="App flex flex-col h-full">
+                <link
+                    href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
+                    rel="stylesheet"
+                />
 
-            <div className="absolute w-full sm:relative sm:flex flex-col p-2 sm:p-6 space-y-1.5 bg-gradient-to-b from-black/95 to-transparent bg/10 backdrop-blur-sm pb-2.5 sm:from-white sm:dark:from-transparent z-50">
-                <h1
-                    className="text-4xl font-bold text-white sm:text-black dark:text-white"
-                    onClick={() => {
-                        window.location.assign('/')
-                        handleClearSearch()
-                    }}
-                    style={{ cursor: 'pointer' }}
-                >
-                    Census GPT
-                </h1>
-                <div className="inline-flex gap-x-1.5 align-middle justify-center">
-                    <ContributeButton />
-                    <GithubButton />
-                    <DiscordButton />
-                    <DarkModeButton />
-                </div>
-                <Toaster />
-                <div className='hidden sm:block sm:px-6 sm:pb-2'>
-                    <form
-                        autoComplete={'off'}
-                        className="flex justify-center"
-                        onSubmit={(event) => {
-                            event.preventDefault()
-                            handleSearchClick(event)
+                <div className="absolute w-full sm:relative sm:flex flex-col p-2 sm:p-6 space-y-1.5 bg-gradient-to-b from-black/95 to-transparent bg/10 backdrop-blur-sm pb-2.5 sm:from-white sm:dark:from-transparent z-50">
+                    <h1
+                        className="text-4xl font-bold text-white sm:text-black dark:text-white"
+                        onClick={() => {
+                            window.location.assign('/')
+                            handleClearSearch()
                         }}
+                        style={{ cursor: 'pointer' }}
                     >
-                        <SearchInput
-                            value={query}
-                            onSearchChange={handleSearchChange}
-                            onClear={handleClearSearch}
-                        />
-                        <SearchButton />
-                    </form>
-                </div>
-                <Disclaimer />
-            </div>
-
-
-            <div className="flex flex-col lg:flex-row h-full w-full gap-6 sm:p-6">
-                <div className="hidden sm:flex sm:flex-col h-full w-full max-h-[23rem] lg:max-h-full overflow-y-auto">
-                    {/*spinner*/}
-                    <LoadingSpinner isLoading={isLoading} />
-                    {sql.length === 0 && !isLoading ? (
-                        <Examples
-                            postHogInstance={posthog}
-                            setQuery={setQuery}
-                            handleClick={fetchBackend}
-                        />
-                    ) : isLoading ? (
-                        <> </>
-                    ) : (
-                        <div className='flex flex-col space-y-4'>
-                            <div>
-                                <p class="font-medium"> {title} </p>
-                                <pre
-                                    align="left"
-                                    className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
-                                >
-                                    <code className="text-sm text-gray-800 dark:text-white">
-                                        <div className='flex justify-end p-1'>
-                                            <CopySqlToClipboard text={sql} />
-                                        </div>
-                                        <SyntaxHighlighter
-                                            language="sql"
-                                            style={hybrid}
-                                            customStyle={{
-                                                color: undefined,
-                                                background: undefined,
-                                                margin: undefined,
-                                                padding: '1rem',
-                                            }}
-                                        >
-                                            {sql}
-                                        </SyntaxHighlighter>
-                                    </code>
-                                </pre>
-                            </div>
-
-                            <Table
-                                columns={tableInfo.columns}
-                                values={tableInfo.rows}
+                        Census GPT
+                    </h1>
+                    <div className="inline-flex gap-x-1.5 align-middle justify-center">
+                        <ContributeButton />
+                        <GithubButton />
+                        <DiscordButton />
+                        <DarkModeButton />
+                    </div>
+                    <Toaster />
+                    <div className='hidden sm:block sm:px-6 sm:pb-2'>
+                        <form
+                            autoComplete={'off'}
+                            className="flex justify-center"
+                            onSubmit={(event) => {
+                                event.preventDefault()
+                                handleSearchClick(event)
+                            }}
+                        >
+                            <SearchInput
+                                value={query}
+                                onSearchChange={handleSearchChange}
+                                onClear={handleClearSearch}
                             />
-                        </div>
-                    )}
+                            <SearchButton />
+                        </form>
+                    </div>
+                    <Disclaimer />
                 </div>
 
-                <div className='flex flex-grow h-full w-full relative sm:rounded-lg shadow overflow-hidden'>
-                    <div className='absolute top-24 sm:top-0 right-0 z-10 p-1'>
-                        <VizSelector
-                            selected={visualization} setSelected={setVisualization}
-                            tableRef={mobileTableRef} setTableIsOpen={setMobileTableIsOpen}
-                            sqlRef={mobileSqlRef} setSqlIsOpen={setMobileSqlIsOpen}
-                            viewsCanOpen={sql.length}
-                        />
-                    </div>
-                    <div className="overflow-hidden sm:rounded-lg shadow flex h-full w-full relative">
-                        {visualization == 'map' ?
-                            <Map
-                                ref={mapRef}
-                                mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
-                                style={{ width: '100%', height: '100%' }}
-                                mapStyle="mapbox://styles/mapbox/dark-v11"
-                                initialViewState={{
-                                    longitude: -100,
-                                    latitude: 40,
-                                    zoom: 3.5,
-                                }}
-                            >
-                                <Source
-                                    id="zips-kml"
-                                    type="vector"
-                                    url="mapbox://darsh99137.4nf1q4ec"
-                                >
-                                    <Layer
-                                        {...zipcodeLayerLow(zipcodesFormatted)}
-                                    />
-                                </Source>
-                                <Source
-                                    id="zip-zoomed-out"
-                                    type="geojson"
-                                    data={{
-                                        type: 'FeatureCollection',
-                                        features: zipcodeFeatures(zipcodes),
-                                    }}
-                                >
-                                    <Layer {...zipcodeLayerHigh} />
-                                </Source>
-                                <Source
-                                    id="cities"
-                                    type="geojson"
-                                    data={{
-                                        type: 'FeatureCollection',
-                                        features: citiesFeatures(cities),
-                                    }}
-                                >
-                                    <Layer {...citiesLayer} />
-                                </Source>
-                            </Map> :
-                            // following <div> helps plot better scale bar widths for responsiveness
-                            <div className='overflow-x-auto flex w-full overflow-hidden mb-32 sm:mb-0'>
-                                <DataPlot cols={tableInfo.columns} rows={tableInfo.rows} />
-                            </div>
-                        }
-                    </div>
-                </div>
 
-            </div>
-
-            {/* Mobile */}
-            <div className='absolute bottom-32 flex w-full justify-center sm:hidden z-50'>
-                {isLoading && <span className='animate-spin text-2xl text-white'><ImSpinner /></span>}
-            </div>
-            {mobileResultIsOpen && !isLoading && sql.length != 0 &&
-                <div className='absolute w-screen h-screen items-center justify-center flex sm:hidden z-50' onClick={(e) => mobileResultRef.current && !mobileResultRef.current.contains(e.target) && setMobileResultIsOpen(false)}>
-                    <div className='absolute w-full bottom-32 items-center justify-center flex'>
-                        <div className='flex flex-col w-4/5 max-h-96 h-full' ref={mobileResultRef}>
-                            <button
-                                className='relative h-0 top-1 px-2 z-10 justify-end flex text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white text-xs'
-                                onClick={() => setMobileResultIsOpen(false)}
-                            >
-                                Close
-                            </button>
-                            <div className='space-y-2 flex-col justify-between h-full bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg pt-6 pb-2 px-2 flex w-full items-center overflow-auto'>
-                                <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-full max-h-48 overflow-auto'>
-                                    <div className='flex justify-end p-1 absolute right-0'>
-                                        <CopySqlToClipboard text={sql} />
-                                    </div>
+                <div className="flex flex-col lg:flex-row h-full w-full gap-6 sm:p-6">
+                    <div className="hidden sm:flex sm:flex-col h-full w-full max-h-[23rem] lg:max-h-full overflow-y-auto">
+                        {/*spinner*/}
+                        <LoadingSpinner isLoading={isLoading} />
+                        {sql.length === 0 && !isLoading ? (
+                            <Examples
+                                postHogInstance={posthog}
+                                setQuery={setQuery}
+                                handleClick={fetchBackend}
+                            />
+                        ) : isLoading ? (
+                            <> </>
+                        ) : (
+                            <div className='flex flex-col space-y-4'>
+                                <div>
+                                    <p class="font-medium"> {title} </p>
                                     <pre
                                         align="left"
-                                        className="rounded-md dark:text-white"
+                                        className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
                                     >
                                         <code className="text-sm text-gray-800 dark:text-white">
+                                            <div className='flex justify-end p-1'>
+                                                <CopySqlToClipboard text={sql} />
+                                            </div>
                                             <SyntaxHighlighter
                                                 language="sql"
                                                 style={hybrid}
@@ -603,95 +494,208 @@ function App(props) {
                                         </code>
                                     </pre>
                                 </div>
-                                <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-full overflow-auto items-start justify-center'>
-                                    <Table
-                                        columns={tableInfo.columns}
-                                        values={tableInfo.rows}
-                                    />
+
+                                <Table
+                                    columns={tableInfo.columns}
+                                    values={tableInfo.rows}
+                                />
+                            </div>
+                        )}
+                    </div>
+
+                    <div className='flex flex-grow h-full w-full relative sm:rounded-lg shadow overflow-hidden'>
+                        <div className='fixed sm:absolute top-24 sm:top-0 right-0 z-10 p-1'>
+                            <VizSelector
+                                selected={visualization} setSelected={setVisualization}
+                                tableRef={mobileTableRef} setTableIsOpen={setMobileTableIsOpen}
+                                sqlRef={mobileSqlRef} setSqlIsOpen={setMobileSqlIsOpen}
+                                viewsCanOpen={sql.length}
+                            />
+                        </div>
+                        <div className="overflow-hidden sm:rounded-lg shadow flex w-full h-full fixed sm:relative">
+                            {visualization == 'map' ?
+                                <Map
+                                    ref={mapRef}
+                                    mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
+                                    style={{ width: '100%', height: '100%' }}
+                                    mapStyle="mapbox://styles/mapbox/dark-v11"
+                                    initialViewState={{
+                                        longitude: -100,
+                                        latitude: 40,
+                                        zoom: 3.5,
+                                    }}
+                                >
+                                    <Source
+                                        id="zips-kml"
+                                        type="vector"
+                                        url="mapbox://darsh99137.4nf1q4ec"
+                                    >
+                                        <Layer
+                                            {...zipcodeLayerLow(zipcodesFormatted)}
+                                        />
+                                    </Source>
+                                    <Source
+                                        id="zip-zoomed-out"
+                                        type="geojson"
+                                        data={{
+                                            type: 'FeatureCollection',
+                                            features: zipcodeFeatures(zipcodes),
+                                        }}
+                                    >
+                                        <Layer {...zipcodeLayerHigh} />
+                                    </Source>
+                                    <Source
+                                        id="cities"
+                                        type="geojson"
+                                        data={{
+                                            type: 'FeatureCollection',
+                                            features: citiesFeatures(cities),
+                                        }}
+                                    >
+                                        <Layer {...citiesLayer} />
+                                    </Source>
+                                </Map> :
+                                // following <div> helps plot better scale bar widths for responsiveness
+                                <div className='overflow-x-auto flex w-full overflow-hidden mb-32 sm:mb-0'>
+                                    <DataPlot cols={tableInfo.columns} rows={tableInfo.rows} />
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+
+                {/* Mobile */}
+                <div className='absolute bottom-32 flex w-full justify-center sm:hidden z-50'>
+                    {isLoading && <span className='animate-spin text-4xl text-blue-600'><ImSpinner /></span>}
+                </div>
+                {mobileResultIsOpen && !isLoading && sql.length != 0 &&
+                    <div className='absolute w-screen h-screen items-center justify-center flex sm:hidden z-50' onClick={(e) => mobileResultRef.current && !mobileResultRef.current.contains(e.target) && setMobileResultIsOpen(false)}>
+                        <div className='absolute w-full bottom-28 items-center justify-center flex'>
+                            <div className='flex flex-col w-4/5 max-h-96 h-full' ref={mobileResultRef}>
+                                <button
+                                    className='relative h-0 top-1 px-2 z-10 justify-end flex text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white text-xs'
+                                    onClick={() => setMobileResultIsOpen(false)}
+                                >
+                                    Close
+                                </button>
+                                <div className='space-y-2 flex-col justify-between bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg pt-6 pb-2 px-2 flex w-full items-center overflow-auto'>
+                                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-full max-h-48 min-h-fit'>
+                                        <div className='overflow-auto'>
+                                            <div className='flex justify-end p-1 absolute right-0'>
+                                                <CopySqlToClipboard text={sql} />
+                                            </div>
+                                            <pre
+                                                align="left"
+                                                className="rounded-md dark:text-white"
+                                            >
+                                                <code className="text-sm text-gray-800 dark:text-white">
+                                                    <SyntaxHighlighter
+                                                        language="sql"
+                                                        style={hybrid}
+                                                        customStyle={{
+                                                            color: undefined,
+                                                            background: undefined,
+                                                            margin: undefined,
+                                                            padding: '1rem',
+                                                        }}
+                                                    >
+                                                        {sql}
+                                                    </SyntaxHighlighter>
+                                                </code>
+                                            </pre>
+                                        </div>
+                                    </div>
+                                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-full overflow-auto items-start justify-center'>
+                                        <Table
+                                            columns={tableInfo.columns}
+                                            values={tableInfo.rows}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-            }
-            <div className='absolute bottom-16 z-50 flex w-full justify-center sm:hidden'>
-                <div className='rounded-xl bg-black/5 dark:bg-black/20 w-full mx-4 p-2.5 backdrop-blur-lg ring-1 dark:ring-white/40 ring-blue-500'>
-                    <form
-                        autoComplete={'off'}
-                        className="flex justify-center"
-                        onSubmit={(event) => {
-                            event.preventDefault()
-                            handleSearchClick(event)
-                        }}
-                    >
-                        <SearchInput
-                            value={query}
-                            onSearchChange={handleSearchChange}
-                            onClear={handleClearSearch}
-                        />
-                    </form>
-                </div>
-            </div>
-            <button className='absolute top-[5.5rem] bg-black/20 backdrop-blur-sm rounded-lg text-white hover:text-blue-600 p-2 m-2 text-xl sm:hidden z-40'
-                onClick={() => setMobileHelpIsOpen(!mobileHelpIsOpen)}
-            >
-                <BsQuestionCircle />
-            </button>
-            {mobileHelpIsOpen && (
-                <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileHelpRef.current && !mobileHelpRef.current.contains(e.target) && setMobileHelpIsOpen(false)}>
-                    <div className='space-y-4 flex-col bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 h-2/5 overflow-auto' ref={mobileHelpRef}>
-                        <div className='font-bold text-lg'>
-                            Welcome to Census GPT
-                        </div>
-                        <Examples
-                            postHogInstance={posthog}
-                            setQuery={setQuery}
-                            handleClick={fetchBackend}
-                        />
-                    </div>
-                </div>
-            )}
-            {mobileTableIsOpen && sql.length && (
-                <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileTableRef.current && !mobileTableRef.current.contains(e.target) && setMobileTableIsOpen(false)}>
-                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 max-h-80 overflow-auto items-start justify-center' ref={mobileTableRef}>
-                        <Table
-                            columns={tableInfo.columns}
-                            values={tableInfo.rows}
-                        />
-                    </div>
-                </div>
-            )}
-            {mobileSqlIsOpen && sql.length && (
-                <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileSqlRef.current && !mobileSqlRef.current.contains(e.target) && setMobileSqlIsOpen(false)}>
-                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-4/5 max-h-80 overflow-auto' ref={mobileSqlRef}>
-                        <div className='flex justify-end p-1 relative'>
-                            <CopySqlToClipboard text={sql} />
-                        </div>
-                        <pre
-                            align="left"
-                            className="rounded-md dark:text-white"
+                }
+                <div className='absolute bottom-12 z-50 flex w-full justify-center sm:hidden'>
+                    <div className='rounded-xl bg-black/20 w-full mx-4 p-2.5 backdrop-blur-lg ring-1 ring-white/40'>
+                        <form
+                            autoComplete={'off'}
+                            className="flex justify-center"
+                            onSubmit={(event) => {
+                                event.preventDefault()
+                                handleSearchClick(event)
+                            }}
                         >
-                            <code className="text-sm text-gray-800 dark:text-white">
-
-                                <SyntaxHighlighter
-                                    language="sql"
-                                    style={hybrid}
-                                    customStyle={{
-                                        color: undefined,
-                                        background: undefined,
-                                        margin: undefined,
-                                        padding: '1rem',
-                                    }}
-                                >
-                                    {sql}
-                                </SyntaxHighlighter>
-                            </code>
-                        </pre>
+                            <SearchInput
+                                value={query}
+                                onSearchChange={handleSearchChange}
+                                onClear={handleClearSearch}
+                            />
+                        </form>
                     </div>
                 </div>
-            )}
-        </div>
+                <button className='absolute top-[5.5rem] bg-black/20 backdrop-blur-sm rounded-lg text-white hover:text-blue-600 p-2 m-2 text-xl sm:hidden z-40'
+                    onClick={() => setMobileHelpIsOpen(!mobileHelpIsOpen)}
+                >
+                    <BsQuestionCircle />
+                </button>
+                {mobileHelpIsOpen && (
+                    <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileHelpRef.current && !mobileHelpRef.current.contains(e.target) && setMobileHelpIsOpen(false)}>
+                        <div className='space-y-4 flex-col bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 h-1/2 overflow-auto' ref={mobileHelpRef}>
+                            <div className='font-bold text-lg'>
+                                Welcome to Census GPT
+                            </div>
+                            <Examples
+                                postHogInstance={posthog}
+                                setQuery={setQuery}
+                                handleClick={fetchBackend}
+                            />
+                        </div>
+                    </div>
+                )}
+                {mobileTableIsOpen && sql.length && (
+                    <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileTableRef.current && !mobileTableRef.current.contains(e.target) && setMobileTableIsOpen(false)}>
+                        <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-4/5 max-h-80 overflow-auto items-start justify-center' ref={mobileTableRef}>
+                            <Table
+                                columns={tableInfo.columns}
+                                values={tableInfo.rows}
+                            />
+                        </div>
+                    </div>
+                )}
+                {mobileSqlIsOpen && sql.length && (
+                    <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileSqlRef.current && !mobileSqlRef.current.contains(e.target) && setMobileSqlIsOpen(false)}>
+                        <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-4/5 max-h-80 overflow-auto' ref={mobileSqlRef}>
+                            <div className='flex justify-end p-1 relative'>
+                                <CopySqlToClipboard text={sql} />
+                            </div>
+                            <pre
+                                align="left"
+                                className="rounded-md dark:text-white"
+                            >
+                                <code className="text-sm text-gray-800 dark:text-white">
+
+                                    <SyntaxHighlighter
+                                        language="sql"
+                                        style={hybrid}
+                                        customStyle={{
+                                            color: undefined,
+                                            background: undefined,
+                                            margin: undefined,
+                                            padding: '1rem',
+                                        }}
+                                    >
+                                        {sql}
+                                    </SyntaxHighlighter>
+                                </code>
+                            </pre>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </main>
     )
 }
 
