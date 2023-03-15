@@ -13,7 +13,6 @@ export const VizSelector = (props) => {
             type="button"
             className={mapClassName}
             onClick={() => {
-              console.log("Map clicked")
               props.setSelected('map')
             }}
           >
@@ -25,7 +24,6 @@ export const VizSelector = (props) => {
             type="button"
             className={chartClassName}
             onClick={() => {
-              console.log("Chart clicked")
               props.setSelected('chart')
             }}
           >
@@ -52,7 +50,7 @@ export const VizSelector = (props) => {
             type="button"
             className={chartClassName}
             onClick={() => {
-              props.setSelected('chart')
+              props.viewsCanOpen && props.setSelected('chart')
             }}
           >
             <span className="block sm:hidden"><BsBarChartLine /></span>
@@ -60,14 +58,14 @@ export const VizSelector = (props) => {
 
           <button
             className='relative -mt-px sm:mt-px sm:-ml-px inline-flex items-center px-3 py-2 text-sm font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 focus:z-10 bg-white dark:bg-neutral-600 hover:dark:bg-neutral-700 hover:bg-gray-100'
-            onClick={() => props.mobileButtonsCanOpen && props.setTableIsOpen(true)}
+            onClick={() => props.viewsCanOpen && props.setTableIsOpen(true)}
           >
             <BsTable />
           </button>
 
           <button
             className='relative -mt-px sm:mt-px sm:-ml-px inline-flex items-center rounded-b-md px-3 py-2 text-sm font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 focus:z-10 bg-white dark:bg-neutral-600 hover:dark:bg-neutral-700 hover:bg-gray-100'
-            onClick={() => props.mobileButtonsCanOpen && props.setSqlIsOpen(true)}
+            onClick={() => props.viewsCanOpen && props.setSqlIsOpen(true)}
           >
             <BsCodeSquare />
           </button>
