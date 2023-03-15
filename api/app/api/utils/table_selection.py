@@ -2,6 +2,7 @@ import json
 from typing import List
 from .messages import get_assistant_message, extract_code_from_markdown
 from .table_details import get_table_schemas
+from .few_shot_examples import get_few_shot_example_messages
 
 
 MSG_WITH_DESCRIPTIONS = (
@@ -29,31 +30,8 @@ DEFAULT_MESSAGES = [
                 + get_table_schemas()
             )
     },
-    {
-        "role": "user",
-        "content": "Which top 5 cities have the most total crime?"
-    },
-    {
-        "role": "assistant",
-        "content": '```\n{\n    "tables": ["crime_by_city"]\n}\n```'
-    },
-    {
-        "role": "user",
-        "content": "What zip code has the highest percentage of people of age 75?"
-    },
-    {
-        "role": "assistant",
-        "content": '```\n{\n    "tables": ["location_data", "population_by_age"]\n}\n```'
-    },
-    {
-        "role": "user",
-        "content": "Which 5 counties have the most arson?"
-    },
-    {
-        "role": "assistant",
-        "content": '```\n{\n    "tables": ["crime_by_city", "location_data"]\n}\n```'
-    },
 ]
+DEFAULT_MESSAGES.extend(get_few_shot_example_messages("table_selection"))
 
 
 def get_relevant_tables(natural_language_query) -> List[str]:
