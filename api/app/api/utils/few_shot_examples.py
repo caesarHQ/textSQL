@@ -7,7 +7,7 @@ with open("app/data/few_shot_examples.json", "r") as f:
     few_shot_examples = json.load(f)
 
 
-def get_few_shot_example_messages(scope: str = "general") -> str:
+def get_few_shot_example_messages(scope: str = "general") -> List[dict]:
     examples = few_shot_examples.get(scope)
     messages = []
     for example in examples:
