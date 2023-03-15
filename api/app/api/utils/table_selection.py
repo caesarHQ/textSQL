@@ -43,7 +43,7 @@ DEFAULT_MESSAGES = [
     },
     {
         "role": "assistant",
-        "content": '```\n{\n    "tables": ["demographic_data"]\n}\n```'
+        "content": '```\n{\n    "tables": ["location_data", "population_by_age"]\n}\n```'
     },
     {
         "role": "user",
@@ -51,7 +51,7 @@ DEFAULT_MESSAGES = [
     },
     {
         "role": "assistant",
-        "content": '```\n{\n    "tables": ["crime_by_city", "demographic_data"]\n}\n```'
+        "content": '```\n{\n    "tables": ["crime_by_city", "location_data"]\n}\n```'
     },
 ]
 
