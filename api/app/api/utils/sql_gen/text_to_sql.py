@@ -23,21 +23,20 @@ def make_default_messages(schemas: str):
         {
             "role": "system",
             "content": (
-                    "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command, generally about crime, demographics, and population."
-                    "\n"
-                    "The following are tables you can query:\n"
-                    "---------------------\n"
-                    + schemas +
-                    "---------------------\n"
-                    "Use state abbreviations for states."
-                    " Table 'crime_by_city' does not have columns 'zip_code' or 'county'."
-                    " Do not use ambiguous column names."
-                    " For example, 'city' can be ambiguous because both tables 'demographic_data' and 'crime_by_city' have a column named 'city'."
-                    " Always specify the table where you are using the column."
-                    " If you include a 'city' column in the result table, include a 'state' column too."
-                    " If you include a 'county' column in the result table, include a 'state' column too."
-                    " Make sure each value in the result table is not null."
-                    " Write your answer in markdown format.\n"
+                "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command, generally about crime, demographics, and population."
+                "\n"
+                "The following are tables you can query:\n"
+                "---------------------\n"
+                + schemas +
+                "---------------------\n"
+                "Use state abbreviations for states."
+                " Table `crime_by_city` does not have columns 'zip_code' or 'county'."
+                " Do not use ambiguous column names."
+                " For example, `city` can be ambiguous because both tables `location_data` and `crime_by_city` have a column named `city`."
+                " Always specify the table where you are using the column."
+                " If you include a `city` or `county` column in the result table, include a `state` column too."
+                " Make sure each value in the result table is not null."
+                " Write your answer in markdown format.\n"
             )
         },
         {
@@ -46,7 +45,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "```SELECT city, sum(violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) as total_crime\nFROM crime_by_city\nGROUP BY city\nORDER BY total_crime DESC\nLIMIT 5;```"
+            "content": "```SELECT city, state, \n       (violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) AS total_crime\nFROM crime_by_city\nORDER BY total_crime DESC\nLIMIT 5;```"
         },
         {
             "role": "user",
@@ -54,7 +53,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "```SELECT zip_code, (population_75_to_84_years / total_population) * 100 AS percentage\nFROM demographic_data\nWHERE total_population > 0\nORDER BY percentage DESC\nLIMIT 1;```"
+            "content": "```SELECT location_data.zip_code, \n       (population_by_age.population_75_to_84_years / total_population.total_population) * 100 AS percentage_75_to_84\nFROM population_by_age\nJOIN location_data ON population_by_age.geo_id = location_data.geo_id\nJOIN total_population ON population_by_age.geo_id = total_population.geo_id\nWHERE total_population.total_population > 0\nORDER BY percentage_75_to_84 DESC\nLIMIT 1;```"
         },
         {
             "role": "user",
@@ -62,7 +61,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "```SELECT demographic_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN demographic_data ON crime_by_city.city = demographic_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY demographic_data.county\nORDER BY total_arson DESC\nLIMIT 5;```"
+            "content": "```SELECT location_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN location_data ON crime_by_city.city = location_data.city AND crime_by_city.state = location_data.state\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY location_data.county\nORDER BY total_arson DESC\nLIMIT 5;```"
         },
         {
             "role": "user",
@@ -70,7 +69,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "```SELECT demographic_data.city, demographic_data.state, SUM(female_population) AS city_female_population\nFROM demographic_data\nWHERE female_population IS NOT NULL\nGROUP BY demographic_data.city\nORDER BY female_population DESC\nLIMIT 5;```"
+            "content": "```SELECT location_data.city, location_data.state, population_by_gender.female_population\nFROM location_data\nJOIN population_by_gender ON location_data.geo_id = population_by_gender.geo_id\nORDER BY population_by_gender.female_population DESC\nLIMIT 5;```"
         },
         {
             "role": "user",
@@ -78,7 +77,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "```SELECT city, state, SUM(total_population) AS total_city_population\nFROM demographic_data\nWHERE state = 'WA'\nGROUP BY city, state\nORDER BY total_city_population DESC\nLIMIT 1;```"
+            "content": "```SELECT location_data.city, location_data.state, \n       SUM(population_by_gender.male_population) + SUM(population_by_gender.female_population) AS total_population\nFROM location_data\nJOIN population_by_gender ON location_data.geo_id = population_by_gender.geo_id\nWHERE location_data.state = 'WA'\nGROUP BY location_data.city, location_data.state\nORDER BY total_population DESC\nLIMIT 1;```"
         },
         {
             "role": "user",
@@ -86,7 +85,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "```SELECT zip_code, \n       (white_population / NULLIF(total_population, 0)) * 100 AS white_percentage,\n       (black_population / NULLIF(total_population, 0)) * 100 AS black_percentage,\n       (native_american_population / NULLIF(total_population, 0)) * 100 AS native_american_percentage,\n       (asian_population / NULLIF(total_population, 0)) * 100 AS asian_percentage,\n       (two_or_more_population / NULLIF(total_population, 0)) * 100 AS two_or_more_percentage,\n       (hispanic_population / NULLIF(total_population, 0)) * 100 AS hispanic_percentage\nFROM demographic_data\nWHERE city = 'San Francisco'\nORDER BY (white_population + black_population + native_american_population + asian_population + two_or_more_population + hispanic_population) DESC\nLIMIT 1;```"
+            "content": "```SELECT location_data.zip_code, \n       (population_by_race.white_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_white,\n       (population_by_race.black_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_black,\n       (population_by_race.native_american_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_native_american,\n       (population_by_race.asian_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_asian,\n       (population_by_race.hispanic_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_hispanic,\n       (population_by_race.two_or_more_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_two_or_more\nFROM population_by_race\nJOIN location_data ON population_by_race.geo_id = location_data.geo_id\nJOIN (SELECT geo_id, SUM(white_population + black_population + native_american_population + asian_population + hispanic_population + two_or_more_population) AS total_population\n      FROM population_by_race\n      GROUP BY geo_id) AS total_population ON population_by_race.geo_id = total_population.geo_id\nWHERE location_data.city = 'San Francisco' AND location_data.state = 'CA'\nORDER BY (population_by_race.white_population + population_by_race.black_population + population_by_race.native_american_population + population_by_race.asian_population + population_by_race.hispanic_population + population_by_race.two_or_more_population) DESC\nLIMIT 1;```"
         },
         {
             "role": "user",
@@ -94,7 +93,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "```SELECT zip_code, SUM(masters_degree + professional_school_degree + doctorate_degree) AS total_highly_educated_population \nFROM demographic_data \nWHERE state = 'CA' \nGROUP BY zip_code \nORDER BY total_highly_educated_population DESC \nLIMIT 1```"
+            "content": "```SELECT location_data.zip_code, population_by_education_level.masters_degree + population_by_education_level.professional_school_degree + population_by_education_level.doctorate_degree AS total_advanced_degrees\nFROM population_by_education_level\nJOIN location_data ON population_by_education_level.geo_id = location_data.geo_id\nWHERE location_data.state = 'CA'\nORDER BY total_advanced_degrees DESC\nLIMIT 1;```"
         }
     ]
 
@@ -119,12 +118,11 @@ def make_msg_with_schema_and_warnings():
             "\n"
             "---------------------\n"
             "Use state abbreviations for states."
-            " Table 'crime_by_city' does not have columns 'zip_code' or 'county'."
+            " Table `crime_by_city` does not have columns 'zip_code' or 'county'."
             " Do not use ambiguous column names."
-            " For example, 'city' can be ambiguous because both tables 'demographic_data' and 'crime_by_city' have a column named 'city'."
+            " For example, `city` can be ambiguous because both tables `location_data` and `crime_by_city` have a column named `city`."
             " Always specify the table where you are using the column."
-            " If you include a 'city' column in the result table, include a 'state' column too."
-            " If you include a 'county' column in the result table, include a 'state' columntoo."
+            " If you include a `city` or `county` column in the result table, include a `state` column too."
             " Make sure each value in the result table is not null."
             " Write your answer in markdown format.\n"
     )
