@@ -9,6 +9,7 @@ from sqlalchemy import text
 from ..lat_lon import city_lat_lon, zip_lat_lon
 from ..messages import get_assistant_message, clean_message_content, extract_code_from_markdown
 from ..table_details import get_table_schemas
+from ..few_shot_examples import get_few_shot_example_messages
 
 
 MSG_WITH_ERROR_TRY_AGAIN = (
@@ -19,7 +20,7 @@ MSG_WITH_ERROR_TRY_AGAIN = (
 
 
 def make_default_messages(schemas: str):
-    return [
+    default_messages = [
         {
             "role": "system",
             "content": (
@@ -39,63 +40,10 @@ def make_default_messages(schemas: str):
                 " Write your answer in markdown format.\n"
             )
         },
-        {
-            "role": "user",
-            "content": "Which top 5 cities have the most total crime?"
-        },
-        {
-            "role": "assistant",
-            "content": "```SELECT city, state, \n       (violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) AS total_crime\nFROM crime_by_city\nORDER BY total_crime DESC\nLIMIT 5;```"
-        },
-        {
-            "role": "user",
-            "content": "What zip code has the highest percentage of people of age 75?"
-        },
-        {
-            "role": "assistant",
-            "content": "```SELECT location_data.zip_code, \n       (population_by_age.population_75_to_84_years / total_population.total_population) * 100 AS percentage_75_to_84\nFROM population_by_age\nJOIN location_data ON population_by_age.geo_id = location_data.geo_id\nJOIN total_population ON population_by_age.geo_id = total_population.geo_id\nWHERE total_population.total_population > 0\nORDER BY percentage_75_to_84 DESC\nLIMIT 1;```"
-        },
-        {
-            "role": "user",
-            "content": "Which 5 counties have the most arson?"
-        },
-        {
-            "role": "assistant",
-            "content": "```SELECT location_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN location_data ON crime_by_city.city = location_data.city AND crime_by_city.state = location_data.state\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY location_data.county\nORDER BY total_arson DESC\nLIMIT 5;```"
-        },
-        {
-            "role": "user",
-            "content": "Which 5 cities have the most females?"
-        },
-        {
-            "role": "assistant",
-            "content": "```SELECT location_data.city, location_data.state, population_by_gender.female_population\nFROM location_data\nJOIN population_by_gender ON location_data.geo_id = population_by_gender.geo_id\nORDER BY population_by_gender.female_population DESC\nLIMIT 5;```"
-        },
-        {
-            "role": "user",
-            "content": "Which city in Washington has the highest population?"
-        },
-        {
-            "role": "assistant",
-            "content": "```SELECT location_data.city, location_data.state, \n       SUM(population_by_gender.male_population) + SUM(population_by_gender.female_population) AS total_population\nFROM location_data\nJOIN population_by_gender ON location_data.geo_id = population_by_gender.geo_id\nWHERE location_data.state = 'WA'\nGROUP BY location_data.city, location_data.state\nORDER BY total_population DESC\nLIMIT 1;```"
-        },
-        {
-            "role": "user",
-            "content": "Which zip code in San Francisco has the highest racial diversity and what is the percentage population of each race in that zip code?"
-        },
-        {
-            "role": "assistant",
-            "content": "```SELECT location_data.zip_code, \n       (population_by_race.white_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_white,\n       (population_by_race.black_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_black,\n       (population_by_race.native_american_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_native_american,\n       (population_by_race.asian_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_asian,\n       (population_by_race.hispanic_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_hispanic,\n       (population_by_race.two_or_more_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_two_or_more\nFROM population_by_race\nJOIN location_data ON population_by_race.geo_id = location_data.geo_id\nJOIN (SELECT geo_id, SUM(white_population + black_population + native_american_population + asian_population + hispanic_population + two_or_more_population) AS total_population\n      FROM population_by_race\n      GROUP BY geo_id) AS total_population ON population_by_race.geo_id = total_population.geo_id\nWHERE location_data.city = 'San Francisco' AND location_data.state = 'CA'\nORDER BY (population_by_race.white_population + population_by_race.black_population + population_by_race.native_american_population + population_by_race.asian_population + population_by_race.hispanic_population + population_by_race.two_or_more_population) DESC\nLIMIT 1;```"
-        },
-        {
-            "role": "user",
-            "content": "Zip code in California with the most advanced degree holders"
-        },
-        {
-            "role": "assistant",
-            "content": "```SELECT location_data.zip_code, population_by_education_level.masters_degree + population_by_education_level.professional_school_degree + population_by_education_level.doctorate_degree AS total_advanced_degrees\nFROM population_by_education_level\nJOIN location_data ON population_by_education_level.geo_id = location_data.geo_id\nWHERE location_data.state = 'CA'\nORDER BY total_advanced_degrees DESC\nLIMIT 1;```"
-        }
     ]
+    default_messages.extend(get_few_shot_example_messages())
+    return default_messages
+
 
 def make_rephrase_msg_with_schema_and_warnings():
     return (
