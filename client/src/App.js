@@ -5,6 +5,7 @@ import bbox from '@turf/bbox'
 import posthog from 'posthog-js'
 import * as turf from '@turf/turf'
 import { FaTimes } from 'react-icons/fa'
+import { ImSpinner } from 'react-icons/im'
 import Plot from 'react-plotly.js'
 
 // Components
@@ -82,8 +83,8 @@ if (process.env.REACT_APP_HOST_ENV === 'dev') {
 const SearchInput = (props) => {
     const { value, onSearchChange, onClear } = props
     return (
-        <div className="flex rounded-md shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900  dark:text-white">
-            <div className="relative flex flex-grow items-stretch focus-within:z-10  ">
+        <div className="flex rounded-md shadow-inner sm:shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900  dark:text-white">
+            <div className="relative flex flex-grow items-stretch focus-within:z-10">
                 {/*<input*/}
                 {/*  type="email"*/}
                 {/*  name="email"*/}
@@ -97,14 +98,14 @@ const SearchInput = (props) => {
                     name="search"
                     id="search"
                     placeholder="Ask anything about US Demographics..."
-                    className="block w-full rounded-none rounded-l-md border-0 py-1.5 ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 sm:text-sm sm:leading-6 bg-transparent dark:placeholder-neutral-400"
+                    className="block w-full rounded-none rounded-l-md border-0 py-1.5 sm:ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 sm:text-sm sm:leading-6 bg-transparent dark:placeholder-neutral-400"
                     value={value}
                     onChange={onSearchChange}
                 />
             </div>
             <button
                 type="button"
-                className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none hover:bg-gray-50 hover:dark:bg-dark-900"
+                className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md p-2 text-xs sm:text-sm font-semibold sm:ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none hover:bg-gray-50 hover:dark:bg-dark-900"
                 onClick={onClear}
             >
                 <FaTimes />
@@ -152,6 +153,16 @@ function App(props) {
     const [title, setTitle] = useState('')
     const [visualization, setVisualization] = useState('map')
 
+    const [mobileHelpIsOpen, setMobileHelpIsOpen] = useState(true)
+    const [mobileTableIsOpen, setMobileTableIsOpen] = useState(false)
+    const [mobileSqlIsOpen, setMobileSqlIsOpen] = useState(false)
+    const [mobileResultIsOpen, setMobileResultIsOpen] = useState(false)
+    const mobileHelpRef = useRef()
+    const mobileTableRef = useRef()
+    const mobileSqlRef = useRef()
+    const mobileResultRef = useRef()
+    const mapRef = useRef()
+
     useEffect(() => {
         document.title = query || 'Census GPT'
     }, [query])
@@ -171,8 +182,6 @@ function App(props) {
         setZipcodes([])
         setZipcodesFormatted([])
     }
-
-    const mapRef = useRef()
 
     const handleSearchChange = (event) => {
         const { value } = event.target
@@ -337,6 +346,8 @@ function App(props) {
                     // No zipcodes or cities to render. Default to chart
                     setVisualization('chart')
                 }
+                setMobileHelpIsOpen(false)
+                setMobileResultIsOpen(true)
             })
             .catch((err) => {
                 Sentry.setContext('queryContext', {
@@ -397,19 +408,6 @@ function App(props) {
         )
     }
 
-    const [mobileHelpIsOpen, setMobileHelpIsOpen] = useState(true)
-    const [mobileTableIsOpen, setMobileTableIsOpen] = useState(false)
-    const [mobileSqlIsOpen, setMobileSqlIsOpen] = useState(false)
-    const mobileHelpRef = useRef();
-    const mobileTableRef = useRef();
-    const mobileSqlRef = useRef();
-
-    useEffect(() => {
-        if (!isLoading) {
-            setMobileHelpIsOpen(false)
-        }
-    }, [isLoading])
-
     return (
         <div className="App bg-white dark:bg-dark-900 dark:text-white flex flex-col h-screen">
             <link
@@ -417,7 +415,7 @@ function App(props) {
                 rel="stylesheet"
             />
 
-            <div className="absolute w-full sm:relative sm:flex flex-col p-2 sm:p-6 space-y-1.5 bg-gradient-to-b from-black to-transparent bg/10 backdrop-blur-sm pb-2.5 sm:from-white sm:dark:from-transparent z-50">
+            <div className="absolute w-full sm:relative sm:flex flex-col p-2 sm:p-6 space-y-1.5 bg-gradient-to-b from-black/95 to-transparent bg/10 backdrop-blur-sm pb-2.5 sm:from-white sm:dark:from-transparent z-50">
                 <h1
                     className="text-4xl font-bold text-white sm:text-black dark:text-white"
                     onClick={() => {
@@ -504,13 +502,13 @@ function App(props) {
                     )}
                 </div>
 
-                <div className='flex flex-grow h-full w-full relative rounded-lg shadow overflow-hidden'>
+                <div className='flex flex-grow h-full w-full relative sm:rounded-lg shadow overflow-hidden'>
                     <div className='absolute top-24 sm:top-0 right-0 z-10 p-1'>
                         <VizSelector
                             selected={visualization} setSelected={setVisualization}
                             tableRef={mobileTableRef} setTableIsOpen={setMobileTableIsOpen}
                             sqlRef={mobileSqlRef} setSqlIsOpen={setMobileSqlIsOpen}
-                            mobileButtonsCanOpen={sql.length}
+                            viewsCanOpen={sql.length}
                         />
                     </div>
                     <div className="overflow-hidden sm:rounded-lg shadow flex h-full w-full relative">
@@ -557,7 +555,7 @@ function App(props) {
                                 </Source>
                             </Map> :
                             // following <div> helps plot better scale bar widths for responsiveness
-                            <div className='overflow-x-auto flex w-full overflow-hidden pb-32 sm:pb-0'>
+                            <div className='overflow-x-auto flex w-full overflow-hidden mb-32 sm:mb-0'>
                                 <DataPlot cols={tableInfo.columns} rows={tableInfo.rows} />
                             </div>
                         }
@@ -566,9 +564,59 @@ function App(props) {
 
             </div>
 
-            {/* Mobile Search */}
-            <div className='absolute bottom-24 z-50 flex w-full justify-center sm:hidden'>
-                <div className='rounded-xl bg-white/10 dark:bg-black/20 w-9/12 p-2.5 backdrop-blur-lg'>
+            {/* Mobile */}
+            <div className='absolute bottom-32 flex w-full justify-center sm:hidden z-50'>
+                {isLoading && <span className='animate-spin text-2xl text-white'><ImSpinner /></span>}
+            </div>
+            {mobileResultIsOpen && !isLoading && sql.length != 0 &&
+                <div className='absolute w-screen h-screen items-center justify-center flex sm:hidden z-50' onClick={(e) => mobileResultRef.current && !mobileResultRef.current.contains(e.target) && setMobileResultIsOpen(false)}>
+                    <div className='absolute w-full bottom-32 items-center justify-center flex'>
+                        <div className='flex flex-col w-4/5 max-h-96 h-full' ref={mobileResultRef}>
+                            <button
+                                className='relative h-0 top-1 px-2 z-10 justify-end flex text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white text-xs'
+                                onClick={() => setMobileResultIsOpen(false)}
+                            >
+                                Close
+                            </button>
+                            <div className='space-y-2 flex-col justify-between h-full bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg pt-6 pb-2 px-2 flex w-full items-center overflow-auto'>
+                                <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-full max-h-48 overflow-auto'>
+                                    <div className='flex justify-end p-1 absolute right-0'>
+                                        <CopySqlToClipboard text={sql} />
+                                    </div>
+                                    <pre
+                                        align="left"
+                                        className="rounded-md dark:text-white"
+                                    >
+                                        <code className="text-sm text-gray-800 dark:text-white">
+                                            <SyntaxHighlighter
+                                                language="sql"
+                                                style={hybrid}
+                                                customStyle={{
+                                                    color: undefined,
+                                                    background: undefined,
+                                                    margin: undefined,
+                                                    padding: '1rem',
+                                                }}
+                                            >
+                                                {sql}
+                                            </SyntaxHighlighter>
+                                        </code>
+                                    </pre>
+                                </div>
+                                <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-full overflow-auto items-start justify-center'>
+                                    <Table
+                                        columns={tableInfo.columns}
+                                        values={tableInfo.rows}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+            <div className='absolute bottom-16 z-50 flex w-full justify-center sm:hidden'>
+                <div className='rounded-xl bg-black/5 dark:bg-black/20 w-full mx-4 p-2.5 backdrop-blur-lg ring-1 dark:ring-white/40 ring-blue-500'>
                     <form
                         autoComplete={'off'}
                         className="flex justify-center"
@@ -582,18 +630,20 @@ function App(props) {
                             onSearchChange={handleSearchChange}
                             onClear={handleClearSearch}
                         />
-                        <SearchButton />
                     </form>
                 </div>
             </div>
-            <button className='absolute top-[6.5rem] text-white mx-4 text-xl sm:hidden z-40'
+            <button className='absolute top-[5.5rem] bg-black/20 backdrop-blur-sm rounded-lg text-white hover:text-blue-600 p-2 m-2 text-xl sm:hidden z-40'
                 onClick={() => setMobileHelpIsOpen(!mobileHelpIsOpen)}
             >
                 <BsQuestionCircle />
             </button>
             {mobileHelpIsOpen && (
                 <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileHelpRef.current && !mobileHelpRef.current.contains(e.target) && setMobileHelpIsOpen(false)}>
-                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 h-3/5 overflow-auto' ref={mobileHelpRef}>
+                    <div className='space-y-4 flex-col bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 h-2/5 overflow-auto' ref={mobileHelpRef}>
+                        <div className='font-bold text-lg'>
+                            Welcome to Census GPT
+                        </div>
                         <Examples
                             postHogInstance={posthog}
                             setQuery={setQuery}
@@ -604,7 +654,7 @@ function App(props) {
             )}
             {mobileTableIsOpen && sql.length && (
                 <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileTableRef.current && !mobileTableRef.current.contains(e.target) && setMobileTableIsOpen(false)}>
-                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 max-h-96 overflow-auto items-center justify-center' ref={mobileTableRef}>
+                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 max-h-80 overflow-auto items-start justify-center' ref={mobileTableRef}>
                         <Table
                             columns={tableInfo.columns}
                             values={tableInfo.rows}
@@ -614,16 +664,16 @@ function App(props) {
             )}
             {mobileSqlIsOpen && sql.length && (
                 <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileSqlRef.current && !mobileSqlRef.current.contains(e.target) && setMobileSqlIsOpen(false)}>
-                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 max-h-96 overflow-auto' ref={mobileSqlRef}>
-                        <p class="font-medium"> {title} </p>
+                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-4/5 max-h-80 overflow-auto' ref={mobileSqlRef}>
+                        <div className='flex justify-end p-1 relative'>
+                            <CopySqlToClipboard text={sql} />
+                        </div>
                         <pre
                             align="left"
-                            className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
+                            className="rounded-md dark:text-white"
                         >
                             <code className="text-sm text-gray-800 dark:text-white">
-                                <div className='flex justify-end p-1'>
-                                    <CopySqlToClipboard text={sql} />
-                                </div>
+
                                 <SyntaxHighlighter
                                     language="sql"
                                     style={hybrid}

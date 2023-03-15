@@ -104,7 +104,7 @@ const Table = (props) => {
     let values = props.values
 
     return (
-        <div className="dark:bg-dark-800 dark:text-white rounded-lg w-full h-full">
+        <div className="sm:dark:bg-dark-800 dark:text-white rounded-lg w-full h-full">
             <div className="flow-root">
                 <div className="overflow-x-auto">
                     <div className="inline-block min-w-full align-middle px-6">
