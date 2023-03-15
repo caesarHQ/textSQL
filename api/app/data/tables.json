@@ -356,6 +356,112 @@
                     "description": "population with a doctorate degree at most"
                 }
             ]
+        },
+        {
+            "name": "national_housing_market_data",
+            "description": "Table `national_housing_market_data` has national-level housing market data.",
+            "columns": [
+                {
+                    "name": "region",
+                    "type": "TEXT",
+                    "description": "region"
+                },
+                {
+                    "name": "month_of_period_end",
+                    "type": "DATETIME",
+                    "description": "month of period end"
+                },
+                {
+                    "name": "median_sale_price",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "median sale price"
+                },
+                {
+                    "name": "median_sale_price_mom",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "median sale price month over month"
+                },
+                {
+                    "name": "median_sale_price_yoy",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "median sale price year over year"
+                },
+                {
+                    "name": "homes_sold",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "homes sold"
+                },
+                {
+                    "name": "homes_sold_mom",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "homes sold month over month"
+                },
+                {
+                    "name": "homes_sold_yoy",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "homes sold year over year"
+                },
+                {
+                    "name": "new_listings",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "new listings"
+                },
+                {
+                    "name": "new_listings_mom",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "new listings month over month"
+                },
+                {
+                    "name": "new_listings_yoy",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "new listings year over year"
+                },
+                {
+                    "name": "inventory",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "inventory"
+                },
+                {
+                    "name": "inventory_mom",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "inventory month over month"
+                },
+                {
+                    "name": "inventory_yoy",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "inventory year over year"
+                },
+                {
+                    "name": "days_on_market",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "days on market"
+                },
+                {
+                    "name": "days_on_market_mom",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "days on market month over month"
+                },
+                {
+                    "name": "days_on_market_yoy",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "days on market year over year"
+                },
+                {
+                    "name": "average_sale_to_list",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "average sale to list"
+                },
+                {
+                    "name": "average_sale_to_list_mom",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "average sale to list month over month"
+                },
+                {
+                    "name": "average_sale_to_list_yoy",
+                    "type": "DOUBLE_PRECISION",
+                    "description": "average sale to list year over year"
+                }
+            ]
         }
     ]
 }
