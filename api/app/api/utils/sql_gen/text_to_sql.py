@@ -1,13 +1,15 @@
 from collections import OrderedDict
+import json
 from typing import Dict, List
 
 import joblib
-import openai
 from app.config import engine
 from sqlalchemy import text
 
 from ..lat_lon import city_lat_lon, zip_lat_lon
 from ..messages import get_assistant_message, clean_message_content
+from ..table_details import get_table_schemas
+
 
 MSG_WITH_ERROR_TRY_AGAIN = (
     "Try again. "
@@ -15,35 +17,22 @@ MSG_WITH_ERROR_TRY_AGAIN = (
     "{error_message}"
 )
 
-def generate_msg_with_schemas(table_names: List[str]):
-    table_name_to_msg = {
-        'crime_by_city': (
-            "Schema of table 'crime_by_city':\n"
-            "Table 'crime_by_city' has columns: city (TEXT), violent_crime (DOUBLE_PRECISION), murder_and_nonnegligent_manslaughter (DOUBLE_PRECISION), rape (DOUBLE_PRECISION), robbery (DOUBLE_PRECISION), aggravated_assault (DOUBLE_PRECISION), property_crime (DOUBLE_PRECISION), burglary (DOUBLE_PRECISION), larceny_theft (DOUBLE_PRECISION), motor_vehicle_theft (DOUBLE_PRECISION), arson (DOUBLE_PRECISION), state (TEXT)."
-        ),
-        'acs_census_data': (
-            "Schema of table 'acs_census_data':\n"
-            "Table 'acs_census_data' has columns: total_population (DOUBLE_PRECISION), elderly_population (DOUBLE_PRECISION), male_population (DOUBLE_PRECISION), female_population (DOUBLE_PRECISION), white_population (DOUBLE_PRECISION), black_population (DOUBLE_PRECISION), native_american_population (DOUBLE_PRECISION), asian_population (DOUBLE_PRECISION), two_or_more_population (DOUBLE_PRECISION), hispanic_population (DOUBLE_PRECISION), adult_population (DOUBLE_PRECISION), citizen_adult_population (DOUBLE_PRECISION), average_household_size (DOUBLE_PRECISION), population_under_5_years (DOUBLE_PRECISION), population_5_to_9_years (DOUBLE_PRECISION), population_10_to_14_years (DOUBLE_PRECISION), population_15_to_19_years (DOUBLE_PRECISION), population_20_to_24_years (DOUBLE_PRECISION), population_25_to_34_years (DOUBLE_PRECISION), population_35_to_44_years (DOUBLE_PRECISION), population_45_to_54_years (DOUBLE_PRECISION), population_55_to_59_years (DOUBLE_PRECISION), population_60_to_64_years (DOUBLE_PRECISION), population_65_to_74_years (DOUBLE_PRECISION), population_75_to_84_years (DOUBLE_PRECISION), population_85_years_and_over (DOUBLE_PRECISION), per_capita_income (DOUBLE_PRECISION), median_income_for_workers (DOUBLE_PRECISION), zip_code (TEXT), city (TEXT), state (TEXT), county (TEXT), lat (DOUBLE_PRECISION), lon (DOUBLE_PRECISION)."
-        )
-    }
 
-    return "\n\n".join(map(lambda table_name: table_name_to_msg[table_name], table_names))
-
-def make_default_messages(table_names: List[str]):
+def make_default_messages(schemas: str):
     return [
         {
             "role": "system",
             "content": (
                     "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command, generally about crime, demographics, and population."
                     "\n"
-                    "The following are schemas of tables you can query:\n"
-                    "---------------------\n" + generate_msg_with_schemas(table_names) +
-                    "\n\n"
+                    "The following are tables you can query:\n"
+                    "---------------------\n"
+                    + schemas +
                     "---------------------\n"
                     "Use state abbreviations for states."
                     " Table 'crime_by_city' does not have columns 'zip_code' or 'county'."
                     " Do not use ambiguous column names."
-                    " For example, 'city' can be ambiguous because both tables 'acs_census_data' and 'crime_by_city' have a column named 'city'."
+                    " For example, 'city' can be ambiguous because both tables 'demographic_data' and 'crime_by_city' have a column named 'city'."
                     " Always specify the table where you are using the column."
                     " If you include a 'city' column in the result table, include a 'state' column too."
                     " If you include a 'county' column in the result table, include a 'state' column too."
@@ -64,7 +53,7 @@ def make_default_messages(table_names: List[str]):
         },
         {
             "role": "assistant",
-            "content": "SELECT zip_code, (population_75_to_84_years / total_population) * 100 AS percentage\nFROM acs_census_data\nWHERE total_population > 0\nORDER BY percentage DESC\nLIMIT 1;"
+            "content": "SELECT zip_code, (population_75_to_84_years / total_population) * 100 AS percentage\nFROM demographic_data\nWHERE total_population > 0\nORDER BY percentage DESC\nLIMIT 1;"
         },
         {
             "role": "user",
@@ -72,7 +61,7 @@ def make_default_messages(table_names: List[str]):
         },
         {
             "role": "assistant",
-            "content": "SELECT acs_census_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN acs_census_data ON crime_by_city.city = acs_census_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY acs_census_data.county\nORDER BY total_arson DESC\nLIMIT 5;"
+            "content": "SELECT demographic_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN demographic_data ON crime_by_city.city = demographic_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY demographic_data.county\nORDER BY total_arson DESC\nLIMIT 5;"
         },
         {
             "role": "user",
@@ -80,7 +69,7 @@ def make_default_messages(table_names: List[str]):
         },
         {
             "role": "assistant",
-            "content": "SELECT acs_census_data.city, acs_census_data.state, SUM(female_population) AS city_female_population\nFROM acs_census_data\nWHERE female_population IS NOT NULL\nGROUP BY acs_census_data.city\nORDER BY female_population DESC\nLIMIT 5;"
+            "content": "SELECT demographic_data.city, demographic_data.state, SUM(female_population) AS city_female_population\nFROM demographic_data\nWHERE female_population IS NOT NULL\nGROUP BY demographic_data.city\nORDER BY female_population DESC\nLIMIT 5;"
         },
         {
             "role": "user",
@@ -88,40 +77,50 @@ def make_default_messages(table_names: List[str]):
         },
         {
             "role": "assistant",
-            "content": "SELECT city, state, SUM(total_population) AS total_city_population\nFROM acs_census_data\nWHERE state = 'WA'\nGROUP BY city, state\nORDER BY total_city_population DESC\nLIMIT 1;"
+            "content": "SELECT city, state, SUM(total_population) AS total_city_population\nFROM demographic_data\nWHERE state = 'WA'\nGROUP BY city, state\nORDER BY total_city_population DESC\nLIMIT 1;"
         },
         {
             "role": "user",
-            "content": "Which area in San Francisco has the highest racial diversity and what is the percentage population of each race in that area?"
+            "content": "Which zip code in San Francisco has the highest racial diversity and what is the percentage population of each race in that zip code?"
         },
         {
             "role": "assistant",
-            "content": "SELECT zip_code, \n       (white_population / NULLIF(total_population, 0)) * 100 AS white_percentage,\n       (black_population / NULLIF(total_population, 0)) * 100 AS black_percentage,\n       (native_american_population / NULLIF(total_population, 0)) * 100 AS native_american_percentage,\n       (asian_population / NULLIF(total_population, 0)) * 100 AS asian_percentage,\n       (two_or_more_population / NULLIF(total_population, 0)) * 100 AS two_or_more_percentage,\n       (hispanic_population / NULLIF(total_population, 0)) * 100 AS hispanic_percentage\nFROM acs_census_data\nWHERE city = 'San Francisco'\nORDER BY (white_population + black_population + native_american_population + asian_population + two_or_more_population + hispanic_population) DESC\nLIMIT 1;"
+            "content": "SELECT zip_code, \n       (white_population / NULLIF(total_population, 0)) * 100 AS white_percentage,\n       (black_population / NULLIF(total_population, 0)) * 100 AS black_percentage,\n       (native_american_population / NULLIF(total_population, 0)) * 100 AS native_american_percentage,\n       (asian_population / NULLIF(total_population, 0)) * 100 AS asian_percentage,\n       (two_or_more_population / NULLIF(total_population, 0)) * 100 AS two_or_more_percentage,\n       (hispanic_population / NULLIF(total_population, 0)) * 100 AS hispanic_percentage\nFROM demographic_data\nWHERE city = 'San Francisco'\nORDER BY (white_population + black_population + native_american_population + asian_population + two_or_more_population + hispanic_population) DESC\nLIMIT 1;"
         },
+        {
+            "role": "user",
+            "content": "Zip code in California with the most advanced degree holders"
+        },
+        {
+            "role": "assistant",
+            "content": "SELECT zip_code, SUM(masters_degree + professional_school_degree + doctorate_degree) AS total_highly_educated_population \nFROM demographic_data \nWHERE state = 'CA' \nGROUP BY zip_code \nORDER BY total_highly_educated_population DESC \nLIMIT 1"
+        }
     ]
 
-def make_rephrase_msg_with_schema_and_warnings(table_names: List[str]):
+def make_rephrase_msg_with_schema_and_warnings():
     return (
             "Let's start by rephrasing the query to be more analytical. Use the schema context to rephrase the user question in a way that leads to optimal query results: {natural_language_query}"
             "The following are schemas of tables you can query:\n"
-            "---------------------\n" + generate_msg_with_schemas(table_names) +
+            "---------------------\n"
+            "{schemas}"
             "\n"
             "---------------------\n"
             "Do not include any of the table names in the query."
             " Ask the natural language query the way a data analyst, with knowledge of these tables, would."
     )
 
-def make_msg_with_schema_and_warnings(table_names: List[str]):
+def make_msg_with_schema_and_warnings():
     return (
             "Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}"
             "The following are schemas of tables you can query:\n"
-            "---------------------\n" + generate_msg_with_schemas(table_names) +
+            "---------------------\n"
+            "{schemas}"
             "\n"
             "---------------------\n"
             "Use state abbreviations for states."
             " Table 'crime_by_city' does not have columns 'zip_code' or 'county'."
             " Do not use ambiguous column names."
-            " For example, 'city' can be ambiguous because both tables 'acs_census_data' and 'crime_by_city' have a column named 'city'."
+            " For example, 'city' can be ambiguous because both tables 'demographic_data' and 'crime_by_city' have a column named 'city'."
             " Always specify the table where you are using the column."
             " If you include a 'city' column in the result table, include a 'state' column too."
             " If you include a 'county' column in the result table, include a 'state' columntoo."
@@ -167,7 +166,6 @@ def execute_sql(sql_query: str):
         )
         with connection.begin():
             sql_text = text(sql_query)
-            # result = connection.execute(sql_text, {'param': 'value'})
             result = connection.execute(sql_text)
 
         column_names = list(result.keys())
@@ -190,10 +188,7 @@ def execute_sql(sql_query: str):
             zip_code_idx = None
 
         if zip_code_idx is not None:
-            # column_names.append("zip_code_lat")
-            # column_names.append("zip_code_lon")
             column_names.append("lat")
-            # column_names.append("lon")
             column_names.append("long")
             for row in rows:
                 zip_code = row[zip_code_idx]
@@ -215,10 +210,7 @@ def execute_sql(sql_query: str):
                 state_idx = None
 
             if city_idx is not None and state_idx is not None:
-                # column_names.append("city_lat")
-                # column_names.append("city_lon")
                 column_names.append("lat")
-                # column_names.append("lon")
                 column_names.append("long")
                 for row in rows:
                     city = row[city_idx]
@@ -246,18 +238,17 @@ def execute_sql(sql_query: str):
             'results': results,
         }
 
-        # return {
-        #     'column_names': column_names,
-        #     'values': values,
-        # }
-
 
 def text_to_sql_parallel(natural_language_query, table_names, k=3):
     """
     Generates K SQL queries in parallel and returns the first one that does not produce an exception.
     """
-    content = make_msg_with_schema_and_warnings(table_names).format(natural_language_query=natural_language_query)
-    messages = make_default_messages(table_names).copy()
+    schemas = get_table_schemas(table_names)
+    content = make_msg_with_schema_and_warnings().format(
+        natural_language_query=natural_language_query,
+        schemas=schemas,
+        )
+    messages = make_default_messages(schemas)
     messages.append({
         "role": "user",
         "content": content
@@ -300,14 +291,20 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     """
     if not messages:
         # ask the assistant to rephrase before generating the query
+        schemas = get_table_schemas(table_names)
         rephrase = [{
             "role": "user",
-            "content": make_rephrase_msg_with_schema_and_warnings(table_names).format(
-                natural_language_query=natural_language_query)
+            "content": make_rephrase_msg_with_schema_and_warnings().format(
+                natural_language_query=natural_language_query,
+                schemas=schemas
+                )
         }]
         assistant_message = get_assistant_message(rephrase)
-        content = make_msg_with_schema_and_warnings(table_names).format(natural_language_query=assistant_message['message']['content'])
-        messages = make_default_messages(table_names).copy()
+        content = make_msg_with_schema_and_warnings().format(
+            natural_language_query=assistant_message['message']['content'],
+            schemas=schemas
+            )
+        messages = make_default_messages(schemas)
         messages.append({
             "role": "user",
             "content": content
