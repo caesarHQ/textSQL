@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, make_response, request
-from .utils.sql_gen.text_to_sql import text_to_sql_with_retry, text_to_sql_parallel
+from .utils.sql_gen.text_to_sql import text_to_sql_with_retry, text_to_sql_parallel, text_to_sql_chat_with_retry
 from .utils.table_selection import get_relevant_tables
 from .utils.lat_lon import zip_lat_lon
 from sentry_sdk import capture_exception
@@ -39,6 +39,32 @@ def text_to_sql():
         return make_response(jsonify({'error': error_msg}), 500)
 
     return make_response(jsonify({'result': result, 'sql_query': sql_query}), 200)
+
+
+@bp.route('/text_to_sql_chat', methods=['POST'])
+def text_to_sql_chat():
+    """
+    Convert natural language query to SQL
+    """
+    request_body = request.get_json()
+    messages = request_body.get('messages')
+
+    if not messages:
+        error_msg = 'messages is missing from request body'
+        return make_response(jsonify({'error': error_msg}), 400)
+
+    try:
+        result, sql_query, messages = text_to_sql_chat_with_retry(messages)
+    except Exception as e:
+        capture_exception(e)
+        error_msg = f'Error processing request: {str(e)}'
+        return make_response(jsonify({'error': error_msg}), 500)
+
+    return make_response(jsonify({
+        'result': result,
+        'sql_query': sql_query,
+        'messages': messages
+        }), 200)
 
 
 @bp.route('/zip_to_lat_lon', methods=['GET'])
