@@ -204,7 +204,7 @@ function App(props) {
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
                 natural_language_query,
-                table_names: ['crime_by_city', 'demographic_data', 'national_housing_market_data'],
+                // table_names: ['crime_by_city', 'demographic_data', 'national_housing_market_data'],
             }),
         }
 
