@@ -19,6 +19,39 @@ code {
 /* For safari mobile */
 @supports (-webkit-touch-callout: none) {
     .h-screen {
-      height: -webkit-fill-available;
+        height: -webkit-fill-available;
     }
-  }
+}
+
+/* Disable safari mobile pull to refresh */
+@media screen and (pointer: coarse) {
+    @supports (-webkit-backdrop-filter: blur(1px)) and (overscroll-behavior-y: none) {
+        html {
+            min-height: 100.3%;
+            overscroll-behavior-y: none;
+        }
+    }
+}
+@media screen and (pointer: coarse) {
+    @supports (-webkit-backdrop-filter: blur(1px)) and (not (overscroll-behavior-y: none)) {
+        html {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            margin: 0px;
+            max-height: 100%;
+            /* or `height: calc(100% - 16px);` if body has default margin */
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* in this case to disable pinch-zoom, set `touch-action: pan-x pan-y;` on `body` instead of `html` */
+    }
+}
+
+/* Disable chrome mobile pull to refresh */
+body {
+    overscroll-behavior-y: none;
+}
