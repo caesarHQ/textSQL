@@ -83,7 +83,7 @@ if (process.env.REACT_APP_HOST_ENV === 'dev') {
 const SearchInput = (props) => {
     const { value, onSearchChange, onClear } = props
     return (
-        <div className="flex rounded-md shadow-inner sm:shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900  dark:text-white">
+        <div className="flex rounded-full sm:rounded-md shadow-inner sm:shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
             <div className="relative flex flex-grow items-stretch focus-within:z-10">
                 {/*<input*/}
                 {/*  type="email"*/}
@@ -98,14 +98,14 @@ const SearchInput = (props) => {
                     name="search"
                     id="search"
                     placeholder="Ask anything about US Demographics..."
-                    className="block w-full rounded-none rounded-l-md border-0 py-1.5 sm:ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 sm:text-sm sm:leading-6 bg-transparent dark:placeholder-neutral-400"
+                    className="focus:ring-0 block w-full rounded-none rounded-l-md border-0 py-1.5 sm:ring-1 sm:ring-inset sm:ring-gray-300 sm:dark:ring-neutral-500 sm:focus:ring-2 sm:focus:ring-inset sm:focus:ring-blue-600 sm:dark:focus:ring-blue-600 sm:text-sm sm:leading-6 bg-transparent dark:placeholder-neutral-400"
                     value={value}
                     onChange={onSearchChange}
                 />
             </div>
             <button
                 type="button"
-                className="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md p-2 text-xs sm:text-sm font-semibold sm:ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none hover:bg-gray-50 hover:dark:bg-dark-900"
+                className="focus:ring-0 focus:text-blue-600 hover:text-blue-600 dark:text-white/50 dark:hover:text-blue-600 relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md p-2 text-xs sm:text-sm font-semibold sm:ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 sm:focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none sm:hover:bg-gray-50 sm:hover:dark:bg-dark-900"
                 onClick={onClear}
             >
                 <FaTimes />
@@ -153,15 +153,32 @@ function App(props) {
     const [title, setTitle] = useState('')
     const [visualization, setVisualization] = useState('map')
 
+    const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false)
     const [mobileHelpIsOpen, setMobileHelpIsOpen] = useState(true)
     const [mobileTableIsOpen, setMobileTableIsOpen] = useState(false)
     const [mobileSqlIsOpen, setMobileSqlIsOpen] = useState(false)
-    const [mobileResultIsOpen, setMobileResultIsOpen] = useState(false)
+    const mobileMenuRef = useRef()
     const mobileHelpRef = useRef()
     const mobileTableRef = useRef()
     const mobileSqlRef = useRef()
-    const mobileResultRef = useRef()
     const mapRef = useRef()
+    const [touchStart, setTouchStart] = useState(null)
+    const [touchEnd, setTouchEnd] = useState(null)
+
+    const onTouchStart = (e) => {
+        setTouchEnd(null)
+        setTouchStart(e.targetTouches[0].clientY)
+    }
+
+    const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientY)
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return
+        const distance = touchStart - touchEnd
+        const swipeUp = distance > 50
+        const swipeDown = distance < -225
+        swipeUp && !mobileMenuIsOpen ? setMobileMenuIsOpen(true) : swipeDown && mobileMenuIsOpen ? setMobileMenuIsOpen(false) : null
+    }
 
     useEffect(() => {
         document.title = query || 'Census GPT'
@@ -347,7 +364,7 @@ function App(props) {
                     setVisualization('chart')
                 }
                 setMobileHelpIsOpen(false)
-                setMobileResultIsOpen(true)
+                setMobileMenuIsOpen(true)
             })
             .catch((err) => {
                 Sentry.setContext('queryContext', {
@@ -416,7 +433,7 @@ function App(props) {
                     rel="stylesheet"
                 />
 
-                <div className="absolute w-full sm:relative sm:flex flex-col p-2 sm:p-6 space-y-1.5 bg-gradient-to-b from-black/95 to-transparent bg/10 backdrop-blur-sm pb-2.5 sm:from-white sm:dark:from-transparent z-50">
+                <div className="fixed sm:relative w-full sm:flex flex-col p-2 sm:p-6 space-y-1.5 bg-gradient-to-b from-black/95 to-transparent bg/10 backdrop-blur-sm pb-2.5 sm:from-white sm:dark:from-transparent z-50">
                     <h1
                         className="text-4xl font-bold text-white sm:text-black dark:text-white"
                         onClick={() => {
@@ -453,7 +470,6 @@ function App(props) {
                     </div>
                     <Disclaimer />
                 </div>
-
 
                 <div className="flex flex-col lg:flex-row h-full w-full gap-6 sm:p-6">
                     <div className="hidden sm:flex sm:flex-col h-full w-full max-h-[23rem] lg:max-h-full overflow-y-auto">
@@ -562,87 +578,20 @@ function App(props) {
                             }
                         </div>
                     </div>
-
                 </div>
 
                 {/* Mobile */}
-                <div className='absolute bottom-32 flex w-full justify-center sm:hidden z-50'>
+                <div className='absolute top-24 flex w-full justify-center sm:hidden z-50'>
                     {isLoading && <span className='animate-spin text-4xl text-blue-600'><ImSpinner /></span>}
                 </div>
-                {mobileResultIsOpen && !isLoading && sql.length != 0 &&
-                    <div className='absolute w-screen h-screen items-center justify-center flex sm:hidden z-50' onClick={(e) => mobileResultRef.current && !mobileResultRef.current.contains(e.target) && setMobileResultIsOpen(false)}>
-                        <div className='absolute w-full bottom-28 items-center justify-center flex'>
-                            <div className='flex flex-col w-4/5 max-h-96 h-full' ref={mobileResultRef}>
-                                <button
-                                    className='relative h-0 top-1 px-2 z-10 justify-end flex text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white text-xs'
-                                    onClick={() => setMobileResultIsOpen(false)}
-                                >
-                                    Close
-                                </button>
-                                <div className='space-y-2 flex-col justify-between bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg pt-6 pb-2 px-2 flex w-full items-center overflow-auto'>
-                                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-full max-h-48 min-h-fit'>
-                                        <div className='overflow-auto'>
-                                            <div className='flex justify-end p-1 absolute right-0'>
-                                                <CopySqlToClipboard text={sql} />
-                                            </div>
-                                            <pre
-                                                align="left"
-                                                className="rounded-md dark:text-white"
-                                            >
-                                                <code className="text-sm text-gray-800 dark:text-white">
-                                                    <SyntaxHighlighter
-                                                        language="sql"
-                                                        style={hybrid}
-                                                        customStyle={{
-                                                            color: undefined,
-                                                            background: undefined,
-                                                            margin: undefined,
-                                                            padding: '1rem',
-                                                        }}
-                                                    >
-                                                        {sql}
-                                                    </SyntaxHighlighter>
-                                                </code>
-                                            </pre>
-                                        </div>
-                                    </div>
-                                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-full overflow-auto items-start justify-center'>
-                                        <Table
-                                            columns={tableInfo.columns}
-                                            values={tableInfo.rows}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                }
-                <div className='absolute bottom-12 z-50 flex w-full justify-center sm:hidden'>
-                    <div className='rounded-xl bg-black/20 w-full mx-4 p-2.5 backdrop-blur-lg ring-1 ring-white/40'>
-                        <form
-                            autoComplete={'off'}
-                            className="flex justify-center"
-                            onSubmit={(event) => {
-                                event.preventDefault()
-                                handleSearchClick(event)
-                            }}
-                        >
-                            <SearchInput
-                                value={query}
-                                onSearchChange={handleSearchChange}
-                                onClear={handleClearSearch}
-                            />
-                        </form>
-                    </div>
-                </div>
-                <button className='absolute top-[5.5rem] bg-black/20 backdrop-blur-sm rounded-lg text-white hover:text-blue-600 p-2 m-2 text-xl sm:hidden z-40'
+                <button className='fixed top-[5.5rem] bg-black/20 backdrop-blur-sm rounded-lg text-white/80 hover:text-white p-2 m-2 text-xl sm:hidden z-40'
                     onClick={() => setMobileHelpIsOpen(!mobileHelpIsOpen)}
                 >
                     <BsQuestionCircle />
                 </button>
                 {mobileHelpIsOpen && (
-                    <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileHelpRef.current && !mobileHelpRef.current.contains(e.target) && setMobileHelpIsOpen(false)}>
+                    <div className='fixed h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileHelpRef.current && !mobileHelpRef.current.contains(e.target) && setMobileHelpIsOpen(false)}>
                         <div className='space-y-4 flex-col bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 h-1/2 overflow-auto' ref={mobileHelpRef}>
                             <div className='font-bold text-lg'>
                                 Welcome to Census GPT
@@ -655,6 +604,101 @@ function App(props) {
                         </div>
                     </div>
                 )}
+
+                {mobileMenuIsOpen ? (
+                    <div className='fixed w-screen h-screen flex z-50 sm:hidden pointer-events-auto' onClick={(e) => mobileMenuRef.current && !mobileMenuRef.current.contains(e.target) && setMobileMenuIsOpen(false)}>
+                        <div className='absolute w-full bottom-0 flex pointer-events-auto'>
+                            <div className='overflow-auto h-80 bg-gray-300/60 dark:bg-black/50 backdrop-blur-xl w-full rounded-t-[2rem] flex flex-col items-center' ref={mobileMenuRef} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+                                <button className='w-full items-center flex justify-center p-1.5 pt-2 rounded-full' onClick={() => setMobileMenuIsOpen(false)}>
+                                    <div className='bg-black/50 dark:bg-white/40 h-1 w-16 rounded-full' />
+                                </button>
+
+                                <div className='flex flex-col items-center w-full p-4 space-y-8'>
+                                    <div className='w-full'>
+                                        <form
+                                            autoComplete={'off'}
+                                            className="flex justify-center"
+                                            onSubmit={(event) => {
+                                                event.preventDefault()
+                                                handleSearchClick(event)
+                                            }}
+                                        >
+                                            <SearchInput
+                                                value={query}
+                                                onSearchChange={handleSearchChange}
+                                                onClear={handleClearSearch}
+                                            />
+                                        </form>
+                                    </div>
+
+                                    {sql.length != 0 && !isLoading && (
+                                        <div className='space-y-4 flex-col flex w-full h-fit items-center pb-4'>
+                                            <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-full overflow-auto'>
+                                                <pre
+                                                    align="left"
+                                                >
+                                                    <code className="text-sm text-gray-800 dark:text-white">
+                                                        <div className='flex justify-end p-1 right-0 relative'>
+                                                            <CopySqlToClipboard text={sql} />
+                                                        </div>
+                                                        <SyntaxHighlighter
+                                                            language="sql"
+                                                            style={hybrid}
+                                                            customStyle={{
+                                                                color: undefined,
+                                                                background: undefined,
+                                                                margin: undefined,
+                                                                padding: '1rem',
+                                                            }}
+                                                        >
+                                                            {sql}
+                                                        </SyntaxHighlighter>
+                                                    </code>
+                                                </pre>
+                                            </div>
+                                            <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-full overflow-auto'>
+                                                <Table
+                                                    columns={tableInfo.columns}
+                                                    values={tableInfo.rows}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div className='fixed w-screen h-screen flex z-50 sm:hidden pointer-events-none' onClick={(e) => mobileMenuRef.current && !mobileMenuRef.current.contains(e.target) && setMobileMenuIsOpen(false)}>
+                        <div className='absolute w-full bottom-0 flex pointer-events-auto'>
+                            <div className='h-24 bg-gray-300/60 dark:bg-black/50 backdrop-blur-xl w-full rounded-t-[2rem] flex flex-col items-center' onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+                                <button className='w-full items-center flex justify-center p-1.5 pt-2 rounded-full' onClick={() => setMobileMenuIsOpen(true)}>
+                                    <div className='bg-black/50 dark:bg-white/40 h-1 w-16 rounded-full' />
+                                </button>
+
+                                <div className='flex w-full justify-center p-4'>
+                                    <div className='w-full'>
+                                        <form
+                                            autoComplete={'off'}
+                                            className="flex justify-center"
+                                            onSubmit={(event) => {
+                                                event.preventDefault()
+                                                handleSearchClick(event)
+                                            }}
+                                        >
+                                            <SearchInput
+                                                value={query}
+                                                onSearchChange={handleSearchChange}
+                                                onClear={handleClearSearch}
+                                            />
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {mobileTableIsOpen && sql.length && (
                     <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileTableRef.current && !mobileTableRef.current.contains(e.target) && setMobileTableIsOpen(false)}>
                         <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-4/5 max-h-80 overflow-auto items-start justify-center' ref={mobileTableRef}>
