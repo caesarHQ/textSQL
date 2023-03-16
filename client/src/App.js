@@ -185,6 +185,9 @@ function App(props) {
     }
 
     const fetchBackend = (natural_language_query) => {
+        if (natural_language_query == null) {
+            return;
+        }
         // Don't send a request if the query is empty!
         natural_language_query = natural_language_query.trim()
         if (!natural_language_query.length) return
