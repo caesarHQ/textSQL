@@ -49,7 +49,7 @@ const Examples = (props) => {
                                 </p>
                             </div>
                             <svg
-                                className="h-5 w-5"
+                                className="h-5 w-5 hidden sm:block"
                                 fill="currentColor"
                                 viewBox="0 0 24 24"
                             >
@@ -87,7 +87,7 @@ const Examples = (props) => {
                                 </p>
                             </div>
                             <svg
-                                className="h-5 w-5"
+                                className="h-5 w-5 hidden sm:block"
                                 fill="currentColor"
                                 viewBox="0 0 24 24"
                             >

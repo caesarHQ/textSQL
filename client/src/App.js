@@ -159,7 +159,7 @@ function App(props) {
     const [touchEnd, setTouchEnd] = useState(null)
 
     const onTouchStart = (e) => {
-        if (expandedMobileSearchRef.current.contains(e.target) ) return
+        if (expandedMobileSearchRef.current?.contains(e.target)) return
         setTouchEnd(null)
         setTouchStart(e.targetTouches[0].clientY)
     }
