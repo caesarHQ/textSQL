@@ -267,6 +267,8 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             # sql_query = clean_message_content(assistant_message['message']['content'])
             sql_query = extract_code_from_markdown(assistant_message['message']['content'])
 
+            # print(sql_query)
+
             response = execute_sql(sql_query)
             # Generated SQL query did not produce exception. Return result
             return response, sql_query
@@ -296,35 +298,40 @@ def text_to_sql_chat_with_retry(messages, table_names=None):
     """
     Takes a series of messages and tries to respond to a natural language query with valid SQL
     """
-    # TODO: add message validation: not empty, last message is user message, etc.
     if not messages:
         raise NoMessagesException("No messages provided.")
     if messages[-1]["role"] != "user":
         raise LastMessageNotUserException("Last message is not a user message.")
     
     # First question, prime with table schemas and rephrasing
-    if len(messages) == 1:
-        natural_language_query = messages[0]["content"]
-        # ask the assistant to rephrase before generating the query
-        schemas = get_table_schemas(table_names)
-        rephrase = [{
-            "role": "user",
-            "content": make_rephrase_msg_with_schema_and_warnings().format(
-                natural_language_query=natural_language_query,
-                schemas=schemas
-                )
-        }]
-        assistant_message = get_assistant_message(rephrase)
-        content = make_msg_with_schema_and_warnings().format(
-            natural_language_query=assistant_message['message']['content'],
+    natural_language_query = messages[-1]["content"]
+    # ask the assistant to rephrase before generating the query
+    schemas = get_table_schemas(table_names)
+    rephrase = [{
+        "role": "user",
+        "content": make_rephrase_msg_with_schema_and_warnings().format(
+            natural_language_query=natural_language_query,
             schemas=schemas
             )
-        # Don't return messages_copy to the front-end. It contains extra information for prompting
+    }]
+    assistant_message = get_assistant_message(rephrase)
+    content = make_msg_with_schema_and_warnings().format(
+        natural_language_query=assistant_message['message']['content'],
+        schemas=schemas
+        )
+    # Don't return messages_copy to the front-end. It contains extra information for prompting
+    if len(messages) == 1:
         messages_copy = make_default_messages(schemas)
         messages_copy.append({
             "role": "user",
             "content": content
         })
+    else:
+        messages_copy = messages.copy()
+        messages_copy[-1] = {
+            "role": "user",
+            "content": content
+        }
 
     # Send all messages
     response, sql_query = text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=messages_copy)
