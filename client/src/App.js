@@ -85,14 +85,6 @@ const SearchInput = (props) => {
     return (
         <div className="flex rounded-full sm:rounded-md shadow-inner sm:shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
             <div className="relative flex flex-grow items-stretch focus-within:z-10">
-                {/*<input*/}
-                {/*  type="email"*/}
-                {/*  name="email"*/}
-                {/*  id="email"*/}
-                {/*  className="block w-full rounded-none rounded-l-md border-0 py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"*/}
-                {/*  placeholder="John Smith"*/}
-                {/*/>*/}
-
                 <input
                     type="text"
                     name="search"
@@ -162,10 +154,12 @@ function App(props) {
     const mobileTableRef = useRef()
     const mobileSqlRef = useRef()
     const mapRef = useRef()
+    const expandedMobileSearchRef = useRef()
     const [touchStart, setTouchStart] = useState(null)
     const [touchEnd, setTouchEnd] = useState(null)
 
     const onTouchStart = (e) => {
+        if (expandedMobileSearchRef.current.contains(e.target) ) return
         setTouchEnd(null)
         setTouchStart(e.targetTouches[0].clientY)
     }
@@ -217,6 +211,7 @@ function App(props) {
 
         // Set the loading state
         setIsLoading(true)
+        setMobileHelpIsOpen(false)
 
         // clear previous layers
         clearMapLayers()
@@ -363,7 +358,6 @@ function App(props) {
                     // No zipcodes or cities to render. Default to chart
                     setVisualization('chart')
                 }
-                setMobileHelpIsOpen(false)
                 setMobileMenuIsOpen(true)
             })
             .catch((err) => {
@@ -617,11 +611,11 @@ function App(props) {
                                     <div className='w-full'>
                                         <form
                                             autoComplete={'off'}
-                                            className="flex justify-center"
                                             onSubmit={(event) => {
                                                 event.preventDefault()
                                                 handleSearchClick(event)
                                             }}
+                                            ref={expandedMobileSearchRef}
                                         >
                                             <SearchInput
                                                 value={query}
@@ -677,22 +671,20 @@ function App(props) {
                                 </button>
 
                                 <div className='flex w-full justify-center p-4'>
-                                    <div className='w-full'>
-                                        <form
-                                            autoComplete={'off'}
-                                            className="flex justify-center"
-                                            onSubmit={(event) => {
-                                                event.preventDefault()
-                                                handleSearchClick(event)
-                                            }}
-                                        >
-                                            <SearchInput
-                                                value={query}
-                                                onSearchChange={handleSearchChange}
-                                                onClear={handleClearSearch}
-                                            />
-                                        </form>
-                                    </div>
+                                    <form
+                                        autoComplete={'off'}
+                                        className='w-full'
+                                        onSubmit={(event) => {
+                                            event.preventDefault()
+                                            handleSearchClick(event)
+                                        }}
+                                    >
+                                        <SearchInput
+                                            value={query}
+                                            onSearchChange={handleSearchChange}
+                                            onClear={handleClearSearch}
+                                        />
+                                    </form>
                                 </div>
                             </div>
                         </div>

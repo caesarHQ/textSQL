@@ -17,9 +17,11 @@ code {
 }
 
 /* For safari mobile */
-@supports (-webkit-touch-callout: none) {
-    .h-screen {
-        height: -webkit-fill-available;
+@media only screen and (max-width: 640px) {
+    @supports (-webkit-touch-callout: none) {
+        .h-screen {
+            height: -webkit-fill-available;
+        }
     }
 }
 
@@ -42,12 +44,9 @@ code {
         body {
             margin: 0px;
             max-height: 100%;
-            /* or `height: calc(100% - 16px);` if body has default margin */
             overflow: auto;
             -webkit-overflow-scrolling: touch;
         }
-
-        /* in this case to disable pinch-zoom, set `touch-action: pan-x pan-y;` on `body` instead of `html` */
     }
 }
 
