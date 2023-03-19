@@ -6,8 +6,8 @@ import joblib
 from app.config import engine
 from sqlalchemy import text
 
-from ..lat_lon import city_lat_lon, zip_lat_lon
-from ..messages import get_assistant_message, clean_message_content, extract_code_from_markdown
+from ..geo_data import city_lat_lon, zip_lat_lon, neighborhood_shapes
+from ..messages import get_assistant_message, extract_code_from_markdown
 from ..table_details import get_table_schemas
 from ..few_shot_examples import get_few_shot_example_messages
 
@@ -127,6 +127,20 @@ def execute_sql(sql_query: str):
             for value in row:
                 if value is None:
                     raise NullValueException("Make sure each value in the result table is not null.")
+                
+        # Add neighborhood boundaries to results that have `neighborhood`
+        neighborhood_idx = None
+        try:
+            neighborhood_idx = column_names.index("neighborhood")
+        except ValueError:
+            neighborhood_idx = None
+        if neighborhood_idx is not None:
+            column_names.append("shape")
+            for row in rows:
+                neighborhood = row[neighborhood_idx]
+                shape = neighborhood_shapes.get(neighborhood, {}).get("shape")
+                row.append(shape)
+
 
         # Add lat and lon to zip_code
         zip_code_idx = None
@@ -211,7 +225,6 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3):
     # Try each completion in order
     attempts_contexts = []
     for assistant_message in assistant_messages:
-        # sql_query = clean_message_content(assistant_message['message']['content'])
         sql_query = extract_code_from_markdown(assistant_message['message']['content'])
 
         try:
@@ -264,8 +277,8 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     for _ in range(k):
         try:
             assistant_message = get_assistant_message(messages)
-            # sql_query = clean_message_content(assistant_message['message']['content'])
             sql_query = extract_code_from_markdown(assistant_message['message']['content'])
+
             response = execute_sql(sql_query)
             # Generated SQL query did not produce exception. Return result
             return response, sql_query
