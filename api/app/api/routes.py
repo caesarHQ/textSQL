@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, make_response, request
 from .utils.sql_gen.text_to_sql import text_to_sql_with_retry, text_to_sql_parallel
 from .utils.table_selection import get_relevant_tables
-from .utils.lat_lon import zip_lat_lon
+from .utils.geo_data import zip_lat_lon
 from sentry_sdk import capture_exception
 
 bp = Blueprint('api_bp', __name__)
