@@ -190,7 +190,7 @@ def execute_sql(sql_query: str):
             column_names.append("shape")
             for row in rows:
                 neighborhood = row[neighborhood_idx]
-                shape = neighborhood_shapes.get(neighborhood, {}).get("shape")
+                shape = neighborhood_shapes["neighborhoods"].get(neighborhood, {}).get("shape")
                 row.append(shape)
 
 
