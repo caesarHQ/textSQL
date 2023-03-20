@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, make_response, request
-from .utils.sql_gen.text_to_sql import text_to_sql_with_retry, text_to_sql_parallel
+from .utils.sql_gen.text_to_sql import execute_sql, text_to_sql_with_retry, text_to_sql_parallel
 from .utils.table_selection import get_relevant_tables
 from .utils.geo_data import zip_lat_lon
 from sentry_sdk import capture_exception
@@ -61,3 +61,12 @@ def zip_to_lat_lon():
         return make_response(jsonify({'error': error_msg}), 400)
 
     return make_response(jsonify({'lat': lat, 'lon': lon}), 200)
+
+@bp.route('/execute_sql', methods=['POST'])
+def run_sql():
+    request_body = request.get_json()
+    try:
+        result = execute_sql(request_body.get('sql'))
+    except Exception as e:
+        return make_response(jsonify({'error': f'Error processing request: {str(e)}' }), 400)
+    return make_response(jsonify({'result': result}), 200)
