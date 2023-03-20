@@ -1,4 +1,7 @@
 {
+    "types": [
+
+    ],
     "tables": [
         {
             "name": "national_housing_market_data",
