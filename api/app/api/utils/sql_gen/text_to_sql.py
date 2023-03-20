@@ -19,7 +19,7 @@ MSG_WITH_ERROR_TRY_AGAIN = (
 )
 
 
-def make_default_messages(schemas: str):
+def make_default_messages(schemas: str, scope="USA"):
     default_messages = [
         {
             "role": "system",
@@ -41,7 +41,7 @@ def make_default_messages(schemas: str):
             )
         },
     ]
-    default_messages.extend(get_few_shot_example_messages())
+    default_messages.extend(get_few_shot_example_messages(mode="text_to_sql", scope=scope))
     return default_messages
 
 
@@ -201,11 +201,11 @@ def execute_sql(sql_query: str):
         }
 
 
-def text_to_sql_parallel(natural_language_query, table_names, k=3):
+def text_to_sql_parallel(natural_language_query, table_names, k=3, scope="USA"):
     """
     Generates K SQL queries in parallel and returns the first one that does not produce an exception.
     """
-    schemas = get_table_schemas(table_names)
+    schemas = get_table_schemas(table_names, scope)
     content = make_msg_with_schema_and_warnings().format(
         natural_language_query=natural_language_query,
         schemas=schemas,
@@ -247,13 +247,13 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3):
         return None, None, attempts_contexts[0]
 
 
-def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=None):
+def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=None, scope="USA"):
     """
     Tries to take a natural language query and generate valid SQL to answer it K times
     """
     if not messages:
         # ask the assistant to rephrase before generating the query
-        schemas = get_table_schemas(table_names)
+        schemas = get_table_schemas(table_names, scope)
         rephrase = [{
             "role": "user",
             "content": make_rephrase_msg_with_schema_and_warnings().format(
@@ -304,7 +304,7 @@ class LastMessageNotUserException(Exception):
     pass
 
 
-def text_to_sql_chat_with_retry(messages, table_names=None):
+def text_to_sql_chat_with_retry(messages, table_names=None, scope="USA"):
     """
     Takes a series of messages and tries to respond to a natural language query with valid SQL
     """
@@ -316,7 +316,7 @@ def text_to_sql_chat_with_retry(messages, table_names=None):
     # First question, prime with table schemas and rephrasing
     natural_language_query = messages[-1]["content"]
     # Ask the assistant to rephrase before generating the query
-    schemas = get_table_schemas(table_names)
+    schemas = get_table_schemas(table_names, scope)
     rephrase = [{
         "role": "user",
         "content": make_rephrase_msg_with_schema_and_warnings().format(

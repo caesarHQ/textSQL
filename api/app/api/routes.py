@@ -15,6 +15,7 @@ def text_to_sql():
     request_body = request.get_json()
     natural_language_query = request_body.get('natural_language_query')
     table_names = request_body.get('table_names')
+    scope = request_body.get('scope', "USA")
 
     if not natural_language_query:
         error_msg = 'natural_language_query is missing from request body'
@@ -31,8 +32,8 @@ def text_to_sql():
         # if result is None or sql_query is None:
         #     result, sql_query = text_to_sql_with_retry(natural_language_query, messages=messages)
         if not table_names:
-            table_names = get_relevant_tables(natural_language_query)
-        result, sql_query = text_to_sql_with_retry(natural_language_query, table_names)
+            table_names = get_relevant_tables(natural_language_query, scope)
+        result, sql_query = text_to_sql_with_retry(natural_language_query, table_names, scope=scope)
     except Exception as e:
         capture_exception(e)
         error_msg = f'Error processing request: {str(e)}'
