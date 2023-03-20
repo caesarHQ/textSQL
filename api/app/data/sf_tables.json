@@ -404,11 +404,13 @@
                 },
                 {
                     "name": "incident_category",
-                    "type": "TEXT"
+                    "type": "TEXT",
+                    "description": "custom type `CRIME_CATEGORY`"
                 },
                 {
                     "name": "incident_subcategory",
-                    "type": "TEXT"
+                    "type": "TEXT",
+                    "description": "custom type `CRIME_SUBCATEGORY`"
                 },
                 {
                     "name": "incident_description",
@@ -416,7 +418,8 @@
                 },
                 {
                     "name": "resolution",
-                    "type": "TEXT"
+                    "type": "TEXT",
+                    "description": "custom type `CRIME_RESOLUTION`"
                 },
                 {
                     "name": "latitude",
@@ -428,7 +431,8 @@
                 },
                 {
                     "name": "neighborhood",
-                    "type": "TEXT"
+                    "type": "TEXT",
+                    "description": "custom type `NEIGHBORHOOD`"
                 },
                 {
                     "name": "zip_code",
@@ -455,7 +459,8 @@
                 },
                 {
                     "name": "status",
-                    "type": "TEXT"
+                    "type": "TEXT",
+                    "description": "custom type `311_STATUS`"
                 },
                 {
                     "name": "category",
@@ -475,7 +480,8 @@
                 },
                 {
                     "name": "neighborhood",
-                    "type": "TEXT"
+                    "type": "TEXT",
+                    "description": "custom type `NEIGHBORHOOD`"
                 },
                 {
                     "name": "zip_code",
