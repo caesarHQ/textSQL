@@ -123,7 +123,7 @@ def make_msg_with_schema_and_warnings():
             " For example, 'city' can be ambiguous because both tables 'demographic_data' and 'crime_by_city' have a column named 'city'."
             " Always specify the table where you are using the column."
             " If you include a 'city' column in the result table, include a 'state' column too."
-            " If you include a 'county' column in the result table, include a 'state' columntoo."
+            " If you include a 'county' column in the result table, include a 'state' column too."
             " Make sure each value in the result table is not null.\n"
     )
 
