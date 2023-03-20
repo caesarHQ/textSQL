@@ -11,7 +11,7 @@
             },
             {
                 "user": "Which 5 counties have the most arson?",
-                "assistant": "```SELECT location_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN location_data ON crime_by_city.city = location_data.city AND crime_by_city.state = location_data.state\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY location_data.county\nORDER BY total_arson DESC\nLIMIT 5;```"
+                "assistant": "```SELECT location_data.county, location_data.state, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN location_data ON crime_by_city.city = location_data.city AND crime_by_city.state = location_data.state\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY location_data.county\nORDER BY total_arson DESC\nLIMIT 5;```"
             },
             {
                 "user": "Which 5 cities have the most females?",
