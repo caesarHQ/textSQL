@@ -18,21 +18,9 @@ import toast, { Toaster } from 'react-hot-toast'
 import Disclaimer from './components/disclaimer'
 import { VizSelector } from './components/vizSelector'
 
-// Utils
-import {
-    cleanupQuery,
-    getCities,
-    getZipcodes,
-    getZipcodesMapboxFormatted,
-} from './utils'
-
 // Mapbox UI configuration
 import {
-    zipcodeFeatures,
-    citiesFeatures,
-    zipcodeLayerHigh,
-    zipcodeLayerLow,
-    citiesLayer,
+    polygonsLayer,
 } from './mapbox-ui-config'
 
 // Plotly UI configuration
@@ -74,7 +62,7 @@ posthog.init('phc_iLMBZqxwjAjaKtgz29r4EWv18El2qg3BIJoOOpw7s2e', {
 // eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
 mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 
-let api_endpoint = 'https://text-sql-be.onrender.com'
+let api_endpoint = 'https://dev-text-sql-be.onrender.com/'
 
 if (process.env.REACT_APP_HOST_ENV === 'dev') {
     api_endpoint = 'http://localhost:9000'
@@ -135,15 +123,13 @@ function SanFrancisco(props) {
     const [searchParams, setSearchParams] = useSearchParams()
     const [query, setQuery] = useState('')
     const [sql, setSQL] = useState('')
-    const [zipcodesFormatted, setZipcodesFormatted] = useState([])
-    const [zipcodes, setZipcodes] = useState([])
     const [tableInfo, setTableInfo] = useState({ rows: [], columns: [] })
     const [statusCode, setStatusCode] = useState(0)
     const [errorMessage, setErrorMessage] = useState('')
-    const [cities, setCities] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [title, setTitle] = useState('')
     const [visualization, setVisualization] = useState('map')
+    const [polygons, setPolygons] = useState([])
 
     const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false)
     const [mobileHelpIsOpen, setMobileHelpIsOpen] = useState(true)
@@ -175,7 +161,7 @@ function SanFrancisco(props) {
     }
 
     useEffect(() => {
-        document.title = query || 'Census GPT'
+        document.title = query || 'SanFranciscoGPT'
     }, [query])
 
     useEffect(() => {
@@ -189,9 +175,7 @@ function SanFrancisco(props) {
     const urlSearch = queryParameters.get('s')
 
     const clearMapLayers = () => {
-        setCities([])
-        setZipcodes([])
-        setZipcodesFormatted([])
+        setPolygons([])
     }
 
     const handleSearchChange = (event) => {
@@ -219,16 +203,13 @@ function SanFrancisco(props) {
         // clear previous layers
         clearMapLayers()
 
-        // Sanitize the query
-        natural_language_query = cleanupQuery(natural_language_query)
-
         // Set the options for the fetch request
         const options = {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
                 natural_language_query,
-                table_names: ['crime_by_city', 'demographic_data'],
+                'scope': 'SF'
             }),
         }
 
@@ -261,7 +242,7 @@ function SanFrancisco(props) {
 
                 // Filter out lat and long columns
                 let filteredColumns = response.result.column_names.filter(
-                    (c) => c !== 'lat' && c !== 'long'
+                    (c) => c !== 'lat' && c !== 'long' && c !== 'shape'
                 )
 
                 // Fit the order of columns and filter out lat and long row values
@@ -273,92 +254,12 @@ function SanFrancisco(props) {
                 })
                 setTableInfo({ rows, columns: filteredColumns })
 
-                // render cities layer on the map
-                if (
-                    filteredColumns.indexOf('zip_code') === -1 &&
-                    filteredColumns.indexOf('city') >= 0
-                ) {
-                    // Get the cities
-                    let responseCities = getCities(response.result)
-                    console.log(responseCities)
-                    if (!responseCities.length) {
-                        setErrorMessage('No results were returned')
-                        setCities([])
-                        setZipcodes([]) // reset cities rendering
-                    } else if (responseCities.length < 2) {
-                        // Focus the map to relevant parts
-                        // Fitbounds needs at least two geo coordinates.
-                        // If less that 2 co-ordinates then use fly to.
-                        mapRef && mapRef.current && mapRef.current.flyTo({
-                            center: [
-                                responseCities[0].long,
-                                responseCities[0].lat,
-                            ],
-                            essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-                        })
-                    } else {
-                        let [minLng, minLat, maxLng, maxLat] = bbox(
-                            turf.lineString(
-                                responseCities.map((c) => [c.long, c.lat])
-                            )
-                        )
-                        mapRef && mapRef.current && mapRef.current.fitBounds(
-                            [
-                                [minLng, minLat],
-                                [maxLng, maxLat],
-                            ],
-                            { padding: '100', duration: 1000 }
-                        )
-                    }
-
-                    // Set the cities into the state
-                    setCities(responseCities)
-
-                    // reset zipcode rendering
-                    setZipcodes([])
-
+              // Render polygon shapes on the map
+              if (filteredColumns.indexOf('neighborhood') >= 0) {
+                    setPolygons(response.result.results.map(r => [r.shape]))
                     setVisualization('map')
-                } else if (filteredColumns.indexOf('zip_code') >= 0) {
-                    // Render zipcodes layer on the map
-                    let responseZipcodes = getZipcodes(response.result)
-                    setZipcodesFormatted(
-                        getZipcodesMapboxFormatted(responseZipcodes)
-                    )
-
-                    // Fitbounds needs at least two geo coordinates.
-                    if (!responseZipcodes.length) {
-                        setErrorMessage('No results were returned')
-                        setZipcodes([])
-                        setCities([]) // reset cities rendering
-                    } else if (responseZipcodes.length < 2) {
-                        // Fitbounds needs at least two geo coordinates.
-                        // If less that 2 co-ordinates then use fly to.
-                        mapRef && mapRef.current && mapRef.current.flyTo({
-                            center: [
-                                responseZipcodes[0].long,
-                                responseZipcodes[0].lat,
-                            ],
-                            essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-                        })
-                    } else {
-                        let [minLng, minLat, maxLng, maxLat] = bbox(
-                            turf.lineString(
-                                responseZipcodes.map((z) => [z.long, z.lat])
-                            )
-                        )
-                        mapRef && mapRef.current && mapRef.current.fitBounds(
-                            [
-                                [minLng, minLat],
-                                [maxLng, maxLat],
-                            ],
-                            { padding: '100', duration: 1000 }
-                        )
-                    }
-                    setVisualization('map')
-                    setZipcodes(responseZipcodes)
-                    setCities([]) // reset cities rendering
                 } else {
-                    // No zipcodes or cities to render. Default to chart
+                    // No neighborhoods to render. Default to chart
                     setVisualization('chart')
                 }
                 setMobileMenuIsOpen(true)
@@ -421,6 +322,19 @@ function SanFrancisco(props) {
             </button>
         )
     }
+
+      const polygonsGeoJSON = {
+        type: "FeatureCollection",
+        features: polygons.map((polygon) => {
+          return {
+            type: "Feature",
+            geometry: {
+              type: "Polygon",
+              coordinates: polygon,
+            },
+          };
+        }),
+      };
 
     return (
         <main className='h-screen bg-white dark:bg-dark-900 dark:text-white'>
@@ -532,40 +446,19 @@ function SanFrancisco(props) {
                                     mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
                                     style={{ width: '100%', height: '100%' }}
                                     mapStyle="mapbox://styles/mapbox/dark-v11"
+                                    minZoom={11}
                                     initialViewState={{
-                                        longitude: -100,
-                                        latitude: 40,
-                                        zoom: 3.5,
+                                        longitude: -122.431297,
+                                        latitude: 37.773972,
+                                        zoom: 11.5,
                                     }}
                                 >
                                     <Source
-                                        id="zips-kml"
-                                        type="vector"
-                                        url="mapbox://darsh99137.4nf1q4ec"
-                                    >
-                                        <Layer
-                                            {...zipcodeLayerLow(zipcodesFormatted)}
-                                        />
-                                    </Source>
-                                    <Source
-                                        id="zip-zoomed-out"
+                                        id="polygons"
                                         type="geojson"
-                                        data={{
-                                            type: 'FeatureCollection',
-                                            features: zipcodeFeatures(zipcodes),
-                                        }}
+                                        data={polygonsGeoJSON}
                                     >
-                                        <Layer {...zipcodeLayerHigh} />
-                                    </Source>
-                                    <Source
-                                        id="cities"
-                                        type="geojson"
-                                        data={{
-                                            type: 'FeatureCollection',
-                                            features: citiesFeatures(cities),
-                                        }}
-                                    >
-                                        <Layer {...citiesLayer} />
+                                        <Layer {...polygonsLayer} />
                                     </Source>
                                 </Map> :
                                 // following <div> helps plot better scale bar widths for responsiveness
@@ -739,33 +632,3 @@ function SanFrancisco(props) {
 }
 
 export default SanFrancisco
-
-// /* DO NOT REMOVE
-
-// Use this to find out what feature info is pulled for each zipcode from the vector tiles
-
-//     map.current.on('mousemove', function (e) {
-//       var features = map.current.queryRenderedFeatures(e.point, {
-//           layers:  ['Zip', 'zips-kml']
-//       });
-//       if (features.length > 0) {
-//         console.log("\n\nFEATURES => ", features)
-//           if (features[0].layer.id == 'Zip') {
-//             console.log("ZIP5", features[0].properties.ZIP5)
-//           } else if (features[0].layer.id == 'zips-kml') {
-//             console.log("ZIPS-KMLLLL", features[0].properties.Name)
-//             console.log("ZIPS-KML", features[0].properties.Name.replace(/^\D+/g, '').split("<closeparen>")[0])
-//             console.log("TYYPE>>>", typeof features[0].properties.Name.replace(/^\D+/g, ''));
-
-//           } else {
-//             console.log("ZCTAE10", features[0].properties.ZCTA5CE10)
-//           }
-
-//       } else {
-//           // document.getElementById('pd').innerHTML = '<p>Hover over a state!</p>';
-//       }
-//   });
-
-//   */
-
-//   });
