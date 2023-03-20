@@ -27,17 +27,23 @@ def extract_text_from_markdown(text):
 def get_table_schemas(table_names: List[str] = None, scope="USA") -> str:
     custom_types_list = []
     tables_list = []
-
-    if table_names:
-        for table in table_details['tables']:
-            if table['name'] in table_names:
-                tables_list.append(table)
-    elif scope == "USA":
-        custom_types_list = table_details.get('types', [])
-        tables_list = table_details.get('tables', [])
+    
+    if scope == "USA":
+        custom_types_list = table_details["types"]
+        if table_names:
+            for table in table_details['tables']:
+                if table['name'] in table_names:
+                    tables_list.append(table)
+        else:
+            tables_list = table_details["tables"]
     elif scope == "SF":
-        custom_types_list = sf_table_details.get('types', [])
-        tables_list = sf_table_details.get('tables', [])
+        custom_types_list = sf_table_details["types"]
+        if table_names:
+            for table in sf_table_details['tables']:
+                if table['name'] in table_names:
+                    tables_list.append(table)
+        else:
+            tables_list = sf_table_details["tables"]
 
     custom_types_str_set = set()
     tables_str_list = []
