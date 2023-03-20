@@ -39,13 +39,7 @@ def get_table_schemas(table_names: List[str] = None, scope="USA") -> str:
         custom_types_list = sf_table_details.get('types', [])
         tables_list = sf_table_details.get('tables', [])
 
-    custom_types_str_list = []
-    for custom_type in custom_types_list:
-        custom_types_str = f"custom type: {custom_type['type']}\n"
-        custom_types_str += f"valid values: {', '.join(custom_type['valid_values'])}\n"
-        custom_types_str_list.append(custom_types_str)
-    custom_types_description = "\n\n".join(custom_types_str_list)
-
+    custom_types_str_set = set()
     tables_str_list = []
     for table in tables_list:
         tables_str = f"table name: {table['name']}\n"
@@ -55,11 +49,21 @@ def get_table_schemas(table_names: List[str] = None, scope="USA") -> str:
             if column.get('description'):
                 columns_str_list.append(f"{column['name']} [{column['type']}] ({column['description']})")
                 if 'custom type' in column['description']:
-                    custom_type = extract_text_from_markdown(column['description'])
+                    custom_types_str_set.add(extract_text_from_markdown(column['description']))
             else:
                 columns_str_list.append(f"{column['name']} [{column['type']}]")
         tables_str += f"table columns: {', '.join(columns_str_list)}\n"
         tables_str_list.append(tables_str)
     tables_description = "\n\n".join(tables_str_list)
 
-    return tables_description
+    custom_types_str_list = []
+    for custom_type_str in custom_types_str_set:
+        custom_type = next((t for t in custom_types_list if t["type"] == custom_type_str), None)
+        if custom_type:
+            custom_types_str = f"custom type: {custom_type['type']}\n"
+            custom_types_str += f"valid values: {', '.join(custom_type['valid_values'])}\n"
+            custom_types_str_list.append(custom_types_str)
+    custom_types_description = "\n\n".join(custom_types_str_list)
+
+    # return tables_description
+    return custom_types_description + tables_description
