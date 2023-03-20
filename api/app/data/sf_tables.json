@@ -392,7 +392,7 @@
         },
         {
             "name": "sf_crime_data",
-            "description": "Table 'sf_crime_data' has neighborhood-level crime data in San Francisco.",
+            "description": "Table `sf_crime_data` has neighborhood-level crime data in San Francisco.",
             "columns": [
                 {
                     "name": "incident_datetime",
@@ -447,7 +447,7 @@
         },
         {
             "name": "sf_311_data",
-            "description": "Table 'sf_311_data' has neighborhood-level data about 311 municipal services cases in San Francisco.",
+            "description": "Table `sf_311_data` has neighborhood-level data about 311 municipal services cases in San Francisco.",
             "columns": [
                 {
                     "name": "opened",
@@ -495,8 +495,8 @@
             ]
         },
         {
-            "name": "demographic_data",
-            "description": "Table 'demographic_data' has zip-code level data about average household sizes, income, and population grouped by gender, age, education levels, and race.",
+            "name": "sf_demographic_population_data",
+            "description": "Table `sf_demographic_population_data` has zip-code level data about average household sizes, income, and population grouped by gender, age, education levels, and race.",
             "columns": [
                 {
                     "name": "zip_code",
@@ -782,112 +782,6 @@
                     "name": "doctorate_degree",
                     "type": "FLOAT",
                     "description": "population with a doctorate degree at most"
-                }
-            ]
-        },
-        {
-            "name": "national_housing_market_data",
-            "description": "Table `national_housing_market_data` has national-level housing market data.",
-            "columns": [
-                {
-                    "name": "region",
-                    "type": "TEXT",
-                    "description": "region"
-                },
-                {
-                    "name": "month_of_period_end",
-                    "type": "DATETIME",
-                    "description": "month of period end"
-                },
-                {
-                    "name": "median_sale_price",
-                    "type": "FLOAT",
-                    "description": "median sale price"
-                },
-                {
-                    "name": "median_sale_price_mom",
-                    "type": "FLOAT",
-                    "description": "median sale price month over month"
-                },
-                {
-                    "name": "median_sale_price_yoy",
-                    "type": "FLOAT",
-                    "description": "median sale price year over year"
-                },
-                {
-                    "name": "homes_sold",
-                    "type": "FLOAT",
-                    "description": "homes sold"
-                },
-                {
-                    "name": "homes_sold_mom",
-                    "type": "FLOAT",
-                    "description": "homes sold month over month"
-                },
-                {
-                    "name": "homes_sold_yoy",
-                    "type": "FLOAT",
-                    "description": "homes sold year over year"
-                },
-                {
-                    "name": "new_listings",
-                    "type": "FLOAT",
-                    "description": "new listings"
-                },
-                {
-                    "name": "new_listings_mom",
-                    "type": "FLOAT",
-                    "description": "new listings month over month"
-                },
-                {
-                    "name": "new_listings_yoy",
-                    "type": "FLOAT",
-                    "description": "new listings year over year"
-                },
-                {
-                    "name": "inventory",
-                    "type": "FLOAT",
-                    "description": "inventory"
-                },
-                {
-                    "name": "inventory_mom",
-                    "type": "FLOAT",
-                    "description": "inventory month over month"
-                },
-                {
-                    "name": "inventory_yoy",
-                    "type": "FLOAT",
-                    "description": "inventory year over year"
-                },
-                {
-                    "name": "days_on_market",
-                    "type": "FLOAT",
-                    "description": "days on market"
-                },
-                {
-                    "name": "days_on_market_mom",
-                    "type": "FLOAT",
-                    "description": "days on market month over month"
-                },
-                {
-                    "name": "days_on_market_yoy",
-                    "type": "FLOAT",
-                    "description": "days on market year over year"
-                },
-                {
-                    "name": "average_sale_to_list",
-                    "type": "FLOAT",
-                    "description": "average sale to list"
-                },
-                {
-                    "name": "average_sale_to_list_mom",
-                    "type": "FLOAT",
-                    "description": "average sale to list month over month"
-                },
-                {
-                    "name": "average_sale_to_list_yoy",
-                    "type": "FLOAT",
-                    "description": "average sale to list year over year"
                 }
             ]
         }
