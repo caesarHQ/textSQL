@@ -80,32 +80,6 @@ if (process.env.REACT_APP_HOST_ENV === 'dev') {
     api_endpoint = 'http://localhost:9000'
 }
 
-const SearchInput = (props) => {
-    const { value, onSearchChange, onClear } = props
-    return (
-        <div className="flex rounded-full sm:rounded-md shadow-inner sm:shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
-            <div className="relative flex flex-grow items-stretch focus-within:z-10">
-                <input
-                    type="text"
-                    name="search"
-                    id="search"
-                    placeholder="Ask anything about US Demographics..."
-                    className="focus:ring-0 block w-full rounded-none rounded-l-md border-0 py-1.5 sm:ring-1 sm:ring-inset sm:ring-gray-300 sm:dark:ring-neutral-500 sm:focus:ring-2 sm:focus:ring-inset sm:focus:ring-blue-600 sm:dark:focus:ring-blue-600 sm:text-sm sm:leading-6 bg-transparent dark:placeholder-neutral-400"
-                    value={value}
-                    onChange={onSearchChange}
-                />
-            </div>
-            <button
-                type="button"
-                className="focus:ring-0 focus:text-blue-600 hover:text-blue-600 dark:text-white/50 dark:hover:text-blue-600 relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md p-2 text-xs sm:text-sm font-semibold sm:ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 sm:focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none sm:hover:bg-gray-50 sm:hover:dark:bg-dark-900"
-                onClick={onClear}
-            >
-                <FaTimes />
-            </button>
-        </div>
-    )
-}
-
 const SearchButton = (props) => {
     return (
         <button
@@ -132,6 +106,7 @@ const DataPlot = (props) => {
 };
 
 function App(props) {
+    const version = props.version || 'Census'
     const [searchParams, setSearchParams] = useSearchParams()
     const [query, setQuery] = useState('')
     const [sql, setSQL] = useState('')
@@ -158,6 +133,32 @@ function App(props) {
     const expandedMobileSearchRef = useRef()
     const [touchStart, setTouchStart] = useState(null)
     const [touchEnd, setTouchEnd] = useState(null)
+
+    const SearchInput = (props) => {
+        const { value, onSearchChange, onClear } = props
+        return (
+            <div className="flex rounded-full sm:rounded-md shadow-inner sm:shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
+                <div className="relative flex flex-grow items-stretch focus-within:z-10">
+                    <input
+                        type="text"
+                        name="search"
+                        id="search"
+                        placeholder={`Ask anything about ${version === 'Census' ? 'US' : version} Demographics...`}
+                        className="focus:ring-0 block w-full rounded-none rounded-l-md border-0 py-1.5 sm:ring-1 sm:ring-inset sm:ring-gray-300 sm:dark:ring-neutral-500 sm:focus:ring-2 sm:focus:ring-inset sm:focus:ring-blue-600 sm:dark:focus:ring-blue-600 sm:text-sm sm:leading-6 bg-transparent dark:placeholder-neutral-400"
+                        value={value}
+                        onChange={onSearchChange}
+                    />
+                </div>
+                <button
+                    type="button"
+                    className="focus:ring-0 focus:text-blue-600 hover:text-blue-600 dark:text-white/50 dark:hover:text-blue-600 relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md p-2 text-xs sm:text-sm font-semibold sm:ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 sm:focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none sm:hover:bg-gray-50 sm:hover:dark:bg-dark-900"
+                    onClick={onClear}
+                >
+                    <FaTimes />
+                </button>
+            </div>
+        )
+    }
 
     const onTouchStart = (e) => {
         if (expandedMobileSearchRef.current?.contains(e.target)) return
@@ -203,6 +204,161 @@ function App(props) {
 
     const handleClearSearch = () => {
         setQuery('')
+    }
+
+    const executeSql = (sql) => {
+        console.log(1, sql)
+        setIsLoading(true)
+        setMobileHelpIsOpen(false)
+        clearMapLayers()
+
+        const options = {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+                sql
+            }),
+        }
+
+        fetch(api_endpoint + '/api/execute_sql', options)
+            .then((response) => response.json())
+            .then((response) => {
+                // Set the loading state to false
+                setIsLoading(false)
+
+                // Handle errors
+                if (!response || !response.result) {
+                    posthog.capture('backend_error', response)
+                    setErrorMessage(
+                        'Something went wrong. Please try again or try a different query'
+                    )
+                    return
+                }
+
+                // Capture the response in posthog
+                posthog.capture('backend_response', response)
+
+                // Set the state for SQL and Status Code
+                setStatusCode(response.status)
+                console.log('Backend Response ==>', response)
+
+                // Filter out lat and long columns
+                let filteredColumns = response.result.column_names.filter(
+                    (c) => c !== 'lat' && c !== 'long'
+                )
+
+                // Fit the order of columns and filter out lat and long row values
+                let rows = response.result.results.map((value) => {
+                    let row = []
+                    // Find each of the filtered column value in the object and push it into the row
+                    filteredColumns.map((c) => row.push(value[c]))
+                    return row
+                })
+                setTableInfo({ rows, columns: filteredColumns })
+
+                // render cities layer on the map
+                if (
+                    filteredColumns.indexOf('zip_code') === -1 &&
+                    filteredColumns.indexOf('city') >= 0
+                ) {
+                    // Get the cities
+                    let responseCities = getCities(response.result)
+                    console.log(responseCities)
+                    if (!responseCities.length) {
+                        setErrorMessage('No results were returned')
+                        setCities([])
+                        setZipcodes([]) // reset cities rendering
+                    } else if (responseCities.length < 2) {
+                        // Focus the map to relevant parts
+                        // Fitbounds needs at least two geo coordinates.
+                        // If less that 2 co-ordinates then use fly to.
+                        mapRef && mapRef.current && mapRef.current.flyTo({
+                            center: [
+                                responseCities[0].long,
+                                responseCities[0].lat,
+                            ],
+                            essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+                        })
+                    } else {
+                        let [minLng, minLat, maxLng, maxLat] = bbox(
+                            turf.lineString(
+                                responseCities.map((c) => [c.long, c.lat])
+                            )
+                        )
+                        mapRef && mapRef.current && mapRef.current.fitBounds(
+                            [
+                                [minLng, minLat],
+                                [maxLng, maxLat],
+                            ],
+                            { padding: '100', duration: 1000 }
+                        )
+                    }
+
+                    // Set the cities into the state
+                    setCities(responseCities)
+
+                    // reset zipcode rendering
+                    setZipcodes([])
+
+                    setVisualization('map')
+                } else if (filteredColumns.indexOf('zip_code') >= 0) {
+                    // Render zipcodes layer on the map
+                    let responseZipcodes = getZipcodes(response.result)
+                    setZipcodesFormatted(
+                        getZipcodesMapboxFormatted(responseZipcodes)
+                    )
+
+                    // Fitbounds needs at least two geo coordinates.
+                    if (!responseZipcodes.length) {
+                        setErrorMessage('No results were returned')
+                        setZipcodes([])
+                        setCities([]) // reset cities rendering
+                    } else if (responseZipcodes.length < 2) {
+                        // Fitbounds needs at least two geo coordinates.
+                        // If less that 2 co-ordinates then use fly to.
+                        mapRef && mapRef.current && mapRef.current.flyTo({
+                            center: [
+                                responseZipcodes[0].long,
+                                responseZipcodes[0].lat,
+                            ],
+                            essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+                        })
+                    } else {
+                        let [minLng, minLat, maxLng, maxLat] = bbox(
+                            turf.lineString(
+                                responseZipcodes.map((z) => [z.long, z.lat])
+                            )
+                        )
+                        mapRef && mapRef.current && mapRef.current.fitBounds(
+                            [
+                                [minLng, minLat],
+                                [maxLng, maxLat],
+                            ],
+                            { padding: '100', duration: 1000 }
+                        )
+                    }
+                    setVisualization('map')
+                    setZipcodes(responseZipcodes)
+                    setCities([]) // reset cities rendering
+                } else {
+                    // No zipcodes or cities to render. Default to chart
+                    setVisualization('chart')
+                }
+                setMobileMenuIsOpen(true)
+            })
+            .catch((err) => {
+                Sentry.setContext('queryContext', {
+                    query: query
+                })
+                Sentry.captureException(err)
+                setIsLoading(false)
+                posthog.capture('backend_error', {
+                    error: err,
+                })
+                setStatusCode(500)
+                setErrorMessage(err.message || err)
+                console.error(err)
+            })
     }
 
     const fetchBackend = (natural_language_query) => {
@@ -402,37 +558,97 @@ function App(props) {
         fetchBackend(query)
     }
 
-    const CopySqlToClipboard = (sql) => {
-        const handleCopy = async () => {
-            if ('clipboard' in navigator) {
-                setCopied(true)
-                setTimeout(() => setCopied(false), 1000)
-                return await navigator.clipboard.writeText(sql.text)
-            } else {
-                setCopied(true)
-                setTimeout(() => setCopied(false), 1000)
-                return document.execCommand('copy', true, sql.text)
+    const SQL = ({ sql }) => {
+        const sqlRef = useRef(sql)
+
+        const CopySqlToClipboardButton = ({ text }) => {
+            const handleCopy = async () => {
+                if ('clipboard' in navigator) {
+                    setCopied(true)
+                    setTimeout(() => setCopied(false), 1000)
+                    return await navigator.clipboard.writeText(text)
+                } else {
+                    setCopied(true)
+                    setTimeout(() => setCopied(false), 1000)
+                    return document.execCommand('copy', true, text)
+                }
             }
+
+            return (
+                <button onClick={handleCopy} className='text-xs rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 bg-white dark:bg-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-700'>
+                    {copied ? <BsClipboard2Check /> : <BsClipboard2 />}
+                </button>
+            )
         }
 
-        return (
-            <button onClick={handleCopy} className='text-xs rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 bg-white dark:bg-neutral-600 hover:bg-gray-200 dark:hover:bg-neutral-700'>
-                {copied ? <BsClipboard2Check /> : <BsClipboard2 />}
-            </button>
-        )
-    }
-
-    const EditSql = (sql) => {
-        // setEditingSql(!editingSql)
-        return (
-            <button onClick={() => setEditingSql(!editingSql)} className={`text-xs rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 hover:bg-gray-200 dark:hover:bg-neutral-700  ${editingSql ? 'bg-gray-200 dark:bg-neutral-700' : 'bg-white dark:bg-neutral-600'}`}>
+        const EditSqlButton = () => (
+            <button onClick={() => setEditingSql(!editingSql)} className={`text-xs rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 hover:bg-gray-100 dark:hover:bg-neutral-700  ${editingSql ? 'bg-gray-100 dark:bg-neutral-700' : 'bg-white dark:bg-neutral-600'}`}>
                 <BsPencilSquare />
             </button>
+        )
+
+        return (
+            <pre
+                align="left"
+                className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
+            >
+                <div className='flex items-center w-full min-h-full'>
+                    <div className='flex w-full h-full rounded-t-md items-center p-1.5 space-x-1.5 bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm font-sans'>
+                        <h2 className='font-bold tracking-wide h-6'>
+                            {title}
+                        </h2>
+                        <div className='fixed flex w-full items-center justify-end right-1 space-x-1.5'>
+                            {editingSql && (
+                                <button
+                                    onClick={() => {
+                                        setSQL(sqlRef.current)
+                                        setEditingSql(false)
+                                        executeSql(sqlRef.current)
+                                    }}
+                                    className='h-6 text-xs items-center flex rounded-full ring-1 ring-blue-600 bg-blue-600/50 hover:bg-blue-600/75 px-2 backdrop-blur-lg font-semibold text-white'>
+                                    Submit
+                                </button>
+                            )}
+                            <EditSqlButton />
+                            <CopySqlToClipboardButton text={sqlRef.current} />
+                        </div>
+                    </div>
+                </div>
+                <code
+                    className={`px-2 bg-transparent text-sm text-gray-800 dark:text-white flex rounded-b-md ${editingSql && 'ring-2 ring-inset'}`}>
+                    <SyntaxHighlighter
+                        ref={sqlRef}
+                        language="sql"
+                        style={hybrid}
+                        customStyle={{
+                            color: undefined,
+                            background: undefined,
+                            margin: undefined,
+                            padding: undefined,
+                        }}
+                        contentEditable={editingSql}
+                        spellCheck={false}
+                        suppressContentEditableWarning
+                        onInput={(e) => sqlRef.current = e.currentTarget.textContent}
+                        className='outline-none'
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey && editingSql) {
+                                setSQL(sqlRef.current)
+                                setEditingSql(false)
+                                executeSql(sqlRef.current)
+                            }
+                        }}
+                        onDoubleClickCapture={() => !editingSql && setEditingSql(true)}
+                    >
+                        {editingSql ? sqlRef.current : sql}
+                    </SyntaxHighlighter>
+                </code>
+            </pre>
         )
     }
 
     return (
-        <main className='h-screen bg-white dark:bg-dark-900 dark:text-white'>
+        <main className='h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen'>
             <div className="App flex flex-col h-full">
                 <link
                     href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
@@ -448,7 +664,7 @@ function App(props) {
                         }}
                         style={{ cursor: 'pointer' }}
                     >
-                        Census GPT
+                        {version} GPT
                     </h1>
                     <div className="inline-flex gap-x-1.5 align-middle justify-center">
                         <ContributeButton />
@@ -492,36 +708,7 @@ function App(props) {
                         ) : (
                             <div className='flex flex-col space-y-4'>
                                 <div>
-                                    <pre
-                                        align="left"
-                                        className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
-                                    >
-                                        <div className='flex justify-end space-x-2 p-1.5 bg-gradient-to-b from-gray-300 dark:from-neutral-700 to-transparent rounded-t-lg'>
-                                            <h2 className='items-start w-full font-sans text-lg font-bold tracking-wide ml-2'>
-                                                {title}
-                                            </h2>
-                                            <EditSql sql={sql} />
-                                            <CopySqlToClipboard text={sql} />
-                                        </div>
-                                        <code className={`text-sm text-gray-800 dark:text-white flex ${editingSql && 'ring-2 ring-inset'}`}>
-                                            <SyntaxHighlighter
-                                                language="sql"
-                                                style={hybrid}
-                                                customStyle={{
-                                                    color: undefined,
-                                                    background: undefined,
-                                                    margin: undefined,
-                                                    padding: '1rem',
-                                                }}
-                                                className='outline-none'
-                                                contentEditable={editingSql}
-                                                onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && editingSql && setEditingSql(false)}
-                                                onDoubleClickCapture={() => !editingSql && setEditingSql(true)}
-                                            >
-                                                {sql}
-                                            </SyntaxHighlighter>
-                                        </code>
-                                    </pre>
+                                    <SQL sql={sql} />
                                 </div>
 
                                 <Table
@@ -619,9 +806,9 @@ function App(props) {
                 )}
 
                 {mobileMenuIsOpen ? (
-                    <div className='fixed w-screen h-screen flex z-50 sm:hidden pointer-events-auto' onClick={(e) => mobileMenuRef.current && !mobileMenuRef.current.contains(e.target) && setMobileMenuIsOpen(false)}>
+                    <div className='bg-black/50 dark:bg-black/10 backdrop-blur fixed w-screen h-screen flex z-50 sm:hidden pointer-events-auto' onClick={(e) => mobileMenuRef.current && !mobileMenuRef.current.contains(e.target) && setMobileMenuIsOpen(false)}>
                         <div className='absolute w-full bottom-0 flex pointer-events-auto'>
-                            <div className='overflow-auto h-80 bg-gray-300/60 dark:bg-black/50 backdrop-blur-xl w-full rounded-t-[2rem] flex flex-col items-center' ref={mobileMenuRef} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+                            <div className='overflow-auto min-h-[50vh] max-h-[65vh] bg-gray-300/60 dark:bg-black/50 backdrop-blur-xl w-full rounded-t-[2rem] flex flex-col items-center' ref={mobileMenuRef} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
                                 <button className='w-full items-center flex justify-center p-1.5 pt-2 rounded-full' onClick={() => setMobileMenuIsOpen(false)}>
                                     <div className='bg-black/50 dark:bg-white/40 h-1 w-16 rounded-full' />
                                 </button>
@@ -646,37 +833,8 @@ function App(props) {
 
                                     {sql.length != 0 && !isLoading && (
                                         <div className='space-y-4 flex-col flex w-full h-fit items-center pb-4'>
-                                            <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-full overflow-auto'>
-                                                <pre
-                                                    align="left"
-                                                    className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
-                                                >
-                                                    <div className='flex justify-end space-x-2 p-1.5 bg-gradient-to-b from-gray-300 dark:from-neutral-700 to-transparent rounded-t-lg'>
-                                                        <h2 className='items-start w-full font-sans text-lg font-bold tracking-wide ml-2'>
-                                                            {title}
-                                                        </h2>
-                                                        <EditSql sql={sql} />
-                                                        <CopySqlToClipboard text={sql} />
-                                                    </div>
-                                                    <code className={`text-sm text-gray-800 dark:text-white flex ${editingSql && 'ring-2 ring-inset'}`}>
-                                                        <SyntaxHighlighter
-                                                            language="sql"
-                                                            style={hybrid}
-                                                            customStyle={{
-                                                                color: undefined,
-                                                                background: undefined,
-                                                                margin: undefined,
-                                                                padding: '1rem',
-                                                            }}
-                                                            className='outline-none'
-                                                            contentEditable={editingSql}
-                                                            onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && editingSql && setEditingSql(false)}
-                                                            onDoubleClickCapture={() => !editingSql && setEditingSql(true)}
-                                                        >
-                                                            {sql}
-                                                        </SyntaxHighlighter>
-                                                    </code>
-                                                </pre>
+                                            <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg w-full overflow-auto'>
+                                                <SQL sql={sql} />
                                             </div>
                                             <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-full overflow-auto'>
                                                 <Table
@@ -732,36 +890,7 @@ function App(props) {
                 {mobileSqlIsOpen && sql.length && (
                     <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileSqlRef.current && !mobileSqlRef.current.contains(e.target) && setMobileSqlIsOpen(false)}>
                         <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-4/5 max-h-80 overflow-auto' ref={mobileSqlRef}>
-                            <pre
-                                align="left"
-                                className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
-                            >
-                                <div className='flex justify-end space-x-2 p-1.5 bg-gradient-to-b from-gray-300 dark:from-neutral-700 to-transparent rounded-t-lg'>
-                                    <h2 className='items-start w-full font-sans text-lg font-bold tracking-wide ml-2'>
-                                        {title}
-                                    </h2>
-                                    <EditSql sql={sql} />
-                                    <CopySqlToClipboard text={sql} />
-                                </div>
-                                <code className={`text-sm text-gray-800 dark:text-white flex ${editingSql && 'ring-2 ring-inset'}`}>
-                                    <SyntaxHighlighter
-                                        language="sql"
-                                        style={hybrid}
-                                        customStyle={{
-                                            color: undefined,
-                                            background: undefined,
-                                            margin: undefined,
-                                            padding: '1rem',
-                                        }}
-                                        className='outline-none'
-                                        contentEditable={editingSql}
-                                        onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && editingSql && setEditingSql(false)}
-                                        onDoubleClickCapture={() => !editingSql && setEditingSql(true)}
-                                    >
-                                        {sql}
-                                    </SyntaxHighlighter>
-                                </code>
-                            </pre>
+                            <SQL sql={sql} />
                         </div>
                     </div>
                 )}
