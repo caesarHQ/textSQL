@@ -266,7 +266,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             natural_language_query=assistant_message['message']['content'],
             schemas=schemas
             )
-        messages = make_default_messages(schemas)
+        messages = make_default_messages(schemas, scope)
         messages.append({
             "role": "user",
             "content": content
