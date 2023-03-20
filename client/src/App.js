@@ -53,7 +53,7 @@ import { useSearchParams } from 'react-router-dom'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { AiOutlineSearch } from 'react-icons/ai'
-import { BsClipboard2, BsClipboard2Check, BsQuestionCircle } from 'react-icons/bs'
+import { BsClipboard2, BsClipboard2Check, BsPencilSquare, BsQuestionCircle } from 'react-icons/bs'
 
 // Add system dark mode
 localStorage.theme === 'dark' ||
@@ -144,7 +144,8 @@ function App(props) {
     const [isLoading, setIsLoading] = useState(false)
     const [title, setTitle] = useState('')
     const [visualization, setVisualization] = useState('map')
-
+    const [editingSql, setEditingSql] = useState(false)
+    const [copied, setCopied] = useState(false)
     const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false)
     const [mobileHelpIsOpen, setMobileHelpIsOpen] = useState(true)
     const [mobileTableIsOpen, setMobileTableIsOpen] = useState(false)
@@ -401,7 +402,6 @@ function App(props) {
         fetchBackend(query)
     }
 
-    const [copied, setCopied] = useState(false)
     const CopySqlToClipboard = (sql) => {
         const handleCopy = async () => {
             if ('clipboard' in navigator) {
@@ -416,8 +416,17 @@ function App(props) {
         }
 
         return (
-            <button onClick={handleCopy} className='absolute text-md rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 bg-white dark:bg-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-700'>
+            <button onClick={handleCopy} className='text-xs rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 bg-white dark:bg-neutral-600 hover:bg-gray-200 dark:hover:bg-neutral-700'>
                 {copied ? <BsClipboard2Check /> : <BsClipboard2 />}
+            </button>
+        )
+    }
+
+    const EditSql = (sql) => {
+        // setEditingSql(!editingSql)
+        return (
+            <button onClick={() => setEditingSql(!editingSql)} className={`text-xs rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 hover:bg-gray-200 dark:hover:bg-neutral-700  ${editingSql ? 'bg-gray-200 dark:bg-neutral-700' : 'bg-white dark:bg-neutral-600'}`}>
+                <BsPencilSquare />
             </button>
         )
     }
@@ -483,15 +492,18 @@ function App(props) {
                         ) : (
                             <div className='flex flex-col space-y-4'>
                                 <div>
-                                    <p class="font-medium"> {title} </p>
                                     <pre
                                         align="left"
                                         className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
                                     >
-                                        <code className="text-sm text-gray-800 dark:text-white">
-                                            <div className='flex justify-end p-1'>
-                                                <CopySqlToClipboard text={sql} />
-                                            </div>
+                                        <div className='flex justify-end space-x-2 p-1.5 bg-gradient-to-b from-gray-300 dark:from-neutral-700 to-transparent rounded-t-lg'>
+                                            <h2 className='items-start w-full font-sans text-lg font-bold tracking-wide ml-2'>
+                                                {title}
+                                            </h2>
+                                            <EditSql sql={sql} />
+                                            <CopySqlToClipboard text={sql} />
+                                        </div>
+                                        <code className={`text-sm text-gray-800 dark:text-white flex ${editingSql && 'ring-2 ring-inset'}`}>
                                             <SyntaxHighlighter
                                                 language="sql"
                                                 style={hybrid}
@@ -501,6 +513,10 @@ function App(props) {
                                                     margin: undefined,
                                                     padding: '1rem',
                                                 }}
+                                                className='outline-none'
+                                                contentEditable={editingSql}
+                                                onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && editingSql && setEditingSql(false)}
+                                                onDoubleClickCapture={() => !editingSql && setEditingSql(true)}
                                             >
                                                 {sql}
                                             </SyntaxHighlighter>
@@ -633,11 +649,16 @@ function App(props) {
                                             <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-full overflow-auto'>
                                                 <pre
                                                     align="left"
+                                                    className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
                                                 >
-                                                    <code className="text-sm text-gray-800 dark:text-white">
-                                                        <div className='flex justify-end p-1 right-0 relative'>
-                                                            <CopySqlToClipboard text={sql} />
-                                                        </div>
+                                                    <div className='flex justify-end space-x-2 p-1.5 bg-gradient-to-b from-gray-300 dark:from-neutral-700 to-transparent rounded-t-lg'>
+                                                        <h2 className='items-start w-full font-sans text-lg font-bold tracking-wide ml-2'>
+                                                            {title}
+                                                        </h2>
+                                                        <EditSql sql={sql} />
+                                                        <CopySqlToClipboard text={sql} />
+                                                    </div>
+                                                    <code className={`text-sm text-gray-800 dark:text-white flex ${editingSql && 'ring-2 ring-inset'}`}>
                                                         <SyntaxHighlighter
                                                             language="sql"
                                                             style={hybrid}
@@ -647,6 +668,10 @@ function App(props) {
                                                                 margin: undefined,
                                                                 padding: '1rem',
                                                             }}
+                                                            className='outline-none'
+                                                            contentEditable={editingSql}
+                                                            onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && editingSql && setEditingSql(false)}
+                                                            onDoubleClickCapture={() => !editingSql && setEditingSql(true)}
                                                         >
                                                             {sql}
                                                         </SyntaxHighlighter>
@@ -707,15 +732,18 @@ function App(props) {
                 {mobileSqlIsOpen && sql.length && (
                     <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileSqlRef.current && !mobileSqlRef.current.contains(e.target) && setMobileSqlIsOpen(false)}>
                         <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-4/5 max-h-80 overflow-auto' ref={mobileSqlRef}>
-                            <div className='flex justify-end p-1 relative'>
-                                <CopySqlToClipboard text={sql} />
-                            </div>
                             <pre
                                 align="left"
-                                className="rounded-md dark:text-white"
+                                className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
                             >
-                                <code className="text-sm text-gray-800 dark:text-white">
-
+                                <div className='flex justify-end space-x-2 p-1.5 bg-gradient-to-b from-gray-300 dark:from-neutral-700 to-transparent rounded-t-lg'>
+                                    <h2 className='items-start w-full font-sans text-lg font-bold tracking-wide ml-2'>
+                                        {title}
+                                    </h2>
+                                    <EditSql sql={sql} />
+                                    <CopySqlToClipboard text={sql} />
+                                </div>
+                                <code className={`text-sm text-gray-800 dark:text-white flex ${editingSql && 'ring-2 ring-inset'}`}>
                                     <SyntaxHighlighter
                                         language="sql"
                                         style={hybrid}
@@ -725,6 +753,10 @@ function App(props) {
                                             margin: undefined,
                                             padding: '1rem',
                                         }}
+                                        className='outline-none'
+                                        contentEditable={editingSql}
+                                        onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && editingSql && setEditingSql(false)}
+                                        onDoubleClickCapture={() => !editingSql && setEditingSql(true)}
                                     >
                                         {sql}
                                     </SyntaxHighlighter>
