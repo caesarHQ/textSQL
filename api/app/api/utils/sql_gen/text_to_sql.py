@@ -45,7 +45,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "SELECT city, sum(violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) as total_crime\nFROM crime_by_city\nGROUP BY city\nORDER BY total_crime DESC\nLIMIT 5;"
+            "content": "SELECT city, state, sum(violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) as total_crime\nFROM crime_by_city\nGROUP BY city\nORDER BY total_crime DESC\nLIMIT 5;"
         },
         {
             "role": "user",
@@ -61,7 +61,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "SELECT demographic_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN demographic_data ON crime_by_city.city = demographic_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY demographic_data.county\nORDER BY total_arson DESC\nLIMIT 5;"
+            "content": "SELECT demographic_data.county, demographic_data.state, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN demographic_data ON crime_by_city.city = demographic_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY demographic_data.county\nORDER BY total_arson DESC\nLIMIT 5;"
         },
         {
             "role": "user",
