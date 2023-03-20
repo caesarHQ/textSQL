@@ -794,7 +794,7 @@ function App(props) {
                     <div className='fixed h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileHelpRef.current && !mobileHelpRef.current.contains(e.target) && setMobileHelpIsOpen(false)}>
                         <div className='space-y-4 flex-col bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 h-1/2 overflow-auto' ref={mobileHelpRef}>
                             <div className='font-bold text-lg'>
-                                Welcome to Census GPT
+                                Welcome to {version} GPT
                             </div>
                             <Examples
                                 postHogInstance={posthog}
