@@ -4,15 +4,17 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 
 from app.api.routes import bp as api_bp
-from app.config import FlaskAppConfig
+from app.config import FlaskAppConfig, ENV
 from app.extensions import db
 import newrelic.agent
+
 
 def create_app(config_object=FlaskAppConfig):
     app = Flask(__name__)
     app.config.from_object(config_object)
     CORS(app)
-    newrelic.agent.initialize('/etc/secrets/newrelic.ini')
+    if ENV in ["production", "development"]:
+        newrelic.agent.initialize('/etc/secrets/newrelic.ini')
 
     # Initialize app with extensions
     db.init_app(app)
