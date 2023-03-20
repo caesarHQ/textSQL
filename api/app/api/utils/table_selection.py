@@ -12,7 +12,7 @@ def get_message_with_descriptions():
         " Respond with an empty list if you cannot identify any relevant tables."
         " Write your answer in markdown format."
         "\n"
-        "The following are descriptions of available tables:\n"
+        "The following are descriptions of available tables and custom types:\n"
         "---------------------\n"
         "{table_details}"
         "---------------------\n"
@@ -29,7 +29,7 @@ def get_default_messages(scope="USA"):
                     " Respond with an empty list if you cannot identify any relevant tables."
                     " Write your answer in markdown format."
                     "\n"
-                    "The following are descriptions of available tables:\n"
+                    "The following are descriptions of available tables and custom types:\n"
                     + get_table_schemas(scope=scope)
                 )
         },
