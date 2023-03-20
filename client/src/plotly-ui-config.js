@@ -76,14 +76,10 @@ const isGeoColumn = (columnName) => {
 
     layout = document.documentElement.classList.contains('dark') ? {
         ...layout,
-        paper_bgcolor: '#1F1F1F',
-        plot_bgcolor: '#1F1F1F',
         font: { color: '#fff' },
-        yaxis: { gridcolor: '#444' }        
+        yaxis: { gridcolor: '#444' }      
     } : {
         ...layout,
-        paper_bgcolor: '#fff',
-        plot_bgcolor: '#fff',
         font: { color: '#000' }
     }
 
