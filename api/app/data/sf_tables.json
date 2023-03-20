@@ -1,4 +1,367 @@
 {
+    "types": [
+        {
+            "type": "NEIGHBORHOOD",
+            "valid_values": [
+                "Mission Dolores",
+                "Laurel Heights / Jordan Park",
+                "Lincoln Park / Ft. Miley",
+                "Outer Richmond",
+                "Lone Mountain",
+                "Golden Gate Park",
+                "Presidio Heights",
+                "Seacliff",
+                "Lake Street",
+                "Presidio National Park",
+                "Presidio Terrace",
+                "Inner Richmond",
+                "Sutro Heights",
+                "Anza Vista",
+                "Cow Hollow",
+                "Union Street",
+                "Nob Hill",
+                "Marina",
+                "Telegraph Hill",
+                "Downtown / Union Square",
+                "Tenderloin",
+                "Civic Center",
+                "Hayes Valley",
+                "Alamo Square",
+                "Panhandle",
+                "Haight Ashbury",
+                "Lower Haight",
+                "Mint Hill",
+                "Duboce Triangle",
+                "Cole Valley",
+                "Rincon Hill",
+                "South Beach",
+                "South of Market",
+                "Showplace Square",
+                "Mission Bay",
+                "Yerba Buena Island",
+                "Treasure Island",
+                "Castro",
+                "Outer Sunset",
+                "Parkside",
+                "Stonestown",
+                "Parkmerced",
+                "Lakeshore",
+                "Golden Gate Heights",
+                "Forest Hill",
+                "West Portal",
+                "Clarendon Heights",
+                "Midtown Terrace",
+                "Laguna Honda",
+                "Lower Nob Hill",
+                "Upper Market",
+                "Dolores Heights",
+                "Mission",
+                "Potrero Hill",
+                "Dogpatch",
+                "Central Waterfront",
+                "Diamond Heights",
+                "Crocker Amazon",
+                "Fairmount",
+                "Peralta Heights",
+                "Holly Park",
+                "Merced Manor",
+                "Balboa Terrace",
+                "Ingleside",
+                "Russian Hill",
+                "Merced Heights",
+                "Outer Mission",
+                "Ingleside Terraces",
+                "Mt. Davidson Manor",
+                "Monterey Heights",
+                "Westwood Highlands",
+                "Westwood Park",
+                "Miraloma Park",
+                "McLaren Park",
+                "Sunnydale",
+                "Visitacion Valley",
+                "India Basin",
+                "Northern Waterfront",
+                "Hunters Point",
+                "Candlestick Point SRA",
+                "Cayuga",
+                "Oceanview",
+                "Apparel City",
+                "Bernal Heights",
+                "Noe Valley",
+                "Produce Market",
+                "Bayview",
+                "Silver Terrace",
+                "Bret Harte",
+                "Little Hollywood",
+                "Excelsior",
+                "Portola",
+                "University Mound",
+                "St. Marys Park",
+                "Mission Terrace",
+                "Sunnyside",
+                "Glen Park",
+                "Western Addition",
+                "Aquatic Park / Ft. Mason",
+                "Fishermans Wharf",
+                "Cathedral Hill",
+                "Japantown",
+                "Pacific Heights",
+                "Lower Pacific Heights",
+                "Chinatown",
+                "Polk Gulch",
+                "North Beach",
+                "Financial District",
+                "Inner Sunset",
+                "Parnassus Heights",
+                "Forest Knolls",
+                "Buena Vista",
+                "Corona Heights",
+                "Ashbury Heights",
+                "Eureka Valley",
+                "St. Francis Wood",
+                "Sherwood Forest"
+            ]
+        },
+        {
+            "type": "311_STATUS",
+            "valid_values": [
+                "Closed",
+                "Open"
+            ]
+        },
+        {
+            "type": "311_CATEGORY",
+            "valid_values": [
+                "311 External Request",
+                "Abandoned Vehicle",
+                "Blocked Street or SideWalk",
+                "Catch Basin Maintenance",
+                "Child Request",
+                "Damaged Property",
+                "DPW Volunteer Programs",
+                "Encampments",
+                "General Request - 311CUSTOMERSERVICECENTER",
+                "General Request - ADULT PROBATION",
+                "General Request - AGING ADULT SERVICES",
+                "General Request - AIRPORT SFO",
+                "General Request - ANIMAL CARE CONTROL",
+                "General Request - ART COMMISSION",
+                "General Request - ASSESSOR RECORDER",
+                "General Request - BOARD OF APPEALS",
+                "General Request - BOARD OF SUPERVISORS",
+                "General Request - BUILDING INSPECTION",
+                "General Request - CENTRAL SHOPS",
+                "General Request - CHILDREN YOUTH FAMILIES",
+                "General Request - CITYADMINISTRATOR GSA",
+                "General Request - CITY ATTORNEY",
+                "General Request - CITY HALL",
+                "General Request - CONTRACT ADMINISTRATION",
+                "General Request - CONTROLLER",
+                "General Request - COUNTY CLERK",
+                "General Request - DISTRICT ATTORNEY",
+                "General Request - DPH",
+                "General Request - DTIS",
+                "General Request - ECONOMICS AND WORKFORCE DEVELOPMENT",
+                "General Request - ELECTIONS",
+                "General Request - ENTERTAINMENT COMMISSION",
+                "General Request - ENVIRONMENT",
+                "General Request - ETHICS COMMISSION",
+                "General Request - FIRE DEPARTMENT",
+                "General Request - HSH",
+                "General Request - HUMAN RESOURCES",
+                "General Request - HUMAN RIGHTS COMMISSION",
+                "General Request - HUMAN SERVICES AGENCY",
+                "General Request - LABOR STANDARDS ENFORCEMENT",
+                "General Request - LANGUAGE SERVICES",
+                "General Request - LIBRARY PUBLIC",
+                "General Request - MEDICAL EXAMINER",
+                "General Request - MOCD",
+                "General Request - MOD",
+                "General Request - MOH",
+                "General Request - MONS",
+                "General Request - MTA",
+                "General Request - OCC",
+                "General Request - PLANNING",
+                "General Request - PORT AUTHORITY",
+                "General Request - PUBLIC DEFENDER",
+                "General Request - PUBLIC WORKS",
+                "General Request - PUC",
+                "General Request - REAL ESTATE DEPARTMENT",
+                "General Request - RENT BOARD",
+                "General Request - RPD",
+                "General Request - SFPD",
+                "General Request - SHERIFF",
+                "General Request - SHORT TERM RENTALS",
+                "General Request - SMALL BUSINESS",
+                "General Request - STATUS OF WOMEN",
+                "General Request - TIDA",
+                "General Request - TT COLLECTOR",
+                "Graffiti",
+                "Homeless Concerns",
+                "Illegal Postings",
+                "Litter Receptacles",
+                "Muni Employee Feedback",
+                "Muni Service Feedback",
+                "Noise Report",
+                "Parking Enforcement",
+                "Rec and Park Requests",
+                "Residential Building Request",
+                "Sewer Issues",
+                "SFHA Requests",
+                "Shared Spaces Violation",
+                "Sidewalk or Curb",
+                "Sign Repair",
+                "Street and Sidewalk Cleaning",
+                "Street Defects",
+                "Streetlights",
+                "Temporary Sign Request",
+                "Tree Maintenance"
+            ]
+        },
+        {
+            "type": "311_REQUEST_TYPE",
+            "valid_values": [
+
+            ]
+        },
+        {
+            "type": "CRIME_RESOLUTION",
+            "valid_values": [
+                "Cite or Arrest Adult",
+                "Exceptional Adult",
+                "Open or Active",
+                "Unfounded"
+            ]
+        },
+        {
+            "type": "CRIME_CATEGORY",
+            "valid_values": [
+                "Arson",
+                "Assault",
+                "Burglary",
+                "Case Closure",
+                "Civil Sidewalks",
+                "Courtesy Report",
+                "Disorderly Conduct",
+                "Drug Offense",
+                "Drug Violation",
+                "Embezzlement",
+                "Fire Report",
+                "Forgery And Counterfeiting",
+                "Fraud",
+                "Gambling",
+                "Homicide",
+                "Human Trafficking (A), Commercial Sex Acts",
+                "Human Trafficking (B), Involuntary Servitude",
+                "Human Trafficking, Commercial Sex Acts",
+                "Larceny Theft",
+                "Liquor Laws",
+                "Lost Property",
+                "Malicious Mischief",
+                "Miscellaneous Investigation",
+                "Missing Person",
+                "Motor Vehicle Theft",
+                "Non-Criminal",
+                "Offenses Against The Family And Children",
+                "Other",
+                "Other Miscellaneous",
+                "Other Offenses",
+                "Prostitution",
+                "Rape",
+                "Recovered Vehicle",
+                "Robbery",
+                "Sex Offense",
+                "Stolen Property",
+                "Suicide",
+                "Suspicious Occurrence",
+                "Traffic Collision",
+                "Traffic Violation Arrest",
+                "Vandalism",
+                "Vehicle Impounded",
+                "Vehicle Misplaced",
+                "Warrant",
+                "Weapons Carrying Etc",
+                "Weapons Offense"
+            ]
+        },
+        {
+            "type": "CRIME_SUBCATEGORY",
+            "valid_values": [
+                "Aggravated Assault",
+                "Arrest",
+                "Arson",
+                "Bad Checks",
+                "Bribery",
+                "Burglary - Commercial",
+                "Burglary - Hot Prowl",
+                "Burglary - Other",
+                "Burglary - Residential",
+                "Case Closure",
+                "Courtesy Report",
+                "Disorderly Conduct",
+                "Drug Violation",
+                "Drunkenness",
+                "Embezzlement",
+                "Extortion-Blackmail",
+                "Fire Report",
+                "Forgery And Counterfeiting",
+                "Fraud",
+                "Gambling",
+                "Homicide",
+                "Homicide - Excusable",
+                "Human Trafficking, Commercial Sex Acts",
+                "Human Trafficking, Involuntary Servitude",
+                "Intimidation",
+                "Kidnapping",
+                "Larceny - Auto Parts",
+                "Larceny - From Vehicle",
+                "Larceny Theft - Bicycle",
+                "Larceny Theft - From Building",
+                "Larceny Theft - Other",
+                "Larceny Theft - Pickpocket",
+                "Larceny Theft - Purse Snatch",
+                "Larceny Theft - Shoplifting",
+                "Liquor Law Violation",
+                "Loitering",
+                "Lost Property",
+                "Manslaughter",
+                "Miscellaneous Investigation",
+                "Missing Adult",
+                "Missing Person",
+                "Motor Vehicle Theft",
+                "Motor Vehicle Theft (Attempted)",
+                "Non-Criminal",
+                "Other",
+                "Other Offenses",
+                "Prostitution",
+                "Rape",
+                "Rape - Attempted",
+                "Recovered Vehicle",
+                "Robbery - Carjacking",
+                "Robbery - Commercial",
+                "Robbery - Other",
+                "Robbery - Residential",
+                "Robbery - Street",
+                "Sex Offense",
+                "Simple Assault",
+                "Stalking",
+                "Stolen Property",
+                "Suicide",
+                "Suspicious Occurrence",
+                "Suspicious Package",
+                "Theft From Vehicle",
+                "Traffic Collision",
+                "Traffic Collision - Hit & Run",
+                "Traffic Violation Arrest",
+                "Trespass",
+                "Vandalism",
+                "Vehicle Impounded",
+                "Vehicle Misplaced",
+                "Warrant",
+                "Weapons Offense"
+            ]
+        }
+    ],
     "tables": [
         {
             "name": "location_data",
@@ -57,11 +420,11 @@
                 },
                 {
                     "name": "latitude",
-                    "type": "DOUBLE_PRECISION"
+                    "type": "FLOAT"
                 },
                 {
                     "name": "longitude",
-                    "type": "DOUBLE_PRECISION"
+                    "type": "FLOAT"
                 },
                 {
                     "name": "neighborhood",
@@ -95,10 +458,6 @@
                     "type": "TEXT"
                 },
                 {
-                    "name": "responsible_agency",
-                    "type": "TEXT"
-                },
-                {
                     "name": "category",
                     "type": "TEXT"
                 },
@@ -107,16 +466,12 @@
                     "type": "TEXT"
                 },
                 {
-                    "name": "address",
-                    "type": "TEXT"
-                },
-                {
                     "name": "latitude",
-                    "type": "DOUBLE_PRECISION"
+                    "type": "FLOAT"
                 },
                 {
                     "name": "longitude",
-                    "type": "DOUBLE_PRECISION"
+                    "type": "FLOAT"
                 },
                 {
                     "name": "neighborhood",
@@ -159,267 +514,267 @@
                 },
                 {
                     "name": "lat",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "zip code latitude"
                 },
                 {
                     "name": "lon",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "zip code longitude"
                 },
                 {
                     "name": "total_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "total population"
                 },
                 {
                     "name": "elderly_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "elderly population"
                 },
                 {
                     "name": "male_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "male population"
                 },
                 {
                     "name": "female_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "female population"
                 },
                 {
                     "name": "white_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "white population"
                 },
                 {
                     "name": "black_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "black population"
                 },
                 {
                     "name": "native_american_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "native american population"
                 },
                 {
                     "name": "asian_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "asian population"
                 },
                 {
                     "name": "two_or_more_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "two or more population"
                 },
                 {
                     "name": "hispanic_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "hispanic population"
                 },
                 {
                     "name": "adult_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "adult population"
                 },
                 {
                     "name": "citizen_adult_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "citizen adult population"
                 },
                 {
                     "name": "average_household_size",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "average household size"
                 },
                 {
                     "name": "population_under_5_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population under 5 years old"
                 },
                 {
                     "name": "population_10_to_14_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 10 to 14 years old"
                 },
                 {
                     "name": "population_15_to_19_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 15 to 19 years old"
                 },
                 {
                     "name": "population_20_to_24_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 20 to 24 years old"
                 },
                 {
                     "name": "population_25_to_34_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 25 to 34 years old"
                 },
                 {
                     "name": "population_35_to_44_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 35 to 44 years old"
                 },
                 {
                     "name": "population_45_to_54_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 45 to 54 years old"
                 },
                 {
                     "name": "population_55_to_59_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 55 to 59 years old"
                 },
                 {
                     "name": "population_60_to_64_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 60 to 64 years old"
                 },
                 {
                     "name": "population_65_to_74_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 65 to 74 years old"
                 },
                 {
                     "name": "population_75_to_84_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 75 to 84 years old"
                 },
                 {
                     "name": "population_85_years_and_over",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 85 years old and over"
                 },
                 {
                     "name": "per_capita_income",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "per capita income"
                 },
                 {
                     "name": "median_income_for_workers",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "median income for workers"
                 },
                 {
                     "name": "no_schooling_completed",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with no schooling completed"
                 },
                 {
                     "name": "nursery_school",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with nursery school completed at most"
                 },
                 {
                     "name": "kindergarten",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with kindergarten completed at most"
                 },
                 {
                     "name": "grade_1",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 1 completed at most"
                 },
                 {
                     "name": "grade_2",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 2 completed at most"
                 },
                 {
                     "name": "grade_3",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 3 completed at most"
                 },
                 {
                     "name": "grade_4",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 4 completed at most"
                 },
                 {
                     "name": "grade_5",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 5 completed at most"
                 },
                 {
                     "name": "grade_6",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 6 completed at most"
                 },
                 {
                     "name": "grade_7",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 7 completed at most"
                 },
                 {
                     "name": "grade_8",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 8 completed at most"
                 },
                 {
                     "name": "grade_9",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 9 completed at most"
                 },
                 {
                     "name": "grade_10",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 10 completed at most"
                 },
                 {
                     "name": "grade_11",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 11 completed at most"
                 },
                 {
                     "name": "grade_12_no_diploma",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 12 completed with no diploma at most"
                 },
                 {
                     "name": "regular_high_school_diploma",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with a regular high school diploma at most"
                 },
                 {
                     "name": "ged_or_alternative_credential",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with a GED or alternative credential at most"
                 },
                 {
                     "name": "some_college_less_than_1_year",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with less than 1 year of college completed at most"
                 },
                 {
                     "name": "some_college_1_or_more_years_no_degree",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with 1 year or more of college completed with no degree at most"
                 },
                 {
                     "name": "associates_degree",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with an associates degree at most"
                 },
                 {
                     "name": "bachelors_degree",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with an bachelors degree at most"
                 },
                 {
                     "name": "masters_degree",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with an masters degree at most"
                 },
                 {
                     "name": "professional_school_degree",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with a professional school degree at most"
                 },
                 {
                     "name": "doctorate_degree",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with a doctorate degree at most"
                 }
             ]
@@ -440,92 +795,92 @@
                 },
                 {
                     "name": "median_sale_price",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "median sale price"
                 },
                 {
                     "name": "median_sale_price_mom",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "median sale price month over month"
                 },
                 {
                     "name": "median_sale_price_yoy",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "median sale price year over year"
                 },
                 {
                     "name": "homes_sold",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "homes sold"
                 },
                 {
                     "name": "homes_sold_mom",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "homes sold month over month"
                 },
                 {
                     "name": "homes_sold_yoy",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "homes sold year over year"
                 },
                 {
                     "name": "new_listings",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "new listings"
                 },
                 {
                     "name": "new_listings_mom",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "new listings month over month"
                 },
                 {
                     "name": "new_listings_yoy",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "new listings year over year"
                 },
                 {
                     "name": "inventory",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "inventory"
                 },
                 {
                     "name": "inventory_mom",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "inventory month over month"
                 },
                 {
                     "name": "inventory_yoy",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "inventory year over year"
                 },
                 {
                     "name": "days_on_market",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "days on market"
                 },
                 {
                     "name": "days_on_market_mom",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "days on market month over month"
                 },
                 {
                     "name": "days_on_market_yoy",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "days on market year over year"
                 },
                 {
                     "name": "average_sale_to_list",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "average sale to list"
                 },
                 {
                     "name": "average_sale_to_list_mom",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "average sale to list month over month"
                 },
                 {
                     "name": "average_sale_to_list_yoy",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "average sale to list year over year"
                 }
             ]
