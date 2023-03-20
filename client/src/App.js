@@ -603,9 +603,9 @@ function App(props) {
                 )}
 
                 {mobileMenuIsOpen ? (
-                    <div className='fixed w-screen h-screen flex z-50 sm:hidden pointer-events-auto' onClick={(e) => mobileMenuRef.current && !mobileMenuRef.current.contains(e.target) && setMobileMenuIsOpen(false)}>
+                    <div className='bg-black/50 dark:bg-black/10 backdrop-blur fixed w-screen h-screen flex z-50 sm:hidden pointer-events-auto' onClick={(e) => mobileMenuRef.current && !mobileMenuRef.current.contains(e.target) && setMobileMenuIsOpen(false)}>
                         <div className='absolute w-full bottom-0 flex pointer-events-auto'>
-                            <div className='overflow-auto h-80 bg-gray-300/60 dark:bg-black/50 backdrop-blur-xl w-full rounded-t-[2rem] flex flex-col items-center' ref={mobileMenuRef} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+                            <div className='overflow-auto min-h-[50vh] max-h-[65vh] bg-gray-300/60 dark:bg-black/50 backdrop-blur-xl w-full rounded-t-[2rem] flex flex-col items-center' ref={mobileMenuRef} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
                                 <button className='w-full items-center flex justify-center p-1.5 pt-2 rounded-full' onClick={() => setMobileMenuIsOpen(false)}>
                                     <div className='bg-black/50 dark:bg-white/40 h-1 w-16 rounded-full' />
                                 </button>
