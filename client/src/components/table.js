@@ -104,10 +104,10 @@ const Table = (props) => {
     let values = props.values
 
     return (
-        <div className="px-4 sm:px-6 lg:px-8 dark:bg-dark-800 dark:text-white rounded-lg">
-            <div className="mt-8 flow-root">
-                <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                    <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div className="sm:dark:bg-dark-800 dark:text-white rounded-lg w-full h-full">
+            <div className="flow-root">
+                <div className="overflow-x-auto">
+                    <div className="inline-block min-w-full align-middle px-6">
                         <table className="min-w-full divide-y divide-dark-300">
                             <TableHeader
                                 key={Math.random()}

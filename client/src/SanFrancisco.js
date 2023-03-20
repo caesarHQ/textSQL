@@ -89,7 +89,7 @@ const SearchInput = (props) => {
                     type="text"
                     name="search"
                     id="search"
-                    placeholder="Ask anything about US Demographics..."
+                    placeholder="Ask anything about San Francisco Demographics..."
                     className="focus:ring-0 block w-full rounded-none rounded-l-md border-0 py-1.5 sm:ring-1 sm:ring-inset sm:ring-gray-300 sm:dark:ring-neutral-500 sm:focus:ring-2 sm:focus:ring-inset sm:focus:ring-blue-600 sm:dark:focus:ring-blue-600 sm:text-sm sm:leading-6 bg-transparent dark:placeholder-neutral-400"
                     value={value}
                     onChange={onSearchChange}
@@ -131,7 +131,7 @@ const DataPlot = (props) => {
     );
 };
 
-function App(props) {
+function SanFrancisco(props) {
     const [searchParams, setSearchParams] = useSearchParams()
     const [query, setQuery] = useState('')
     const [sql, setSQL] = useState('')
@@ -439,7 +439,7 @@ function App(props) {
                         }}
                         style={{ cursor: 'pointer' }}
                     >
-                        Census GPT
+                        San Francisco GPT
                     </h1>
                     <div className="inline-flex gap-x-1.5 align-middle justify-center">
                         <ContributeButton />
@@ -738,7 +738,7 @@ function App(props) {
     )
 }
 
-export default App
+export default SanFrancisco
 
 // /* DO NOT REMOVE
 
