@@ -721,7 +721,6 @@ function App(props) {
                         {props.version} GPT
                     </h1>
                     <div className="inline-flex gap-x-1.5 align-middle justify-center">
-                        <ContributeButton />
                         <GithubButton />
                         <DiscordButton />
                         <DarkModeButton />
