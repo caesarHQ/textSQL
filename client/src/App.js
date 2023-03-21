@@ -966,6 +966,10 @@ function App(props) {
     )
 }
 
+App.defaultProps = {
+    version: 'Census'
+}
+
 export default App
 
 // /* DO NOT REMOVE
