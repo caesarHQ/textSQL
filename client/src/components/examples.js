@@ -9,15 +9,26 @@
  * @returns {JSX.Element} – The examples component
  */
 const Examples = (props) => {
-    const basic_example_queries = [
+    let basic_example_queries = [
         'Five cities in Florida with the highest crime',
         'Richest neighborhood in Houston, TX',
     ]
-    const advanced_example_queries = [
+    let advanced_example_queries = [
         '3 neighborhoods in San Francisco that have the highest female to male ratio',
         'Which area in San Francisco has the highest racial diversity and what is the percentage population of each race in that area?',
         // "Which 5 areas have the median income closest to the national median income?"
     ]
+
+    if (props.version === 'San Francisco') {
+        basic_example_queries = [
+            'Which four neighorhoods had the highest crime in 2021',
+            'Which two neighorhoods had the lowest crime in 2021',
+        ]
+        advanced_example_queries = [
+            '3 neighborhoods in have the highest female to male ratio',
+        ]
+    }
+
     return (
         <div className="px-10 text-gray-900 dark:text-white max-w-4xl">
             <p className={'my-2 font-medium'}> Try these: </p>
