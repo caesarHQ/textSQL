@@ -219,7 +219,11 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3, scope="USA"):
     # Create K completions in parallel
     jobs = []
     for _ in range(k):
-        jobs.append(joblib.delayed(get_assistant_message)(messages, 0, "gpt-3.5-turbo"))
+        if scope == "SF":
+            model = "gpt-4"
+        else:
+            model = "gpt-3.5-turbo"
+        jobs.append(joblib.delayed(get_assistant_message)(messages, 0, model))
     assistant_messages = joblib.Parallel(n_jobs=k, verbose=10)(jobs)
 
     # Try each completion in order
@@ -276,7 +280,11 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
 
     for _ in range(k):
         try:
-            assistant_message = get_assistant_message(messages)
+            if scope == "SF":
+                model = "gpt-4"
+            else:
+                model = "gpt-3.5-turbo"
+            assistant_message = get_assistant_message(messages, model=model)
             sql_query = extract_sql_query_from_message(assistant_message['message']['content'])
 
             response = execute_sql(sql_query)

@@ -53,7 +53,11 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
         "content": content
     })
 
-    assistant_message_content = get_assistant_message(messages=messages)['message']['content']
+    if scope == "SF":
+        model = "gpt-4"
+    else:
+        model = "gpt-3.5-turbo"
+    assistant_message_content = get_assistant_message(messages=messages, model=model)['message']['content']
     tables_json_str = extract_code_from_markdown(assistant_message_content)
     tables = json.loads(tables_json_str).get('tables')
     return tables
