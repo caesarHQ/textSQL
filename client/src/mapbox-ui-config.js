@@ -75,3 +75,16 @@ export const citiesLayer = {
         'circle-opacity': 0.8,
     },
 }
+
+export const polygonsLayer = {
+    id: 'polygons',
+    type: 'fill',
+    source: "polygons",
+    layout: {
+        visibility: 'visible',
+    },
+    paint: {
+        'fill-color': '#006AF9',
+        'fill-opacity': 0.8,
+    },
+}
