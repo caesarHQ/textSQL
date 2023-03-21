@@ -761,6 +761,7 @@ function App(props) {
                                 postHogInstance={posthog}
                                 setQuery={setQuery}
                                 handleClick={fetchBackend}
+                                version={props.version}
                             />
                         ) : isLoading ? (
                             <> </>
@@ -863,6 +864,7 @@ function App(props) {
                                 postHogInstance={posthog}
                                 setQuery={setQuery}
                                 handleClick={fetchBackend}
+                                version={props.version}
                             />
                         </div>
                     </div>
