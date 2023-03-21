@@ -748,7 +748,7 @@ function App(props) {
                             <SearchButton />
                         </form>
                     </div>
-                    <Disclaimer />
+                    <Disclaimer version={props.version} />
                 </div>
 
                 <div className="flex flex-col lg:flex-row h-full w-full gap-6 sm:p-6">
