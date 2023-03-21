@@ -379,9 +379,7 @@ function App(props) {
         clearMapLayers()
 
         // Sanitize the query
-        if(props.version === 'Census') {
-            natural_language_query = cleanupQuery(natural_language_query)
-        }
+        natural_language_query = cleanupQuery(natural_language_query, props.version)
 
         let requestBody = {
             natural_language_query,
