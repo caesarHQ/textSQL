@@ -33,6 +33,7 @@ import {
     zipcodeLayerHigh,
     zipcodeLayerLow,
     citiesLayer,
+    polygonsLayer
 } from './mapbox-ui-config'
 
 // Plotly UI configuration
@@ -53,7 +54,7 @@ import { useSearchParams } from 'react-router-dom'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { AiOutlineSearch } from 'react-icons/ai'
-import { BsClipboard2, BsClipboard2Check, BsQuestionCircle } from 'react-icons/bs'
+import { BsClipboard2, BsClipboard2Check, BsPencilSquare, BsQuestionCircle } from 'react-icons/bs'
 
 // Add system dark mode
 localStorage.theme === 'dark' ||
@@ -78,32 +79,6 @@ let api_endpoint = 'https://text-sql-be.onrender.com'
 
 if (process.env.REACT_APP_HOST_ENV === 'dev') {
     api_endpoint = 'http://localhost:9000'
-}
-
-const SearchInput = (props) => {
-    const { value, onSearchChange, onClear } = props
-    return (
-        <div className="flex rounded-full sm:rounded-md shadow-inner sm:shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
-            <div className="relative flex flex-grow items-stretch focus-within:z-10">
-                <input
-                    type="text"
-                    name="search"
-                    id="search"
-                    placeholder="Ask anything about US Demographics..."
-                    className="focus:ring-0 block w-full rounded-none rounded-l-md border-0 py-1.5 sm:ring-1 sm:ring-inset sm:ring-gray-300 sm:dark:ring-neutral-500 sm:focus:ring-2 sm:focus:ring-inset sm:focus:ring-blue-600 sm:dark:focus:ring-blue-600 sm:text-sm sm:leading-6 bg-transparent dark:placeholder-neutral-400"
-                    value={value}
-                    onChange={onSearchChange}
-                />
-            </div>
-            <button
-                type="button"
-                className="focus:ring-0 focus:text-blue-600 hover:text-blue-600 dark:text-white/50 dark:hover:text-blue-600 relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md p-2 text-xs sm:text-sm font-semibold sm:ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 sm:focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none sm:hover:bg-gray-50 sm:hover:dark:bg-dark-900"
-                onClick={onClear}
-            >
-                <FaTimes />
-            </button>
-        </div>
-    )
 }
 
 const SearchButton = (props) => {
@@ -131,7 +106,34 @@ const DataPlot = (props) => {
     );
 };
 
+const SearchInput = (props) => {
+    const { value, onSearchChange, onClear } = props
+    return (
+        <div className="flex rounded-full sm:rounded-md shadow-inner sm:shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
+            <div className="relative flex flex-grow items-stretch focus-within:z-10">
+                <input
+                    type="text"
+                    name="search"
+                    id="search"
+                    placeholder={`Ask anything about ${props.version === 'Census' ? 'US' : props.version} Demographics...`}
+                    className="focus:ring-0 block w-full rounded-none rounded-l-md border-0 py-1.5 sm:ring-1 sm:ring-inset sm:ring-gray-300 sm:dark:ring-neutral-500 sm:focus:ring-2 sm:focus:ring-inset sm:focus:ring-blue-600 sm:dark:focus:ring-blue-600 sm:text-sm sm:leading-6 bg-transparent dark:placeholder-neutral-400"
+                    value={value}
+                    onChange={onSearchChange}
+                />
+            </div>
+            <button
+                type="button"
+                className="focus:ring-0 focus:text-blue-600 hover:text-blue-600 dark:text-white/50 dark:hover:text-blue-600 relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md p-2 text-xs sm:text-sm font-semibold sm:ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 sm:focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none sm:hover:bg-gray-50 sm:hover:dark:bg-dark-900"
+                onClick={onClear}
+            >
+                <FaTimes />
+            </button>
+        </div>
+    )
+}
+
 function App(props) {
+    const version = props.version || 'Census'
     const [searchParams, setSearchParams] = useSearchParams()
     const [query, setQuery] = useState('')
     const [sql, setSQL] = useState('')
@@ -144,7 +146,8 @@ function App(props) {
     const [isLoading, setIsLoading] = useState(false)
     const [title, setTitle] = useState('')
     const [visualization, setVisualization] = useState('map')
-
+    const [editingSql, setEditingSql] = useState(false)
+    const [copied, setCopied] = useState(false)
     const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false)
     const [mobileHelpIsOpen, setMobileHelpIsOpen] = useState(true)
     const [mobileTableIsOpen, setMobileTableIsOpen] = useState(false)
@@ -157,6 +160,7 @@ function App(props) {
     const expandedMobileSearchRef = useRef()
     const [touchStart, setTouchStart] = useState(null)
     const [touchEnd, setTouchEnd] = useState(null)
+    const [polygons, setPolygons] = useState([])
 
     const onTouchStart = (e) => {
         if (expandedMobileSearchRef.current?.contains(e.target)) return
@@ -175,7 +179,7 @@ function App(props) {
     }
 
     useEffect(() => {
-        document.title = query || 'Census GPT'
+        document.title = query || (props.version === 'Census' ? 'Census GPT' : 'San Francisco GPT')
     }, [query])
 
     useEffect(() => {
@@ -192,6 +196,7 @@ function App(props) {
         setCities([])
         setZipcodes([])
         setZipcodesFormatted([])
+        setPolygons([])
     }
 
     const handleSearchChange = (event) => {
@@ -202,6 +207,161 @@ function App(props) {
 
     const handleClearSearch = () => {
         setQuery('')
+    }
+
+    const executeSql = (sql) => {
+        console.log(1, sql)
+        setIsLoading(true)
+        setMobileHelpIsOpen(false)
+        clearMapLayers()
+
+        const options = {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+                sql
+            }),
+        }
+
+        fetch(api_endpoint + '/api/execute_sql', options)
+            .then((response) => response.json())
+            .then((response) => {
+                // Set the loading state to false
+                setIsLoading(false)
+
+                // Handle errors
+                if (!response || !response.result) {
+                    posthog.capture('backend_error', response)
+                    setErrorMessage(
+                        'Something went wrong. Please try again or try a different query'
+                    )
+                    return
+                }
+
+                // Capture the response in posthog
+                posthog.capture('backend_response', response)
+
+                // Set the state for SQL and Status Code
+                setStatusCode(response.status)
+                console.log('Backend Response ==>', response)
+
+                // Filter out lat and long columns
+                let filteredColumns = response.result.column_names.filter(
+                    (c) => c !== 'lat' && c !== 'long'
+                )
+
+                // Fit the order of columns and filter out lat and long row values
+                let rows = response.result.results.map((value) => {
+                    let row = []
+                    // Find each of the filtered column value in the object and push it into the row
+                    filteredColumns.map((c) => row.push(value[c]))
+                    return row
+                })
+                setTableInfo({ rows, columns: filteredColumns })
+
+                // render cities layer on the map
+                if (
+                    filteredColumns.indexOf('zip_code') === -1 &&
+                    filteredColumns.indexOf('city') >= 0
+                ) {
+                    // Get the cities
+                    let responseCities = getCities(response.result)
+                    console.log(responseCities)
+                    if (!responseCities.length) {
+                        setErrorMessage('No results were returned')
+                        setCities([])
+                        setZipcodes([]) // reset cities rendering
+                    } else if (responseCities.length < 2) {
+                        // Focus the map to relevant parts
+                        // Fitbounds needs at least two geo coordinates.
+                        // If less that 2 co-ordinates then use fly to.
+                        mapRef && mapRef.current && mapRef.current.flyTo({
+                            center: [
+                                responseCities[0].long,
+                                responseCities[0].lat,
+                            ],
+                            essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+                        })
+                    } else {
+                        let [minLng, minLat, maxLng, maxLat] = bbox(
+                            turf.lineString(
+                                responseCities.map((c) => [c.long, c.lat])
+                            )
+                        )
+                        mapRef && mapRef.current && mapRef.current.fitBounds(
+                            [
+                                [minLng, minLat],
+                                [maxLng, maxLat],
+                            ],
+                            { padding: '100', duration: 1000 }
+                        )
+                    }
+
+                    // Set the cities into the state
+                    setCities(responseCities)
+
+                    // reset zipcode rendering
+                    setZipcodes([])
+
+                    setVisualization('map')
+                } else if (filteredColumns.indexOf('zip_code') >= 0) {
+                    // Render zipcodes layer on the map
+                    let responseZipcodes = getZipcodes(response.result)
+                    setZipcodesFormatted(
+                        getZipcodesMapboxFormatted(responseZipcodes)
+                    )
+
+                    // Fitbounds needs at least two geo coordinates.
+                    if (!responseZipcodes.length) {
+                        setErrorMessage('No results were returned')
+                        setZipcodes([])
+                        setCities([]) // reset cities rendering
+                    } else if (responseZipcodes.length < 2) {
+                        // Fitbounds needs at least two geo coordinates.
+                        // If less that 2 co-ordinates then use fly to.
+                        mapRef && mapRef.current && mapRef.current.flyTo({
+                            center: [
+                                responseZipcodes[0].long,
+                                responseZipcodes[0].lat,
+                            ],
+                            essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+                        })
+                    } else {
+                        let [minLng, minLat, maxLng, maxLat] = bbox(
+                            turf.lineString(
+                                responseZipcodes.map((z) => [z.long, z.lat])
+                            )
+                        )
+                        mapRef && mapRef.current && mapRef.current.fitBounds(
+                            [
+                                [minLng, minLat],
+                                [maxLng, maxLat],
+                            ],
+                            { padding: '100', duration: 1000 }
+                        )
+                    }
+                    setVisualization('map')
+                    setZipcodes(responseZipcodes)
+                    setCities([]) // reset cities rendering
+                } else {
+                    // No zipcodes or cities to render. Default to chart
+                    setVisualization('chart')
+                }
+                setMobileMenuIsOpen(true)
+            })
+            .catch((err) => {
+                Sentry.setContext('queryContext', {
+                    query: query
+                })
+                Sentry.captureException(err)
+                setIsLoading(false)
+                posthog.capture('backend_error', {
+                    error: err,
+                })
+                setStatusCode(500)
+                setErrorMessage(err.message || err)
+                console.error(err)
+            })
     }
 
     const fetchBackend = (natural_language_query) => {
@@ -220,21 +380,33 @@ function App(props) {
         clearMapLayers()
 
         // Sanitize the query
-        natural_language_query = cleanupQuery(natural_language_query)
+        if(props.version === 'Census') {
+            natural_language_query = cleanupQuery(natural_language_query)
+        }
+
+        let requestBody = {
+            natural_language_query,
+            table_names: ['crime_by_city', 'demographic_data'],
+        }
+
+        if(props.version === 'San Francisco') {
+            requestBody = {
+                natural_language_query,
+                table_names: ['crime_by_city', 'demographic_data'],
+                scope: 'SF'
+            }
+        }
 
         // Set the options for the fetch request
         const options = {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({
-                natural_language_query,
-                table_names: ['crime_by_city', 'demographic_data'],
-            }),
+            body: JSON.stringify(requestBody),
         }
 
         let responseOuter = null
         // Send the request
-        fetch(api_endpoint + '/api/text_to_sql', options)
+        fetch((props.version === 'Census' ? api_endpoint : 'https://dev-text-sql-be.onrender.com/') + '/api/text_to_sql', options)
             .then((response) => response.json())
             .then((response) => {
                 // Set the loading state to false
@@ -259,10 +431,18 @@ function App(props) {
 
                 console.log('Backend Response ==>', response)
 
-                // Filter out lat and long columns
-                let filteredColumns = response.result.column_names.filter(
-                    (c) => c !== 'lat' && c !== 'long'
-                )
+                // Filter out geolocation columns (lat, long, shape)
+                let filteredColumns = []
+                if (props.version === 'Census') {
+                    filteredColumns = response.result.column_names.filter(
+                        (c) => c !== 'lat' && c !== 'long'
+                    )
+                } else {
+                    filteredColumns = response.result.column_names.filter(
+                        (c) => c !== 'lat' && c !== 'long' && c !== 'shape'
+                    )
+                }
+               
 
                 // Fit the order of columns and filter out lat and long row values
                 let rows = response.result.results.map((value) => {
@@ -273,8 +453,16 @@ function App(props) {
                 })
                 setTableInfo({ rows, columns: filteredColumns })
 
-                // render cities layer on the map
-                if (
+                if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') >= 0) {
+                    // Render polygon shapes on the map
+                    setPolygons(response.result.results.map(r => [r.shape]))
+                    setVisualization('map')
+                } else if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') == -1) {
+                    // No neighborhoods to render. Default to chart
+                    setVisualization('chart')
+                }
+                else if (
+                     // render cities layer on the map
                     filteredColumns.indexOf('zip_code') === -1 &&
                     filteredColumns.indexOf('city') >= 0
                 ) {
@@ -401,29 +589,124 @@ function App(props) {
         fetchBackend(query)
     }
 
-    const [copied, setCopied] = useState(false)
-    const CopySqlToClipboard = (sql) => {
-        const handleCopy = async () => {
-            if ('clipboard' in navigator) {
-                setCopied(true)
-                setTimeout(() => setCopied(false), 1000)
-                return await navigator.clipboard.writeText(sql.text)
-            } else {
-                setCopied(true)
-                setTimeout(() => setCopied(false), 1000)
-                return document.execCommand('copy', true, sql.text)
+    const SQL = ({ sql }) => {
+        const sqlRef = useRef(sql)
+
+        const CopySqlToClipboardButton = ({ text }) => {
+            const handleCopy = async () => {
+                if ('clipboard' in navigator) {
+                    setCopied(true)
+                    setTimeout(() => setCopied(false), 1000)
+                    return await navigator.clipboard.writeText(text)
+                } else {
+                    setCopied(true)
+                    setTimeout(() => setCopied(false), 1000)
+                    return document.execCommand('copy', true, text)
+                }
             }
+
+            return (
+                <button onClick={handleCopy} className='text-xs rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 bg-white dark:bg-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-700'>
+                    {copied ? <BsClipboard2Check /> : <BsClipboard2 />}
+                </button>
+            )
         }
 
-        return (
-            <button onClick={handleCopy} className='absolute text-md rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 bg-white dark:bg-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-700'>
-                {copied ? <BsClipboard2Check /> : <BsClipboard2 />}
+        const EditSqlButton = () => (
+            <button onClick={() => setEditingSql(!editingSql)} className={`text-xs rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 hover:bg-gray-100 dark:hover:bg-neutral-700  ${editingSql ? 'bg-gray-100 dark:bg-neutral-700' : 'bg-white dark:bg-neutral-600'}`}>
+                <BsPencilSquare />
             </button>
+        )
+
+        return (
+            <pre
+                align="left"
+                className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
+            >
+                <div className='flex items-center w-full min-h-full'>
+                    <div className='flex w-full h-full rounded-t-md items-center p-1.5 space-x-1.5 bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm font-sans'>
+                        <h2 className='font-bold tracking-wide h-6'>
+                            {title}
+                        </h2>
+                        <div className='fixed flex w-full items-center justify-end right-1 space-x-1.5'>
+                            {editingSql && (
+                                <button
+                                    onClick={() => {
+                                        setSQL(sqlRef.current)
+                                        setEditingSql(false)
+                                        executeSql(sqlRef.current)
+                                    }}
+                                    className='h-6 text-xs items-center flex rounded-full ring-1 ring-blue-600 bg-blue-600/50 hover:bg-blue-600/75 px-2 backdrop-blur-lg font-semibold text-white'>
+                                    Submit
+                                </button>
+                            )}
+                            <EditSqlButton />
+                            <CopySqlToClipboardButton text={sqlRef.current} />
+                        </div>
+                    </div>
+                </div>
+                <code
+                    className={`px-2 bg-transparent text-sm text-gray-800 dark:text-white flex rounded-b-md ${editingSql && 'ring-2 ring-inset'}`}>
+                    <SyntaxHighlighter
+                        ref={sqlRef}
+                        language="sql"
+                        style={hybrid}
+                        customStyle={{
+                            color: undefined,
+                            background: undefined,
+                            margin: undefined,
+                            padding: undefined,
+                        }}
+                        contentEditable={editingSql}
+                        spellCheck={false}
+                        suppressContentEditableWarning
+                        onInput={(e) => sqlRef.current = e.currentTarget.textContent}
+                        className='outline-none'
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey && editingSql) {
+                                setSQL(sqlRef.current)
+                                setEditingSql(false)
+                                executeSql(sqlRef.current)
+                            }
+                        }}
+                        onDoubleClickCapture={() => !editingSql && setEditingSql(true)}
+                    >
+                        {editingSql ? sqlRef.current : sql}
+                    </SyntaxHighlighter>
+                </code>
+            </pre>
         )
     }
 
+    const polygonsGeoJSON = {
+        type: "FeatureCollection",
+        features: polygons.map((polygon) => {
+          return {
+            type: "Feature",
+            geometry: {
+              type: "Polygon",
+              coordinates: polygon,
+            },
+          };
+        }),
+    };
+
+    let initialView = {
+        longitude: -100,
+        latitude: 40,
+        zoom: 3.5
+    }
+
+    if (props.version === 'San Francisco') {
+       initialView = {
+            longitude: -122.431297,
+            latitude: 37.773972,
+            zoom: 11.5,
+        }
+    }
+
     return (
-        <main className='h-screen bg-white dark:bg-dark-900 dark:text-white'>
+        <main className='h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen'>
             <div className="App flex flex-col h-full">
                 <link
                     href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
@@ -439,7 +722,7 @@ function App(props) {
                         }}
                         style={{ cursor: 'pointer' }}
                     >
-                        Census GPT
+                        {version} GPT
                     </h1>
                     <div className="inline-flex gap-x-1.5 align-middle justify-center">
                         <ContributeButton />
@@ -461,6 +744,7 @@ function App(props) {
                                 value={query}
                                 onSearchChange={handleSearchChange}
                                 onClear={handleClearSearch}
+                                version={version}
                             />
                             <SearchButton />
                         </form>
@@ -477,35 +761,14 @@ function App(props) {
                                 postHogInstance={posthog}
                                 setQuery={setQuery}
                                 handleClick={fetchBackend}
+                                version={props.version}
                             />
                         ) : isLoading ? (
                             <> </>
                         ) : (
                             <div className='flex flex-col space-y-4'>
                                 <div>
-                                    <p class="font-medium"> {title} </p>
-                                    <pre
-                                        align="left"
-                                        className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
-                                    >
-                                        <code className="text-sm text-gray-800 dark:text-white">
-                                            <div className='flex justify-end p-1'>
-                                                <CopySqlToClipboard text={sql} />
-                                            </div>
-                                            <SyntaxHighlighter
-                                                language="sql"
-                                                style={hybrid}
-                                                customStyle={{
-                                                    color: undefined,
-                                                    background: undefined,
-                                                    margin: undefined,
-                                                    padding: '1rem',
-                                                }}
-                                            >
-                                                {sql}
-                                            </SyntaxHighlighter>
-                                        </code>
-                                    </pre>
+                                    <SQL sql={sql} />
                                 </div>
 
                                 <Table
@@ -532,11 +795,8 @@ function App(props) {
                                     mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
                                     style={{ width: '100%', height: '100%' }}
                                     mapStyle="mapbox://styles/mapbox/dark-v11"
-                                    initialViewState={{
-                                        longitude: -100,
-                                        latitude: 40,
-                                        zoom: 3.5,
-                                    }}
+                                    initialViewState={initialView}
+                                    minZoom={props.version === 'San Francisco' ? 11 : 0}
                                 >
                                     <Source
                                         id="zips-kml"
@@ -567,6 +827,13 @@ function App(props) {
                                     >
                                         <Layer {...citiesLayer} />
                                     </Source>
+                                    <Source
+                                        id="polygons"
+                                        type="geojson"
+                                        data={polygonsGeoJSON}
+                                    >
+                                        <Layer {...polygonsLayer} />
+                                    </Source>
                                 </Map> :
                                 // following <div> helps plot better scale bar widths for responsiveness
                                 <div className='overflow-x-auto flex w-full overflow-hidden mb-32 sm:mb-0'>
@@ -591,12 +858,13 @@ function App(props) {
                     <div className='fixed h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileHelpRef.current && !mobileHelpRef.current.contains(e.target) && setMobileHelpIsOpen(false)}>
                         <div className='space-y-4 flex-col bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 h-1/2 overflow-auto' ref={mobileHelpRef}>
                             <div className='font-bold text-lg'>
-                                Welcome to Census GPT
+                                Welcome to {version} GPT
                             </div>
                             <Examples
                                 postHogInstance={posthog}
                                 setQuery={setQuery}
                                 handleClick={fetchBackend}
+                                version={props.version}
                             />
                         </div>
                     </div>
@@ -624,34 +892,15 @@ function App(props) {
                                                 value={query}
                                                 onSearchChange={handleSearchChange}
                                                 onClear={handleClearSearch}
+                                                version={version}
                                             />
                                         </form>
                                     </div>
 
                                     {sql.length != 0 && !isLoading && (
                                         <div className='space-y-4 flex-col flex w-full h-fit items-center pb-4'>
-                                            <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-full overflow-auto'>
-                                                <pre
-                                                    align="left"
-                                                >
-                                                    <code className="text-sm text-gray-800 dark:text-white">
-                                                        <div className='flex justify-end p-1 right-0 relative'>
-                                                            <CopySqlToClipboard text={sql} />
-                                                        </div>
-                                                        <SyntaxHighlighter
-                                                            language="sql"
-                                                            style={hybrid}
-                                                            customStyle={{
-                                                                color: undefined,
-                                                                background: undefined,
-                                                                margin: undefined,
-                                                                padding: '1rem',
-                                                            }}
-                                                        >
-                                                            {sql}
-                                                        </SyntaxHighlighter>
-                                                    </code>
-                                                </pre>
+                                            <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg w-full overflow-auto'>
+                                                <SQL sql={sql} />
                                             </div>
                                             <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-full overflow-auto'>
                                                 <Table
@@ -686,6 +935,7 @@ function App(props) {
                                             value={query}
                                             onSearchChange={handleSearchChange}
                                             onClear={handleClearSearch}
+                                            version={version}
                                         />
                                     </form>
                                 </div>
@@ -707,29 +957,7 @@ function App(props) {
                 {mobileSqlIsOpen && sql.length && (
                     <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileSqlRef.current && !mobileSqlRef.current.contains(e.target) && setMobileSqlIsOpen(false)}>
                         <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-4/5 max-h-80 overflow-auto' ref={mobileSqlRef}>
-                            <div className='flex justify-end p-1 relative'>
-                                <CopySqlToClipboard text={sql} />
-                            </div>
-                            <pre
-                                align="left"
-                                className="rounded-md dark:text-white"
-                            >
-                                <code className="text-sm text-gray-800 dark:text-white">
-
-                                    <SyntaxHighlighter
-                                        language="sql"
-                                        style={hybrid}
-                                        customStyle={{
-                                            color: undefined,
-                                            background: undefined,
-                                            margin: undefined,
-                                            padding: '1rem',
-                                        }}
-                                    >
-                                        {sql}
-                                    </SyntaxHighlighter>
-                                </code>
-                            </pre>
+                            <SQL sql={sql} />
                         </div>
                     </div>
                 )}

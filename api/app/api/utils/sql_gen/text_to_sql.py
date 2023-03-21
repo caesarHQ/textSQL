@@ -3,11 +3,13 @@ import json
 from typing import Dict, List
 
 import joblib
+import newrelic
+import tiktoken
 from app.config import engine
 from sqlalchemy import text
 
 from ..geo_data import city_lat_lon, zip_lat_lon, neighborhood_shapes
-from ..messages import get_assistant_message, extract_code_from_markdown
+from ..messages import get_assistant_message, extract_code_from_markdown, extract_sql_query_from_message
 from ..table_details import get_table_schemas
 
 
@@ -45,7 +47,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "SELECT city, sum(violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) as total_crime\nFROM crime_by_city\nGROUP BY city\nORDER BY total_crime DESC\nLIMIT 5;"
+            "content": "SELECT city, state, sum(violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) as total_crime\nFROM crime_by_city\nGROUP BY city\nORDER BY total_crime DESC\nLIMIT 5;"
         },
         {
             "role": "user",
@@ -61,7 +63,7 @@ def make_default_messages(schemas: str):
         },
         {
             "role": "assistant",
-            "content": "SELECT demographic_data.county, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN demographic_data ON crime_by_city.city = demographic_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY demographic_data.county\nORDER BY total_arson DESC\nLIMIT 5;"
+            "content": "SELECT demographic_data.county, demographic_data.state, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN demographic_data ON crime_by_city.city = demographic_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY demographic_data.county\nORDER BY total_arson DESC\nLIMIT 5;"
         },
         {
             "role": "user",
@@ -123,7 +125,7 @@ def make_msg_with_schema_and_warnings():
             " For example, 'city' can be ambiguous because both tables 'demographic_data' and 'crime_by_city' have a column named 'city'."
             " Always specify the table where you are using the column."
             " If you include a 'city' column in the result table, include a 'state' column too."
-            " If you include a 'county' column in the result table, include a 'state' columntoo."
+            " If you include a 'county' column in the result table, include a 'state' column too."
             " Make sure each value in the result table is not null.\n"
     )
 
@@ -170,7 +172,7 @@ def execute_sql(sql_query: str):
 
         column_names = list(result.keys())
         if 'state' not in column_names and any(c in column_names for c in ['city', 'county']):
-            CityOrCountyWithoutStateException("Include 'state' in the result table, too.")
+            raise CityOrCountyWithoutStateException("Include `state` in the result table, too.")
 
         rows = [list(r) for r in result.all()]
 
@@ -277,7 +279,7 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3):
     # Try each completion in order
     attempts_contexts = []
     for assistant_message in assistant_messages:
-        sql_query = extract_code_from_markdown(assistant_message['message']['content'])
+        sql_query = extract_sql_query_from_message(assistant_message['message']['content'])
 
         try:
             response = execute_sql(sql_query)
@@ -318,6 +320,13 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             natural_language_query=assistant_message['message']['content'],
             schemas=schemas
             )
+        try:
+            enc = len(tiktoken.encoding_for_model("gpt-3.5-turbo").encode(content))
+            newrelic.agent.add_custom_span_attribute("encoding_length", enc)
+        except Exception as e:
+            print(e)
+            pass
+
         messages = make_default_messages(schemas)
         messages.append({
             "role": "user",
@@ -329,7 +338,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     for _ in range(k):
         try:
             assistant_message = get_assistant_message(messages)
-            sql_query = extract_code_from_markdown(assistant_message['message']['content'])
+            sql_query = extract_sql_query_from_message(assistant_message['message']['content'])
 
             response = execute_sql(sql_query)
             # Generated SQL query did not produce exception. Return result
