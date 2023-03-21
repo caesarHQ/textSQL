@@ -391,7 +391,6 @@ function App(props) {
         if(props.version === 'San Francisco') {
             requestBody = {
                 natural_language_query,
-                table_names: ['crime_by_city', 'demographic_data'],
                 scope: 'SF'
             }
         }
