@@ -133,7 +133,6 @@ const SearchInput = (props) => {
 }
 
 function App(props) {
-    const version = props.version || 'Census'
     const [searchParams, setSearchParams] = useSearchParams()
     const [query, setQuery] = useState('')
     const [sql, setSQL] = useState('')
@@ -722,7 +721,7 @@ function App(props) {
                         }}
                         style={{ cursor: 'pointer' }}
                     >
-                        {version} GPT
+                        {props.version} GPT
                     </h1>
                     <div className="inline-flex gap-x-1.5 align-middle justify-center">
                         <ContributeButton />
@@ -744,7 +743,7 @@ function App(props) {
                                 value={query}
                                 onSearchChange={handleSearchChange}
                                 onClear={handleClearSearch}
-                                version={version}
+                                version={props.version}
                             />
                             <SearchButton />
                         </form>
@@ -858,7 +857,7 @@ function App(props) {
                     <div className='fixed h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileHelpRef.current && !mobileHelpRef.current.contains(e.target) && setMobileHelpIsOpen(false)}>
                         <div className='space-y-4 flex-col bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 h-1/2 overflow-auto' ref={mobileHelpRef}>
                             <div className='font-bold text-lg'>
-                                Welcome to {version} GPT
+                                Welcome to {props.version} GPT
                             </div>
                             <Examples
                                 postHogInstance={posthog}
@@ -892,7 +891,7 @@ function App(props) {
                                                 value={query}
                                                 onSearchChange={handleSearchChange}
                                                 onClear={handleClearSearch}
-                                                version={version}
+                                                version={props.version}
                                             />
                                         </form>
                                     </div>
@@ -935,7 +934,7 @@ function App(props) {
                                             value={query}
                                             onSearchChange={handleSearchChange}
                                             onClear={handleClearSearch}
-                                            version={version}
+                                            version={props.version}
                                         />
                                     </form>
                                 </div>
