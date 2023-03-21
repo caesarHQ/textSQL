@@ -10,7 +10,8 @@ openai.api_key = OPENAI_KEY
 def get_assistant_message(
         messages: List[Dict[str, str]],
         temperature: int = 0,
-        model: str = "gpt-3.5-turbo",
+        # model: str = "gpt-3.5-turbo",
+        model: str = "gpt-4",
 ) -> str:
     res = openai.ChatCompletion.create(
         model=model,
@@ -36,6 +37,12 @@ def clean_message_content(assistant_message_content):
     else:
         sql_query = assistant_message_content
     return sql_query
+
+
+def extract_sql_query_from_message(assistant_message_content):
+    print(assistant_message_content)
+    content = clean_message_content(assistant_message_content)
+    return extract_code_from_markdown(content)
 
 
 def extract_code_from_markdown(assistant_message_content):

@@ -159,7 +159,18 @@
         {
             "type": "311_REQUEST_TYPE",
             "valid_values": [
-
+                "Automotive",
+                "Bulky Items",
+                "Christmas_tree",
+                "City_garbage_can_overflowing",
+                "General Cleaning",
+                "Hazardous Materials",
+                "Human or Animal Waste",
+                "Medical Waste",
+                "Missed_Route_Mechanical_Sweeping",
+                "Missed_TrashRecycleCompost_Collection",
+                "Street and Sidewalk Cleaning Request",
+                "Transit_shelter_platform"
             ]
         },
         {
@@ -407,7 +418,8 @@
                 },
                 {
                     "name": "request_type",
-                    "type": "TEXT"
+                    "type": "TEXT",
+                    "description": "custom type `311_REQUEST_TYPE`"
                 },
                 {
                     "name": "latitude",
