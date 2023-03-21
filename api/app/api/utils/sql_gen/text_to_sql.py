@@ -170,7 +170,7 @@ def execute_sql(sql_query: str):
 
         column_names = list(result.keys())
         if 'state' not in column_names and any(c in column_names for c in ['city', 'county']):
-            CityOrCountyWithoutStateException("Include 'state' in the result table, too.")
+            raise CityOrCountyWithoutStateException("Include `state` in the result table, too.")
 
         rows = [list(r) for r in result.all()]
 
