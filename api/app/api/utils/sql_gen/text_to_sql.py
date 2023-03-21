@@ -3,6 +3,8 @@ import json
 from typing import Dict, List
 
 import joblib
+import newrelic
+import tiktoken
 from app.config import engine
 from sqlalchemy import text
 
@@ -318,6 +320,13 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             natural_language_query=assistant_message['message']['content'],
             schemas=schemas
             )
+        try:
+            enc = len(tiktoken.encoding_for_model("gpt-3.5-turbo").encode(content))
+            newrelic.agent.add_custom_span_attribute("encoding_length", enc)
+        except Exception as e:
+            print(e)
+            pass
+
         messages = make_default_messages(schemas)
         messages.append({
             "role": "user",
