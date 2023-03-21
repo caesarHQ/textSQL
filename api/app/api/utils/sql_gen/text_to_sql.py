@@ -7,7 +7,7 @@ from app.config import engine
 from sqlalchemy import text
 
 from ..geo_data import city_lat_lon, zip_lat_lon, neighborhood_shapes
-from ..messages import get_assistant_message, extract_code_from_markdown
+from ..messages import get_assistant_message, extract_code_from_markdown, extract_sql_query_from_message
 from ..table_details import get_table_schemas
 
 
@@ -277,7 +277,7 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3):
     # Try each completion in order
     attempts_contexts = []
     for assistant_message in assistant_messages:
-        sql_query = extract_code_from_markdown(assistant_message['message']['content'])
+        sql_query = extract_sql_query_from_message(assistant_message['message']['content'])
 
         try:
             response = execute_sql(sql_query)
@@ -329,7 +329,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     for _ in range(k):
         try:
             assistant_message = get_assistant_message(messages)
-            sql_query = extract_code_from_markdown(assistant_message['message']['content'])
+            sql_query = extract_sql_query_from_message(assistant_message['message']['content'])
 
             response = execute_sql(sql_query)
             # Generated SQL query did not produce exception. Return result

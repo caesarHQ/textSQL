@@ -38,6 +38,11 @@ def clean_message_content(assistant_message_content):
     return sql_query
 
 
+def extract_sql_query_from_message(assistant_message_content):
+    content = clean_message_content(assistant_message_content)
+    return extract_code_from_markdown(content)
+
+
 def extract_code_from_markdown(assistant_message_content):
     regex = r"```([\s\S]+?)```"
     matches = re.findall(regex, assistant_message_content)
