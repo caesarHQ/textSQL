@@ -33,6 +33,7 @@ import {
     zipcodeLayerHigh,
     zipcodeLayerLow,
     citiesLayer,
+    polygonsLayer
 } from './mapbox-ui-config'
 
 // Plotly UI configuration
@@ -132,7 +133,6 @@ const SearchInput = (props) => {
 }
 
 function App(props) {
-    const version = props.version || 'Census'
     const [searchParams, setSearchParams] = useSearchParams()
     const [query, setQuery] = useState('')
     const [sql, setSQL] = useState('')
@@ -159,6 +159,7 @@ function App(props) {
     const expandedMobileSearchRef = useRef()
     const [touchStart, setTouchStart] = useState(null)
     const [touchEnd, setTouchEnd] = useState(null)
+    const [polygons, setPolygons] = useState([])
 
     const onTouchStart = (e) => {
         if (expandedMobileSearchRef.current?.contains(e.target)) return
@@ -177,7 +178,7 @@ function App(props) {
     }
 
     useEffect(() => {
-        document.title = query || 'Census GPT'
+        document.title = query || (props.version === 'Census' ? 'Census GPT' : 'San Francisco GPT')
     }, [query])
 
     useEffect(() => {
@@ -194,6 +195,7 @@ function App(props) {
         setCities([])
         setZipcodes([])
         setZipcodesFormatted([])
+        setPolygons([])
     }
 
     const handleSearchChange = (event) => {
@@ -377,21 +379,33 @@ function App(props) {
         clearMapLayers()
 
         // Sanitize the query
-        natural_language_query = cleanupQuery(natural_language_query)
+        if(props.version === 'Census') {
+            natural_language_query = cleanupQuery(natural_language_query)
+        }
+
+        let requestBody = {
+            natural_language_query,
+            table_names: ['crime_by_city', 'demographic_data'],
+        }
+
+        if(props.version === 'San Francisco') {
+            requestBody = {
+                natural_language_query,
+                table_names: ['crime_by_city', 'demographic_data'],
+                scope: 'SF'
+            }
+        }
 
         // Set the options for the fetch request
         const options = {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({
-                natural_language_query,
-                table_names: ['crime_by_city', 'demographic_data'],
-            }),
+            body: JSON.stringify(requestBody),
         }
 
         let responseOuter = null
         // Send the request
-        fetch(api_endpoint + '/api/text_to_sql', options)
+        fetch((props.version === 'Census' ? api_endpoint : 'https://dev-text-sql-be.onrender.com/') + '/api/text_to_sql', options)
             .then((response) => response.json())
             .then((response) => {
                 // Set the loading state to false
@@ -416,10 +430,18 @@ function App(props) {
 
                 console.log('Backend Response ==>', response)
 
-                // Filter out lat and long columns
-                let filteredColumns = response.result.column_names.filter(
-                    (c) => c !== 'lat' && c !== 'long'
-                )
+                // Filter out geolocation columns (lat, long, shape)
+                let filteredColumns = []
+                if (props.version === 'Census') {
+                    filteredColumns = response.result.column_names.filter(
+                        (c) => c !== 'lat' && c !== 'long'
+                    )
+                } else {
+                    filteredColumns = response.result.column_names.filter(
+                        (c) => c !== 'lat' && c !== 'long' && c !== 'shape'
+                    )
+                }
+               
 
                 // Fit the order of columns and filter out lat and long row values
                 let rows = response.result.results.map((value) => {
@@ -430,8 +452,16 @@ function App(props) {
                 })
                 setTableInfo({ rows, columns: filteredColumns })
 
-                // render cities layer on the map
-                if (
+                if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') >= 0) {
+                    // Render polygon shapes on the map
+                    setPolygons(response.result.results.map(r => [r.shape]))
+                    setVisualization('map')
+                } else if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') == -1) {
+                    // No neighborhoods to render. Default to chart
+                    setVisualization('chart')
+                }
+                else if (
+                     // render cities layer on the map
                     filteredColumns.indexOf('zip_code') === -1 &&
                     filteredColumns.indexOf('city') >= 0
                 ) {
@@ -647,6 +677,33 @@ function App(props) {
         )
     }
 
+    const polygonsGeoJSON = {
+        type: "FeatureCollection",
+        features: polygons.map((polygon) => {
+          return {
+            type: "Feature",
+            geometry: {
+              type: "Polygon",
+              coordinates: polygon,
+            },
+          };
+        }),
+    };
+
+    let initialView = {
+        longitude: -100,
+        latitude: 40,
+        zoom: 3.5
+    }
+
+    if (props.version === 'San Francisco') {
+       initialView = {
+            longitude: -122.431297,
+            latitude: 37.773972,
+            zoom: 11.5,
+        }
+    }
+
     return (
         <main className='h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen'>
             <div className="App flex flex-col h-full">
@@ -664,7 +721,7 @@ function App(props) {
                         }}
                         style={{ cursor: 'pointer' }}
                     >
-                        {version} GPT
+                        {props.version} GPT
                     </h1>
                     <div className="inline-flex gap-x-1.5 align-middle justify-center">
                         <ContributeButton />
@@ -686,7 +743,7 @@ function App(props) {
                                 value={query}
                                 onSearchChange={handleSearchChange}
                                 onClear={handleClearSearch}
-                                version={version}
+                                version={props.version}
                             />
                             <SearchButton />
                         </form>
@@ -703,6 +760,7 @@ function App(props) {
                                 postHogInstance={posthog}
                                 setQuery={setQuery}
                                 handleClick={fetchBackend}
+                                version={props.version}
                             />
                         ) : isLoading ? (
                             <> </>
@@ -736,11 +794,8 @@ function App(props) {
                                     mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
                                     style={{ width: '100%', height: '100%' }}
                                     mapStyle="mapbox://styles/mapbox/dark-v11"
-                                    initialViewState={{
-                                        longitude: -100,
-                                        latitude: 40,
-                                        zoom: 3.5,
-                                    }}
+                                    initialViewState={initialView}
+                                    minZoom={props.version === 'San Francisco' ? 11 : 0}
                                 >
                                     <Source
                                         id="zips-kml"
@@ -771,6 +826,13 @@ function App(props) {
                                     >
                                         <Layer {...citiesLayer} />
                                     </Source>
+                                    <Source
+                                        id="polygons"
+                                        type="geojson"
+                                        data={polygonsGeoJSON}
+                                    >
+                                        <Layer {...polygonsLayer} />
+                                    </Source>
                                 </Map> :
                                 // following <div> helps plot better scale bar widths for responsiveness
                                 <div className='overflow-x-auto flex w-full overflow-hidden mb-32 sm:mb-0'>
@@ -795,12 +857,13 @@ function App(props) {
                     <div className='fixed h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileHelpRef.current && !mobileHelpRef.current.contains(e.target) && setMobileHelpIsOpen(false)}>
                         <div className='space-y-4 flex-col bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 h-1/2 overflow-auto' ref={mobileHelpRef}>
                             <div className='font-bold text-lg'>
-                                Welcome to {version} GPT
+                                Welcome to {props.version} GPT
                             </div>
                             <Examples
                                 postHogInstance={posthog}
                                 setQuery={setQuery}
                                 handleClick={fetchBackend}
+                                version={props.version}
                             />
                         </div>
                     </div>
@@ -828,7 +891,7 @@ function App(props) {
                                                 value={query}
                                                 onSearchChange={handleSearchChange}
                                                 onClear={handleClearSearch}
-                                                version={version}
+                                                version={props.version}
                                             />
                                         </form>
                                     </div>
@@ -871,7 +934,7 @@ function App(props) {
                                             value={query}
                                             onSearchChange={handleSearchChange}
                                             onClear={handleClearSearch}
-                                            version={version}
+                                            version={props.version}
                                         />
                                     </form>
                                 </div>
@@ -900,6 +963,10 @@ function App(props) {
             </div>
         </main>
     )
+}
+
+App.defaultProps = {
+    version: 'Census'
 }
 
 export default App
