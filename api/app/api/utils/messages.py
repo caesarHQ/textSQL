@@ -52,6 +52,9 @@ def extract_code_from_markdown(assistant_message_content):
 
     if matches:
         code_str = matches[0]
+        match = re.search(r"(?i)sql\s+(.*)", code_str)
+        if match:
+            code_str = match.group(1)
     else:
         code_str = assistant_message_content
 
