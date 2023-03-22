@@ -91,16 +91,6 @@
                     "description": "state"
                 },
                 {
-                    "name": "lat",
-                    "type": "FLOAT",
-                    "description": "zip code latitude"
-                },
-                {
-                    "name": "lon",
-                    "type": "FLOAT",
-                    "description": "zip code longitude"
-                },
-                {
                     "name": "total_population",
                     "type": "FLOAT",
                     "description": "total population"
