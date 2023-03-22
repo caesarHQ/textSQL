@@ -371,14 +371,6 @@
                     "description": "custom type `CRIME_RESOLUTION`"
                 },
                 {
-                    "name": "latitude",
-                    "type": "FLOAT"
-                },
-                {
-                    "name": "longitude",
-                    "type": "FLOAT"
-                },
-                {
                     "name": "neighborhood",
                     "type": "TEXT",
                     "description": "custom type `NEIGHBORHOOD`"
