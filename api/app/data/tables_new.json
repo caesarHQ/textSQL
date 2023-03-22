@@ -1,0 +1,488 @@
+{
+    "types": [
+
+    ],
+    "tables": [
+        {
+            "name": "national_housing_market_data",
+            "description": "Table `national_housing_market_data` has national-level housing market data.",
+            "columns": [
+                {
+                    "name": "region",
+                    "type": "TEXT",
+                    "description": "region"
+                },
+                {
+                    "name": "month_of_period_end",
+                    "type": "DATETIME",
+                    "description": "month of period end"
+                },
+                {
+                    "name": "median_sale_price",
+                    "type": "FLOAT",
+                    "description": "median sale price"
+                },
+                {
+                    "name": "median_sale_price_mom",
+                    "type": "FLOAT",
+                    "description": "median sale price month over month"
+                },
+                {
+                    "name": "median_sale_price_yoy",
+                    "type": "FLOAT",
+                    "description": "median sale price year over year"
+                },
+                {
+                    "name": "homes_sold",
+                    "type": "FLOAT",
+                    "description": "homes sold"
+                },
+                {
+                    "name": "homes_sold_mom",
+                    "type": "FLOAT",
+                    "description": "homes sold month over month"
+                },
+                {
+                    "name": "homes_sold_yoy",
+                    "type": "FLOAT",
+                    "description": "homes sold year over year"
+                },
+                {
+                    "name": "new_listings",
+                    "type": "FLOAT",
+                    "description": "new listings"
+                },
+                {
+                    "name": "new_listings_mom",
+                    "type": "FLOAT",
+                    "description": "new listings month over month"
+                },
+                {
+                    "name": "new_listings_yoy",
+                    "type": "FLOAT",
+                    "description": "new listings year over year"
+                },
+                {
+                    "name": "inventory",
+                    "type": "FLOAT",
+                    "description": "inventory"
+                },
+                {
+                    "name": "inventory_mom",
+                    "type": "FLOAT",
+                    "description": "inventory month over month"
+                },
+                {
+                    "name": "inventory_yoy",
+                    "type": "FLOAT",
+                    "description": "inventory year over year"
+                },
+                {
+                    "name": "days_on_market",
+                    "type": "FLOAT",
+                    "description": "days on market"
+                },
+                {
+                    "name": "days_on_market_mom",
+                    "type": "FLOAT",
+                    "description": "days on market month over month"
+                },
+                {
+                    "name": "days_on_market_yoy",
+                    "type": "FLOAT",
+                    "description": "days on market year over year"
+                },
+                {
+                    "name": "average_sale_to_list",
+                    "type": "FLOAT",
+                    "description": "average sale to list"
+                },
+                {
+                    "name": "average_sale_to_list_mom",
+                    "type": "FLOAT",
+                    "description": "average sale to list month over month"
+                },
+                {
+                    "name": "average_sale_to_list_yoy",
+                    "type": "FLOAT",
+                    "description": "average sale to list year over year"
+                }
+            ]
+        },
+        {
+            "name": "crime_by_city",
+            "description": "Table 'crime_by_city' has city-level crime data in the United States. It has numbers for violent crime, murder and nonnegligent manslaughter, rape, robbery, aggravated assault, property crime, burglary, larceny theft, motor vehicle theft, and arson.",
+            "columns": [
+                {
+                    "name": "city",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "state",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "violent_crime",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "murder_and_nonnegligent_manslaughter",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "rape",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "robbery",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "aggravated_assault",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "property_crime",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "burglary",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "larceny_theft",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "motor_vehicle_theft",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "arson",
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "location_data",
+            "description": "Table `location_data` has geo_ids for zip codes.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "geo ID of zip code, primary key"
+                },
+                {
+                    "name": "zip_code",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "city",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "county",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "state",
+                    "type": "TEXT"
+                }
+            ]
+        },
+        {
+            "name": "income",
+            "description": "Table `income` has zip-code level income data.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
+                },
+                {
+                    "name": "per_capita_income",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "median_income_for_workers",
+                    "type": "TEXT"
+                }
+            ]
+        },
+        {
+            "name": "average_household_size",
+            "description": "Table `average_household_size` has zip-code level average household size data.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
+                },
+                {
+                    "name": "average_household_size",
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "population_by_age",
+            "description": "Table `population_by_age` has zip-code level population by age data.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
+                },
+                {
+                    "name": "population_under_5_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_10_to_14_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_15_to_19_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_20_to_24_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_25_to_34_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_35_to_44_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_45_to_54_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_55_to_59_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_60_to_64_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_65_to_74_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_75_to_84_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_85_years_and_over",
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "population_by_education_level",
+            "description": "Table `population_by_education_level` has zip-code level data population data grouped by highest education level attained.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
+                },
+                {
+                    "name": "no_schooling_completed",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "nursery_school",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "kindergarten",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_1",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_2",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_3",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_4",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_5",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_6",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_7",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_8",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_9",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_10",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_11",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_12_no_diploma",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "regular_high_school_diploma",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "ged_or_alternative_credential",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "some_college_less_than_1_year",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "some_college_1_or_more_years_no_degree",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "associates_degree",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "bachelors_degree",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "masters_degree",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "professional_school_degree",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "doctorate_degree",
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "population_by_gender",
+            "description": "Table `population_by_gender` has zip-code level population by gender data.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
+                },
+                {
+                    "name": "male_population",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "female_population",
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "total_population",
+            "description": "Table `total_population` has zip-code level total population data.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
+                },
+                {
+                    "name": "total_population",
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "population_by_citizenship",
+            "description": "Table `population_by_citizenship` has zip-code level adult citizenship population data.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
+                },
+                {
+                    "name": "adult_population",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "citizen_adult_population",
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "population_by_race",
+            "description": "Table `population_by_race` has zip-code level population by race data.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
+                },
+                {
+                    "name": "white_population",
+                    "type": "FLOAT",
+                    "description": "white population"
+                },
+                {
+                    "name": "black_population",
+                    "type": "FLOAT",
+                    "description": "black population"
+                },
+                {
+                    "name": "native_american_population",
+                    "type": "FLOAT",
+                    "description": "native american population"
+                },
+                {
+                    "name": "asian_population",
+                    "type": "FLOAT",
+                    "description": "asian population"
+                },
+                {
+                    "name": "hispanic_population",
+                    "type": "FLOAT",
+                    "description": "hispanic population"
+                },
+                {
+                    "name": "two_or_more_population",
+                    "type": "FLOAT",
+                    "description": "two or more population"
+                }
+            ]
+        }
+    ]
+}

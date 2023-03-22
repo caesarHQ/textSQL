@@ -9,8 +9,9 @@ from app.config import engine
 from sqlalchemy import text
 
 from ..geo_data import city_lat_lon, zip_lat_lon, neighborhood_shapes
-from ..messages import get_assistant_message, extract_code_from_markdown, extract_sql_query_from_message
+from ..messages import get_assistant_message, extract_sql_query_from_message, extract_sql_query_from_message
 from ..table_details import get_table_schemas
+from ..few_shot_examples import get_few_shot_example_messages
 
 
 MSG_WITH_ERROR_TRY_AGAIN = (
@@ -20,84 +21,31 @@ MSG_WITH_ERROR_TRY_AGAIN = (
 )
 
 
-def make_default_messages(schemas: str):
-    return [
+def make_default_messages(schemas: str, scope="USA"):
+    default_messages = [
         {
             "role": "system",
             "content": (
-                    "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command, generally about crime, demographics, and population."
-                    "\n"
-                    "The following are tables you can query:\n"
-                    "---------------------\n"
-                    + schemas +
-                    "---------------------\n"
-                    "Use state abbreviations for states."
-                    " Table 'crime_by_city' does not have columns 'zip_code' or 'county'."
-                    " Do not use ambiguous column names."
-                    " For example, 'city' can be ambiguous because both tables 'demographic_data' and 'crime_by_city' have a column named 'city'."
-                    " Always specify the table where you are using the column."
-                    " If you include a 'city' column in the result table, include a 'state' column too."
-                    " If you include a 'county' column in the result table, include a 'state' column too."
-                    " Make sure each value in the result table is not null.\n"
+                "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command, generally about crime, demographics, and population."
+                "\n"
+                "The following are tables you can query:\n"
+                "---------------------\n"
+                + schemas +
+                "---------------------\n"
+                "Use state abbreviations for states."
+                " Table `crime_by_city` does not have columns 'zip_code' or 'county'."
+                " Do not use ambiguous column names."
+                " For example, `city` can be ambiguous because both tables `location_data` and `crime_by_city` have a column named `city`."
+                " Always specify the table where you are using the column."
+                " If you include a `city` or `county` column in the result table, include a `state` column too."
+                " Make sure each value in the result table is not null."
+                " Write your answer in markdown format.\n"
             )
         },
-        {
-            "role": "user",
-            "content": "Which top 5 cities have the most total crime?"
-        },
-        {
-            "role": "assistant",
-            "content": "SELECT city, state, sum(violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) as total_crime\nFROM crime_by_city\nGROUP BY city\nORDER BY total_crime DESC\nLIMIT 5;"
-        },
-        {
-            "role": "user",
-            "content": "What zip code has the highest percentage of people of age 75?"
-        },
-        {
-            "role": "assistant",
-            "content": "SELECT zip_code, (population_75_to_84_years / total_population) * 100 AS percentage\nFROM demographic_data\nWHERE total_population > 0\nORDER BY percentage DESC\nLIMIT 1;"
-        },
-        {
-            "role": "user",
-            "content": "Which 5 counties have the most arson?"
-        },
-        {
-            "role": "assistant",
-            "content": "SELECT demographic_data.county, demographic_data.state, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN demographic_data ON crime_by_city.city = demographic_data.city\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY demographic_data.county\nORDER BY total_arson DESC\nLIMIT 5;"
-        },
-        {
-            "role": "user",
-            "content": "Which 5 cities have the most females?"
-        },
-        {
-            "role": "assistant",
-            "content": "SELECT demographic_data.city, demographic_data.state, SUM(female_population) AS city_female_population\nFROM demographic_data\nWHERE female_population IS NOT NULL\nGROUP BY demographic_data.city\nORDER BY female_population DESC\nLIMIT 5;"
-        },
-        {
-            "role": "user",
-            "content": "Which city in Washington has the highest population?"
-        },
-        {
-            "role": "assistant",
-            "content": "SELECT city, state, SUM(total_population) AS total_city_population\nFROM demographic_data\nWHERE state = 'WA'\nGROUP BY city, state\nORDER BY total_city_population DESC\nLIMIT 1;"
-        },
-        {
-            "role": "user",
-            "content": "Which zip code in San Francisco has the highest racial diversity and what is the percentage population of each race in that zip code?"
-        },
-        {
-            "role": "assistant",
-            "content": "SELECT zip_code, \n       (white_population / NULLIF(total_population, 0)) * 100 AS white_percentage,\n       (black_population / NULLIF(total_population, 0)) * 100 AS black_percentage,\n       (native_american_population / NULLIF(total_population, 0)) * 100 AS native_american_percentage,\n       (asian_population / NULLIF(total_population, 0)) * 100 AS asian_percentage,\n       (two_or_more_population / NULLIF(total_population, 0)) * 100 AS two_or_more_percentage,\n       (hispanic_population / NULLIF(total_population, 0)) * 100 AS hispanic_percentage\nFROM demographic_data\nWHERE city = 'San Francisco'\nORDER BY (white_population + black_population + native_american_population + asian_population + two_or_more_population + hispanic_population) DESC\nLIMIT 1;"
-        },
-        {
-            "role": "user",
-            "content": "Zip code in California with the most advanced degree holders"
-        },
-        {
-            "role": "assistant",
-            "content": "SELECT zip_code, SUM(masters_degree + professional_school_degree + doctorate_degree) AS total_highly_educated_population \nFROM demographic_data \nWHERE state = 'CA' \nGROUP BY zip_code \nORDER BY total_highly_educated_population DESC \nLIMIT 1"
-        }
     ]
+    default_messages.extend(get_few_shot_example_messages(mode="text_to_sql", scope=scope))
+    return default_messages
+
 
 def make_rephrase_msg_with_schema_and_warnings():
     return (
@@ -120,13 +68,13 @@ def make_msg_with_schema_and_warnings():
             "\n"
             "---------------------\n"
             "Use state abbreviations for states."
-            " Table 'crime_by_city' does not have columns 'zip_code' or 'county'."
+            " Table `crime_by_city` does not have columns 'zip_code' or 'county'."
             " Do not use ambiguous column names."
-            " For example, 'city' can be ambiguous because both tables 'demographic_data' and 'crime_by_city' have a column named 'city'."
+            " For example, `city` can be ambiguous because both tables `location_data` and `crime_by_city` have a column named `city`."
             " Always specify the table where you are using the column."
-            " If you include a 'city' column in the result table, include a 'state' column too."
-            " If you include a 'county' column in the result table, include a 'state' column too."
-            " Make sure each value in the result table is not null.\n"
+            " If you include a `city` or `county` column in the result table, include a `state` column too."
+            " Make sure each value in the result table is not null."
+            " Write your answer in markdown format.\n"
     )
 
 def is_read_only_query(sql_query: str):
@@ -255,11 +203,11 @@ def execute_sql(sql_query: str):
         }
 
 
-def text_to_sql_parallel(natural_language_query, table_names, k=3):
+def text_to_sql_parallel(natural_language_query, table_names, k=3, scope="USA"):
     """
     Generates K SQL queries in parallel and returns the first one that does not produce an exception.
     """
-    schemas = get_table_schemas(table_names)
+    schemas = get_table_schemas(table_names, scope)
     content = make_msg_with_schema_and_warnings().format(
         natural_language_query=natural_language_query,
         schemas=schemas,
@@ -273,7 +221,11 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3):
     # Create K completions in parallel
     jobs = []
     for _ in range(k):
-        jobs.append(joblib.delayed(get_assistant_message)(messages, 0, "gpt-3.5-turbo"))
+        if scope == "SF":
+            model = "gpt-4"
+        else:
+            model = "gpt-3.5-turbo"
+        jobs.append(joblib.delayed(get_assistant_message)(messages, 0, model))
     assistant_messages = joblib.Parallel(n_jobs=k, verbose=10)(jobs)
 
     # Try each completion in order
@@ -301,13 +253,13 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3):
         return None, None, attempts_contexts[0]
 
 
-def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=None):
+def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=None, scope="USA"):
     """
     Tries to take a natural language query and generate valid SQL to answer it K times
     """
     if not messages:
         # ask the assistant to rephrase before generating the query
-        schemas = get_table_schemas(table_names)
+        schemas = get_table_schemas(table_names, scope)
         rephrase = [{
             "role": "user",
             "content": make_rephrase_msg_with_schema_and_warnings().format(
@@ -327,7 +279,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             print(e)
             pass
 
-        messages = make_default_messages(schemas)
+        messages = make_default_messages(schemas, scope)
         messages.append({
             "role": "user",
             "content": content
@@ -337,7 +289,11 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
 
     for _ in range(k):
         try:
-            assistant_message = get_assistant_message(messages)
+            if scope == "SF":
+                model = "gpt-4"
+            else:
+                model = "gpt-3.5-turbo"
+            assistant_message = get_assistant_message(messages, model=model)
             sql_query = extract_sql_query_from_message(assistant_message['message']['content'])
 
             response = execute_sql(sql_query)
@@ -356,3 +312,61 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
 
     print("Could not generate SQL query after {k} tries.".format(k=k))
     return None, None
+
+
+class NoMessagesException(Exception):
+    pass
+
+class LastMessageNotUserException(Exception):
+    pass
+
+
+def text_to_sql_chat_with_retry(messages, table_names=None, scope="USA"):
+    """
+    Takes a series of messages and tries to respond to a natural language query with valid SQL
+    """
+    if not messages:
+        raise NoMessagesException("No messages provided.")
+    if messages[-1]["role"] != "user":
+        raise LastMessageNotUserException("Last message is not a user message.")
+    
+    # First question, prime with table schemas and rephrasing
+    natural_language_query = messages[-1]["content"]
+    # Ask the assistant to rephrase before generating the query
+    schemas = get_table_schemas(table_names, scope)
+    rephrase = [{
+        "role": "user",
+        "content": make_rephrase_msg_with_schema_and_warnings().format(
+            natural_language_query=natural_language_query,
+            schemas=schemas
+            )
+    }]
+    rephrased_query = get_assistant_message(rephrase)['message']['content']
+    content = make_msg_with_schema_and_warnings().format(
+        natural_language_query=rephrased_query,
+        schemas=schemas
+        )
+    # Don't return messages_copy to the front-end. It contains extra information for prompting
+    messages_copy = make_default_messages(schemas)
+    messages_copy.extend(messages)
+    messages_copy[-1] = {
+        "role": "user",
+        "content": content
+    }
+
+    # Send all messages
+    response, sql_query = text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=messages_copy)
+
+    if response is None and sql_query is None:
+        messages.append({
+            "role": "assistant",
+            "content": "Sorry, I wasn't able to answer that. Try rephrasing your question to make it more specific and easier to understand."
+        })
+
+    else:
+        messages.append({
+            "role": "assistant",
+            "content": sql_query
+        })
+
+    return response, sql_query, messages
