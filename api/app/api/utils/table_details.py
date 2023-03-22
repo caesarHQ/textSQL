@@ -73,4 +73,4 @@ def get_table_schemas(table_names: List[str] = None, scope="USA") -> str:
     custom_types_description = "\n\n".join(custom_types_str_list)
 
     # return tables_description
-    return custom_types_description + tables_description
+    return custom_types_description + "\n\n" + tables_description
