@@ -15,7 +15,7 @@ from ..few_shot_examples import get_few_shot_example_messages
 
 
 MSG_WITH_ERROR_TRY_AGAIN = (
-    "Try again. "
+    "Try again. Only respond with valid SQL. Write your answer in markdown format."
     "The SQL query you just generated resulted in the following error message:\n"
     "{error_message}"
 )
