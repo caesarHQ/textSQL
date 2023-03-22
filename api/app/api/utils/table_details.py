@@ -4,7 +4,8 @@ import re
 
 
 table_details = {}
-with open("app/data/tables_new.json", "r") as f:
+with open("app/data/tables_many.json", "r") as f:
+# with open("app/data/tables.json", "r") as f:
     table_details = json.load(f)
 
 sf_table_details = {}
@@ -29,7 +30,7 @@ def get_table_schemas(table_names: List[str] = None, scope="USA") -> str:
     tables_list = []
     
     if scope == "USA":
-        custom_types_list = table_details["types"]
+        custom_types_list = table_details.get("types", [])
         if table_names:
             for table in table_details['tables']:
                 if table['name'] in table_names:
