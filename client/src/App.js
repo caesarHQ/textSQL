@@ -383,7 +383,7 @@ function App(props) {
 
         let requestBody = {
             natural_language_query,
-            table_names: ['crime_by_city', 'demographic_data'],
+            // table_names: ['crime_by_city', 'demographic_data'],
         }
 
         if(props.version === 'San Francisco') {
