@@ -341,7 +341,7 @@
         },
         {
             "name": "sf_crime_data",
-            "description": "Table `sf_crime_data` has neighborhood-level crime data in San Francisco.",
+            "description": "Table `sf_crime_data` has neighborhood-level and zip-code-level crime data in San Francisco.",
             "columns": [
                 {
                     "name": "incident_datetime",
@@ -396,7 +396,7 @@
         },
         {
             "name": "sf_311_data",
-            "description": "Table `sf_311_data` has neighborhood-level data about 311 municipal services cases in San Francisco.",
+            "description": "Table `sf_311_data` has neighborhood-level and zip-code-level data about 311 municipal services cases in San Francisco.",
             "columns": [
                 {
                     "name": "opened",
