@@ -712,10 +712,6 @@ function App(props) {
                 <div className="fixed sm:relative w-full sm:flex flex-col p-2 sm:p-6 space-y-1.5 bg-gradient-to-b from-black/95 to-transparent bg/10 backdrop-blur-sm pb-2.5 sm:from-white sm:dark:from-transparent z-50">
                     <h1
                         className="text-4xl font-bold text-white sm:text-black dark:text-white"
-                        onClick={() => {
-                            window.location.assign('/')
-                            handleClearSearch()
-                        }}
                         style={{ cursor: 'pointer' }}
                     >
                         {props.version} GPT

@@ -313,33 +313,6 @@
     ],
     "tables": [
         {
-            "name": "location_data",
-            "description": "Table `location_data` has geo_ids for zip codes.",
-            "columns": [
-                {
-                    "name": "geo_id",
-                    "type": "TEXT",
-                    "description": "geo ID of zip code, primary key"
-                },
-                {
-                    "name": "zip_code",
-                    "type": "TEXT"
-                },
-                {
-                    "name": "city",
-                    "type": "TEXT"
-                },
-                {
-                    "name": "county",
-                    "type": "TEXT"
-                },
-                {
-                    "name": "state",
-                    "type": "TEXT"
-                }
-            ]
-        },
-        {
             "name": "sf_crime_data",
             "description": "Table `sf_crime_data` has neighborhood-level and zip-code-level crime data in San Francisco.",
             "columns": [
@@ -371,14 +344,6 @@
                     "description": "custom type `CRIME_RESOLUTION`"
                 },
                 {
-                    "name": "latitude",
-                    "type": "FLOAT"
-                },
-                {
-                    "name": "longitude",
-                    "type": "FLOAT"
-                },
-                {
                     "name": "neighborhood",
                     "type": "TEXT",
                     "description": "custom type `NEIGHBORHOOD`"
@@ -386,11 +351,6 @@
                 {
                     "name": "zip_code",
                     "type": "TEXT"
-                },
-                {
-                    "name": "geo_id",
-                    "type": "TEXT",
-                    "description": "foreign key: location_data.geo_id"
                 }
             ]
         },
@@ -437,11 +397,6 @@
                 {
                     "name": "zip_code",
                     "type": "TEXT"
-                },
-                {
-                    "name": "geo_id",
-                    "type": "TEXT",
-                    "description": "foreign key: location_data.geo_id"
                 }
             ]
         },
