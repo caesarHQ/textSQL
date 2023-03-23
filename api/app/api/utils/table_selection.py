@@ -5,18 +5,24 @@ from .table_details import get_table_schemas
 from .few_shot_examples import get_few_shot_example_messages
 
 
-def get_message_with_descriptions():
-    return (
+def get_message_with_descriptions(scope="USA"):
+    message = (
         "Return a JSON object with relevant SQL tables for answering the following natural language query: {natural_language_query}"
         " Respond in JSON format with your answer in a field named \"tables\" which is a list of strings."
         " Respond with an empty list if you cannot identify any relevant tables."
         " Write your answer in markdown format."
         "\n"
+    )
+    if scope == "USA":
+        return (
+        message +
         "The following are descriptions of available tables and custom types:\n"
         "---------------------\n"
-        "{table_details}"
+        + get_table_schemas(scope=scope) +
         "---------------------\n"
-    )
+        )
+    else:
+        return message
     
 
 def get_default_messages(scope="USA"):
@@ -30,7 +36,9 @@ def get_default_messages(scope="USA"):
                     " Write your answer in markdown format."
                     "\n"
                     "The following are descriptions of available tables and custom types:\n"
-                    + get_table_schemas(scope=scope)
+                    "---------------------\n"
+                    + get_table_schemas(scope=scope) +
+                    "---------------------\n"
                 )
         },
     ]
@@ -42,9 +50,8 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
     """
     Identify relevant tables for answering a natural language query
     """
-    content = get_message_with_descriptions().format(
+    content = get_message_with_descriptions(scope=scope).format(
         natural_language_query=natural_language_query,
-        table_details=get_table_schemas(scope=scope)
         )
 
     messages = get_default_messages(scope=scope).copy()
@@ -54,7 +61,8 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
     })
 
     if scope == "SF":
-        model = "gpt-4"
+        # model = "gpt-4"
+        model = "gpt-3.5-turbo"
     else:
         model = "gpt-3.5-turbo"
     assistant_message_content = get_assistant_message(messages=messages, model=model)['message']['content']
