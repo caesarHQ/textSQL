@@ -223,7 +223,8 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3, scope="USA"):
     jobs = []
     for _ in range(k):
         if scope == "SF":
-            model = "gpt-4"
+            # model = "gpt-4"
+            model = "gpt-3.5-turbo"
         else:
             model = "gpt-3.5-turbo"
         jobs.append(joblib.delayed(get_assistant_message)(messages, 0, model))
@@ -291,7 +292,8 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     for _ in range(k):
         try:
             if scope == "SF":
-                model = "gpt-4"
+                # model = "gpt-4"
+                model = "gpt-3.5-turbo"
             else:
                 model = "gpt-3.5-turbo"
             assistant_message = get_assistant_message(messages, model=model)
