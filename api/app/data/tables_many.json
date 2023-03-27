@@ -201,11 +201,11 @@
                 },
                 {
                     "name": "per_capita_income",
-                    "type": "TEXT"
+                    "type": "FLOAT"
                 },
                 {
                     "name": "median_income_for_workers",
-                    "type": "TEXT"
+                    "type": "FLOAT"
                 }
             ]
         },
