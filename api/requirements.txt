@@ -5,6 +5,7 @@ flask-cors==3.0.10
 Flask-Migrate==4.0.4
 psycopg2-binary==2.9.5
 gunicorn==20.1.0
+openai[embeddings]==0.27.2
 openai==0.27.2
 python-dotenv==1.0.0
 sentry-sdk==1.16.0
@@ -16,3 +17,4 @@ requests==2.28.1
 pytest==7.2.2
 newrelic==8.7.0
 tiktoken==0.3.2
+pinecone-client==2.2.1
