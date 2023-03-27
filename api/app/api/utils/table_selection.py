@@ -51,21 +51,27 @@ def get_default_messages(scope="USA"):
 
 
 def get_relevant_tables_from_pinecone(natural_language_query, scope="USA") -> List[str]:
+    tables_set = set()
+
     vector = get_embedding(natural_language_query, "text-embedding-ada-002")
 
     if scope == "SF":
         index_name = "sf-gpt"
+    elif scope == "USA":
+        index_name = "usa-gpt"
+        tables_set.add("location_data")
 
     results = pinecone.Index(index_name).query(
         vector=vector,
         top_k=5,
         include_metadata=True,
     )
-
-    tables_set = set()
+    
     for result in results["matches"]:
         for table_name in result.metadata['table_names']:
             tables_set.add(table_name)
+
+    print(results["matches"])
     
     return list(tables_set)
 
@@ -88,8 +94,10 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
         # model = "gpt-4"
         model = "gpt-3.5-turbo"
         return get_relevant_tables_from_pinecone(natural_language_query, scope=scope)
-    else:
+    elif scope == "USA":
         model = "gpt-3.5-turbo"
+        return get_relevant_tables_from_pinecone(natural_language_query, scope=scope)
+
     assistant_message_content = get_assistant_message(messages=messages, model=model)['message']['content']
     tables_json_str = extract_code_from_markdown(assistant_message_content)
     tables = json.loads(tables_json_str).get('tables')
