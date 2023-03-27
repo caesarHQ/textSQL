@@ -51,27 +51,31 @@ def get_default_messages(scope="USA"):
 
 
 def get_relevant_tables_from_pinecone(natural_language_query, scope="USA") -> List[str]:
-    tables_set = set()
-
     vector = get_embedding(natural_language_query, "text-embedding-ada-002")
 
     if scope == "SF":
         index_name = "sf-gpt"
     elif scope == "USA":
         index_name = "usa-gpt"
-        tables_set.add("location_data")
 
     results = pinecone.Index(index_name).query(
         vector=vector,
         top_k=5,
         include_metadata=True,
     )
-    
+
+    tables_set = set()
     for result in results["matches"]:
         for table_name in result.metadata['table_names']:
             tables_set.add(table_name)
 
     print(results["matches"])
+
+    if scope == "USA":
+        if len(tables_set) == 1 and "crime_by_city" in tables_set:
+            pass
+        else:
+            tables_set.add("location_data")
     
     return list(tables_set)
 
