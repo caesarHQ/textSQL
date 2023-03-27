@@ -1,10 +1,11 @@
 from os import getenv
-from sqlalchemy import create_engine
-from sqlalchemy.pool import QueuePool
+
+import pinecone
 import sentry_sdk
 from dotenv import load_dotenv
 from sentry_sdk.integrations.flask import FlaskIntegration
-
+from sqlalchemy import create_engine
+from sqlalchemy.pool import QueuePool
 
 load_dotenv()
 
@@ -31,3 +32,8 @@ class FlaskAppConfig:
 
 
 engine = create_engine(DB_URL)
+
+pinecone.init(
+    api_key=getenv("PINECONE_KEY"),
+    environment=getenv("PINECONE_ENV")
+)
