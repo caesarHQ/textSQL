@@ -1,8 +1,12 @@
 import json
 from typing import List
-from .messages import get_assistant_message, extract_code_from_markdown
-from .table_details import get_table_schemas
+
+import pinecone
+from openai.embeddings_utils import get_embedding
+
 from .few_shot_examples import get_few_shot_example_messages
+from .messages import extract_code_from_markdown, get_assistant_message
+from .table_details import get_table_schemas
 
 
 def get_message_with_descriptions(scope="USA"):
@@ -46,6 +50,26 @@ def get_default_messages(scope="USA"):
     return default_messages
 
 
+def get_relevant_tables_from_pinecone(natural_language_query, scope="USA") -> List[str]:
+    vector = get_embedding(natural_language_query, "text-embedding-ada-002")
+
+    if scope == "SF":
+        index_name = "sf-gpt"
+
+    results = pinecone.Index(index_name).query(
+        vector=vector,
+        top_k=5,
+        include_metadata=True,
+    )
+
+    tables_set = set()
+    for result in results["matches"]:
+        for table_name in result.metadata['table_names']:
+            tables_set.add(table_name)
+    
+    return list(tables_set)
+
+
 def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
     """
     Identify relevant tables for answering a natural language query
@@ -63,6 +87,7 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
     if scope == "SF":
         # model = "gpt-4"
         model = "gpt-3.5-turbo"
+        return get_relevant_tables_from_pinecone(natural_language_query, scope=scope)
     else:
         model = "gpt-3.5-turbo"
     assistant_message_content = get_assistant_message(messages=messages, model=model)['message']['content']
