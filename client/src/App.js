@@ -136,10 +136,10 @@ function App(props) {
     const [searchParams, setSearchParams] = useSearchParams()
     const [query, setQuery] = useState('')
     const [sql, setSQL] = useState('')
+    const [tables, setTables] = useState([])
     const [zipcodesFormatted, setZipcodesFormatted] = useState([])
     const [zipcodes, setZipcodes] = useState([])
     const [tableInfo, setTableInfo] = useState({ rows: [], columns: [] })
-    const [statusCode, setStatusCode] = useState(0)
     const [errorMessage, setErrorMessage] = useState('')
     const [cities, setCities] = useState([])
     const [isLoading, setIsLoading] = useState(false)
@@ -241,7 +241,6 @@ function App(props) {
                 posthog.capture('backend_response', response)
 
                 // Set the state for SQL and Status Code
-                setStatusCode(response.status)
                 console.log('Backend Response ==>', response)
 
                 // Filter out lat and long columns
@@ -357,7 +356,6 @@ function App(props) {
                 posthog.capture('backend_error', {
                     error: err,
                 })
-                setStatusCode(500)
                 setErrorMessage(err.message || err)
                 console.error(err)
             })
@@ -421,7 +419,6 @@ function App(props) {
                 posthog.capture('backend_response', response)
 
                 // Set the state for SQL and Status Code
-                setStatusCode(response.status)
                 responseOuter = response
                 setSQL(response.sql_query)
 
@@ -557,7 +554,6 @@ function App(props) {
                 posthog.capture('backend_error', {
                     error: err,
                 })
-                setStatusCode(500)
                 setErrorMessage(err.message || err)
                 console.error(err)
             })
