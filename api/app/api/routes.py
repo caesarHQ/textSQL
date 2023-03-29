@@ -7,6 +7,24 @@ from sentry_sdk import capture_exception
 bp = Blueprint('api_bp', __name__)
 
 
+@bp.route('/get_tables', methods=['POST'])
+def get_tables():
+    """
+    Select relevant tables given a natural language query
+    """
+    request_body = request.get_json()
+    natural_language_query = request_body.get('natural_language_query')
+
+    if not natural_language_query:
+        error_msg = 'natural_language_query is missing from request body'
+        return make_response(jsonify({'error': error_msg}), 400)
+    
+    scope = request_body.get('scope', "USA")
+    
+    table_names = get_relevant_tables(natural_language_query, scope)
+    return make_response(jsonify({'table_names': table_names}), 200)
+
+
 @bp.route('/text_to_sql', methods=['POST'])
 def text_to_sql():
     """
