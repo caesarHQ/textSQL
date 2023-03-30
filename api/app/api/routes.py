@@ -1,8 +1,13 @@
 from flask import Blueprint, jsonify, make_response, request
-from .utils.sql_gen.text_to_sql import execute_sql, text_to_sql_with_retry, text_to_sql_parallel, text_to_sql_chat_with_retry
-from .utils.table_selection import get_relevant_tables
-from .utils.geo_data import zip_lat_lon
 from sentry_sdk import capture_exception
+
+from .utils.geo_data import zip_lat_lon
+from .utils.sql_explanation.sql_explanation import get_sql_explanation
+from .utils.sql_gen.text_to_sql import (execute_sql,
+                                        text_to_sql_chat_with_retry,
+                                        text_to_sql_parallel,
+                                        text_to_sql_with_retry)
+from .utils.table_selection.table_selection import get_relevant_tables
 
 bp = Blueprint('api_bp', __name__)
 
@@ -25,6 +30,20 @@ def get_tables():
     return make_response(jsonify({'table_names': table_names}), 200)
 
 
+@bp.route('/explain_sql', methods=['POST'])
+def explain_sql():
+    """
+    Explains SQL in natural language
+    """
+    request_body = request.get_json()
+    sql = request_body.get('sql')
+    if not sql:
+        error_msg = '`sql` is missing from request body'
+        return make_response(jsonify({'error': error_msg}), 400)
+    explanation = get_sql_explanation(sql)
+    return make_response(jsonify({'explanation': explanation}), 200)
+
+
 @bp.route('/text_to_sql', methods=['POST'])
 def text_to_sql():
     """
@@ -36,11 +55,11 @@ def text_to_sql():
     scope = request_body.get('scope', "USA")
 
     if not natural_language_query:
-        error_msg = 'natural_language_query is missing from request body'
+        error_msg = '`natural_language_query` is missing from request body'
         return make_response(jsonify({'error': error_msg}), 400)
 
     # if not table_names or len(table_names) == 0:
-    #     error_msg = 'non-empty table_names array is missing from request body'
+    #     error_msg = 'non-empty `table_names` array is missing from request body'
     #     return make_response(jsonify({'error': error_msg}), 400)
 
     try:
@@ -69,7 +88,7 @@ def text_to_sql_chat():
     messages = request_body.get('messages')
 
     if not messages:
-        error_msg = 'messages is missing from request body'
+        error_msg = '`messages` is missing from request body'
         return make_response(jsonify({'error': error_msg}), 400)
 
     try:
@@ -94,7 +113,7 @@ def zip_to_lat_lon():
     zip_code = request.args.get('zip_code')
 
     if not zip_code:
-        error_msg = 'zip_code is missing from request parameters'
+        error_msg = '`zip_code` is missing from request parameters'
         return make_response(jsonify({'error': error_msg}), 400)
 
     try:

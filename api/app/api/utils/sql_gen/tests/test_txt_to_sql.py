@@ -3,7 +3,7 @@ from typing import Union, OrderedDict, Any, List, Tuple, Callable, Dict
 import pytest
 
 from ..text_to_sql import text_to_sql_parallel
-from ...table_selection import get_relevant_tables
+from ...table_selection.table_selection import get_relevant_tables
 
 Res = Dict[str, Union[List[OrderedDict[str, Any]], List[str]]]
 
