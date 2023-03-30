@@ -136,10 +136,10 @@ function App(props) {
     const [searchParams, setSearchParams] = useSearchParams()
     const [query, setQuery] = useState('')
     const [sql, setSQL] = useState('')
+    const [tables, setTables] = useState([])
     const [zipcodesFormatted, setZipcodesFormatted] = useState([])
     const [zipcodes, setZipcodes] = useState([])
     const [tableInfo, setTableInfo] = useState({ rows: [], columns: [] })
-    const [statusCode, setStatusCode] = useState(0)
     const [errorMessage, setErrorMessage] = useState('')
     const [cities, setCities] = useState([])
     const [isLoading, setIsLoading] = useState(false)
@@ -241,7 +241,6 @@ function App(props) {
                 posthog.capture('backend_response', response)
 
                 // Set the state for SQL and Status Code
-                setStatusCode(response.status)
                 console.log('Backend Response ==>', response)
 
                 // Filter out lat and long columns
@@ -357,7 +356,6 @@ function App(props) {
                 posthog.capture('backend_error', {
                     error: err,
                 })
-                setStatusCode(500)
                 setErrorMessage(err.message || err)
                 console.error(err)
             })
@@ -379,19 +377,16 @@ function App(props) {
         clearMapLayers()
 
         // Sanitize the query
-        if(props.version === 'Census') {
-            natural_language_query = cleanupQuery(natural_language_query)
-        }
+        natural_language_query = cleanupQuery(natural_language_query, props.version)
 
         let requestBody = {
             natural_language_query,
-            table_names: ['crime_by_city', 'demographic_data'],
+            // table_names: ['crime_by_city', 'demographic_data'],
         }
 
         if(props.version === 'San Francisco') {
             requestBody = {
                 natural_language_query,
-                table_names: ['crime_by_city', 'demographic_data'],
                 scope: 'SF'
             }
         }
@@ -405,7 +400,7 @@ function App(props) {
 
         let responseOuter = null
         // Send the request
-        fetch((props.version === 'Census' ? api_endpoint : 'https://dev-text-sql-be.onrender.com/') + '/api/text_to_sql', options)
+        fetch((props.version === 'Census' ? api_endpoint : 'https://text-sql-be.onrender.com/') + '/api/text_to_sql', options)
             .then((response) => response.json())
             .then((response) => {
                 // Set the loading state to false
@@ -424,7 +419,6 @@ function App(props) {
                 posthog.capture('backend_response', response)
 
                 // Set the state for SQL and Status Code
-                setStatusCode(response.status)
                 responseOuter = response
                 setSQL(response.sql_query)
 
@@ -560,7 +554,6 @@ function App(props) {
                 posthog.capture('backend_error', {
                     error: err,
                 })
-                setStatusCode(500)
                 setErrorMessage(err.message || err)
                 console.error(err)
             })
@@ -715,16 +708,11 @@ function App(props) {
                 <div className="fixed sm:relative w-full sm:flex flex-col p-2 sm:p-6 space-y-1.5 bg-gradient-to-b from-black/95 to-transparent bg/10 backdrop-blur-sm pb-2.5 sm:from-white sm:dark:from-transparent z-50">
                     <h1
                         className="text-4xl font-bold text-white sm:text-black dark:text-white"
-                        onClick={() => {
-                            window.location.assign('/')
-                            handleClearSearch()
-                        }}
                         style={{ cursor: 'pointer' }}
                     >
                         {props.version} GPT
                     </h1>
                     <div className="inline-flex gap-x-1.5 align-middle justify-center">
-                        <ContributeButton />
                         <GithubButton />
                         <DiscordButton />
                         <DarkModeButton />
@@ -748,7 +736,7 @@ function App(props) {
                             <SearchButton />
                         </form>
                     </div>
-                    <Disclaimer />
+                    <Disclaimer version={props.version} />
                 </div>
 
                 <div className="flex flex-col lg:flex-row h-full w-full gap-6 sm:p-6">

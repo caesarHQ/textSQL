@@ -84,6 +84,7 @@ export const polygonsLayer = {
         visibility: 'visible',
     },
     paint: {
+        'fill-outline-color': 'black',
         'fill-color': '#006AF9',
         'fill-opacity': 0.8,
     },

@@ -16,52 +16,52 @@
                 },
                 {
                     "name": "violent_crime",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "violent crime"
                 },
                 {
                     "name": "murder_and_nonnegligent_manslaughter",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "murder and nonnegligent manslaughter"
                 },
                 {
                     "name": "rape",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "rape"
                 },
                 {
                     "name": "robbery",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "robbery"
                 },
                 {
                     "name": "aggravated_assault",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "aggravated assault"
                 },
                 {
                     "name": "property_crime",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "property crime"
                 },
                 {
                     "name": "burglary",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "burglary"
                 },
                 {
                     "name": "larceny_theft",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "larceny theft"
                 },
                 {
                     "name": "motor_vehicle_theft",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "motor vehicle theft"
                 },
                 {
                     "name": "arson",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "arson"
                 }
             ]
@@ -91,268 +91,258 @@
                     "description": "state"
                 },
                 {
-                    "name": "lat",
-                    "type": "DOUBLE_PRECISION",
-                    "description": "zip code latitude"
-                },
-                {
-                    "name": "lon",
-                    "type": "DOUBLE_PRECISION",
-                    "description": "zip code longitude"
-                },
-                {
                     "name": "total_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "total population"
                 },
                 {
                     "name": "elderly_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "elderly population"
                 },
                 {
                     "name": "male_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "male population"
                 },
                 {
                     "name": "female_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "female population"
                 },
                 {
                     "name": "white_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "white population"
                 },
                 {
                     "name": "black_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "black population"
                 },
                 {
                     "name": "native_american_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "native american population"
                 },
                 {
                     "name": "asian_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "asian population"
                 },
                 {
                     "name": "two_or_more_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "two or more population"
                 },
                 {
                     "name": "hispanic_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "hispanic population"
                 },
                 {
                     "name": "adult_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "adult population"
                 },
                 {
                     "name": "citizen_adult_population",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "citizen adult population"
                 },
                 {
                     "name": "average_household_size",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "average household size"
                 },
                 {
                     "name": "population_under_5_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population under 5 years old"
                 },
                 {
                     "name": "population_10_to_14_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 10 to 14 years old"
                 },
                 {
                     "name": "population_15_to_19_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 15 to 19 years old"
                 },
                 {
                     "name": "population_20_to_24_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 20 to 24 years old"
                 },
                 {
                     "name": "population_25_to_34_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 25 to 34 years old"
                 },
                 {
                     "name": "population_35_to_44_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 35 to 44 years old"
                 },
                 {
                     "name": "population_45_to_54_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 45 to 54 years old"
                 },
                 {
                     "name": "population_55_to_59_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 55 to 59 years old"
                 },
                 {
                     "name": "population_60_to_64_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 60 to 64 years old"
                 },
                 {
                     "name": "population_65_to_74_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 65 to 74 years old"
                 },
                 {
                     "name": "population_75_to_84_years",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 75 to 84 years old"
                 },
                 {
                     "name": "population_85_years_and_over",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population 85 years old and over"
                 },
                 {
                     "name": "per_capita_income",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "per capita income"
                 },
                 {
                     "name": "median_income_for_workers",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "median income for workers"
                 },
                 {
                     "name": "no_schooling_completed",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with no schooling completed"
                 },
                 {
                     "name": "nursery_school",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with nursery school completed at most"
                 },
                 {
                     "name": "kindergarten",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with kindergarten completed at most"
                 },
                 {
                     "name": "grade_1",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 1 completed at most"
                 },
                 {
                     "name": "grade_2",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 2 completed at most"
                 },
                 {
                     "name": "grade_3",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 3 completed at most"
                 },
                 {
                     "name": "grade_4",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 4 completed at most"
                 },
                 {
                     "name": "grade_5",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 5 completed at most"
                 },
                 {
                     "name": "grade_6",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 6 completed at most"
                 },
                 {
                     "name": "grade_7",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 7 completed at most"
                 },
                 {
                     "name": "grade_8",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 8 completed at most"
                 },
                 {
                     "name": "grade_9",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 9 completed at most"
                 },
                 {
                     "name": "grade_10",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 10 completed at most"
                 },
                 {
                     "name": "grade_11",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 11 completed at most"
                 },
                 {
                     "name": "grade_12_no_diploma",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with grade 12 completed with no diploma at most"
                 },
                 {
                     "name": "regular_high_school_diploma",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with a regular high school diploma at most"
                 },
                 {
                     "name": "ged_or_alternative_credential",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with a GED or alternative credential at most"
                 },
                 {
                     "name": "some_college_less_than_1_year",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with less than 1 year of college completed at most"
                 },
                 {
                     "name": "some_college_1_or_more_years_no_degree",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with 1 year or more of college completed with no degree at most"
                 },
                 {
                     "name": "associates_degree",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with an associates degree at most"
                 },
                 {
                     "name": "bachelors_degree",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with an bachelors degree at most"
                 },
                 {
                     "name": "masters_degree",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with an masters degree at most"
                 },
                 {
                     "name": "professional_school_degree",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with a professional school degree at most"
                 },
                 {
                     "name": "doctorate_degree",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "population with a doctorate degree at most"
                 }
             ]
@@ -373,92 +363,92 @@
                 },
                 {
                     "name": "median_sale_price",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "median sale price"
                 },
                 {
                     "name": "median_sale_price_mom",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "median sale price month over month"
                 },
                 {
                     "name": "median_sale_price_yoy",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "median sale price year over year"
                 },
                 {
                     "name": "homes_sold",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "homes sold"
                 },
                 {
                     "name": "homes_sold_mom",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "homes sold month over month"
                 },
                 {
                     "name": "homes_sold_yoy",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "homes sold year over year"
                 },
                 {
                     "name": "new_listings",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "new listings"
                 },
                 {
                     "name": "new_listings_mom",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "new listings month over month"
                 },
                 {
                     "name": "new_listings_yoy",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "new listings year over year"
                 },
                 {
                     "name": "inventory",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "inventory"
                 },
                 {
                     "name": "inventory_mom",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "inventory month over month"
                 },
                 {
                     "name": "inventory_yoy",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "inventory year over year"
                 },
                 {
                     "name": "days_on_market",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "days on market"
                 },
                 {
                     "name": "days_on_market_mom",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "days on market month over month"
                 },
                 {
                     "name": "days_on_market_yoy",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "days on market year over year"
                 },
                 {
                     "name": "average_sale_to_list",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "average sale to list"
                 },
                 {
                     "name": "average_sale_to_list_mom",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "average sale to list month over month"
                 },
                 {
                     "name": "average_sale_to_list_yoy",
-                    "type": "DOUBLE_PRECISION",
+                    "type": "FLOAT",
                     "description": "average sale to list year over year"
                 }
             ]
