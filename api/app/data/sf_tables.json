@@ -642,48 +642,293 @@
             ]
         },
         {
-            "name": "sf_demographic_population_data",
-            "description": "Table `sf_demographic_population_data` has zip-code level data about average household sizes, income, and population grouped by gender, age, education levels, and race.",
+            "name": "location_data",
+            "description": "Table `location_data` has geo_ids for zip codes.",
             "columns": [
                 {
-                    "name": "zip_code",
+                    "name": "geo_id",
                     "type": "TEXT",
-                    "description": "zip code"
+                    "description": "geo ID of zip code, primary key"
+                },
+                {
+                    "name": "zip_code",
+                    "type": "TEXT"
                 },
                 {
                     "name": "city",
-                    "type": "TEXT",
-                    "description": "city"
+                    "type": "TEXT"
                 },
                 {
                     "name": "county",
-                    "type": "TEXT",
-                    "description": "county"
+                    "type": "TEXT"
                 },
                 {
                     "name": "state",
+                    "type": "TEXT"
+                }
+            ]
+        },
+        {
+            "name": "sf_income",
+            "description": "Table `income` has zip-code level income data.",
+            "columns": [
+                {
+                    "name": "geo_id",
                     "type": "TEXT",
-                    "description": "state"
+                    "description": "foreign key: location_data.geo_id"
                 },
                 {
-                    "name": "total_population",
-                    "type": "FLOAT",
-                    "description": "total population"
+                    "name": "per_capita_income",
+                    "type": "FLOAT"
                 },
                 {
-                    "name": "elderly_population",
-                    "type": "FLOAT",
-                    "description": "elderly population"
+                    "name": "median_income_for_workers",
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "sf_average_household_size",
+            "description": "Table `average_household_size` has zip-code level average household size data.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
+                },
+                {
+                    "name": "average_household_size",
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "sf_population_by_age",
+            "description": "Table `population_by_age` has zip-code level population by age data.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
+                },
+                {
+                    "name": "population_under_5_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_10_to_14_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_15_to_19_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_20_to_24_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_25_to_34_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_35_to_44_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_45_to_54_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_55_to_59_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_60_to_64_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_65_to_74_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_75_to_84_years",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "population_85_years_and_over",
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "sf_population_by_education_level",
+            "description": "Table `population_by_education_level` has zip-code level data population data grouped by highest education level attained.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
+                },
+                {
+                    "name": "no_schooling_completed",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "nursery_school",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "kindergarten",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_1",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_2",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_3",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_4",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_5",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_6",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_7",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_8",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_9",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_10",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_11",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "grade_12_no_diploma",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "regular_high_school_diploma",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "ged_or_alternative_credential",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "some_college_less_than_1_year",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "some_college_1_or_more_years_no_degree",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "associates_degree",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "bachelors_degree",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "masters_degree",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "professional_school_degree",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "doctorate_degree",
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "sf_population_by_gender",
+            "description": "Table `population_by_gender` has zip-code level population by gender data.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
                 },
                 {
                     "name": "male_population",
-                    "type": "FLOAT",
-                    "description": "male population"
+                    "type": "FLOAT"
                 },
                 {
                     "name": "female_population",
-                    "type": "FLOAT",
-                    "description": "female population"
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "sf_total_population",
+            "description": "Table `total_population` has zip-code level total population data.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
+                },
+                {
+                    "name": "total_population",
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "sf_population_by_citizenship",
+            "description": "Table `population_by_citizenship` has zip-code level adult citizenship population data.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
+                },
+                {
+                    "name": "adult_population",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "citizen_adult_population",
+                    "type": "FLOAT"
+                }
+            ]
+        },
+        {
+            "name": "sf_population_by_race",
+            "description": "Table `population_by_race` has zip-code level population by race data.",
+            "columns": [
+                {
+                    "name": "geo_id",
+                    "type": "TEXT",
+                    "description": "foreign key: location_data.geo_id"
                 },
                 {
                     "name": "white_population",
@@ -706,219 +951,14 @@
                     "description": "asian population"
                 },
                 {
-                    "name": "two_or_more_population",
-                    "type": "FLOAT",
-                    "description": "two or more population"
-                },
-                {
                     "name": "hispanic_population",
                     "type": "FLOAT",
                     "description": "hispanic population"
                 },
                 {
-                    "name": "adult_population",
+                    "name": "two_or_more_population",
                     "type": "FLOAT",
-                    "description": "adult population"
-                },
-                {
-                    "name": "citizen_adult_population",
-                    "type": "FLOAT",
-                    "description": "citizen adult population"
-                },
-                {
-                    "name": "average_household_size",
-                    "type": "FLOAT",
-                    "description": "average household size"
-                },
-                {
-                    "name": "population_under_5_years",
-                    "type": "FLOAT",
-                    "description": "population under 5 years old"
-                },
-                {
-                    "name": "population_10_to_14_years",
-                    "type": "FLOAT",
-                    "description": "population 10 to 14 years old"
-                },
-                {
-                    "name": "population_15_to_19_years",
-                    "type": "FLOAT",
-                    "description": "population 15 to 19 years old"
-                },
-                {
-                    "name": "population_20_to_24_years",
-                    "type": "FLOAT",
-                    "description": "population 20 to 24 years old"
-                },
-                {
-                    "name": "population_25_to_34_years",
-                    "type": "FLOAT",
-                    "description": "population 25 to 34 years old"
-                },
-                {
-                    "name": "population_35_to_44_years",
-                    "type": "FLOAT",
-                    "description": "population 35 to 44 years old"
-                },
-                {
-                    "name": "population_45_to_54_years",
-                    "type": "FLOAT",
-                    "description": "population 45 to 54 years old"
-                },
-                {
-                    "name": "population_55_to_59_years",
-                    "type": "FLOAT",
-                    "description": "population 55 to 59 years old"
-                },
-                {
-                    "name": "population_60_to_64_years",
-                    "type": "FLOAT",
-                    "description": "population 60 to 64 years old"
-                },
-                {
-                    "name": "population_65_to_74_years",
-                    "type": "FLOAT",
-                    "description": "population 65 to 74 years old"
-                },
-                {
-                    "name": "population_75_to_84_years",
-                    "type": "FLOAT",
-                    "description": "population 75 to 84 years old"
-                },
-                {
-                    "name": "population_85_years_and_over",
-                    "type": "FLOAT",
-                    "description": "population 85 years old and over"
-                },
-                {
-                    "name": "per_capita_income",
-                    "type": "FLOAT",
-                    "description": "per capita income"
-                },
-                {
-                    "name": "median_income_for_workers",
-                    "type": "FLOAT",
-                    "description": "median income for workers"
-                },
-                {
-                    "name": "no_schooling_completed",
-                    "type": "FLOAT",
-                    "description": "population with no schooling completed"
-                },
-                {
-                    "name": "nursery_school",
-                    "type": "FLOAT",
-                    "description": "population with nursery school completed at most"
-                },
-                {
-                    "name": "kindergarten",
-                    "type": "FLOAT",
-                    "description": "population with kindergarten completed at most"
-                },
-                {
-                    "name": "grade_1",
-                    "type": "FLOAT",
-                    "description": "population with grade 1 completed at most"
-                },
-                {
-                    "name": "grade_2",
-                    "type": "FLOAT",
-                    "description": "population with grade 2 completed at most"
-                },
-                {
-                    "name": "grade_3",
-                    "type": "FLOAT",
-                    "description": "population with grade 3 completed at most"
-                },
-                {
-                    "name": "grade_4",
-                    "type": "FLOAT",
-                    "description": "population with grade 4 completed at most"
-                },
-                {
-                    "name": "grade_5",
-                    "type": "FLOAT",
-                    "description": "population with grade 5 completed at most"
-                },
-                {
-                    "name": "grade_6",
-                    "type": "FLOAT",
-                    "description": "population with grade 6 completed at most"
-                },
-                {
-                    "name": "grade_7",
-                    "type": "FLOAT",
-                    "description": "population with grade 7 completed at most"
-                },
-                {
-                    "name": "grade_8",
-                    "type": "FLOAT",
-                    "description": "population with grade 8 completed at most"
-                },
-                {
-                    "name": "grade_9",
-                    "type": "FLOAT",
-                    "description": "population with grade 9 completed at most"
-                },
-                {
-                    "name": "grade_10",
-                    "type": "FLOAT",
-                    "description": "population with grade 10 completed at most"
-                },
-                {
-                    "name": "grade_11",
-                    "type": "FLOAT",
-                    "description": "population with grade 11 completed at most"
-                },
-                {
-                    "name": "grade_12_no_diploma",
-                    "type": "FLOAT",
-                    "description": "population with grade 12 completed with no diploma at most"
-                },
-                {
-                    "name": "regular_high_school_diploma",
-                    "type": "FLOAT",
-                    "description": "population with a regular high school diploma at most"
-                },
-                {
-                    "name": "ged_or_alternative_credential",
-                    "type": "FLOAT",
-                    "description": "population with a GED or alternative credential at most"
-                },
-                {
-                    "name": "some_college_less_than_1_year",
-                    "type": "FLOAT",
-                    "description": "population with less than 1 year of college completed at most"
-                },
-                {
-                    "name": "some_college_1_or_more_years_no_degree",
-                    "type": "FLOAT",
-                    "description": "population with 1 year or more of college completed with no degree at most"
-                },
-                {
-                    "name": "associates_degree",
-                    "type": "FLOAT",
-                    "description": "population with an associates degree at most"
-                },
-                {
-                    "name": "bachelors_degree",
-                    "type": "FLOAT",
-                    "description": "population with an bachelors degree at most"
-                },
-                {
-                    "name": "masters_degree",
-                    "type": "FLOAT",
-                    "description": "population with an masters degree at most"
-                },
-                {
-                    "name": "professional_school_degree",
-                    "type": "FLOAT",
-                    "description": "population with a professional school degree at most"
-                },
-                {
-                    "name": "doctorate_degree",
-                    "type": "FLOAT",
-                    "description": "population with a doctorate degree at most"
+                    "description": "two or more population"
                 }
             ]
         }
