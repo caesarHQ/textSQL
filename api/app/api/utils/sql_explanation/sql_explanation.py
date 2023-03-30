@@ -1,8 +1,5 @@
-import json
-from typing import List
-
 from ..few_shot_examples import get_few_shot_example_messages
-from ..messages import extract_code_from_markdown, get_assistant_message
+from ..messages import get_assistant_message
 
 
 def get_message_with_descriptions():
