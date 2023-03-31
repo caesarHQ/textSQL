@@ -4,8 +4,8 @@ from typing import List
 import pinecone
 from openai.embeddings_utils import get_embedding
 
-from .few_shot_examples import get_few_shot_example_messages
-from .messages import extract_code_from_markdown, get_assistant_message
+from ..few_shot_examples import get_few_shot_example_messages
+from ..messages import extract_code_from_markdown, get_assistant_message
 from .table_details import get_table_schemas
 
 
@@ -30,22 +30,20 @@ def get_message_with_descriptions(scope="USA"):
     
 
 def get_default_messages(scope="USA"):
-    default_messages = [
-        {
-            "role": "system",
-            "content": (
-                    "You are a helpful assistant for identifying relevant SQL tables to use for answering a natural language query."
-                    " You respond in JSON format with your answer in a field named \"tables\" which is a list of strings."
-                    " Respond with an empty list if you cannot identify any relevant tables."
-                    " Write your answer in markdown format."
-                    "\n"
-                    "The following are descriptions of available tables and custom types:\n"
-                    "---------------------\n"
-                    + get_table_schemas(scope=scope) +
-                    "---------------------\n"
-                )
-        },
-    ]
+    default_messages = [{
+        "role": "system",
+        "content": (
+            "You are a helpful assistant for identifying relevant SQL tables to use for answering a natural language query."
+            " You respond in JSON format with your answer in a field named \"tables\" which is a list of strings."
+            " Respond with an empty list if you cannot identify any relevant tables."
+            " Write your answer in markdown format."
+            "\n"
+            "The following are descriptions of available tables and custom types:\n"
+            "---------------------\n"
+            + get_table_schemas(scope=scope) +
+            "---------------------\n"
+        )
+    }]
     default_messages.extend(get_few_shot_example_messages(mode="table_selection", scope=scope))
     return default_messages
 
@@ -71,7 +69,7 @@ def get_relevant_tables_from_pinecone(natural_language_query, scope="USA") -> Li
 
     print(results["matches"])
 
-    if scope == "USA":
+    if scope == "USA" or scope == "SF":
         if len(tables_set) == 1 and "crime_by_city" in tables_set:
             pass
         else:

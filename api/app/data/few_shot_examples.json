@@ -1,6 +1,16 @@
 {
     "USA": {
-        "text_to_sql" : [
+        "sql_explanation": [
+            {
+                "user": "```SELECT city, state, \n       (violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) AS total_crime\nFROM crime_by_city\nORDER BY total_crime DESC\nLIMIT 5```",
+                "assistant": "This SQL query retrieves the top 5 cities with the highest total crime from the `crime_by_city` table, where the total crime is calculated by adding up the values of various types of crimes, such as violent crimes and property crimes, and the results are sorted in descending order based on the total crime."
+            },
+            {
+                "user": "```SELECT location_data.county, location_data.state, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN location_data ON crime_by_city.city = location_data.city AND crime_by_city.state = location_data.state\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY location_data.county\nORDER BY total_arson DESC\nLIMIT 5```",
+                "assistant": "This SQL query retrieves the top 5 counties with the highest total arson cases from the `crime_by_city` table, where the total arson cases are summed up and grouped by county. It joins with the `location_data` table to match the cities and states, then filters the results to only include rows where the arson column is not null. Finally, the results are sorted in descending order based on the total arson cases."
+            }
+        ],
+        "text_to_sql": [
             {
                 "user": "Which top 5 cities have the most total crime?",
                 "assistant": "```SELECT city, state, \n       (violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) AS total_crime\nFROM crime_by_city\nORDER BY total_crime DESC\nLIMIT 5;```"
@@ -50,7 +60,7 @@
         ]
     },
     "SF": {
-        "text_to_sql" : [
+        "text_to_sql": [
             {
                 "user": "Which neighborhood had the most crime in 2021?",
                 "assistant": "```SELECT neighborhood, COUNT(*) as num_crimes \nFROM sf_crime_data\nWHERE incident_datetime >= '2021-01-01' AND incident_datetime < '2022-01-01'\nGROUP BY neighborhood\nORDER BY num_crimes DESC\nLIMIT 1;```"

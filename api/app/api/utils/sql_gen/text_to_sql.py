@@ -10,7 +10,7 @@ from sqlalchemy import text
 
 from ..geo_data import city_lat_lon, zip_lat_lon, neighborhood_shapes
 from ..messages import get_assistant_message, extract_sql_query_from_message, extract_sql_query_from_message
-from ..table_details import get_table_schemas
+from ..table_selection.table_details import get_table_schemas
 from ..few_shot_examples import get_few_shot_example_messages
 
 
@@ -23,50 +23,14 @@ MSG_WITH_ERROR_TRY_AGAIN = (
 
 
 def make_default_messages(schemas: str, scope="USA"):
-    default_messages = [
-        {
-            "role": "system",
-            "content": (
-                "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command, generally about crime, demographics, and population."
-                "\n"
-                "The following are tables you can query:\n"
-                "---------------------\n"
-                + schemas +
-                "---------------------\n"
-                "Use state abbreviations for states."
-                " Table `crime_by_city` does not have columns 'zip_code' or 'county'."
-                " Do not use ambiguous column names."
-                " For example, `city` can be ambiguous because both tables `location_data` and `crime_by_city` have a column named `city`."
-                " Always specify the table where you are using the column."
-                " If you include a `city` or `county` column in the result table, include a `state` column too."
-                " Make sure each value in the result table is not null."
-                " Write your answer in markdown format.\n"
-            )
-        },
-    ]
-    default_messages.extend(get_few_shot_example_messages(mode="text_to_sql", scope=scope))
-    return default_messages
-
-
-def make_rephrase_msg_with_schema_and_warnings():
-    return (
-            "Let's start by rephrasing the query to be more analytical. Use the schema context to rephrase the user question in a way that leads to optimal query results: {natural_language_query}"
-            "The following are schemas of tables you can query:\n"
-            "---------------------\n"
-            "{schemas}"
+    default_messages = [{
+        "role": "system",
+        "content": (
+            "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command, generally about crime, demographics, and population."
             "\n"
+            "The following are tables you can query:\n"
             "---------------------\n"
-            "Do not include any of the table names in the query."
-            " Ask the natural language query the way a data analyst, with knowledge of these tables, would."
-    )
-
-def make_msg_with_schema_and_warnings():
-    return (
-            "Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}"
-            "The following are schemas of tables you can query:\n"
-            "---------------------\n"
-            "{schemas}"
-            "\n"
+            + schemas +
             "---------------------\n"
             "Use state abbreviations for states."
             " Table `crime_by_city` does not have columns 'zip_code' or 'county'."
@@ -76,6 +40,40 @@ def make_msg_with_schema_and_warnings():
             " If you include a `city` or `county` column in the result table, include a `state` column too."
             " Make sure each value in the result table is not null."
             " Write your answer in markdown format.\n"
+        )
+    }]
+    default_messages.extend(get_few_shot_example_messages(mode="text_to_sql", scope=scope))
+    return default_messages
+
+
+def make_rephrase_msg_with_schema_and_warnings():
+    return (
+        "Let's start by rephrasing the query to be more analytical. Use the schema context to rephrase the user question in a way that leads to optimal query results: {natural_language_query}"
+        "The following are schemas of tables you can query:\n"
+        "---------------------\n"
+        "{schemas}"
+        "\n"
+        "---------------------\n"
+        "Do not include any of the table names in the query."
+        " Ask the natural language query the way a data analyst, with knowledge of these tables, would."
+    )
+
+def make_msg_with_schema_and_warnings():
+    return (
+        "Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}"
+        "The following are schemas of tables you can query:\n"
+        "---------------------\n"
+        "{schemas}"
+        "\n"
+        "---------------------\n"
+        "Use state abbreviations for states."
+        " Table `crime_by_city` does not have columns 'zip_code' or 'county'."
+        " Do not use ambiguous column names."
+        " For example, `city` can be ambiguous because both tables `location_data` and `crime_by_city` have a column named `city`."
+        " Always specify the table where you are using the column."
+        " If you include a `city` or `county` column in the result table, include a `state` column too."
+        " Make sure each value in the result table is not null."
+        " Write your answer in markdown format.\n"
     )
 
 def is_read_only_query(sql_query: str):
@@ -273,7 +271,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
         content = make_msg_with_schema_and_warnings().format(
             natural_language_query=assistant_message['message']['content'],
             schemas=schemas
-            )
+        )
         try:
             enc = len(tiktoken.encoding_for_model("gpt-3.5-turbo").encode(content))
             newrelic.agent.add_custom_attribute("encoding_length", enc)
