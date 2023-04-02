@@ -472,6 +472,7 @@ function App(props) {
                     setErrorMessage(
                         'Something went wrong. Please try again or try a different query'
                     )
+                    setTableNames()
                     return
                 }
 
@@ -610,6 +611,7 @@ function App(props) {
                 })
                 Sentry.captureException(err)
                 setIsLoading(false)
+                setTableNames()
                 posthog.capture('backend_error', {
                     error: err,
                 })
