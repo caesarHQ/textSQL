@@ -346,7 +346,6 @@ function App(props) {
                     // No zipcodes or cities to render. Default to chart
                     setVisualization('chart')
                 }
-                setMobileMenuIsOpen(true)
             })
             .catch((err) => {
                 Sentry.setContext('queryContext', {
@@ -401,7 +400,7 @@ function App(props) {
     }
 
     const TableNamesDisplay = () => (
-        <div className='flex flex-col w-full rounded-lg shadow bg-gray-100 dark:bg-dark-800'>
+        <div className='flex flex-col w-full rounded-lg shadow bg-gray-100 dark:bg-dark-800 ring-1 ring-dark-300 sm:ring-0'>
             <div className='flex p-1.5 items-center gap-2 rounded-t-lg bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm'>
                 <BsTable className='dark:text-white/60' />
                 <span className='font-medium text-sm'>Tables Queried</span>
@@ -602,7 +601,6 @@ function App(props) {
                     // No zipcodes or cities to render. Default to chart
                     setVisualization('chart')
                 }
-                setMobileMenuIsOpen(true)
             })
             .catch((err) => {
                 Sentry.setContext('queryContext', {
