@@ -679,7 +679,7 @@ function App(props) {
                         <h2 className='font-bold tracking-wide h-6'>
                             {title}
                         </h2>
-                        <div className='fixed flex w-full items-center justify-end right-1 space-x-1.5'>
+                        <div className='flex w-full items-center justify-end right-1 space-x-1.5 relative'>
                             {editingSql && (
                                 <button
                                     onClick={() => {
