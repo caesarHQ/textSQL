@@ -409,7 +409,7 @@ function App(props) {
             <ul className='font-medium text-left'>
                 {tableNames.map((tableName, index) => (
                     <li className={`${index % 2 == 0 ? 'dark:bg-black/10 bg-gray-400/10' : 'dark:bg-black/20 bg-gray-400/20'} py-1 pl-2 backdrop-blur-md border-b dark:border-white/10 border-black/10 ${index === tableNames.length - 1 && 'rounded-b-lg border-b-0'}`}>
-                        <span className='capitalize text-sm'>{tableName}</span>
+                        <span className='text-sm'>{tableName}</span>
                     </li>
                 ))}
             </ul>
