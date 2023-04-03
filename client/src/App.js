@@ -802,7 +802,7 @@ function App(props) {
                     <div className="hidden gap-3 sm:flex sm:flex-col h-full w-full max-h-[23rem] lg:max-h-full overflow-y-auto items-center">
                         {/*spinner*/}
                         <LoadingSpinner isLoading={isLoading || isGetTablesLoading} />
-                        {sql.length === 0 && !isLoading ? (
+                        {sql.length === 0 && !isLoading && !isGetTablesLoading ? (
                             <Examples
                                 postHogInstance={posthog}
                                 setQuery={setQuery}
