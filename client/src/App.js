@@ -54,7 +54,7 @@ import { useSearchParams } from 'react-router-dom'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { AiOutlineSearch } from 'react-icons/ai'
-import { BsClipboard2, BsClipboard2Check, BsPencilSquare, BsQuestionCircle } from 'react-icons/bs'
+import { BsClipboard2, BsClipboard2Check, BsPencilSquare, BsQuestionCircle, BsTable } from 'react-icons/bs'
 
 // Add system dark mode
 localStorage.theme === 'dark' ||
@@ -142,6 +142,8 @@ function App(props) {
     const [tableInfo, setTableInfo] = useState({ rows: [], columns: [] })
     const [errorMessage, setErrorMessage] = useState('')
     const [cities, setCities] = useState([])
+    const [isGetTablesLoading, setIsGetTablesLoading] = useState(false)
+    const [tableNames, setTableNames] = useState()
     const [isLoading, setIsLoading] = useState(false)
     const [title, setTitle] = useState('')
     const [visualization, setVisualization] = useState('map')
@@ -209,7 +211,6 @@ function App(props) {
     }
 
     const executeSql = (sql) => {
-        console.log(1, sql)
         setIsLoading(true)
         setMobileHelpIsOpen(false)
         clearMapLayers()
@@ -345,7 +346,6 @@ function App(props) {
                     // No zipcodes or cities to render. Default to chart
                     setVisualization('chart')
                 }
-                setMobileMenuIsOpen(true)
             })
             .catch((err) => {
                 Sentry.setContext('queryContext', {
@@ -361,7 +361,62 @@ function App(props) {
             })
     }
 
-    const fetchBackend = (natural_language_query) => {
+    const getTables = (natural_language_query) => {
+        setIsGetTablesLoading(true)
+
+        let requestBody = {
+            natural_language_query
+        }
+
+        if (props.version === 'San Francisco') {
+            requestBody = {
+                natural_language_query,
+                scope: 'SF'
+            }
+        }
+
+        const options = {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        }
+
+        return fetch((props.version === 'Census' ? api_endpoint : 'https://text-sql-be.onrender.com/') + '/api/get_tables', options)
+            .then((response) => response.json())
+            .then((response) => {
+                setIsGetTablesLoading(false)
+
+                if (!response || !response.table_names) {
+                    setTableNames()
+                    posthog.capture('getTables_backend_error', response)
+                    setErrorMessage('Something went wrong. Please try again or try a different query')
+                    return
+                }
+
+                posthog.capture('getTables_backend_response', response)
+                setTableNames(response.table_names)
+                return response.table_names
+            })
+    }
+
+    const TableNamesDisplay = () => (
+        <div className='flex flex-col w-full rounded-lg shadow bg-gray-100 dark:bg-dark-800 ring-1 ring-dark-300 sm:ring-0'>
+            <div className='flex p-1.5 items-center gap-2 rounded-t-lg bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm'>
+                <BsTable className='dark:text-white/60' />
+                <span className='font-medium text-sm'>Tables Queried</span>
+            </div>
+
+            <ul className='font-medium text-left'>
+                {tableNames.map((tableName, index) => (
+                    <li className={`${index % 2 == 0 ? 'dark:bg-black/10 bg-gray-400/10' : 'dark:bg-black/20 bg-gray-400/20'} py-1 pl-2 backdrop-blur-md border-b dark:border-white/10 border-black/10 ${index === tableNames.length - 1 && 'rounded-b-lg border-b-0'}`}>
+                        <span className='text-sm'>{tableName}</span>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    )
+
+    const fetchBackend = async (natural_language_query) => {
         if (natural_language_query == null) {
             return;
         }
@@ -369,9 +424,8 @@ function App(props) {
         natural_language_query = natural_language_query.trim()
         if (!natural_language_query.length) return
 
-        // Set the loading state
-        setIsLoading(true)
         setMobileHelpIsOpen(false)
+        setTableNames()
 
         // clear previous layers
         clearMapLayers()
@@ -379,12 +433,17 @@ function App(props) {
         // Sanitize the query
         natural_language_query = cleanupQuery(natural_language_query, props.version)
 
+        const table_names = await getTables(natural_language_query)
+
+        // Set the loading state
+        setIsLoading(true)
+
         let requestBody = {
             natural_language_query,
-            // table_names: ['crime_by_city', 'demographic_data'],
+            table_names
         }
 
-        if(props.version === 'San Francisco') {
+        if (props.version === 'San Francisco') {
             requestBody = {
                 natural_language_query,
                 scope: 'SF'
@@ -412,6 +471,7 @@ function App(props) {
                     setErrorMessage(
                         'Something went wrong. Please try again or try a different query'
                     )
+                    setTableNames()
                     return
                 }
 
@@ -435,7 +495,6 @@ function App(props) {
                         (c) => c !== 'lat' && c !== 'long' && c !== 'shape'
                     )
                 }
-               
 
                 // Fit the order of columns and filter out lat and long row values
                 let rows = response.result.results.map((value) => {
@@ -455,7 +514,7 @@ function App(props) {
                     setVisualization('chart')
                 }
                 else if (
-                     // render cities layer on the map
+                    // render cities layer on the map
                     filteredColumns.indexOf('zip_code') === -1 &&
                     filteredColumns.indexOf('city') >= 0
                 ) {
@@ -542,7 +601,6 @@ function App(props) {
                     // No zipcodes or cities to render. Default to chart
                     setVisualization('chart')
                 }
-                setMobileMenuIsOpen(true)
             })
             .catch((err) => {
                 Sentry.setContext('queryContext', {
@@ -551,6 +609,7 @@ function App(props) {
                 })
                 Sentry.captureException(err)
                 setIsLoading(false)
+                setTableNames()
                 posthog.capture('backend_error', {
                     error: err,
                 })
@@ -620,7 +679,7 @@ function App(props) {
                         <h2 className='font-bold tracking-wide h-6'>
                             {title}
                         </h2>
-                        <div className='fixed flex w-full items-center justify-end right-1 space-x-1.5'>
+                        <div className='flex w-full items-center justify-end right-1 space-x-1.5 relative'>
                             {editingSql && (
                                 <button
                                     onClick={() => {
@@ -673,13 +732,13 @@ function App(props) {
     const polygonsGeoJSON = {
         type: "FeatureCollection",
         features: polygons.map((polygon) => {
-          return {
-            type: "Feature",
-            geometry: {
-              type: "Polygon",
-              coordinates: polygon,
-            },
-          };
+            return {
+                type: "Feature",
+                geometry: {
+                    type: "Polygon",
+                    coordinates: polygon,
+                },
+            };
         }),
     };
 
@@ -690,7 +749,7 @@ function App(props) {
     }
 
     if (props.version === 'San Francisco') {
-       initialView = {
+        initialView = {
             longitude: -122.431297,
             latitude: 37.773972,
             zoom: 11.5,
@@ -740,30 +799,37 @@ function App(props) {
                 </div>
 
                 <div className="flex flex-col lg:flex-row h-full w-full gap-6 sm:p-6">
-                    <div className="hidden sm:flex sm:flex-col h-full w-full max-h-[23rem] lg:max-h-full overflow-y-auto">
+                    <div className="hidden gap-3 sm:flex sm:flex-col h-full w-full max-h-[23rem] lg:max-h-full overflow-y-auto items-center">
                         {/*spinner*/}
-                        <LoadingSpinner isLoading={isLoading} />
-                        {sql.length === 0 && !isLoading ? (
+                        <LoadingSpinner isLoading={isLoading || isGetTablesLoading} />
+                        {sql.length === 0 && !isLoading && !isGetTablesLoading ? (
                             <Examples
                                 postHogInstance={posthog}
                                 setQuery={setQuery}
                                 handleClick={fetchBackend}
                                 version={props.version}
                             />
-                        ) : isLoading ? (
+                        ) : isLoading && (
                             <> </>
-                        ) : (
-                            <div className='flex flex-col space-y-4'>
-                                <div>
-                                    <SQL sql={sql} />
-                                </div>
-
-                                <Table
-                                    columns={tableInfo.columns}
-                                    values={tableInfo.rows}
-                                />
-                            </div>
                         )}
+                        <div className='flex flex-col space-y-4 w-full'>
+                            {tableNames && (
+                                <TableNamesDisplay />
+                            )}
+
+                            {!isLoading && sql.length !== 0 && (
+                                <>
+                                    <div>
+                                        <SQL sql={sql} />
+                                    </div>
+
+                                    <Table
+                                        columns={tableInfo.columns}
+                                        values={tableInfo.rows}
+                                    />
+                                </>
+                            )}
+                        </div>
                     </div>
 
                     <div className='flex flex-grow h-full w-full relative sm:rounded-lg shadow overflow-hidden'>
@@ -884,17 +950,24 @@ function App(props) {
                                         </form>
                                     </div>
 
-                                    {sql.length != 0 && !isLoading && (
+                                    {sql.length != 0 && (
                                         <div className='space-y-4 flex-col flex w-full h-fit items-center pb-4'>
-                                            <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg w-full overflow-auto'>
-                                                <SQL sql={sql} />
-                                            </div>
-                                            <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-full overflow-auto'>
-                                                <Table
-                                                    columns={tableInfo.columns}
-                                                    values={tableInfo.rows}
-                                                />
-                                            </div>
+                                            {tableNames && (
+                                                <TableNamesDisplay />
+                                            )}
+                                            {!isLoading && (
+                                                <>
+                                                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg w-full overflow-auto'>
+                                                        <SQL sql={sql} />
+                                                    </div>
+                                                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-full overflow-auto'>
+                                                        <Table
+                                                            columns={tableInfo.columns}
+                                                            values={tableInfo.rows}
+                                                        />
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
                                     )}
                                 </div>
