@@ -51,13 +51,14 @@ def get_current_user():
         return None
 
 
-
-def save_table_metadata_to_db():
+def save_table_metadata_to_db(target_table_names = []):
     """
     Save tables metadata to database
     """
-    table_names = get_table_names(get_current_user())
+    table_names = get_table_names()
     for table_name in table_names:
+        if target_table_names and table_name not in target_table_names:
+            continue
         metadata = generate_table_metadata(table_name)
         try:
             tm = TableMetadata.query.filter_by(table_name=table_name).one_or_none()
@@ -124,7 +125,7 @@ def get_type_names() -> List[str] | None:
         return None
 
 
-def get_table_names(username) -> List[str] | None:
+def get_table_names(username=get_current_user()) -> List[str] | None:
     """
     Get names of tables in the database
     """
