@@ -1,10 +1,42 @@
-import openai
+import json
 import re
-from typing import List, Dict
-from ...config import OPENAI_KEY
+from typing import Dict, List
+
+import openai
+from app.extensions import db
+from app.models.in_context_examples import InContextExamples
+
+IN_CONTEXT_EXAMPLES_DICT = {}
+def setup_in_context_examples_dict():
+    """
+    Setup in context examples dict
+    """
+    global IN_CONTEXT_EXAMPLES_DICT
+
+    try:
+        in_context_examples = InContextExamples.query.all()
+    except Exception as e:
+        print(e)
+        in_context_examples = []
+    for in_context_example in in_context_examples:
+        IN_CONTEXT_EXAMPLES_DICT[in_context_example.mode] = in_context_example.examples
 
 
-openai.api_key = OPENAI_KEY
+def get_few_shot_messages(mode: str = "text_to_sql") -> List[Dict]:
+    global IN_CONTEXT_EXAMPLES_DICT
+    
+    examples = IN_CONTEXT_EXAMPLES_DICT.get(mode, [])
+    messages = []
+    for example in examples:
+        messages.append({
+            "role": "user",
+            "content": example["user"],
+        })
+        messages.append({
+            "role": "assistant",
+            "content": example["assistant"],
+        })
+    return messages
 
 
 def get_assistant_message(
@@ -45,10 +77,8 @@ def extract_sql_query_from_message(assistant_message_content):
     return clean_message_content(content)
 
 
-
 def extract_code_from_markdown(assistant_message_content):
-    regex = r"```([\s\S]+?)```"
-    matches = re.findall(regex, assistant_message_content)
+    matches = re.findall(r"```([\s\S]+?)```", assistant_message_content)
 
     if matches:
         code_str = matches[0]

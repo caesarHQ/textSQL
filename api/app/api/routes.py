@@ -18,16 +18,16 @@ def get_tables():
     Select relevant tables given a natural language query
     """
     request_body = request.get_json()
-    natural_language_query = request_body.get('natural_language_query')
+    natural_language_query = request_body.get("natural_language_query")
 
     if not natural_language_query:
         error_msg = 'natural_language_query is missing from request body'
-        return make_response(jsonify({'error': error_msg}), 400)
+        return make_response(jsonify({"error": error_msg}), 400)
     
     scope = request_body.get('scope', "USA")
     
     table_names = get_relevant_tables(natural_language_query, scope)
-    return make_response(jsonify({'table_names': table_names}), 200)
+    return make_response(jsonify({"table_names": table_names}), 200)
 
 
 @bp.route('/explain_sql', methods=['POST'])
@@ -39,7 +39,7 @@ def explain_sql():
     sql = request_body.get('sql')
     if not sql:
         error_msg = '`sql` is missing from request body'
-        return make_response(jsonify({'error': error_msg}), 400)
+        return make_response(jsonify({"error": error_msg}), 400)
     explanation = get_sql_explanation(sql)
     return make_response(jsonify({'explanation': explanation}), 200)
 
@@ -50,17 +50,17 @@ def text_to_sql():
     Convert natural language query to SQL
     """
     request_body = request.get_json()
-    natural_language_query = request_body.get('natural_language_query')
-    table_names = request_body.get('table_names')
+    natural_language_query = request_body.get("natural_language_query")
+    table_names = request_body.get("table_names")
     scope = request_body.get('scope', "USA")
 
     if not natural_language_query:
         error_msg = '`natural_language_query` is missing from request body'
-        return make_response(jsonify({'error': error_msg}), 400)
+        return make_response(jsonify({"error": error_msg}), 400)
 
     # if not table_names or len(table_names) == 0:
     #     error_msg = 'non-empty `table_names` array is missing from request body'
-    #     return make_response(jsonify({'error': error_msg}), 400)
+    #     return make_response(jsonify({"error": error_msg}), 400)
 
     try:
         # LM outputs are non-deterministic, so same natural language query may result in different SQL queries (some of which may be invalid)
@@ -74,7 +74,7 @@ def text_to_sql():
     except Exception as e:
         capture_exception(e)
         error_msg = f'Error processing request: {str(e)}'
-        return make_response(jsonify({'error': error_msg}), 500)
+        return make_response(jsonify({"error": error_msg}), 500)
 
     return make_response(jsonify({'result': result, 'sql_query': sql_query}), 200)
 
@@ -89,14 +89,14 @@ def text_to_sql_chat():
 
     if not messages:
         error_msg = '`messages` is missing from request body'
-        return make_response(jsonify({'error': error_msg}), 400)
+        return make_response(jsonify({"error": error_msg}), 400)
 
     try:
         result, sql_query, messages = text_to_sql_chat_with_retry(messages)
     except Exception as e:
         capture_exception(e)
         error_msg = f'Error processing request: {str(e)}'
-        return make_response(jsonify({'error': error_msg}), 500)
+        return make_response(jsonify({"error": error_msg}), 500)
 
     return make_response(jsonify({
         'result': result,
@@ -114,7 +114,7 @@ def zip_to_lat_lon():
 
     if not zip_code:
         error_msg = '`zip_code` is missing from request parameters'
-        return make_response(jsonify({'error': error_msg}), 400)
+        return make_response(jsonify({"error": error_msg}), 400)
 
     try:
         lat = zip_lat_lon[zip_code]['lat']
@@ -122,7 +122,7 @@ def zip_to_lat_lon():
     except KeyError as e:
         capture_exception(e)
         error_msg = f'Invalid zip_code: {zip_code}'
-        return make_response(jsonify({'error': error_msg}), 400)
+        return make_response(jsonify({"error": error_msg}), 400)
 
     return make_response(jsonify({'lat': lat, 'lon': lon}), 200)
 
@@ -132,5 +132,5 @@ def run_sql():
     try:
         result = execute_sql(request_body.get('sql'))
     except Exception as e:
-        return make_response(jsonify({'error': f'Error processing request: {str(e)}' }), 400)
+        return make_response(jsonify({"error": f'Error processing request: {str(e)}' }), 400)
     return make_response(jsonify({'result': result}), 200)

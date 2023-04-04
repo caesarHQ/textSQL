@@ -1,5 +1,4 @@
-from ..few_shot_examples import get_few_shot_example_messages
-from ..messages import get_assistant_message
+from ..utils import get_assistant_message, get_few_shot_messages
 
 
 def get_message_with_descriptions():
@@ -16,7 +15,7 @@ def get_default_messages():
             "You are a helpful assistant for providing an explanation for a SQL query."
         )
     }]
-    default_messages.extend(get_few_shot_example_messages(mode="sql_explanation"))
+    default_messages.extend(get_few_shot_messages(mode="sql_explanation"))
     return default_messages
 
 
@@ -31,7 +30,6 @@ def get_sql_explanation(sql) -> str:
         "content": content
     })
 
-    # model = "gpt-4"
     model = "gpt-3.5-turbo"
 
     assistant_message_content = get_assistant_message(messages=messages, model=model)["message"]["content"]
