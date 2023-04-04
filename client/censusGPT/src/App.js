@@ -54,7 +54,7 @@ import { useSearchParams } from 'react-router-dom'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { AiOutlineSearch } from 'react-icons/ai'
-import { BsClipboard2, BsClipboard2Check, BsPencilSquare, BsQuestionCircle, BsTable } from 'react-icons/bs'
+import { BsClipboard2, BsClipboard2Check, BsPatchQuestion, BsPencilSquare, BsQuestionCircle, BsTable } from 'react-icons/bs'
 
 // Add system dark mode
 localStorage.theme === 'dark' ||
@@ -159,9 +159,13 @@ function App(props) {
     const mobileSqlRef = useRef()
     const mapRef = useRef()
     const expandedMobileSearchRef = useRef()
+    const sqlExplanationRef = useRef()
     const [touchStart, setTouchStart] = useState(null)
     const [touchEnd, setTouchEnd] = useState(null)
     const [polygons, setPolygons] = useState([])
+    const [sqlExplanationIsOpen, setSqlExplanationIsOpen] = useState(false)
+    const [sqlExplanation, setSqlExplanation] = useState()
+    const [isExplainSqlLoading, setIsExplainSqlLoading] = useState(false)
 
     const onTouchStart = (e) => {
         if (expandedMobileSearchRef.current?.contains(e.target)) return
@@ -212,6 +216,7 @@ function App(props) {
 
     const executeSql = (sql) => {
         setIsLoading(true)
+        setSqlExplanation()
         setMobileHelpIsOpen(false)
         clearMapLayers()
 
@@ -361,6 +366,38 @@ function App(props) {
             })
     }
 
+    const explainSql = (sql) => {
+        setIsExplainSqlLoading(true)
+
+        const options = {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+                sql
+            })
+        }
+
+        fetch(api_endpoint + '/api/explain_sql', options)
+            .then((response) => response.json())
+            .then((response) => {
+                setSqlExplanation(response.explanation)
+                setIsExplainSqlLoading(false)
+            })
+            .catch((err) => {
+                setSqlExplanation()
+                Sentry.setContext('queryContext', {
+                    query: query
+                })
+                Sentry.captureException(err)
+                setIsExplainSqlLoading(false)
+                posthog.capture('explainSql_backend_error', {
+                    error: err,
+                })
+                setErrorMessage(err.message || err)
+                console.error(err)
+            })
+    }
+
     const getTables = (natural_language_query) => {
         setIsGetTablesLoading(true)
 
@@ -401,7 +438,7 @@ function App(props) {
 
     const TableNamesDisplay = () => (
         <div className='flex flex-col w-full rounded-lg shadow bg-gray-100 dark:bg-dark-800 ring-1 ring-dark-300 sm:ring-0'>
-            <div className='flex p-1.5 items-center gap-2 rounded-t-lg bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm'>
+            <div className='flex p-2 items-center gap-2 rounded-t-lg bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm'>
                 <BsTable className='dark:text-white/60' />
                 <span className='font-medium text-sm'>Tables Queried</span>
             </div>
@@ -426,6 +463,7 @@ function App(props) {
 
         setMobileHelpIsOpen(false)
         setTableNames()
+        setSqlExplanation()
 
         // clear previous layers
         clearMapLayers()
@@ -669,17 +707,50 @@ function App(props) {
             </button>
         )
 
+        const ExplainSqlButton = () => (
+            <>
+                <div className='group relative flex'>
+                    <button onClick={() => {
+                        setSqlExplanationIsOpen(!sqlExplanationIsOpen)
+                        !sqlExplanation && explainSql(sqlRef.current)
+                    }
+                    }
+                        className={`text-lg hover:text-blue-600 ${sqlExplanationIsOpen && 'text-blue-600'}`}>
+                        <BsPatchQuestion />
+                    </button>
+                    {sqlExplanationIsOpen ? (
+                        <div ref={sqlExplanationRef} className='h-[5.4rem] w-64 sm:w-[28.5rem] flex overflow-auto bottom-7 text-xs absolute rounded-md p-2 bg-gray-300/90 dark:bg-dark-800/90 backdrop-blur-xl ring-blue-600 ring-1'>
+                            {isExplainSqlLoading ? (
+                                <div className='flex w-full items-center justify-center text-lg'>
+                                    <ImSpinner className='animate-spin' />
+                                </div>
+                            ) : (
+                                <span className='whitespace-pre-wrap text-sm font-medium'>
+                                    {sqlExplanation} 
+                                </span>
+                            )}
+                        </div>
+                    ) : (
+                        <div className='bottom-7 text-xs hidden group-hover:block absolute rounded-md p-1 bg-gray-300/75 dark:bg-dark-800/75 backdrop-blur ring-gray-900 dark:ring-gray-300 ring-1'>
+                            Click to explain SQL
+                        </div>
+                    )}
+                </div>
+            </>
+        )
+
         return (
             <pre
                 align="left"
-                className="rounded-md bg-gray-100 dark:bg-dark-800 dark:text-white"
+                className="rounded-lg bg-gray-100 dark:bg-dark-800 dark:text-white ring-1 ring-dark-300 sm:ring-0"
             >
                 <div className='flex items-center w-full min-h-full'>
-                    <div className='flex w-full h-full rounded-t-md items-center p-1.5 space-x-1.5 bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm font-sans'>
-                        <h2 className='font-bold tracking-wide h-6'>
+                    <div className='rounded-t-lg flex w-full justify-end h-full items-center p-2 space-x-1.5 bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm font-sans'>
+                        <ExplainSqlButton />
+                        <h2 className='font-bold tracking-wide h-6 overflow-hidden flex w-full'>
                             {title}
                         </h2>
-                        <div className='flex w-full items-center justify-end right-1 space-x-1.5 relative'>
+                        <div className='flex right-1 space-x-1.5 relative'>
                             {editingSql && (
                                 <button
                                     onClick={() => {
@@ -697,7 +768,7 @@ function App(props) {
                     </div>
                 </div>
                 <code
-                    className={`px-2 bg-transparent text-sm text-gray-800 dark:text-white flex rounded-b-md ${editingSql && 'ring-2 ring-inset'}`}>
+                    className={`px-2 bg-transparent text-sm text-gray-800 dark:text-white flex ${editingSql && 'ring-2 ring-inset'}`}>
                     <SyntaxHighlighter
                         ref={sqlRef}
                         language="sql"
@@ -758,7 +829,7 @@ function App(props) {
 
     return (
         <main className='h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen'>
-            <div className="App flex flex-col h-full">
+            <div className="App flex flex-col h-full" onClick={(e) => sqlExplanationRef.current && !sqlExplanationRef.current.contains(e.target) && setSqlExplanationIsOpen(false)}>
                 <link
                     href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
                     rel="stylesheet"
@@ -957,7 +1028,7 @@ function App(props) {
                                             )}
                                             {!isLoading && (
                                                 <>
-                                                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg w-full overflow-auto'>
+                                                    <div className='w-full'>
                                                         <SQL sql={sql} />
                                                     </div>
                                                     <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-full overflow-auto'>
@@ -1016,7 +1087,7 @@ function App(props) {
                 )}
                 {mobileSqlIsOpen && sql.length && (
                     <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileSqlRef.current && !mobileSqlRef.current.contains(e.target) && setMobileSqlIsOpen(false)}>
-                        <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-4/5 max-h-80 overflow-auto' ref={mobileSqlRef}>
+                        <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-4/5 max-h-80' ref={mobileSqlRef}>
                             <SQL sql={sql} />
                         </div>
                     </div>
