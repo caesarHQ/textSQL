@@ -167,7 +167,7 @@ def get_table_names(username=get_current_user()) -> List[str] | None:
     """
     Get names of tables in the database
     """
-    IGNORE_TABLES = ["table_metadata", "type_metadata", "in_context_examples"]
+    IGNORE_TABLES = ["ai_sql_table_metadata", "ai_sql_type_metadata", "ai_sql_in_context_examples"]
     try:
         with ENGINE.connect() as connection:
             connection = connection.execution_options(
