@@ -50,13 +50,13 @@ def setup_metadata():
 @bp.route('/save_metadata', methods=['POST'])
 def save_metadata():
     request_body = request.get_json()
-    tables_metadata_dict = request_body.get("tables_metadata_dict", [])
-    types_metadata_dict = request_body.get("types_metadata_dict", [])
+    tables_metadata_dict = request_body.get("tables_metadata_dict", {})
+    types_metadata_dict = request_body.get("types_metadata_dict", {})
 
-    for table_name, table_metadata in tables_metadata_dict:
-        save_table_metadata(table_name, table_metadata)
+    for name, metadata in tables_metadata_dict.items():
+        save_table_metadata(name, metadata)
 
-    for type_name, type_metadata in types_metadata_dict:
-        save_type_metadata(type_name, type_metadata)
+    for name, metadata in types_metadata_dict.items():
+        save_type_metadata(name, metadata)
 
     return "Success"
