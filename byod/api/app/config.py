@@ -22,7 +22,8 @@ class FlaskAppConfig:
 
 ENGINE = create_engine(DB_URL)
 
-pinecone.init(
-    api_key=PINECONE_KEY,
-    environment=PINECONE_ENV
-)
+if PINECONE_KEY and PINECONE_ENV:
+    pinecone.init(
+        api_key=PINECONE_KEY,
+        environment=PINECONE_ENV
+    )

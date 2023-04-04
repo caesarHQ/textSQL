@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, make_response, request
 
+from ..config import PINECONE_ENV, PINECONE_KEY
 from ..table_selection.utils import (get_relevant_tables_from_lm,
                                      get_relevant_tables_from_pinecone)
 from .utils import text_to_sql_with_retry
@@ -22,8 +23,10 @@ def text_to_sql():
 
     try:
         if not table_names:
-            # table_names = get_relevant_tables_from_pinecone(natural_language_query)
-            table_names = get_relevant_tables_from_lm(natural_language_query)
+            if PINECONE_ENV and PINECONE_KEY:
+                table_names = get_relevant_tables_from_pinecone(natural_language_query)
+            else:
+                table_names = get_relevant_tables_from_lm(natural_language_query)
         result, sql_query = text_to_sql_with_retry(natural_language_query, table_names)
     except Exception as e:
         error_msg = f"Error processing request: {str(e)}"
