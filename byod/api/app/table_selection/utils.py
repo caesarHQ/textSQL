@@ -12,7 +12,7 @@ from ..utils import get_assistant_message, get_few_shot_messages
 
 TYPES_METADATA_DICT = {}
 TABLES_METADATA_DICT = {}
-def setup_metadata_dicts():
+def load_tables_and_types_metadata():
     """
     Setup metadata dicts for tables and types
     """
