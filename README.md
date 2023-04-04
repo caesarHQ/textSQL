@@ -36,7 +36,7 @@ Here are some examples:
 
 ### Diagram:
 
-Visual representation of the architecture - textSQL uses LLMs to convert natural language to SQL in order to democratize data analysis.
+Visual representation of the architecture - textSQL uses LLMs to convert natural language to accurate, executable SQL.
 
 ![TextSQL diagram](https://raw.githubusercontent.com/zafileo23/textSQL/zafileo23-patch-2/TextSQL.svg)
 
