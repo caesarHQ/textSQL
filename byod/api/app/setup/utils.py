@@ -167,6 +167,7 @@ def get_table_names(username=get_current_user()) -> List[str] | None:
     """
     Get names of tables in the database
     """
+    IGNORE_TABLES = ["table_metadata", "type_metadata", "in_context_examples"]
     try:
         with ENGINE.connect() as connection:
             connection = connection.execution_options(
@@ -183,7 +184,8 @@ def get_table_names(username=get_current_user()) -> List[str] | None:
 
                 table_names = []
                 for row in rows:
-                    table_names.append(row[0])
+                    if row[0] not in IGNORE_TABLES:
+                        table_names.append(row[0])
 
                 return table_names
             
