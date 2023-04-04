@@ -90,12 +90,9 @@ def execute_sql(sql_query: str):
         raise NotReadOnlyException("Only read-only queries are allowed.")
 
     with ENGINE.connect() as connection:
-        connection = connection.execution_options(
-            postgresql_readonly=True
-        )
+        connection = connection.execution_options(postgresql_readonly=True)
         with connection.begin():
-            sql_text = text(sql_query)
-            result = connection.execute(sql_text)
+            result = connection.execute(text(sql_query))
 
         column_names = list(result.keys())
 
