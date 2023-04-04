@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, make_response, request
 
 from ..config import ENGINE
-from .utils import (generate_few_shot_queries, get_table_names,
+from .utils import (generate_few_shot_queries, generate_table_metadata,
+                    generate_type_metadata, get_table_names, get_type_names,
                     save_table_metadata, save_tables_metadata_to_db,
                     save_type_metadata, save_types_metadata_to_db)
 
@@ -35,16 +36,45 @@ def get_tables():
     return make_response(jsonify({"table_names": table_names}), 200)
 
 
-@bp.route('/setup_metadata', methods=['POST'])
-def setup_metadata():
+@bp.route('/get_tables_metadata', methods=['POST'])
+def get_tables_metadata():
+    """
+    Get tables metadata
+    """
     request_body = request.get_json()
-    target_table_names = request_body.get("table_names")
-    target_type_names = request_body.get("type_names")
+    table_names = request_body.get('table_names')
 
-    save_tables_metadata_to_db(target_table_names)
-    save_types_metadata_to_db(target_type_names)
-    
-    return "Success"
+    tables_metadata = {}
+    for t in table_names:
+        metadata = generate_table_metadata(t)
+        tables_metadata[t] = metadata
+
+    return make_response(jsonify({"tables_metadata": tables_metadata}), 200)
+
+
+@bp.route('/get_types', methods=['GET'])
+def get_types():
+    """
+    Get type names from database
+    """
+    type_names = get_type_names()
+    return make_response(jsonify({"type_names": type_names}), 200)
+
+
+@bp.route('/get_types_metadata', methods=['POST'])
+def get_types_metadata():
+    """
+    Get types metadata
+    """
+    request_body = request.get_json()
+    type_names = request_body.get('type_names')
+
+    types_metadata = {}
+    for t in type_names:
+        metadata = generate_type_metadata(t)
+        types_metadata[t] = metadata
+
+    return make_response(jsonify({"types_metadata": types_metadata}), 200)
 
 
 @bp.route('/save_metadata', methods=['POST'])
@@ -59,4 +89,16 @@ def save_metadata():
     for name, metadata in types_metadata_dict.items():
         save_type_metadata(name, metadata)
 
+    return "Success"
+
+
+@bp.route('/setup_metadata', methods=['POST'])
+def setup_metadata():
+    request_body = request.get_json()
+    target_table_names = request_body.get("table_names")
+    target_type_names = request_body.get("type_names")
+
+    save_tables_metadata_to_db(target_table_names)
+    save_types_metadata_to_db(target_type_names)
+    
     return "Success"
