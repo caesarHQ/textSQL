@@ -34,6 +34,11 @@ Here are some examples:
 <img width="1316" alt="Screenshot 2023-03-10 at 12 55 44 AM" src="https://user-images.githubusercontent.com/10172332/224270303-087495bd-2391-4e1f-a8ad-ef5ae49ace0c.png">
 
 
+### Diagram:
+
+![TextSQL diagram](https://raw.githubusercontent.com/zafileo23/textSQL/zafileo23-patch-2/TextSQL.svg)
+
+
 ### Roadmap:
 
 We're splitting the roadmap for this project broadly into three categories
