@@ -5,7 +5,7 @@ from typing import Dict, List
 import joblib
 import newrelic
 import tiktoken
-from app.config import engine
+from app.config import ENGINE
 from sqlalchemy import text
 
 from ..geo_data import city_lat_lon, zip_lat_lon, neighborhood_shapes
@@ -109,7 +109,7 @@ def execute_sql(sql_query: str):
     if not is_read_only_query(sql_query):
         raise NotReadOnlyException("Only read-only queries are allowed.")
 
-    with engine.connect() as connection:
+    with ENGINE.connect() as connection:
         connection = connection.execution_options(
             postgresql_readonly=True
         )

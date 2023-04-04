@@ -1,20 +1,21 @@
 from os import getenv
 
+import openai
 import pinecone
 import sentry_sdk
 from dotenv import load_dotenv
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sqlalchemy import create_engine
-from sqlalchemy.pool import QueuePool
 
 load_dotenv()
 
 ENV = getenv("ENVIRONMENT") or "unknown"
-if ENV == "production":
-    DB_URL = "postgresql://census_data_user:BvgUaxoocxdDrJ9Mam4HHkacPBWLYYt9@dpg-cg59te3hp8u9l20dqd40-b.replica-cyan.oregon-postgres.render.com/census_data"
-else:
-    DB_URL = "postgresql://census_data_user:3PjePE3hVzm2m2UFPywLTLfIiC6w28HB@dpg-cg73gvhmbg5ab7mrk8qg-b.replica-cyan.oregon-postgres.render.com/census_data_w0ix"
+DB_URL = getenv("DB_URL")
 OPENAI_KEY = getenv("OPENAI_KEY")
+PINECONE_KEY = getenv("PINECONE_KEY")
+PINECONE_ENV = getenv("PINECONE_ENV")
+
+openai.api_key = OPENAI_KEY
 
 sentry_sdk.init(
     dsn="https://0e7943646a4242138f99898cd421560e@o4504813129826304.ingest.sentry.io/4504817446617088",
@@ -26,14 +27,14 @@ sentry_sdk.init(
 )
 
 class FlaskAppConfig:
-    CORS_HEADERS = 'Content-Type'
+    CORS_HEADERS = "Content-Type"
     SQLALCHEMY_DATABASE_URI = DB_URL
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
 
+ENGINE = create_engine(DB_URL)
 
-engine = create_engine(DB_URL)
-
-pinecone.init(
-    api_key=getenv("PINECONE_KEY"),
-    environment=getenv("PINECONE_ENV")
-)
+if PINECONE_KEY and PINECONE_ENV:
+    pinecone.init(
+        api_key=PINECONE_KEY,
+        environment=PINECONE_ENV,
+    )

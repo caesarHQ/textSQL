@@ -4,6 +4,7 @@ from typing import List
 import pinecone
 from openai.embeddings_utils import get_embedding
 
+from ....config import PINECONE_ENV, PINECONE_KEY
 from ..few_shot_examples import get_few_shot_example_messages
 from ..messages import extract_code_from_markdown, get_assistant_message
 from .table_details import get_table_schemas
@@ -92,15 +93,19 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
         "content": content
     })
 
+    if PINECONE_KEY and PINECONE_ENV:
+        return get_relevant_tables_from_pinecone(natural_language_query, scope=scope)
+    
     if scope == "SF":
-        # model = "gpt-4"
+        model = "gpt-4"
+    else:
         model = "gpt-3.5-turbo"
-        return get_relevant_tables_from_pinecone(natural_language_query, scope=scope)
-    elif scope == "USA":
-        model = "gpt-3.5-turbo"
-        return get_relevant_tables_from_pinecone(natural_language_query, scope=scope)
 
-    assistant_message_content = get_assistant_message(messages=messages, model=model)["message"]["content"]
-    tables_json_str = extract_code_from_markdown(assistant_message_content)
+    tables_json_str = extract_code_from_markdown(
+        get_assistant_message(
+            messages=messages,
+            model=model
+        )["message"]["content"]
+    )
     tables = json.loads(tables_json_str).get('tables')
     return tables
