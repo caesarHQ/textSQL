@@ -2,7 +2,8 @@ from flask import Blueprint, jsonify, make_response, request
 
 from ..config import ENGINE
 from .utils import (generate_few_shot_queries, get_table_names,
-                    save_table_metadata_to_db, save_type_metadata_to_db)
+                    save_table_metadata, save_tables_metadata_to_db,
+                    save_type_metadata, save_types_metadata_to_db)
 
 bp = Blueprint('setup_bp', __name__)
 
@@ -37,8 +38,25 @@ def get_tables():
 @bp.route('/setup_metadata', methods=['POST'])
 def setup_metadata():
     request_body = request.get_json()
-    table_names = request_body.get("table_names")
+    target_table_names = request_body.get("table_names")
+    target_type_names = request_body.get("type_names")
 
-    save_table_metadata_to_db(table_names)
-    save_type_metadata_to_db()
+    save_tables_metadata_to_db(target_table_names)
+    save_types_metadata_to_db(target_type_names)
+    
+    return "Success"
+
+
+@bp.route('/save_metadata', methods=['POST'])
+def save_metadata():
+    request_body = request.get_json()
+    tables_metadata_dict = request_body.get("tables_metadata_dict", [])
+    types_metadata_dict = request_body.get("types_metadata_dict", [])
+
+    for table_name, table_metadata in tables_metadata_dict:
+        save_table_metadata(table_name, table_metadata)
+
+    for type_name, type_metadata in types_metadata_dict:
+        save_type_metadata(type_name, type_metadata)
+
     return "Success"

@@ -15,10 +15,9 @@ PINECONE_ENV = getenv("PINECONE_ENV")
 openai.api_key = OPENAI_KEY
 
 class FlaskAppConfig:
-    CORS_HEADERS = 'Content-Type'
+    CORS_HEADERS = "Content-Type"
     SQLALCHEMY_DATABASE_URI = DB_URL
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
-
 
 ENGINE = create_engine(DB_URL)
 
