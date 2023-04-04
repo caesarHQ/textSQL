@@ -64,7 +64,7 @@ def get_relevant_tables_from_pinecone(natural_language_query, scope="USA") -> Li
 
     tables_set = set()
     for result in results["matches"]:
-        for table_name in result.metadata['table_names']:
+        for table_name in result.metadata["table_names"]:
             tables_set.add(table_name)
 
     print(results["matches"])
@@ -100,7 +100,7 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
         model = "gpt-3.5-turbo"
         return get_relevant_tables_from_pinecone(natural_language_query, scope=scope)
 
-    assistant_message_content = get_assistant_message(messages=messages, model=model)['message']['content']
+    assistant_message_content = get_assistant_message(messages=messages, model=model)["message"]["content"]
     tables_json_str = extract_code_from_markdown(assistant_message_content)
     tables = json.loads(tables_json_str).get('tables')
     return tables

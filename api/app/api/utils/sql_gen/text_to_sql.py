@@ -231,7 +231,7 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3, scope="USA"):
     # Try each completion in order
     attempts_contexts = []
     for assistant_message in assistant_messages:
-        sql_query = extract_sql_query_from_message(assistant_message['message']['content'])
+        sql_query = extract_sql_query_from_message(assistant_message["message"]["content"])
 
         try:
             response = execute_sql(sql_query)
@@ -241,7 +241,7 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3, scope="USA"):
             attempts_context = messages.copy()
             attempts_context.append({
                 "role": "assistant",
-                "content": assistant_message['message']['content']
+                "content": assistant_message["message"]["content"]
             })
             attempts_context.append({
                 "role": "user",
@@ -269,7 +269,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
         }]
         assistant_message = get_assistant_message(rephrase)
         content = make_msg_with_schema_and_warnings().format(
-            natural_language_query=assistant_message['message']['content'],
+            natural_language_query=assistant_message["message"]["content"],
             schemas=schemas
         )
         try:
@@ -295,7 +295,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             else:
                 model = "gpt-3.5-turbo"
             assistant_message = get_assistant_message(messages, model=model)
-            sql_query = extract_sql_query_from_message(assistant_message['message']['content'])
+            sql_query = extract_sql_query_from_message(assistant_message["message"]["content"])
 
             response = execute_sql(sql_query)
             # Generated SQL query did not produce exception. Return result
@@ -304,7 +304,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
         except Exception as e:
             messages.append({
                 "role": "assistant",
-                "content": assistant_message['message']['content']
+                "content": assistant_message["message"]["content"]
             })
             messages.append({
                 "role": "user",
@@ -342,7 +342,7 @@ def text_to_sql_chat_with_retry(messages, table_names=None, scope="USA"):
             schemas=schemas
             )
     }]
-    rephrased_query = get_assistant_message(rephrase)['message']['content']
+    rephrased_query = get_assistant_message(rephrase)["message"]["content"]
     content = make_msg_with_schema_and_warnings().format(
         natural_language_query=rephrased_query,
         schemas=schemas
