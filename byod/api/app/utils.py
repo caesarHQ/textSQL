@@ -23,6 +23,8 @@ def setup_in_context_examples_dict():
 
 
 def get_few_shot_messages(mode: str = "text_to_sql") -> List[Dict]:
+    global IN_CONTEXT_EXAMPLES_DICT
+    
     examples = IN_CONTEXT_EXAMPLES_DICT.get(mode, [])
     messages = []
     for example in examples:

@@ -7,10 +7,8 @@ from app.extensions import db
 from app.models.table_metadata import TableMetadata
 from app.models.type_metadata import TypeMetadata
 from openai.embeddings_utils import get_embedding
-from flask import current_app
 
 from ..utils import get_assistant_message, get_few_shot_messages
-
 
 TYPES_METADATA_DICT = {}
 TABLES_METADATA_DICT = {}
@@ -42,12 +40,14 @@ def get_table_schemas_str(table_names: List[str] = []) -> str:
     """
     Format table and types metadata into string to be used in prompt
     """
-    tables_to_use = []
+    global TYPES_METADATA_DICT
+    global TABLES_METADATA_DICT
 
-    for table_name in table_names:
-        tables_to_use.append(TABLES_METADATA_DICT.get(table_name))
-    if not tables_to_use:
-        tables_to_use = TABLES_METADATA_DICT.values()
+    tables_to_use = []
+    if table_names:
+        tables_to_use = [TABLES_METADATA_DICT[t_name] for t_name in table_names]
+    else:
+        tables_to_use = [t for t in TABLES_METADATA_DICT.values()]
 
     custom_types_to_use = set()
     tables_str_list = []
