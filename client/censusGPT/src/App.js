@@ -54,7 +54,7 @@ import { useSearchParams } from 'react-router-dom'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { AiOutlineSearch } from 'react-icons/ai'
-import { BsClipboard2, BsClipboard2Check, BsPatchQuestion, BsPencilSquare, BsQuestionCircle, BsTable } from 'react-icons/bs'
+import { BsChevronCompactDown, BsClipboard2, BsClipboard2Check, BsDashLg, BsPatchQuestion, BsPencilSquare, BsQuestionCircle, BsTable } from 'react-icons/bs'
 
 // Add system dark mode
 localStorage.theme === 'dark' ||
@@ -166,6 +166,7 @@ function App(props) {
     const [sqlExplanationIsOpen, setSqlExplanationIsOpen] = useState(false)
     const [sqlExplanation, setSqlExplanation] = useState()
     const [isExplainSqlLoading, setIsExplainSqlLoading] = useState(false)
+    const [minimizeTableNames, setMinimizeTableNames] = useState(false)
 
     const onTouchStart = (e) => {
         if (expandedMobileSearchRef.current?.contains(e.target)) return
@@ -438,18 +439,26 @@ function App(props) {
 
     const TableNamesDisplay = () => (
         <div className='flex flex-col w-full rounded-lg shadow bg-gray-100 dark:bg-dark-800 ring-1 ring-dark-300 sm:ring-0'>
-            <div className='flex p-2 items-center gap-2 rounded-t-lg bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm'>
-                <BsTable className='dark:text-white/60' />
-                <span className='font-medium text-sm'>Tables Queried</span>
+            <div className='flex w-full justify-between p-2 items-center rounded-t-lg bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm'>
+                <div className='inline-flex items-center space-x-2'>
+                    <BsTable className='dark:text-white/60' />
+                    <span className='font-medium text-sm'>Tables Queried</span>
+                </div>
+
+                <button className='text-sm rounded-full p-1 bg-white/10 hover:bg-white/20' onClick={() => setMinimizeTableNames(!minimizeTableNames)}>
+                    {minimizeTableNames ? <BsChevronCompactDown /> : <BsDashLg />}
+                </button>
             </div>
 
-            <ul className='font-medium text-left'>
-                {tableNames.map((tableName, index) => (
-                    <li className={`${index % 2 == 0 ? 'dark:bg-black/10 bg-gray-400/10' : 'dark:bg-black/20 bg-gray-400/20'} py-1 pl-2 backdrop-blur-md border-b dark:border-white/10 border-black/10 ${index === tableNames.length - 1 && 'rounded-b-lg border-b-0'}`}>
-                        <span className='text-sm'>{tableName}</span>
-                    </li>
-                ))}
-            </ul>
+            {!minimizeTableNames && (
+                <ul className='font-medium text-left'>
+                    {tableNames.map((tableName, index) => (
+                        <li className={`${index % 2 == 0 ? 'dark:bg-black/10 bg-gray-400/10' : 'dark:bg-black/20 bg-gray-400/20'} py-1 pl-2 backdrop-blur-md border-b dark:border-white/10 border-black/10 ${index === tableNames.length - 1 && 'rounded-b-lg border-b-0'}`}>
+                            <span className='text-sm'>{tableName}</span>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     )
 
@@ -713,25 +722,24 @@ function App(props) {
                     <button onClick={() => {
                         setSqlExplanationIsOpen(!sqlExplanationIsOpen)
                         !sqlExplanation && explainSql(sqlRef.current)
-                    }
-                    }
+                    }}
                         className={`text-lg hover:text-blue-600 ${sqlExplanationIsOpen && 'text-blue-600'}`}>
                         <BsPatchQuestion />
                     </button>
                     {sqlExplanationIsOpen ? (
-                        <div ref={sqlExplanationRef} className='h-[5.4rem] w-64 sm:w-[28.5rem] flex overflow-auto bottom-7 text-xs absolute rounded-md p-2 bg-gray-300/90 dark:bg-dark-800/90 backdrop-blur-xl ring-blue-600 ring-1'>
+                        <div ref={sqlExplanationRef} className='h-[5.4rem] w-64 sm:w-[28.5rem] flex overflow-auto top-7 text-xs absolute rounded-md p-2 bg-gray-300/95 dark:bg-dark-800/95 backdrop-blur-xl ring-blue-600 ring-1 ring-inset'>
                             {isExplainSqlLoading ? (
                                 <div className='flex w-full items-center justify-center text-lg'>
                                     <ImSpinner className='animate-spin' />
                                 </div>
                             ) : (
                                 <span className='whitespace-pre-wrap text-sm font-medium'>
-                                    {sqlExplanation} 
+                                    {sqlExplanation}
                                 </span>
                             )}
                         </div>
                     ) : (
-                        <div className='bottom-7 text-xs hidden group-hover:block absolute rounded-md p-1 bg-gray-300/75 dark:bg-dark-800/75 backdrop-blur ring-gray-900 dark:ring-gray-300 ring-1'>
+                        <div className='font-semibold top-7 text-sm hidden group-hover:block absolute rounded-md p-1 bg-gray-300/75 dark:bg-dark-800/75 backdrop-blur ring-gray-900 dark:ring-gray-300 ring-1'>
                             Click to explain SQL
                         </div>
                     )}
@@ -750,7 +758,7 @@ function App(props) {
                         <h2 className='font-bold tracking-wide h-6 overflow-hidden flex w-full'>
                             {title}
                         </h2>
-                        <div className='flex right-1 space-x-1.5 relative'>
+                        <div className='flex right-1 space-x-1.5 relative items-center'>
                             {editingSql && (
                                 <button
                                     onClick={() => {
@@ -884,10 +892,6 @@ function App(props) {
                             <> </>
                         )}
                         <div className='flex flex-col space-y-4 w-full'>
-                            {tableNames && (
-                                <TableNamesDisplay />
-                            )}
-
                             {!isLoading && sql.length !== 0 && (
                                 <>
                                     <div>
@@ -899,6 +903,9 @@ function App(props) {
                                         values={tableInfo.rows}
                                     />
                                 </>
+                            )}
+                            {tableNames && (
+                                <TableNamesDisplay />
                             )}
                         </div>
                     </div>
@@ -1023,9 +1030,6 @@ function App(props) {
 
                                     {sql.length != 0 && (
                                         <div className='space-y-4 flex-col flex w-full h-fit items-center pb-4'>
-                                            {tableNames && (
-                                                <TableNamesDisplay />
-                                            )}
                                             {!isLoading && (
                                                 <>
                                                     <div className='w-full'>
@@ -1038,6 +1042,9 @@ function App(props) {
                                                         />
                                                     </div>
                                                 </>
+                                            )}
+                                            {tableNames && (
+                                                <TableNamesDisplay />
                                             )}
                                         </div>
                                     )}
