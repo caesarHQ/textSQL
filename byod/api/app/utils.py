@@ -7,7 +7,7 @@ from app.extensions import db
 from app.models.in_context_examples import InContextExamples
 
 IN_CONTEXT_EXAMPLES_DICT = {}
-def setup_in_context_examples_dict():
+def load_in_context_examples():
     """
     Setup in context examples dict
     """
