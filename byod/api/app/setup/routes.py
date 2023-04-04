@@ -94,11 +94,7 @@ def save_metadata():
 
 @bp.route('/setup_metadata', methods=['POST'])
 def setup_metadata():
-    request_body = request.get_json()
-    target_table_names = request_body.get("table_names")
-    target_type_names = request_body.get("type_names")
-
-    save_tables_metadata_to_db(target_table_names)
-    save_types_metadata_to_db(target_type_names)
+    save_tables_metadata_to_db()
+    save_types_metadata_to_db()
     
     return "Success"
