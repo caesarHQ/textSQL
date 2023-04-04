@@ -133,7 +133,7 @@ def generate_few_shot_queries():
     pass
 
 
-def get_type_names() -> List[str] | None:
+def get_type_names() -> List[str]:
     """
     Get names of user-defined types in the database
     """
@@ -163,7 +163,7 @@ def get_type_names() -> List[str] | None:
         return None
 
 
-def get_table_names(username=get_current_user()) -> List[str] | None:
+def get_table_names(username=get_current_user()) -> List[str]:
     """
     Get names of tables in the database
     """

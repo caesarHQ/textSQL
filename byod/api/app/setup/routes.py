@@ -3,8 +3,7 @@ from flask import Blueprint, jsonify, make_response, request
 from ..config import ENGINE
 from .utils import (generate_few_shot_queries, generate_table_metadata,
                     generate_type_metadata, get_table_names, get_type_names,
-                    save_table_metadata, save_tables_metadata_to_db,
-                    save_type_metadata, save_types_metadata_to_db)
+                    save_table_metadata, save_type_metadata)
 
 bp = Blueprint('setup_bp', __name__)
 
@@ -92,9 +91,13 @@ def save_metadata():
     return "Success"
 
 
+# DEPRECATED
 @bp.route('/setup_metadata', methods=['POST'])
 def setup_metadata():
-    save_tables_metadata_to_db()
-    save_types_metadata_to_db()
+
+    for table_name in get_table_names():
+        save_table_metadata(table_name, generate_table_metadata(table_name))
+    for type_name in get_type_names():
+        save_type_metadata(type_name, generate_type_metadata(type_name))
     
     return "Success"
