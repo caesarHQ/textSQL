@@ -91,6 +91,9 @@ def save_metadata():
     return "Success"
 
 
+# TODO: delete metadata
+
+
 # DEPRECATED
 @bp.route('/setup_metadata', methods=['POST'])
 def setup_metadata():

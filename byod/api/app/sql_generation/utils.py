@@ -20,7 +20,7 @@ def make_default_messages(schemas_str: str) -> List[Dict[str, str]]:
     default_messages = [{
         "role": "system",
         "content": (
-            "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command, generally about crime, demographics, and population."
+            "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command."
             "\n"
             "The following are tables you can query:\n"
             "---------------------\n"

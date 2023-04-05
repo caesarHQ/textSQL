@@ -174,10 +174,15 @@ def get_table_names(username=get_current_user()) -> List[str]:
                 postgresql_readonly=True
             )
             with connection.begin():
+                # sql_text = text(f"""
+                #     SELECT tablename
+                #     FROM pg_catalog.pg_tables
+                #     WHERE tableowner = '{username}';
+                # """)
                 sql_text = text(f"""
                     SELECT tablename
                     FROM pg_catalog.pg_tables
-                    WHERE tableowner = '{username}';
+                    WHERE schemaname = 'public';
                 """)
                 result = connection.execute(sql_text)
                 rows = [list(r) for r in result.all()]
