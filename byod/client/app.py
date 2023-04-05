@@ -1,24 +1,13 @@
+import time
+
 import pandas as pd
 import requests
 import streamlit as st
 from config import API_BASE
 
-SQL_TEMPLATE = """
-```sql
-{sql_query}
-```
-"""
-
 
 def main():
     st.title("Text-to-SQL")
-
-
-
-    SQL = SQL_TEMPLATE.format(
-        sql_query="SELECT city, state, \n       (violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) AS total_crime\nFROM crime_by_city\nORDER BY total_crime DESC\nLIMIT 5"
-    )
-
 
     natural_language_query = st.text_input(
         "Ask me anything",
@@ -27,61 +16,37 @@ def main():
     )
 
     if natural_language_query:
-        response = requests.post(f"{API_BASE}/text_to_sql", json={"natural_language_query": natural_language_query})
+        with st.spinner(text="Generating SQL..."):
+            start_time = time.time()
+            response = requests.post(f"{API_BASE}/text_to_sql", json={"natural_language_query": natural_language_query})
+            end_time = time.time()
+            time_taken = end_time - start_time
         if response.status_code == 200:
-            SQL = SQL_TEMPLATE.format(
-                sql_query=response.json().get("sql_query")
-            )
-            st.text(SQL)
+            st.info(f"SQL generated in {time_taken:.2f} seconds")
+            SQL = f"""```sql
+                {response.json().get("sql_query")}
+            ```"""
+            st.markdown(SQL)
+
             RESULT = response.json().get("result")
+            st.json(RESULT, expanded=False)
+
             # TODO: get Vega spec to visualize result
+            with st.spinner(text="Generating visualization..."):
+                start_time = time.time()
+                response = requests.post(f"{API_BASE}/viz", json={"data": RESULT})
+                end_time = time.time()
+                time_taken = end_time - start_time
+            if response.status_code == 200:
+                st.info(f"Visualization generated in {time_taken:.2f} seconds")
+                VEGA_SPEC = response.json().get("vega_spec")
+                st.vega_lite_chart(VEGA_SPEC)
+            else:
+                st.error(f"{response.status_code}: {response.reason}")
+                st.info("Sorry, I couldn't generate a visualization. Please try again.")
         else:
-            st.text("Sorry, I don't understand your question/command. Please try again.")
-
-    st.markdown(SQL)
-
-
-    VEGA_SPEC = {
-        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-        "description": "A basic bar chart example",
-        "data": {
-            "values": [
-                {"category": "A", "value": 10},
-                {"category": "B", "value": 5},
-                {"category": "C", "value": 15},
-                {"category": "D", "value": 7},
-                {"category": "E", "value": 20}
-            ]
-        },
-        "mark": {"type": "bar", "color": "yellow"},
-        "encoding": {
-            "x": {"field": "category", "type": "nominal"},
-            "y": {"field": "value", "type": "quantitative"}
-        }
-    }
-
-    if VEGA_SPEC:
-        st.vega_lite_chart(VEGA_SPEC)
-
-
-    def set_vega_spec(vega_spec):
-        VEGA_SPEC = vega_spec
-
-
-    @st.cache_data(ttl=60)    # cache data for 1 min (=60 seconds)
-    def load_data():
-        """
-        Sends a GET request to the API to load data
-        """
-        response = requests.get(f'{API_BASE}/tables')
-        if response.status_code == 200:
-            # If the request was successful, print the response body
-            response_data = response.json()
-            table_names = response_data['table_names']
-            return table_names
-        else:
-            st.warning(f'Request failed with status code {response.status_code}', icon='⚠️')
-        return []
+            st.error(f"{response.status_code}: {response.reason}")
+            st.info("Sorry, I couldn't answer your question/command. Please try again.")
 
 
 if __name__ == "__main__":
