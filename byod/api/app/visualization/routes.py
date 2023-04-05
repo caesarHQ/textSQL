@@ -15,7 +15,7 @@ def text_to_vega():
     vega_json = request_body.get('vega_json')
 
     if not natural_language_command:
-        return make_response(jsonify({"error": "`natura_language_command` is missing from request body"}), 400)
+        return make_response(jsonify({"error": "`natural_language_command` is missing from request body"}), 400)
     
     if not vega_json:
         return make_response(jsonify({"error": "`vega_json` is missing from request body"}), 400)
