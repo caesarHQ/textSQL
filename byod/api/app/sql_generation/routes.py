@@ -20,7 +20,7 @@ def text_to_sql():
     if not natural_language_query:
         error_msg = "`natural_language_query` is missing from request body"
         return make_response(jsonify({"error": error_msg}), 400)
-
+    
     try:
         if not table_names:
             if PINECONE_ENV and PINECONE_KEY:
