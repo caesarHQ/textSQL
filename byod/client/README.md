@@ -5,6 +5,11 @@ A front-end streamlit application for Text-to-SQL
 ## Prerequisites
 `python3.10`
 
+## Required configuration for development:
+- base URL for TextSQL API
+
+Configure the above in `.env`. Refer to `.env.example`.
+
 ## Local development
 
 Initial setup
