@@ -1,4 +1,6 @@
-# API for textSQL
+# TextSQL API
+
+A Flask API for Text-to-SQL
 
 ## Prerequisites
 - `python3.10`

@@ -26,7 +26,7 @@ def setup_db():
             return make_response(jsonify({"error": error_msg}), 400)
         
 
-@bp.route('/get_tables', methods=['GET'])
+@bp.route('/tables', methods=['GET'])
 def get_tables():
     """
     Get table names from database
@@ -51,7 +51,7 @@ def get_tables_metadata():
     return make_response(jsonify({"tables_metadata": tables_metadata}), 200)
 
 
-@bp.route('/get_types', methods=['GET'])
+@bp.route('/types', methods=['GET'])
 def get_types():
     """
     Get type names from database
