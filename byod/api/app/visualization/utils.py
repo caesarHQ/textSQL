@@ -8,7 +8,7 @@ def make_default_visualize_data_messages():
     default_messages = [{
         "role": "system",
         "content": (
-            "You are a helpful assistant for generating syntactically correct Vega specs that are best for visualizing given data."
+            "You are a helpful assistant for generating syntactically correct Vega-Lite specs that are best for visualizing given data."
             " Write responses in markdown format."
             " You will be given a JSON object in the following format."
             "\n\n"
@@ -32,7 +32,7 @@ def make_default_visualize_data_messages():
 
 def make_visualize_data_message():
     return (
-        "Generate a syntactically correct Vega spec to best visualize the given data."
+        "Generate a syntactically correct Vega-Lite spec to best visualize the given data."
         "\n\n"
         "{data}"
     )
@@ -42,9 +42,9 @@ def make_default_visualization_change_messages():
     default_messages = [{
         "role": "system",
         "content": (
-            "You are a helpful assistant for making changes to a Vega spec."
-            " You generate a syntactically correct Vega spec."
-            " You will be given a Vega spec and a command."
+            "You are a helpful assistant for making changes to a Vega-Lite spec."
+            " You generate a syntactically correct Vega-Lite spec."
+            " You will be given a Vega-Lite spec and a command."
             " Write responses in markdown format."
         )
     }]
@@ -54,15 +54,15 @@ def make_default_visualization_change_messages():
 
 def make_visualization_change_message():
     return (
-        "Make the following changes to the given Vega spec to best visualize the data."
+        "Make the following changes to the given Vega-Lite spec to best visualize the data."
         "\n\n"
         "changes: {command}"
         "\n\n"
-        "Vega spec: {vega_spec}"
+        "Vega-Lite spec: {vega_lite_spec}"
     )
 
 
-def get_vega_spec(data):
+def get_vega_lite_spec(data):
     messages = make_default_visualize_data_messages()
     messages.append({
         "role": "user",
@@ -76,13 +76,13 @@ def get_vega_spec(data):
     return vega
 
 
-def get_changed_vega(command, vega_spec):
+def get_changed_vega(command, vega_lite_spec):
     messages = make_default_visualization_change_messages()
     messages.append({
         "role": "user",
         "content": make_visualization_change_message().format(
             command=command,
-            vega_spec=vega_spec
+            vega_lite_spec=vega_lite_spec
         )
     })
     vega = extract_json_from_markdown(
