@@ -1,5 +1,6 @@
 import json
 import re
+from typing import Dict
 
 from ..utils import get_assistant_message, get_few_shot_messages
 
@@ -62,7 +63,7 @@ def make_visualization_change_message():
     )
 
 
-def get_vega_lite_spec(data):
+def get_vega_lite_spec(data) -> Dict:
     messages = make_default_visualize_data_messages()
     messages.append({
         "role": "user",
@@ -70,13 +71,13 @@ def get_vega_lite_spec(data):
             data=json.dumps(data, indent=2)
         )
     })
-    vega = extract_json_from_markdown(
+    vega = extract_json_str_from_markdown(
         get_assistant_message(messages)["message"]["content"]
     )
-    return vega
+    return json.loads(vega)
 
 
-def get_changed_vega(command, vega_lite_spec):
+def get_changed_vega(command, vega_lite_spec) -> Dict:
     messages = make_default_visualization_change_messages()
     messages.append({
         "role": "user",
@@ -85,13 +86,13 @@ def get_changed_vega(command, vega_lite_spec):
             vega_lite_spec=vega_lite_spec
         )
     })
-    vega = extract_json_from_markdown(
+    vega = extract_json_str_from_markdown(
         get_assistant_message(messages)["message"]["content"]
     )
-    return vega
+    return json.loads(vega)
 
 
-def extract_json_from_markdown(assistant_message_content):
+def extract_json_str_from_markdown(assistant_message_content) -> str:
     matches = re.findall(r"```([\s\S]+?)```", assistant_message_content)
 
     if matches:
