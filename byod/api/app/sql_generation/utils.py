@@ -112,10 +112,14 @@ def execute_sql(sql_query: str):
                 result[column_name] = row[i]
             results.append(result)
 
-        return {
+        result_dict = {
             "column_names": column_names,
             "results": results,
         }
+        if results:
+            result_dict["column_types"] = [type(r).__name__ for r in results[0]]
+
+        return result_dict
 
 
 def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=None):

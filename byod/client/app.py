@@ -5,6 +5,36 @@ import requests
 import streamlit as st
 from config import API_BASE
 
+VEGA_TYPES_MAP = {
+    "int": "quantitative",
+    "float": "quantitative",
+    "str": "nominal",
+    "bool": "nominal",
+    "date": "temporal",
+    "time": "temporal",
+    "datetime": "temporal",
+}
+
+
+def create_viz_data_dict(column_names, column_types, results):
+    data = {
+        "fields": [],
+        "total_rows": len(results),
+    }
+    for i, column_name in enumerate(column_names):
+        data["fields"].append({
+            "name": column_name,
+            "type": VEGA_TYPES_MAP.get(column_types[i], "nominal"),
+        })
+    for i in range(len(results)):
+        # include 1 sample
+        if i == 1:
+            break
+        r = results[i]
+        for j, column_name in enumerate(column_names):
+            data["fields"][j]["sample_value"] = r[column_name]
+    return data
+
 
 def main():
     st.title("Text-to-SQL")
@@ -31,10 +61,17 @@ def main():
             RESULT = response.json().get("result")
             st.json(RESULT, expanded=False)
 
-            # TODO: get Vega spec to visualize result
             with st.spinner(text="Generating visualization..."):
                 start_time = time.time()
-                response = requests.post(f"{API_BASE}/viz", json={"data": RESULT})
+                response = requests.post(f"{API_BASE}/viz",
+                    json={
+                        "data": create_viz_data_dict(
+                            RESULT.get("column_names", []),
+                            RESULT.get("column_types", []),
+                            RESULT.get("results", []),
+                        )
+                    }
+                )
                 end_time = time.time()
                 time_taken = end_time - start_time
             if response.status_code == 200:
