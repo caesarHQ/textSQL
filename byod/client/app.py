@@ -77,9 +77,7 @@ def main():
             if response.status_code == 200:
                 st.info(f"Visualization generated in {time_taken:.2f} seconds")
                 VEGA_SPEC = response.json().get("vega_lite_spec")
-                st.markdown(f"""```json
-                    {VEGA_SPEC}
-                ```""")
+                st.json(VEGA_SPEC, expanded=False)
                 st.vega_lite_chart(data=RESULT.get("results", []), spec=VEGA_SPEC)
             else:
                 st.error(f"{response.status_code}: {response.reason}")
