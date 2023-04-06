@@ -38,11 +38,7 @@ def create_viz_data_dict(column_names, column_types, results):
 def main():
     st.title("Text-to-SQL")
 
-    natural_language_query = st.text_input(
-        "Ask me anything",
-        placeholder="Crime statistics",
-        help="SQL will be generated to address your question/command entered here."
-    )
+    natural_language_query = st.text_input(label="", placeholder="Ask anything...")
 
     if natural_language_query:
         with st.spinner(text="Generating SQL..."):
@@ -54,11 +50,11 @@ def main():
             st.info(f"SQL generated in {time_taken:.2f} seconds")
             SQL = f"""```sql
                 {response.json().get("sql_query")}
-            ```"""
+            """
             st.markdown(SQL)
 
             RESULT = response.json().get("result")
-            # st.json(RESULT, expanded=False)
+            st.table(RESULT.get("results", []))
 
             with st.spinner(text="Generating visualization..."):
                 start_time = time.time()
@@ -76,7 +72,6 @@ def main():
             if response.status_code == 200:
                 st.info(f"Visualization generated in {time_taken:.2f} seconds")
                 VEGA_LITE_SPEC = response.json().get("vega_lite_spec")
-                # st.json(VEGA_SPEC, expanded=False)
                 st.vega_lite_chart(data=RESULT.get("results", []), spec=VEGA_LITE_SPEC)
             else:
                 st.error(f"{response.status_code}: {response.reason}")
