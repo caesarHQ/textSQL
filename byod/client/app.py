@@ -1,6 +1,5 @@
 import time
 
-import pandas as pd
 import requests
 import streamlit as st
 from config import API_BASE
