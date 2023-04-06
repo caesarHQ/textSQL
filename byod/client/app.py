@@ -5,7 +5,7 @@ import requests
 import streamlit as st
 from config import API_BASE
 
-VEGA_TYPES_MAP = {
+VEGA_LITE_TYPES_MAP = {
     "int": "quantitative",
     "float": "quantitative",
     "str": "nominal",
@@ -24,7 +24,7 @@ def create_viz_data_dict(column_names, column_types, results):
     for i, column_name in enumerate(column_names):
         data["fields"].append({
             "name": column_name,
-            "type": VEGA_TYPES_MAP.get(column_types[i], "nominal"),
+            "type": VEGA_LITE_TYPES_MAP.get(column_types[i], "nominal"),
         })
     for i in range(len(results)):
         # include 1 sample
@@ -76,9 +76,9 @@ def main():
                 time_taken = end_time - start_time
             if response.status_code == 200:
                 st.info(f"Visualization generated in {time_taken:.2f} seconds")
-                VEGA_SPEC = response.json().get("vega_lite_spec")
+                VEGA_LITE_SPEC = response.json().get("vega_lite_spec")
                 # st.json(VEGA_SPEC, expanded=False)
-                st.vega_lite_chart(data=RESULT.get("results", []), spec=VEGA_SPEC)
+                st.vega_lite_chart(data=RESULT.get("results", []), spec=VEGA_LITE_SPEC)
             else:
                 st.error(f"{response.status_code}: {response.reason}")
                 st.info("Sorry, I couldn't generate a visualization. Please try again.")
