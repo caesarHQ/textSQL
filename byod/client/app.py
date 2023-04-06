@@ -38,7 +38,7 @@ def create_viz_data_dict(column_names, column_types, results):
 def main():
     st.title("Text-to-SQL")
 
-    natural_language_query = st.text_input(label="", placeholder="Ask anything...")
+    natural_language_query = st.text_input(label="Ask anything...", label_visibility="hidden", placeholder="Ask anything...")
 
     if natural_language_query:
         with st.spinner(text="Generating SQL..."):
