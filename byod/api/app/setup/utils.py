@@ -10,13 +10,51 @@ from app.extensions import db
 
 # TODO: implement commands for MySQL
 
+def save_table_metadata(table_name, table_metadata):
+    """
+    Save table metadata to database
+    """
+    try:
+        tm = TableMetadata.query.filter_by(table_name=table_name).one_or_none()
+        if tm:
+            tm.table_metadata = table_metadata
+        else:
+            tm = TableMetadata(
+                table_name=table_name,
+                table_metadata=table_metadata
+            )
+            db.session.add(tm)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        db.session.rollback()
 
-def save_type_metadata_to_db():
+
+def save_type_metadata(type_name, type_metadata):
+    """
+    Save type metadata to database
+    """
+    try:
+        tm = TypeMetadata.query.filter_by(type_name=type_name).one_or_none()
+        if tm:
+            tm.type_metadata = type_metadata
+        else:
+            tm = TypeMetadata(
+                type_name=type_name,
+                type_metadata=type_metadata
+            )
+            db.session.add(tm)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+
+
+def save_types_metadata_to_db():
     """
     Save types metadata to database
     """
-    type_names = get_type_names()
-    for type_name in type_names:
+    for type_name in get_type_names():
         metadata = generate_type_metadata(type_name)
         try:
             tm = TypeMetadata.query.filter_by(type_name=type_name).one_or_none()
@@ -35,6 +73,9 @@ def save_type_metadata_to_db():
 
 
 def get_current_user():
+    """
+    Get current db user
+    """
     try:
         with ENGINE.connect() as connection:
             connection = connection.execution_options(
@@ -51,14 +92,11 @@ def get_current_user():
         return None
 
 
-def save_table_metadata_to_db(target_table_names = []):
+def save_tables_metadata_to_db():
     """
     Save tables metadata to database
     """
-    table_names = get_table_names()
-    for table_name in table_names:
-        if target_table_names and table_name not in target_table_names:
-            continue
+    for table_name in get_table_names():
         metadata = generate_table_metadata(table_name)
         try:
             tm = TableMetadata.query.filter_by(table_name=table_name).one_or_none()
@@ -95,7 +133,7 @@ def generate_few_shot_queries():
     pass
 
 
-def get_type_names() -> List[str] | None:
+def get_type_names() -> List[str]:
     """
     Get names of user-defined types in the database
     """
@@ -125,27 +163,34 @@ def get_type_names() -> List[str] | None:
         return None
 
 
-def get_table_names(username=get_current_user()) -> List[str] | None:
+def get_table_names(username=get_current_user()) -> List[str]:
     """
     Get names of tables in the database
     """
+    IGNORE_TABLES = ["ai_sql_table_metadata", "ai_sql_type_metadata", "ai_sql_in_context_examples"]
     try:
         with ENGINE.connect() as connection:
             connection = connection.execution_options(
                 postgresql_readonly=True
             )
             with connection.begin():
+                # sql_text = text(f"""
+                #     SELECT tablename
+                #     FROM pg_catalog.pg_tables
+                #     WHERE tableowner = '{username}';
+                # """)
                 sql_text = text(f"""
                     SELECT tablename
                     FROM pg_catalog.pg_tables
-                    WHERE tableowner = '{username}';
+                    WHERE schemaname = 'public';
                 """)
                 result = connection.execute(sql_text)
                 rows = [list(r) for r in result.all()]
 
                 table_names = []
                 for row in rows:
-                    table_names.append(row[0])
+                    if row[0] not in IGNORE_TABLES:
+                        table_names.append(row[0])
 
                 return table_names
             

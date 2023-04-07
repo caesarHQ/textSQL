@@ -6,6 +6,7 @@ from app.setup.routes import bp as setup_bp
 from app.sql_explanation.routes import bp as sql_explanation_bp
 from app.sql_generation.routes import bp as sql_gen_bp
 from app.table_selection.routes import bp as table_selection_bp
+from app.visualization.routes import bp as visualization_bp
 from app.table_selection.utils import load_tables_and_types_metadata
 from app.utils import load_in_context_examples
 from flask import Flask
@@ -39,6 +40,7 @@ def create_app(config_object=FlaskAppConfig):
     app.register_blueprint(sql_explanation_bp)
     app.register_blueprint(sql_gen_bp)
     app.register_blueprint(table_selection_bp)
+    app.register_blueprint(visualization_bp)
 
     # from app.errors import bp as errors_bp
     # app.register_blueprint(errors_bp)

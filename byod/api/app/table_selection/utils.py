@@ -135,7 +135,7 @@ def _get_table_selection_messages():
 
 
 def _extract_text_from_markdown(text):
-    matches = re.findall(r"`([\s\S]+?)`", text)
+    matches = re.findall(r"```([\s\S]+?)```", text)
     if matches:
         return matches[0]
     return text

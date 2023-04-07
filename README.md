@@ -33,6 +33,9 @@ Here are some examples:
 
 <img width="1316" alt="Screenshot 2023-03-10 at 12 55 44 AM" src="https://user-images.githubusercontent.com/10172332/224270303-087495bd-2391-4e1f-a8ad-ef5ae49ace0c.png">
 
+![TextSQL](https://user-images.githubusercontent.com/10172332/229999777-e6983baa-da54-4a49-aa54-b496076a95f5.png)
+
+
 
 ### Diagram:
 

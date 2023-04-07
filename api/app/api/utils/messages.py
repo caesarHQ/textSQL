@@ -8,7 +8,7 @@ def get_assistant_message(
         temperature: int = 0,
         model: str = "gpt-3.5-turbo",
         # model: str = "gpt-4",
-) -> str:
+):
     res = openai.ChatCompletion.create(
         model=model,
         temperature=temperature,

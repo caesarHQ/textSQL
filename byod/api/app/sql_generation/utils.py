@@ -20,7 +20,7 @@ def make_default_messages(schemas_str: str) -> List[Dict[str, str]]:
     default_messages = [{
         "role": "system",
         "content": (
-            "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command, generally about crime, demographics, and population."
+            "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command."
             "\n"
             "The following are tables you can query:\n"
             "---------------------\n"
@@ -112,10 +112,14 @@ def execute_sql(sql_query: str):
                 result[column_name] = row[i]
             results.append(result)
 
-        return {
+        result_dict = {
             "column_names": column_names,
             "results": results,
         }
+        if results:
+            result_dict["column_types"] = [type(r).__name__ for r in results[0]]
+
+        return result_dict
 
 
 def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=None):
