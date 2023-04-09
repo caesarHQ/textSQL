@@ -10,22 +10,22 @@ from openai.embeddings_utils import get_embedding
 
 from ..utils import get_assistant_message, get_few_shot_messages
 
-TYPES_METADATA_DICT = {}
+ENUMS_METADATA_DICT = {}
 TABLES_METADATA_DICT = {}
 def load_tables_and_types_metadata():
     """
-    Setup metadata dicts for tables and types
+    Setup metadata dicts for tables and enums
     """
-    global TYPES_METADATA_DICT
+    global ENUMS_METADATA_DICT
     global TABLES_METADATA_DICT
 
     try:
-        types_metadata = TypeMetadata.query.all()
+        enums_metadata = TypeMetadata.query.all()
     except Exception as e:
         print(e)
-        types_metadata = []
-    for type_metadata in types_metadata:
-        TYPES_METADATA_DICT[type_metadata.type_name] = type_metadata
+        enums_metadata = []
+    for enum_metadata in enums_metadata:
+        ENUMS_METADATA_DICT[enum_metadata.type_name] = enum_metadata
 
     try:
         tables_metadata = TableMetadata.query.all()
@@ -40,7 +40,7 @@ def get_table_schemas_str(table_names: List[str] = []) -> str:
     """
     Format table and types metadata into string to be used in prompt
     """
-    global TYPES_METADATA_DICT
+    global ENUMS_METADATA_DICT
     global TABLES_METADATA_DICT
 
     tables_to_use = []
@@ -49,7 +49,7 @@ def get_table_schemas_str(table_names: List[str] = []) -> str:
     else:
         tables_to_use = [t for t in TABLES_METADATA_DICT.values()]
 
-    custom_types_to_use = set()
+    enums_to_use = set()
     tables_str_list = []
     for table in tables_to_use:
         tables_str = f"table name: {table.table_name}\n"
@@ -58,22 +58,22 @@ def get_table_schemas_str(table_names: List[str] = []) -> str:
         columns_str_list = []
         for column in table.table_metadata.get("columns", []):
             columns_str_list.append(f"{column['name']} [{column['type']}]")
-            if column.get("type") in TYPES_METADATA_DICT.keys():
-                custom_types_to_use.add(column.get("type"))
+            if column.get("type") in ENUMS_METADATA_DICT.keys():
+                enums_to_use.add(column.get("type"))
         tables_str += f"table columns: {', '.join(columns_str_list)}\n"
         tables_str_list.append(tables_str)
     tables_details = "\n\n".join(tables_str_list)
 
-    custom_types_str_list = []
-    for custom_type_str in custom_types_to_use:
-        custom_type = TYPES_METADATA_DICT.get(custom_type_str)
+    enums_str_list = []
+    for custom_type_str in enums_to_use:
+        custom_type = ENUMS_METADATA_DICT.get(custom_type_str)
         if custom_type:
-            custom_types_str = f"custom type: {custom_type.type_name}\n"
-            custom_types_str += f"valid values: {', '.join(custom_type.type_metadata.get('valid_values'))}\n"
-            custom_types_str_list.append(custom_types_str)
-    custom_types_details = "\n\n".join(custom_types_str_list)
+            enums_str = f"enum: {custom_type.type_name}\n"
+            enums_str += f"valid values: {', '.join(custom_type.type_metadata.get('valid_values'))}\n"
+            enums_str_list.append(enums_str)
+    enums_details = "\n\n".join(enums_str_list)
 
-    return custom_types_details + "\n\n" + tables_details
+    return enums_details + "\n\n" + tables_details
 
 
 def get_relevant_tables_from_pinecone(natural_language_query, index_name="text_to_sql") -> List[str]:
@@ -108,7 +108,7 @@ def _get_table_selection_message_with_descriptions():
     )
     return (
         message +
-        "The following are descriptions of available tables and custom types:\n"
+        "The following are descriptions of available tables and enums:\n"
         "---------------------\n"
         + get_table_schemas_str() +
         "---------------------\n"
@@ -124,7 +124,7 @@ def _get_table_selection_messages():
             " Respond with an empty list if you cannot identify any relevant tables."
             " Write your answer in markdown format."
             "\n"
-            "The following are descriptions of available tables and custom types:\n"
+            "The following are descriptions of available tables and enums:\n"
             "---------------------\n"
             + get_table_schemas_str() +
             "---------------------\n"

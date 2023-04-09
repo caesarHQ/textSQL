@@ -21,7 +21,7 @@ def get_message_with_descriptions(scope="USA"):
     if scope == "USA":
         return (
         message +
-        "The following are descriptions of available tables and custom types:\n"
+        "The following are descriptions of available tables and enums:\n"
         "---------------------\n"
         + get_table_schemas(scope=scope) +
         "---------------------\n"
@@ -39,7 +39,7 @@ def get_default_messages(scope="USA"):
             " Respond with an empty list if you cannot identify any relevant tables."
             " Write your answer in markdown format."
             "\n"
-            "The following are descriptions of available tables and custom types:\n"
+            "The following are descriptions of available tables and enums:\n"
             "---------------------\n"
             + get_table_schemas(scope=scope) +
             "---------------------\n"
