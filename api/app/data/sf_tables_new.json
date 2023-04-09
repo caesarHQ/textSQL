@@ -170,7 +170,7 @@
     ],
     "tables": [
         {
-            "name": "sf_crime_cases",
+            "name": "sf_crime_incidents",
             "description": "Neighborhood-level and zip-code-level crime data in San Francisco",
             "columns": [
                 {
@@ -212,7 +212,7 @@
             ]
         },
         {
-            "name": "sf_311_cases",
+            "name": "sf_311_incidents",
             "description": "Neighborhood-level and zip-code-level data about 311 municipal services cases in San Francisco",
             "columns": [
                 {
