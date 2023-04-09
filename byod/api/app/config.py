@@ -19,7 +19,11 @@ class FlaskAppConfig:
     SQLALCHEMY_DATABASE_URI = DB_URL
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
 
-ENGINE = create_engine(DB_URL)
+if DB_URL:
+    ENGINE = create_engine(DB_URL)
+else:
+    print('DB_URL not found, please check your environment')
+    exit(1)
 
 if PINECONE_KEY and PINECONE_ENV:
     pinecone.init(
