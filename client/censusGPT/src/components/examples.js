@@ -25,7 +25,7 @@ const Examples = (props) => {
             'Which two neighorhoods had the lowest crime in 2021',
         ]
         advanced_example_queries = [
-            '3 neighborhoods in have the highest female to male ratio',
+            '3 neighborhoods with the highest female to male ratio',
         ]
     }
 
