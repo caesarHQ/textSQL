@@ -78,7 +78,8 @@
                 "Streetlights",
                 "Temporary Sign Request",
                 "Tree Maintenance",
-                "Human or Animal Waste"
+                "Feces/Urine",
+                "Needles"
             ]
         },
         {
@@ -182,7 +183,7 @@
                     "type": "DATETIME"
                 },
                 {
-                    "name": "type",
+                    "name": "incident_type",
                     "type": "TEXT",
                     "description": "enum `CRIME_CASE_TYPE`"
                 },
@@ -229,7 +230,7 @@
                     "description": "enum `311_STATUS`"
                 },
                 {
-                    "name": "type",
+                    "name": "incident_type",
                     "type": "TEXT",
                     "description": "enum `311_CASE_TYPE`"
                 },
