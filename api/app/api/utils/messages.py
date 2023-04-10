@@ -1,10 +1,6 @@
 import openai
 import re
 from typing import List, Dict
-from ...config import OPENAI_KEY
-
-
-openai.api_key = OPENAI_KEY
 
 
 def get_assistant_message(
@@ -12,13 +8,13 @@ def get_assistant_message(
         temperature: int = 0,
         model: str = "gpt-3.5-turbo",
         # model: str = "gpt-4",
-) -> str:
+):
     res = openai.ChatCompletion.create(
         model=model,
         temperature=temperature,
         messages=messages
     )
-    # completion = res['choices'][0]['message']['content']
+    # completion = res['choices'][0]["message"]["content"]
     assistant_message = res['choices'][0]
     return assistant_message
 

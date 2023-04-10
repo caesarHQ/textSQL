@@ -1,0 +1,16 @@
+Flask===2.2.2
+flask-admin==1.6.1
+flask-sqlalchemy==3.0.2
+flask-cors==3.0.10
+Flask-Migrate==4.0.4
+psycopg2-binary==2.9.5
+gunicorn==20.1.0
+openai[embeddings]==0.27.2
+openai==0.27.2
+python-dotenv==1.0.0
+blinker==1.5
+joblib==1.2.0
+requests==2.28.1
+pytest==7.2.2
+pinecone-client==2.2.1
+snowflake-connector-python==3.0.2

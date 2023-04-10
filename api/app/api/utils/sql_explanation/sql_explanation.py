@@ -34,5 +34,5 @@ def get_sql_explanation(sql) -> str:
     # model = "gpt-4"
     model = "gpt-3.5-turbo"
 
-    assistant_message_content = get_assistant_message(messages=messages, model=model)['message']['content']
+    assistant_message_content = get_assistant_message(messages=messages, model=model)["message"]["content"]
     return assistant_message_content

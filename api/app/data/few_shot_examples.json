@@ -67,7 +67,7 @@
             },
             {
                 "user": "Which neighborhood had the most poop on the street?",
-                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE 'human_or_animal_waste' = ANY(request_type)\nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
+                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE 'human_or_animal_waste' = ANY(request_types)\nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
             },
             {
                 "user": "Which neighborhood has the most homeless people?",

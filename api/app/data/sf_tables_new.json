@@ -1,0 +1,254 @@
+{
+    "enums": [
+        {
+            "type": "NEIGHBORHOOD",
+            "valid_values": [
+                "Western Addition",
+                "West of Twin Peaks",
+                "Visitacion Valley",
+                "Twin Peaks",
+                "South of Market",
+                "Treasure Island",
+                "Presidio Heights",
+                "Presidio",
+                "Potrero Hill",
+                "Portola",
+                "Pacific Heights",
+                "Outer Richmond",
+                "Outer Mission",
+                "Sunset/Parkside",
+                "Oceanview/Merced/Ingleside",
+                "North Beach",
+                "Noe Valley",
+                "Lone Mountain/USF",
+                "Lincoln Park",
+                "Seacliff",
+                "Nob Hill",
+                "Mission Bay",
+                "Mission",
+                "Russian Hill",
+                "Marina",
+                "Lakeshore",
+                "Tenderloin",
+                "McLaren Park",
+                "Japantown",
+                "Inner Sunset",
+                "Hayes Valley",
+                "Haight Ashbury",
+                "Golden Gate Park",
+                "Inner Richmond",
+                "Glen Park",
+                "Financial District/South Beach",
+                "Excelsior",
+                "Chinatown",
+                "Castro/Upper Market",
+                "Bernal Heights",
+                "Bayview Hunters Point"
+            ]
+        },
+        {
+            "type": "311_STATUS",
+            "valid_values": [
+                "Closed",
+                "Open"
+            ]
+        },
+        {
+            "type": "311_CASE_TYPE",
+            "valid_values": [
+                "Abandoned Vehicle",
+                "Blocked Street or SideWalk",
+                "Damaged Property",
+                "Encampments",
+                "Graffiti",
+                "Homeless Concerns",
+                "Illegal Postings",
+                "Litter Receptacles",
+                "Noise Report",
+                "Parking Enforcement",
+                "Rec and Park Requests",
+                "Residential Building Request",
+                "Sewer Issues",
+                "SFHA Requests",
+                "Shared Spaces Violation",
+                "Sidewalk or Curb",
+                "Sign Repair",
+                "Street and Sidewalk Cleaning",
+                "Street Defects",
+                "Streetlights",
+                "Temporary Sign Request",
+                "Tree Maintenance",
+                "Feces/Urine",
+                "Needles"
+            ]
+        },
+        {
+            "type": "CRIME_RESOLUTION",
+            "valid_values": [
+                "Cite or Arrest Adult",
+                "Exceptional Adult",
+                "Open or Active",
+                "Unfounded"
+            ]
+        },
+        {
+            "type": "CRIME_CASE_TYPE",
+            "valid_values": [
+                "Aggravated Assault",
+                "Arrest",
+                "Arson",
+                "Bad Checks",
+                "Bribery",
+                "Burglary - Commercial",
+                "Burglary - Hot Prowl",
+                "Burglary - Other",
+                "Burglary - Residential",
+                "Case Closure",
+                "Courtesy Report",
+                "Disorderly Conduct",
+                "Drug Violation",
+                "Drunkenness",
+                "Embezzlement",
+                "Extortion-Blackmail",
+                "Fire Report",
+                "Forgery And Counterfeiting",
+                "Fraud",
+                "Gambling",
+                "Homicide",
+                "Homicide - Excusable",
+                "Human Trafficking, Commercial Sex Acts",
+                "Human Trafficking, Involuntary Servitude",
+                "Intimidation",
+                "Kidnapping",
+                "Larceny - Auto Parts",
+                "Larceny - From Vehicle",
+                "Larceny - Bicycle",
+                "Larceny - From Building",
+                "Larceny - Other",
+                "Larceny - Pickpocket",
+                "Larceny - Purse Snatch",
+                "Larceny - Shoplifting",
+                "Liquor Law Violation",
+                "Loitering",
+                "Lost Property",
+                "Manslaughter",
+                "Miscellaneous Investigation",
+                "Missing Adult",
+                "Missing Person",
+                "Motor Vehicle Theft",
+                "Motor Vehicle Theft (Attempted)",
+                "Non-Criminal",
+                "Other",
+                "Other Offenses",
+                "Prostitution",
+                "Rape",
+                "Rape - Attempted",
+                "Recovered Vehicle",
+                "Robbery - Carjacking",
+                "Robbery - Commercial",
+                "Robbery - Other",
+                "Robbery - Residential",
+                "Robbery - Street",
+                "Sex Offense",
+                "Simple Assault",
+                "Stalking",
+                "Stolen Property",
+                "Suicide",
+                "Suspicious Occurrence",
+                "Suspicious Package",
+                "Theft From Vehicle",
+                "Traffic Collision",
+                "Traffic Collision - Hit & Run",
+                "Traffic Violation Arrest",
+                "Trespass",
+                "Vandalism",
+                "Vehicle Impounded",
+                "Vehicle Misplaced",
+                "Warrant",
+                "Weapons Offense"
+            ]
+        }
+    ],
+    "tables": [
+        {
+            "name": "sf_crime_incidents",
+            "description": "Neighborhood-level and zip-code-level crime data in San Francisco",
+            "columns": [
+                {
+                    "name": "occurred",
+                    "type": "DATETIME"
+                },
+                {
+                    "name": "reported",
+                    "type": "DATETIME"
+                },
+                {
+                    "name": "incident_type",
+                    "type": "TEXT",
+                    "description": "enum `CRIME_CASE_TYPE`"
+                },
+                {
+                    "name": "description",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "resolution",
+                    "type": "TEXT",
+                    "description": "enum `CRIME_RESOLUTION`"
+                },
+                {
+                    "name": "point",
+                    "type": "TEXT",
+                    "description": "longitude latitude of incident"
+                },
+                {
+                    "name": "neighborhood",
+                    "type": "TEXT",
+                    "description": "enum `NEIGHBORHOOD`"
+                },
+                {
+                    "name": "zip_code",
+                    "type": "TEXT"
+                }
+            ]
+        },
+        {
+            "name": "sf_311_incidents",
+            "description": "Neighborhood-level and zip-code-level data about 311 municipal services cases in San Francisco",
+            "columns": [
+                {
+                    "name": "opened",
+                    "type": "DATETIME"
+                },
+                {
+                    "name": "closed",
+                    "type": "DATETIME"
+                },
+                {
+                    "name": "status",
+                    "type": "TEXT",
+                    "description": "enum `311_STATUS`"
+                },
+                {
+                    "name": "incident_type",
+                    "type": "TEXT",
+                    "description": "enum `311_CASE_TYPE`"
+                },
+                {
+                    "name": "point",
+                    "type": "TEXT",
+                    "description": "longitude latitude of incident"
+                },
+                {
+                    "name": "neighborhood",
+                    "type": "TEXT",
+                    "description": "enum `NEIGHBORHOOD`"
+                },
+                {
+                    "name": "zip_code",
+                    "type": "TEXT"
+                }
+            ]
+        }
+    ]
+}

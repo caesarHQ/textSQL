@@ -1,5 +1,5 @@
 {
-    "types": [
+    "enums": [
         {
             "type": "NEIGHBORHOOD",
             "valid_values": [

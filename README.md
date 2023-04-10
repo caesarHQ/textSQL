@@ -3,7 +3,7 @@
 ### 
 
 
-Demo on US Census Data: [CensusGPT.com](https://censusgpt.com)
+:point_right: Demo on US Census Data: [CensusGPT.com](https://censusgpt.com)
 
 
 <h3 align="center">
@@ -20,9 +20,12 @@ Demo on US Census Data: [CensusGPT.com](https://censusgpt.com)
    <a href="https://github.com/caesarHQ/textSQL/commits/main"><img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/caesarHQ/textSQL?color=8b55e3"/></a>
 </p>
 
+Welcome to textSQL, a project which uses LLMs to democratize access to data analysis. An example use case of textSQL is CensusGPT — a natural language interface to US census data, enabling anyone to analyze and gain insights from the data.
 
-### How it works:
-With CensusGPT, ask any questions related to census data. 
+<img width="1316" alt="Screenshot 2023-03-10 at 12 55 44 AM" src="https://user-images.githubusercontent.com/10172332/224270303-087495bd-2391-4e1f-a8ad-ef5ae49ace0c.png">
+
+## :thinking: How it works:
+With CensusGPT, you can ask any question related to census data in natural language. 
 
 These natural language questions get converted to SQL using GPT-3.5 and are then used to query the census database.
 
@@ -31,15 +34,18 @@ Here are some examples:
 * [🔍 Five cities with a population over 100,000 and lowest crime](https://censusgpt.com/?s=five%20cities%20with%20a%20population%20over%20100%2C000%20and%20lowest%20crime)
 * [🔍 10 highest income areas in california](https://censusgpt.com/?s=10%20highest%20income%20areas%20in%20california)
 
-<img width="1316" alt="Screenshot 2023-03-10 at 12 55 44 AM" src="https://user-images.githubusercontent.com/10172332/224270303-087495bd-2391-4e1f-a8ad-ef5ae49ace0c.png">
+
+#### Diagram:
+
+![TextSQL diagram](https://raw.githubusercontent.com/zafileo23/textSQL/zafileo23-patch-2/TextSQL.svg)
 
 
-### Roadmap:
+## :world_map: Roadmap:
 
-We're splitting the roadmap for this project broadly into three categories
+We're splitting the roadmap for this project broadly into three categories:
 
 
-#### Visualizations: 
+### 1. Visualizations: 
 
 Currently, textSQL only supports visualizing zip codes and cities on an interactive map and bar chart using [Mapbox](https://www.mapbox.com/) + [Plotly](https://plotly.com/). But data can be visualized in other interesting ways such as Heatmaps and Pie charts. Not every kind of data can be (or should be) visualized on a map. For example, a query like _"What percent of total crime in San Francisco is burglary vs in New York City"_ is perfect for visualizing as a stacked bar chart, but really hard to visualize on map.
 
@@ -51,19 +57,41 @@ Bar Chart:
 
 <img width="480" alt="Screenshot 2023-03-10 at 12 58 33 AM" src="https://user-images.githubusercontent.com/10172332/224271087-58cdcfd9-8940-4543-a3a5-1119477bd209.png">
 
+[coming soon] Visualization-GPT: A way to use natural language to create and iterate on data visualizations in natural language through a text-to-vega engine.
+
+### 2. Bring Your Own Data (BYOD):
+
+You can now connect your own database & datasets to textSQL. Our vision is to continue to modularize and improve this process.
+
+#### Use cases
+* Business intelligence — reducing the burden on technical employees to build & run queries for non-technical
+* Public-facing interactive interfaces for government & NGO data — democratizing public data
+* Empowering researchers — enabling journalists and other researchers to more easily explore data
+
+### 3. Integrations
+
+|   |  |
+|---|---|
+| <img width="120" alt="Screenshot 2023-03-10 at 12 58 33 AM" src="https://download.logo.wine/logo/Snowflake_Inc./Snowflake_Inc.-Logo.wine.png">  | Snowflake (coming soon)  |
+| <img width="120" alt="Screenshot 2023-03-10 at 12 58 33 AM" src="https://retool.com/logo.png">  | ReTool (coming soon)  |
+| <img width="120" alt="Screenshot 2023-03-10 at 12 58 33 AM" src="https://www.looker.com/static/assets/looker_logo_meta.png">   |  Looker (coming soon) |
+|  <img width="120" alt="Screenshot 2023-03-10 at 12 58 33 AM" src="https://www.vectorlogo.zone/logos/google_bigquery/google_bigquery-ar21.png"> | Big Query (coming soon)  |
+
+## :pencil: Additional Notes
+
 #### Datasets: 
 
 A lot of the users of this project have asked for historical census data (trends), weather, health, transportation and real-estate data. Feel free to create a pull request, drop a link to your dataset in our [Discord](https://discord.gg/JZtxhZQQus), or contribute data via our [dedicated submission form](https://airtable.com/shrDKRRGyRCihWEZd).
 
 More data → Better CensusGPT
 
-#### Query Interface:
+#### Query Building:
 
-Users build complex queries progressively. They start with a simple query like _"Which neighborhoods in LA have the best schools?"_ and then progressively add details like _"with median income that is under $100,000"_. One of the most powerful things that GPT-3.5 turbo enables is iterating on a query.
+Users build complex queries progressively. They start with a simple query like _"Which neighborhoods in LA have the best schools?"_ and then progressively add details like _"with median income that is under $100,000"_. One of the most powerful aspects of textSQL is enabling iterating on a query as a process of uncovering insights.
 
-Turning search into a chat interface will allow the users to do just that -- iterate on a query and progressively build it.
+### 
 
-#### How to Contribute:
+## :computer: How to Contribute:
 
 Join our [discord](https://discord.gg/JZtxhZQQus)
 

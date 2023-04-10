@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+        'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+        'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+}
+
+/* For safari mobile */
+@media only screen and (max-width: 640px) {
+    @supports (-webkit-touch-callout: none) {
+        .h-screen {
+            height: -webkit-fill-available;
+        }
+    }
+}
+
+/* Disable safari mobile pull to refresh */
+@media screen and (pointer: coarse) {
+    @supports (-webkit-backdrop-filter: blur(1px)) and (overscroll-behavior-y: none) {
+        html {
+            min-height: 100.3%;
+            overscroll-behavior-y: none;
+        }
+    }
+}
+@media screen and (pointer: coarse) {
+    @supports (-webkit-backdrop-filter: blur(1px)) and (not (overscroll-behavior-y: none)) {
+        html {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            margin: 0px;
+            max-height: 100%;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+    }
+}
+
+/* Disable chrome mobile pull to refresh */
+body {
+    overscroll-behavior-y: none;
+}
