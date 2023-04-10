@@ -63,29 +63,33 @@
         "text_to_sql": [
             {
                 "user": "Which neighborhood had the most crime in 2021?",
-                "assistant": "```SELECT neighborhood, COUNT(*) as num_crimes \nFROM sf_crime_data\nWHERE incident_datetime >= '2021-01-01' AND incident_datetime < '2022-01-01'\nGROUP BY neighborhood\nORDER BY num_crimes DESC\nLIMIT 1;```"
+                "assistant": "```SELECT neighborhood, COUNT(*) as num_crimes \nFROM sf_crime_incidents\nWHERE occurred >= '2021-01-01' AND occurred < '2022-01-01'\nGROUP BY neighborhood\nORDER BY num_crimes DESC\nLIMIT 1;```"
             },
             {
                 "user": "Which neighborhood had the most poop on the street?",
-                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE 'human_or_animal_waste' = ANY(request_types)\nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
+                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_incidents\nWHERE incident_type = 'Feces/Urine'\nGROUP BY neighborhood\nORDER BY num_cases DESC;```"
             },
             {
                 "user": "Which neighborhood has the most homeless people?",
-                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE category = 'Encampments'\nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
+                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE category = 'Homeless Encampments' OR category = 'Homeless Concerns' \nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
+            },
+            {
+                "user": "Which neighborhood has the most needles on the street?",
+                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE category = 'Needles' \nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
             }
         ],
         "table_selection": [
             {
                 "user": "Which neighborhood has the most crime?",
-                "assistant": "```\n{\n    \"tables\": [\"sf_crime_data\"]\n}\n```"
+                "assistant": "```\n{\n    \"tables\": [\"sf_crime_incidents\"]\n}\n```"
             },
             {
                 "user": "Which neighborhood has the most poop on the street?",
-                "assistant": "```\n{\n    \"tables\": [\"sf_311_data\"]\n}\n```"
+                "assistant": "```\n{\n    \"tables\": [\"sf_311_incidents\"]\n}\n```"
             },
             {
                 "user": "Which neighborhood has the most homeless people?",
-                "assistant": "```\n{\n    \"tables\": [\"sf_311_data\"]\n}\n```"
+                "assistant": "```\n{\n    \"tables\": [\"sf_311_incidents\"]\n}\n```"
             }
         ]
     }
