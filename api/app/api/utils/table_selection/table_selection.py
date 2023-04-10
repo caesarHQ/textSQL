@@ -10,7 +10,7 @@ from ..messages import extract_code_from_markdown, get_assistant_message
 from .table_details import get_table_schemas
 
 
-def get_message_with_descriptions(scope="USA"):
+def _get_table_selection_message_with_descriptions(scope="USA"):
     message = (
         "Return a JSON object with relevant SQL tables for answering the following natural language query: {natural_language_query}"
         " Respond in JSON format with your answer in a field named \"tables\" which is a list of strings."
@@ -30,7 +30,7 @@ def get_message_with_descriptions(scope="USA"):
         return message
     
 
-def get_default_messages(scope="USA"):
+def _get_table_selection_messages(scope="USA"):
     default_messages = [{
         "role": "system",
         "content": (
@@ -78,20 +78,39 @@ def get_relevant_tables_from_pinecone(natural_language_query, scope="USA") -> Li
     
     return list(tables_set)
 
+def get_relevant_tables_from_lm(natural_language_query, model="gpt-3.5-turbo"):
+    """
+    Identify relevant tables for answering a natural language query via LM
+    """
+    content = _get_table_selection_message_with_descriptions().format(
+        natural_language_query=natural_language_query,
+    )
+
+    messages = _get_table_selection_messages().copy()
+    messages.append({
+        "role": "user",
+        "content": content
+    })
+
+    tables_json_str = extract_code_from_markdown(
+        get_assistant_message(
+            messages=messages,
+            model=model,
+        )["message"]["content"]
+    )
+    tables = json.loads(tables_json_str).get("tables")
+    return tables
+
 
 def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
     """
     Identify relevant tables for answering a natural language query
     """
-    content = get_message_with_descriptions(scope=scope).format(
-        natural_language_query=natural_language_query,
-        )
-
-    messages = get_default_messages(scope=scope).copy()
-    messages.append({
-        "role": "user",
-        "content": content
-    })
+    # temporary hack to always use LM for SF
+    if scope == "SF":
+        # model = "gpt-4"
+        model = "gpt-3.5-turbo"
+        return get_relevant_tables_from_lm(natural_language_query, model)
 
     if PINECONE_KEY and PINECONE_ENV:
         return get_relevant_tables_from_pinecone(natural_language_query, scope=scope)
@@ -102,11 +121,4 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
     else:
         model = "gpt-3.5-turbo"
 
-    tables_json_str = extract_code_from_markdown(
-        get_assistant_message(
-            messages=messages,
-            model=model
-        )["message"]["content"]
-    )
-    tables = json.loads(tables_json_str).get('tables')
-    return tables
+    return get_relevant_tables_from_lm(natural_language_query, model)
