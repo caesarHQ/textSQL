@@ -71,11 +71,11 @@
             },
             {
                 "user": "Which neighborhood has the most homeless people?",
-                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE category = 'Homeless Encampments' OR category = 'Homeless Concerns' \nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
+                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE incident_type = 'Homeless Encampments' OR category = 'Homeless Concerns' \nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
             },
             {
                 "user": "Which neighborhood has the most needles on the street?",
-                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE category = 'Needles' \nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
+                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE incident_type = 'Needles' \nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
             }
         ],
         "table_selection": [
