@@ -8,7 +8,7 @@ with open("app/data/tables_many.json", "r") as f:
     table_details = json.load(f)
 
 sf_table_details = {}
-with open("app/data/sf_tables_new.json", "r") as f:
+with open("app/data/sf_tables.json", "r") as f:
     sf_table_details = json.load(f)
 
 
