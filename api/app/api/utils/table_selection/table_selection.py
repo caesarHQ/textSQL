@@ -97,7 +97,8 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
         return get_relevant_tables_from_pinecone(natural_language_query, scope=scope)
     
     if scope == "SF":
-        model = "gpt-4"
+        # model = "gpt-4"
+        model = "gpt-3.5-turbo"
     else:
         model = "gpt-3.5-turbo"
 
