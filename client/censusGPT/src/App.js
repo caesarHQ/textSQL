@@ -162,6 +162,7 @@ function App(props) {
     const [touchStart, setTouchStart] = useState(null)
     const [touchEnd, setTouchEnd] = useState(null)
     const [polygons, setPolygons] = useState([])
+    const [points, setPoints] = useState([])
     const [sqlExplanationIsOpen, setSqlExplanationIsOpen] = useState(false)
     const [sqlExplanation, setSqlExplanation] = useState()
     const [isExplainSqlLoading, setIsExplainSqlLoading] = useState(false)
@@ -549,7 +550,22 @@ function App(props) {
                 })
                 setTableInfo({ rows, columns: filteredColumns })
 
-                if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') >= 0) {
+                if (props.version === 'San Francisco' && filteredColumns.indexOf('point') >= 0) {
+                    // Render points shapes on the map
+                    // Point: ( -122.41816048, 37.75876017)
+                    setPoints(response.result.results.map(r => {
+                        const regex = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
+                        const match = r.point.match(regex);
+                        if (match) {
+                          const long = parseFloat(match[1]);
+                          const lat = parseFloat(match[2]);
+                          return { long, lat };
+                        }
+                        return null; // Return null if no match is found (you can handle this case as needed)
+                      }).filter(Boolean)); // Filter out any null values from the result
+
+                    setVisualization('map')
+                } else if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') >= 0) {
                     // Render polygon shapes on the map
                     setPolygons(response.result.results.map(r => [r.shape]))
                     setVisualization('map')
