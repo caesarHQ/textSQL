@@ -37,7 +37,7 @@ def make_default_messages(schemas_str: str) -> List[Dict[str, str]]:
 
 def make_rephrase_msg_with_schema_and_warnings():
     return (
-        "Let's start by fixing spelling errors and rephrasing the query to be more analytical. Use the schema context to rephrase the user question in a way that leads to optimal query results: {natural_language_query}"
+        "Let's start by fixing and rephrasing the query to be more analytical. Use the schema context to rephrase the user question in a way that leads to optimal query results: {natural_language_query}"
         "The following are schemas of tables you can query:\n"
         "---------------------\n"
         "{schemas_str}"
