@@ -268,7 +268,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
                 )
         }]
         rephrased_query = get_assistant_message(rephrase)["message"]["content"]
-        print(f'[REPHRASED_QUERY:] {rephrased_query}')
+        print(f'[REPHRASED_QUERY] {rephrased_query}')
         content = make_msg_with_schema_and_warnings().format(
             natural_language_query=rephrased_query,
             schemas=schemas
@@ -344,7 +344,7 @@ def text_to_sql_chat_with_retry(messages, table_names=None, scope="USA"):
             )
     }]
     rephrased_query = get_assistant_message(rephrase)["message"]["content"]
-    print(f'[REPHRASED_QUERY:] {rephrased_query}')
+    print(f'[REPHRASED_QUERY] {rephrased_query}')
     content = make_msg_with_schema_and_warnings().format(
         natural_language_query=rephrased_query,
         schemas=schemas
