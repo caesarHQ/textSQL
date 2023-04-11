@@ -56,7 +56,17 @@ def get_table_schemas(table_names: List[str] = None, scope="USA") -> str:
     tables_str_list = []
     for table in tables_list:
         if scope == "SF":
+
             tables_str = table['table_creation_query']
+            
+            # get all the vars in backticks using regex from tables_str
+            regex = r"`([\s\S]+?)`"
+            matches = re.findall(regex, tables_str)
+            if matches:
+                # add each to enums_str_set
+                for match in matches:
+                    enums_str_set.add(match)
+
         else:
             tables_str = f"table name: {table['name']}\n"
             tables_str += f"table description: {table['description']}\n"
