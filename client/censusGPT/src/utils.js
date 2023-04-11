@@ -36,27 +36,3 @@ export const getCities = (result) => {
         return { city: x['city'], lat: x['lat'], long: x['long'] }
     })
 }
-
-/**
- * Query sanitization
- * @param {*} q – The query
- * @returns {string} – The sanitized query
- */
-export const cleanupQuery = (q, version) => {
-    if (version === 'Census') {
-        let cleanedQuery = q.replaceAll(/\barea\b/gi, 'zip code')
-        cleanedQuery = cleanedQuery.replaceAll(/\bareas\b/gi, 'zip codes')
-        cleanedQuery = cleanedQuery.replaceAll(/\bneighborhood\b/gi, 'zip code')
-        cleanedQuery = cleanedQuery.replaceAll(/\bneighborhoods\b/gi, 'zip codes')
-        cleanedQuery = cleanedQuery.replaceAll(/\bpart of\b/gi, 'zip code of')
-        cleanedQuery = cleanedQuery.replaceAll(/\bparts of\b/gi, 'zip codes of')
-        return cleanedQuery
-    }
-    if (version === 'San Francisco') {
-        let cleanedQuery = q.replaceAll(/\barea\b/gi, 'neighborhood')
-        cleanedQuery = cleanedQuery.replaceAll(/\bareas\b/gi, 'neighborhoods')
-        return cleanedQuery
-    }
-
-    return q
-  }

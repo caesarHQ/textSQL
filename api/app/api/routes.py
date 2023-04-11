@@ -45,10 +45,10 @@ def get_tables():
     if not natural_language_query:
         error_msg = 'natural_language_query is missing from request body'
         return make_response(jsonify({"error": error_msg}), 400)
-    
-    natural_language_query = replace_unsupported_localities(natural_language_query)
-    
+        
     scope = request_body.get('scope', "USA")
+    natural_language_query = replace_unsupported_localities(natural_language_query, scope)
+
     
     table_names = get_relevant_tables(natural_language_query, scope)
     return make_response(jsonify({"table_names": table_names}), 200)
@@ -82,7 +82,7 @@ def text_to_sql():
         error_msg = '`natural_language_query` is missing from request body'
         return make_response(jsonify({"error": error_msg}), 400)
     
-    natural_language_query = replace_unsupported_localities(natural_language_query)
+    natural_language_query = replace_unsupported_localities(natural_language_query, scope)
 
     # if not table_names or len(table_names) == 0:
     #     error_msg = 'non-empty `table_names` array is missing from request body'
