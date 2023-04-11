@@ -489,7 +489,8 @@ function App(props) {
         if (props.version === 'San Francisco') {
             requestBody = {
                 natural_language_query,
-                scope: 'SF'
+                scope: 'SF',
+                table_names
             }
         }
 

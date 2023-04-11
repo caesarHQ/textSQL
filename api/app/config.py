@@ -34,7 +34,7 @@ class FlaskAppConfig:
 if DB_URL:
     ENGINE = create_engine(DB_URL)
     dialect_mapping = {
-        "postgresql": "PostgreSQL",
+        "postgresql": "PostgreSQL 15.2",
         "mysql": "MySQL",
     }
     DIALECT = dialect_mapping.get(ENGINE.dialect.name)
