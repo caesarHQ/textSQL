@@ -74,8 +74,8 @@
                 "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE incident_type = 'Homeless Encampments' OR category = 'Homeless Concerns' \nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
             },
             {
-                "user": "Which neighborhood has the most needles on the street?",
-                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE incident_type = 'Needles' \nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
+                "user": "where are the places with the most poop per capita?",
+                "assistant": "```--Since total population has a census_tract column, we need to sum by neighborhood.\nSELECT sfi.neighborhood, SUM(stp.total_population) as total_population, COUNT(*) as poop_count, COUNT(*) / SUM(stp.total_population) as poop_per_capita\nFROM sf_311_incidents sfi\nJOIN sf_total_pop stp ON sfi.neighborhood = stp.neighborhood\nWHERE sfi.incident_type = 'Feces/Urine'\nGROUP BY sfi.neighborhood\nORDER BY poop_per_capita DESC```"
             },
             {
                 "user": "Where is the most violent crime by percentage of crime",
