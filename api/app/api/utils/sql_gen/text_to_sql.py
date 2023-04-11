@@ -25,7 +25,7 @@ def make_default_messages(schemas: str, scope="USA"):
     default_messages = [{
         "role": "system",
         "content": (
-            "You are a helpful assistant for generating syntactically correct read-only {DIALECT} to answer a given question or command, generally about crime, demographics, and population."
+            f"You are a helpful assistant for generating syntactically correct read-only {DIALECT} to answer a given question or command, generally about crime, demographics, and population."
             "\n"
             "The following are tables you can query:\n"
             "---------------------\n"
