@@ -73,6 +73,7 @@ def make_msg_with_schema_and_warnings():
         " Always specify the table where you are using the column."
         " If you include a `city` or `county` column in the result table, include a `state` column too."
         " Make sure each value in the result table is not null."
+        " Include a SQL comment (--) at the top explaining what the code will do in 1-2 sentences"
         " Write your answer in markdown format.\n"
     )
 
