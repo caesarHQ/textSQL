@@ -108,21 +108,21 @@ const DataPlot = (props) => {
 const SearchInput = (props) => {
     const { value, onSearchChange, onClear } = props
     return (
-        <div className="flex rounded-full sm:rounded-md shadow-inner sm:shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
+        <div className="flex rounded-md shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
             <div className="relative flex flex-grow items-stretch focus-within:z-10">
                 <input
                     type="text"
                     name="search"
                     id="search"
                     placeholder={`Ask anything about ${props.version === 'Census' ? 'US' : props.version} Demographics...`}
-                    className="focus:ring-0 block w-full rounded-none rounded-l-md border-0 py-1.5 sm:ring-1 sm:ring-inset sm:ring-gray-300 sm:dark:ring-neutral-500 sm:focus:ring-2 sm:focus:ring-inset sm:focus:ring-blue-600 sm:dark:focus:ring-blue-600 sm:text-sm sm:leading-6 bg-transparent dark:placeholder-neutral-400"
+                    className="block w-full rounded-none rounded-l-md border-0 py-1.5 ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 text-sm leading-6 bg-transparent dark:placeholder-neutral-400"
                     value={value}
                     onChange={onSearchChange}
                 />
             </div>
             <button
                 type="button"
-                className="focus:ring-0 focus:text-blue-600 hover:text-blue-600 dark:text-white/50 dark:hover:text-blue-600 relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md p-2 text-xs sm:text-sm font-semibold sm:ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 sm:focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none sm:hover:bg-gray-50 sm:hover:dark:bg-dark-900"
+                className="focus:text-blue-600 hover:text-blue-600 dark:text-white/50 dark:hover:text-blue-600 relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md p-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none hover:bg-gray-50 hover:dark:bg-dark-900"
                 onClick={onClear}
             >
                 <FaTimes />
@@ -437,7 +437,7 @@ function App(props) {
     }
 
     const TableNamesDisplay = () => (
-        <div className='flex flex-col w-full rounded-lg shadow bg-gray-100 dark:bg-dark-800 ring-1 ring-dark-300 sm:ring-0'>
+        <div className='flex flex-col w-full rounded-lg shadow bg-gray-100 dark:bg-dark-800 ring-dark-300 ring-0'>
             <div className='flex w-full justify-between p-2 items-center rounded-t-lg bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm'>
                 <div className='inline-flex items-center space-x-2'>
                     <BsTable className='dark:text-white/60' />
@@ -724,7 +724,7 @@ function App(props) {
                         <BsPatchQuestion />
                     </button>
                     {sqlExplanationIsOpen ? (
-                        <div ref={sqlExplanationRef} className='h-[5.4rem] w-64 sm:w-[28.5rem] flex overflow-auto top-7 text-xs absolute rounded-md p-2 bg-gray-300/95 dark:bg-dark-800/95 backdrop-blur-xl ring-blue-600 ring-1 ring-inset'>
+                        <div ref={sqlExplanationRef} className='h-[5.4rem] w-[28.5rem] flex overflow-auto top-7 text-xs absolute rounded-md p-2 bg-gray-300/95 dark:bg-dark-800/95 backdrop-blur-xl ring-blue-600 ring-1 ring-inset'>
                             {isExplainSqlLoading ? (
                                 <div className='flex w-full items-center justify-center text-lg'>
                                     <ImSpinner className='animate-spin' />
@@ -747,7 +747,7 @@ function App(props) {
         return (
             <pre
                 align="left"
-                className="rounded-lg bg-gray-100 dark:bg-dark-800 dark:text-white ring-1 ring-dark-300 sm:ring-0"
+                className="rounded-lg bg-gray-100 dark:bg-dark-800 dark:text-white ring-dark-300 ring-0"
             >
                 <div className='flex items-center w-full min-h-full'>
                     <div className='rounded-t-lg flex w-full justify-end h-full items-center p-2 space-x-1.5 bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm font-sans'>
@@ -840,9 +840,9 @@ function App(props) {
                     rel="stylesheet"
                 />
 
-                <div className="fixed sm:relative w-full sm:flex flex-col p-2 sm:p-6 space-y-1.5 bg-gradient-to-b from-black/95 to-transparent bg/10 backdrop-blur-sm pb-2.5 sm:from-white sm:dark:from-transparent z-50">
+                <div className="relative w-full flex flex-col p-6 space-y-1.5 bg-gradient-to-b bg/10 backdrop-blur-sm pb-2.5 from-white dark:from-transparent z-50">
                     <h1
-                        className="text-4xl font-bold text-white sm:text-black dark:text-white"
+                        className="text-4xl font-bold text-black dark:text-white"
                         style={{ cursor: 'pointer' }}
                     >
                         {props.version} GPT
@@ -853,7 +853,7 @@ function App(props) {
                         <DarkModeButton />
                     </div>
                     <Toaster />
-                    <div className='hidden sm:block sm:px-6 sm:pb-2'>
+                    <div className='block px-6 pb-2'>
                         <form
                             autoComplete={'off'}
                             className="flex justify-center"
@@ -874,8 +874,8 @@ function App(props) {
                     <Disclaimer version={props.version} />
                 </div>
 
-                <div className="flex flex-col lg:flex-row h-full w-full gap-6 sm:p-6">
-                    <div className="hidden gap-3 sm:flex sm:flex-col h-full w-full max-h-[23rem] lg:max-h-full overflow-y-auto items-center">
+                <div className="flex flex-col lg:flex-row h-full w-full gap-6 p-6">
+                    <div className="gap-3 flex flex-col h-full w-full max-h-[23rem] lg:max-h-full overflow-y-auto items-center">
                         {/*spinner*/}
                         <LoadingSpinner isLoading={isLoading || isGetTablesLoading} />
                         {sql.length === 0 && !isLoading && !isGetTablesLoading ? (
@@ -907,8 +907,8 @@ function App(props) {
                         </div>
                     </div>
 
-                    <div className='flex flex-grow h-full w-full relative sm:rounded-lg shadow overflow-hidden'>
-                        <div className='fixed sm:absolute top-24 sm:top-0 right-0 z-10 p-1'>
+                    <div className='flex flex-grow h-full w-full relative rounded-lg shadow overflow-hidden'>
+                        <div className='absolute top-0 right-0 z-10 p-1'>
                             <VizSelector
                                 selected={visualization} setSelected={setVisualization}
                                 tableRef={mobileTableRef} setTableIsOpen={setMobileTableIsOpen}
@@ -916,7 +916,7 @@ function App(props) {
                                 viewsCanOpen={sql.length}
                             />
                         </div>
-                        <div className="overflow-hidden sm:rounded-lg shadow flex w-full h-full fixed sm:relative">
+                        <div className="overflow-hidden rounded-lg shadow flex-grow-[2] min-h-[70vh] w-full h-full relative">
                             {visualization == 'map' ?
                                 <Map
                                     ref={mapRef}
@@ -964,138 +964,13 @@ function App(props) {
                                     </Source>
                                 </Map> :
                                 // following <div> helps plot better scale bar widths for responsiveness
-                                <div className='overflow-x-auto flex w-full overflow-hidden mb-32 sm:mb-0'>
+                                <div className='overflow-x-auto flex w-full overflow-hidden mb-32'>
                                     <DataPlot cols={tableInfo.columns} rows={tableInfo.rows} />
                                 </div>
                             }
                         </div>
                     </div>
                 </div>
-
-                {/* Mobile */}
-                <div className={`${mobileMenuIsOpen ? 'top-24' : 'bottom-32'} absolute flex w-full justify-center sm:hidden z-[100]`}>
-                    {isLoading && <span className='animate-spin text-4xl text-blue-600'><ImSpinner /></span>}
-                </div>
-
-                <button className='fixed top-[5.5rem] bg-black/20 backdrop-blur-sm rounded-lg text-white/80 hover:text-white p-2 m-2 text-xl sm:hidden z-40'
-                    onClick={() => setMobileHelpIsOpen(!mobileHelpIsOpen)}
-                >
-                    <BsQuestionCircle />
-                </button>
-                {mobileHelpIsOpen && (
-                    <div className='fixed h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileHelpRef.current && !mobileHelpRef.current.contains(e.target) && setMobileHelpIsOpen(false)}>
-                        <div className='space-y-4 flex-col bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg p-4 flex w-4/5 h-1/2 overflow-auto' ref={mobileHelpRef}>
-                            <div className='font-bold text-lg'>
-                                Welcome to {props.version} GPT
-                            </div>
-                            <Examples
-                                postHogInstance={posthog}
-                                setQuery={setQuery}
-                                handleClick={fetchBackend}
-                                version={props.version}
-                            />
-                        </div>
-                    </div>
-                )}
-
-                {mobileMenuIsOpen ? (
-                    <div className='bg-black/50 dark:bg-black/10 backdrop-blur fixed w-screen h-screen flex z-50 sm:hidden pointer-events-auto' onClick={(e) => mobileMenuRef.current && !mobileMenuRef.current.contains(e.target) && setMobileMenuIsOpen(false)}>
-                        <div className='absolute w-full bottom-0 flex pointer-events-auto'>
-                            <div className='overflow-auto min-h-[50vh] max-h-[65vh] bg-gray-300/60 dark:bg-black/50 backdrop-blur-xl w-full rounded-t-[2rem] flex flex-col items-center' ref={mobileMenuRef} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
-                                <button className='w-full items-center flex justify-center p-1.5 pt-2 rounded-full' onClick={() => setMobileMenuIsOpen(false)}>
-                                    <div className='bg-black/50 dark:bg-white/40 h-1 w-16 rounded-full' />
-                                </button>
-
-                                <div className='flex flex-col items-center w-full p-4 space-y-8'>
-                                    <div className='w-full'>
-                                        <form
-                                            autoComplete={'off'}
-                                            onSubmit={(event) => {
-                                                event.preventDefault()
-                                                handleSearchClick(event)
-                                            }}
-                                            ref={expandedMobileSearchRef}
-                                        >
-                                            <SearchInput
-                                                value={query}
-                                                onSearchChange={handleSearchChange}
-                                                onClear={handleClearSearch}
-                                                version={props.version}
-                                            />
-                                        </form>
-                                    </div>
-
-                                    {sql.length != 0 && (
-                                        <div className='space-y-4 flex-col flex w-full h-fit items-center pb-4'>
-                                            {!isLoading && (
-                                                <>
-                                                    <div className='w-full'>
-                                                        <SQL sql={sql} />
-                                                    </div>
-                                                    <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-full overflow-auto'>
-                                                        <Table
-                                                            columns={tableInfo.columns}
-                                                            values={tableInfo.rows}
-                                                        />
-                                                    </div>
-                                                </>
-                                            )}
-                                            {tableNames && (
-                                                <TableNamesDisplay />
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    <div className='fixed w-screen h-screen flex z-50 sm:hidden pointer-events-none' onClick={(e) => mobileMenuRef.current && !mobileMenuRef.current.contains(e.target) && setMobileMenuIsOpen(false)}>
-                        <div className='absolute w-full bottom-0 flex pointer-events-auto'>
-                            <div className='h-24 bg-gray-300/60 dark:bg-black/50 backdrop-blur-xl w-full rounded-t-[2rem] flex flex-col items-center' onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
-                                <button className='w-full items-center flex justify-center p-1.5 pt-2 rounded-full' onClick={() => setMobileMenuIsOpen(true)}>
-                                    <div className='bg-black/50 dark:bg-white/40 h-1 w-16 rounded-full' />
-                                </button>
-
-                                <div className='flex w-full justify-center p-4'>
-                                    <form
-                                        autoComplete={'off'}
-                                        className='w-full'
-                                        onSubmit={(event) => {
-                                            event.preventDefault()
-                                            handleSearchClick(event)
-                                        }}
-                                    >
-                                        <SearchInput
-                                            value={query}
-                                            onSearchChange={handleSearchChange}
-                                            onClear={handleClearSearch}
-                                            version={props.version}
-                                        />
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {mobileTableIsOpen && sql.length && (
-                    <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileTableRef.current && !mobileTableRef.current.contains(e.target) && setMobileTableIsOpen(false)}>
-                        <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex w-4/5 max-h-80 overflow-auto items-start justify-center' ref={mobileTableRef}>
-                            <Table
-                                columns={tableInfo.columns}
-                                values={tableInfo.rows}
-                            />
-                        </div>
-                    </div>
-                )}
-                {mobileSqlIsOpen && sql.length && (
-                    <div className='absolute h-screen w-screen z-30 items-center justify-center flex sm:hidden' onClick={(e) => mobileSqlRef.current && !mobileSqlRef.current.contains(e.target) && setMobileSqlIsOpen(false)}>
-                        <div className='bg-white/80 dark:bg-dark-900/80 ring-1 ring-dark-300 backdrop-blur-sm shadow rounded-lg flex flex-col w-4/5 max-h-80' ref={mobileSqlRef}>
-                            <SQL sql={sql} />
-                        </div>
-                    </div>
-                )}
             </div>
         </main>
     )
