@@ -15,7 +15,7 @@ from ..table_selection.table_details import get_table_schemas
 
 MSG_WITH_ERROR_TRY_AGAIN = (
     "Try again. "
-    "Only respond with valid {DIALECT}. Write your answer in markdown format. "
+    f"Only respond with valid {DIALECT}. Write your answer in markdown format. "
     f"The {DIALECT} query you just generated resulted in the following error message:\n"
     "{error_message}"
 )
