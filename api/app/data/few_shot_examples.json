@@ -76,6 +76,10 @@
             {
                 "user": "Which neighborhood has the most needles on the street?",
                 "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE incident_type = 'Needles' \nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
+            },
+            {
+                "user": "Where is the most violent crime by percentage of crime",
+                "assistant": "```SELECT neighborhood, \n       100.0 * COUNT(CASE WHEN incident_type IN ('Aggravated Assault', 'Arson', 'Assault', 'Manslaughter', 'Robbery', 'Sexual Offense', 'Homicide') THEN 1 END) / COUNT(*) as violent_crime_percentage\nFROM sf_crime_incidents\nWHERE neighborhood IS NOT NULL\nGROUP BY neighborhood\nORDER BY violent_crime_percentage DESC;```"
             }
         ],
         "table_selection": [
