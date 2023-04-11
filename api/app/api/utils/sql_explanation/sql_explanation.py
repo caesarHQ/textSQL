@@ -1,10 +1,12 @@
 from ..few_shot_examples import get_few_shot_example_messages
 from ..messages import get_assistant_message
+from app.config import DIALECT
 
 
 def get_message_with_descriptions():
     message = (
-        "Provide a concise explanation for the following SQL query: ```{sql}```"
+        f"Provide a concise explanation for the following {DIALECT}"
+        " query: ```{sql}```"
     )
     return message
 
@@ -13,7 +15,7 @@ def get_default_messages():
     default_messages = [{
         "role": "system",
         "content": (
-            "You are a helpful assistant for providing an explanation for a SQL query."
+            f"You are a helpful assistant for providing an explanation for a {DIALECT} query."
         )
     }]
     default_messages.extend(get_few_shot_example_messages(mode="sql_explanation"))

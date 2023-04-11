@@ -1,23 +1,22 @@
-from collections import OrderedDict
 import json
+from collections import OrderedDict
 from typing import Dict, List
 
 import joblib
 import newrelic
 import tiktoken
-from app.config import ENGINE
+from app.config import DIALECT, ENGINE
 from sqlalchemy import text
 
-from ..geo_data import city_lat_lon, zip_lat_lon, neighborhood_shapes
-from ..messages import get_assistant_message, extract_sql_query_from_message, extract_sql_query_from_message
-from ..table_selection.table_details import get_table_schemas
 from ..few_shot_examples import get_few_shot_example_messages
-
+from ..geo_data import city_lat_lon, neighborhood_shapes, zip_lat_lon
+from ..messages import extract_sql_query_from_message, get_assistant_message
+from ..table_selection.table_details import get_table_schemas
 
 MSG_WITH_ERROR_TRY_AGAIN = (
     "Try again. "
-    "Only respond with valid SQL. Write your answer in markdown format. "
-    "The SQL query you just generated resulted in the following error message:\n"
+    "Only respond with valid {DIALECT}. Write your answer in markdown format. "
+    f"The {DIALECT} query you just generated resulted in the following error message:\n"
     "{error_message}"
 )
 
@@ -26,7 +25,7 @@ def make_default_messages(schemas: str, scope="USA"):
     default_messages = [{
         "role": "system",
         "content": (
-            "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command, generally about crime, demographics, and population."
+            "You are a helpful assistant for generating syntactically correct read-only {DIALECT} to answer a given question or command, generally about crime, demographics, and population."
             "\n"
             "The following are tables you can query:\n"
             "---------------------\n"
@@ -60,7 +59,8 @@ def make_rephrase_msg_with_schema_and_warnings():
 
 def make_msg_with_schema_and_warnings():
     return (
-        "Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}"
+        f"Generate syntactically correct read-only {DIALECT} query to answer the following question/command: "
+        "{natural_language_query}"
         "The following are schemas of tables you can query:\n"
         "---------------------\n"
         "{schemas}"
@@ -315,7 +315,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
                 "content": MSG_WITH_ERROR_TRY_AGAIN.format(error_message=str(e))
             })
 
-    print("Could not generate SQL query after {k} tries.".format(k=k))
+    print(f"Could not generate {DIALECT} query after {k} tries.")
     return None, None
 
 

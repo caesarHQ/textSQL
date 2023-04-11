@@ -33,6 +33,11 @@ class FlaskAppConfig:
 
 if DB_URL:
     ENGINE = create_engine(DB_URL)
+    dialect_mapping = {
+        "postgresql": "PostgreSQL",
+        "mysql": "MySQL",
+    }
+    DIALECT = dialect_mapping.get(ENGINE.dialect.name)
 else:
     print('DB_URL not found, please check your environment')
     exit(1)
