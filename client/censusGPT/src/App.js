@@ -419,7 +419,7 @@ function App(props) {
             body: JSON.stringify(requestBody)
         }
 
-        return fetch((props.version === 'Census' ? api_endpoint : 'https://text-sql-be.onrender.com/') + '/api/get_tables', options)
+        return fetch(api_endpoint + '/api/get_tables', options)
             .then((response) => response.json())
             .then((response) => {
                 setIsGetTablesLoading(false)
@@ -506,7 +506,7 @@ function App(props) {
 
         let responseOuter = null
         // Send the request
-        fetch((props.version === 'Census' ? api_endpoint : api_endpoint) + '/api/text_to_sql', options)
+        fetch((props.version === 'Census' ? api_endpoint : 'https://text-sql-be.onrender.com/') + '/api/text_to_sql', options)
             .then((response) => response.json())
             .then((response) => {
                 // Set the loading state to false
