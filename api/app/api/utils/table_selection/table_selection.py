@@ -85,15 +85,15 @@ def get_relevant_tables_from_pinecone(natural_language_query, scope="USA") -> Li
     
     return list(tables_set)
 
-def get_relevant_tables_from_lm(natural_language_query, model="gpt-3.5-turbo"):
+def get_relevant_tables_from_lm(natural_language_query, scope="USA", model="gpt-3.5-turbo"):
     """
     Identify relevant tables for answering a natural language query via LM
     """
-    content = _get_table_selection_message_with_descriptions().format(
+    content = _get_table_selection_message_with_descriptions(scope).format(
         natural_language_query=natural_language_query,
     )
 
-    messages = _get_table_selection_messages().copy()
+    messages = _get_table_selection_messages(scope).copy()
     messages.append({
         "role": "user",
         "content": content
@@ -117,7 +117,7 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
     if scope == "SF":
         # model = "gpt-4"
         model = "gpt-3.5-turbo"
-        return get_relevant_tables_from_lm(natural_language_query, model)
+        return get_relevant_tables_from_lm(natural_language_query, scope, model)
 
     if PINECONE_KEY and PINECONE_ENV:
         return get_relevant_tables_from_pinecone(natural_language_query, scope=scope)
@@ -128,4 +128,4 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
     else:
         model = "gpt-3.5-turbo"
 
-    return get_relevant_tables_from_lm(natural_language_query, model)
+    return get_relevant_tables_from_lm(natural_language_query, scope, model)
