@@ -105,7 +105,11 @@ def get_relevant_tables_from_lm(natural_language_query, scope="USA", model="gpt-
             model=model,
         )["message"]["content"]
     )
-    tables = json.loads(tables_json_str).get("tables")
+
+    try:
+        tables = json.loads(tables_json_str).get("tables")
+    except:
+        tables = []
     return tables
 
 
