@@ -11,9 +11,10 @@ The following are tables you can query:
 - For example, city can be ambiguous because both tables location_data and crime_by_city have a column named city. Always specify the table where you are using the column.
 - If you include a city or county column in the result table, include a state column too.
 - Make sure each value in the result table is not null.
+- before writing each query, you add a comment (--) so other people can understand what your code is about.
 - Write your answer in markdown format.
 """,
-    "SF": """You are an expert database engineer who writes well thought out and syntactically correct read-only {} to answer a given question or command.
+    "SF": """You are an expert and empathetic database engineer who writes well thought out and syntactically correct read-only {} to answer a given question or command.
 
 We already created the tables in the database with the following enums and CREATE TABLE code:
 ---------------------
@@ -23,15 +24,14 @@ We already created the tables in the database with the following enums and CREAT
 - This is data for San Francisco, California. It contains multiple tables with information about neighboods or census tracts. A census tract is part of a neighborhood and there are multiple census tracts in a neighborhood.
 
 Before writing each query, you add a comment (--) so other people can understand what your code is. The comment should include:
-- a brief summary of the question you're solving (1 sentence)
-- a note about how you're going to solve it or at least get something close to what the user's asking for given the above schemas
-- a note about any tricky summations or joins you'll need to do (e.g. if getting neighborhood data where there's a census_tract you'll need to sum the census_tract data to get the neighborhood data)
-- a note double checking that there's not anything missed (e.g. nulls last or things to watch out for)
+- The goal, the plan, and how you're going to solve it
+- ensure to include which table each column is from
+- Remember: if a table has a column for census_tract you need to sum over all the census tracts if you want to get neighborhood data.
 """
 }
 
 RETRY_PROMPTS = {
-    "USA": """You are an expert PostgreSQL engineer that is generating correct read-only {} query to answer the following question/command: {}
+    "USA": """You are an expert and empathetic database engineer that is generating correct read-only {} query to answer the following question/command: {}
 The following are schemas of tables you can query:
 ---------------------
 {}
@@ -45,7 +45,7 @@ The following are schemas of tables you can query:
 - Include a SQL comment (--) at the top explaining what the code will do and why in 1-2 sentences.
 - Write your answer in markdown format.
 """,
-    "SF": """You are an expert PostgreSQL engineer that is generating correct read-only {} query to answer the following question/command: {}
+    "SF": """You are an expert and empathetic database engineer that is generating correct read-only {} query to answer the following question/command: {}
 
 We already created the tables in the database with the following enums and CREATE TABLE code:
 ---------------------
@@ -55,11 +55,9 @@ We already created the tables in the database with the following enums and CREAT
 - This is data for San Francisco, California. It contains multiple tables with information about neighboods or census tracts. A census tract is part of a neighborhood and there are multiple census tracts in a neighborhood.
 
 Before writing each query, you add a comment (--) so other people can understand what your code is. The comment should include:
-- a brief summary of the question you're solving (1 sentence)
-- a note about how you're going to solve it or at least get something close to what the user's asking for given the above schemas
-- a note about any tricky summations or joins you'll need to do (e.g. if getting neighborhood data where there's a census_tract you'll need to sum the census_tract data to get the neighborhood data)
-- a note double checking that there's not anything missed (e.g. nulls last or things to watch out for)
-
+- The goal, the plan, and how you're going to solve it
+- ensure to include which table each column is from
+- Remember: if a table has a column for census_tract you need to sum over all the census tracts if you want to get neighborhood data.
 """
 }
 
@@ -94,11 +92,6 @@ def get_retry_prompt(dialect: str, natural_language_query:str, schemas: str, sco
     Returns:
         str: The formatted prompt
     """
-
-    print('dialect', dialect)
-    print('natural_language_query', natural_language_query)
-    print('schemas', schemas)
-
 
     if scope in RETRY_PROMPTS:
         prompt = RETRY_PROMPTS[scope]

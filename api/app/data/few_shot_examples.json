@@ -67,15 +67,15 @@
             },
             {
                 "user": "What are the largest 3 neighborhoods?",
-                "assistant": "```--Since sf_total_pop includes census_tract, we need to sum on neighborhood first.\nSELECT stp1.neighborhood, sum(total_population) as total_population\nFROM sf_total_pop stp1\nGROUP BY stp1.neighborhood\nORDER BY total_population DESC\nLIMIT 3;```"
+                "assistant": "```SELECT stp1.neighborhood, sum(total_population) as total_population\nFROM sf_total_pop stp1\nGROUP BY stp1.neighborhood\nORDER BY total_population DESC\nLIMIT 3;```"
             },
             {
-                "user": "Which neighborhood has the most homeless people?",
-                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_data\nWHERE incident_type = 'Homeless Encampments' OR category = 'Homeless Concerns' \nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
+                "user": "Which neighborhoods have the highest female to male ratio?",
+                "assistant": "```SELECT \n    sf_income.neighborhood, \n    COALESCE(SUM(total_population), 0) AS total_pop, \n    COALESCE(SUM(female_age_16_plus_with_earnings), 0) AS female_pop, \n    COALESCE(SUM(male_age_16_plus_with_earnings), 0) AS male_pop, \n    COALESCE((SUM(female_age_16_plus_with_earnings) / NULLIF(SUM(male_age_16_plus_with_earnings), 0)), 0) AS female_to_male_ratio\nFROM \n    sf_income \n    JOIN sf_total_pop ON sf_income.neighborhood = sf_total_pop.neighborhood \nWHERE \n    total_population > 0 --exclude neighborhoods with 0 population\nGROUP BY \n    sf_income.neighborhood \nHAVING\n    SUM(male_age_16_plus_with_earnings) > 0 --exclude neighborhoods with 0 male population\nORDER BY \n    female_to_male_ratio DESC \nLIMIT 10;```"
             },
             {
                 "user": "where are the places with the most poop per capita?",
-                "assistant": "```--Since total population has a census_tract column, we need to sum by neighborhood.\nSELECT sfi.neighborhood, SUM(stp.total_population) as total_population, COUNT(*) as poop_count, COUNT(*) / SUM(stp.total_population) as poop_per_capita\nFROM sf_311_incidents sfi\nJOIN sf_total_pop stp ON sfi.neighborhood = stp.neighborhood\nWHERE sfi.incident_type = 'Feces/Urine'\nGROUP BY sfi.neighborhood\nORDER BY poop_per_capita DESC```"
+                "assistant": "```SELECT sfi.neighborhood, SUM(stp.total_population) as total_population, COUNT(*) as poop_count, COUNT(*) / SUM(stp.total_population) as poop_per_capita\nFROM sf_311_incidents sfi\nJOIN sf_total_pop stp ON sfi.neighborhood = stp.neighborhood\nWHERE sfi.incident_type = 'Feces/Urine'\nGROUP BY sfi.neighborhood\nORDER BY poop_per_capita DESC```"
             },
             {
                 "user": "Where is the most violent crime by percentage of crime",

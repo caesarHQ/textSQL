@@ -16,6 +16,7 @@ def get_assistant_message(
     )
     # completion = res['choices'][0]["message"]["content"]
     assistant_message = res['choices'][0]
+  
     return assistant_message
 
 
@@ -32,6 +33,8 @@ def clean_sql_message_content(assistant_message_content):
         sql_query = split_corrected_query_message[1].strip()
     else:
         sql_query = assistant_message_content
+
+    print('SQL QUERY: ', sql_query)
     return sql_query
 
 
