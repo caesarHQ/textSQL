@@ -66,8 +66,8 @@
                 "assistant": "```SELECT neighborhood, COUNT(*) as num_crimes \nFROM sf_crime_incidents\nWHERE occurred >= '2021-01-01' AND occurred < '2022-01-01'\nGROUP BY neighborhood\nORDER BY num_crimes DESC\nLIMIT 1;```"
             },
             {
-                "user": "Which neighborhood had the most poop on the street?",
-                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_incidents\nWHERE incident_type = 'Feces/Urine'\nGROUP BY neighborhood\nORDER BY num_cases DESC;```"
+                "user": "Which neighborhood has the most poop on the street?",
+                "assistant": "```SELECT neighborhood, COUNT(*) as num_cases\nFROM sf_311_incidents\nWHERE incident_type = 'Feces/Urine'\nGROUP BY neighborhood\nORDER BY num_cases DESC\nLIMIT 1;```"
             },
             {
                 "user": "Which neighborhood has the most homeless people?",
