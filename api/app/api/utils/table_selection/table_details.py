@@ -55,17 +55,20 @@ def get_table_schemas(table_names: List[str] = None, scope="USA") -> str:
     enums_str_set = set()
     tables_str_list = []
     for table in tables_list:
-        tables_str = f"table name: {table['name']}\n"
-        tables_str += f"table description: {table['description']}\n"
-        columns_str_list = []
-        for column in table['columns']:
-            if column.get('description'):
-                columns_str_list.append(f"{column['name']} [{column['type']}] ({column['description']})")
-                if 'custom type' in column['description']:
-                    enums_str_set.add(extract_text_from_markdown(column['description']))
-            else:
-                columns_str_list.append(f"{column['name']} [{column['type']}]")
-        tables_str += f"table columns: {', '.join(columns_str_list)}\n"
+        if scope == "SF":
+            tables_str = table['table_creation_query']
+        else:
+            tables_str = f"table name: {table['name']}\n"
+            tables_str += f"table description: {table['description']}\n"
+            columns_str_list = []
+            for column in table['columns']:
+                if column.get('description'):
+                    columns_str_list.append(f"{column['name']} [{column['type']}] ({column['description']})")
+                    if 'custom type' in column['description']:
+                        enums_str_set.add(extract_text_from_markdown(column['description']))
+                else:
+                    columns_str_list.append(f"{column['name']} [{column['type']}]")
+            tables_str += f"table columns: {', '.join(columns_str_list)}\n"
         tables_str_list.append(tables_str)
     tables_description = "\n\n".join(tables_str_list)
 
