@@ -12,7 +12,7 @@ from ..few_shot_examples import get_few_shot_example_messages
 from ..geo_data import city_lat_lon, neighborhood_shapes, zip_lat_lon
 from ..messages import extract_sql_query_from_message, get_assistant_message
 from ..table_selection.table_details import get_table_schemas
-from .prompts import get_initial_prompt
+from .prompts import get_initial_prompt, get_retry_prompt
 
 MSG_WITH_ERROR_TRY_AGAIN = (
     "Try again. "
@@ -26,7 +26,7 @@ def make_default_messages(schemas: str, scope="USA"):
         "role": "system",
         "content": get_initial_prompt(DIALECT, schemas, scope)
     }]
-    print('default_messages', default_messages)
+
     default_messages.extend(get_few_shot_example_messages(mode="text_to_sql", scope=scope))
     return default_messages
 
@@ -41,26 +41,6 @@ def make_rephrase_msg_with_schema_and_warnings():
         "---------------------\n"
         "Do not include any of the table names in the query."
         " Ask the natural language query the way a data analyst, with knowledge of these tables, would."
-    )
-
-def make_msg_with_schema_and_warnings():
-    return (
-        f"You are an expert PostgreSQL engineer that is generating correct read-only {DIALECT} query to answer the following question/command: "
-        "{natural_language_query}"
-        "The following are schemas of tables you can query:\n"
-        "---------------------\n"
-        "{schemas}"
-        "\n"
-        "---------------------\n"
-        "Use state abbreviations for states."
-        " Table `crime_by_city` does not have columns 'zip_code' or 'county'."
-        " Do not use ambiguous column names."
-        " For example, `city` can be ambiguous because both tables `location_data` and `crime_by_city` have a column named `city`."
-        " Always specify the table where you are using the column."
-        " If you include a `city` or `county` column in the result table, include a `state` column too."
-        " Make sure each value in the result table is not null."
-        " Include a SQL comment (--) at the top explaining what the code will do and why in 1-2 sentences"
-        " Write your answer in markdown format.\n"
     )
 
 def is_read_only_query(sql_query: str):
@@ -194,10 +174,8 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3, scope="USA"):
     Generates K SQL queries in parallel and returns the first one that does not produce an exception.
     """
     schemas = get_table_schemas(table_names, scope)
-    content = make_msg_with_schema_and_warnings().format(
-        natural_language_query=natural_language_query,
-        schemas=schemas,
-        )
+    content = get_retry_prompt(DIALECT, natural_language_query, schemas)
+
     messages = make_default_messages(schemas)
     messages.append({
         "role": "user",
@@ -258,10 +236,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
         # print(f'[REPHRASED_QUERY] {rephrased_query}')
         # natural_language_query=rephrased_query
 
-        content = make_msg_with_schema_and_warnings().format(
-            natural_language_query=natural_language_query,
-            schemas=schemas
-        )
+        content = get_retry_prompt(DIALECT, natural_language_query, schemas)
         try:
             enc = len(tiktoken.encoding_for_model("gpt-3.5-turbo").encode(content))
             newrelic.agent.add_custom_attribute("encoding_length", enc)
@@ -333,11 +308,8 @@ def text_to_sql_chat_with_retry(messages, table_names=None, scope="USA"):
             )
     }]
     rephrased_query = get_assistant_message(rephrase)["message"]["content"]
-    print(f'[REPHRASED_QUERY] {rephrased_query}')
-    content = make_msg_with_schema_and_warnings().format(
-        natural_language_query=rephrased_query,
-        schemas=schemas
-        )
+
+    content = get_retry_prompt(DIALECT, rephrased_query, schemas) 
     # Don't return messages_copy to the front-end. It contains extra information for prompting
     messages_copy = make_default_messages(schemas)
     messages_copy.extend(messages)
