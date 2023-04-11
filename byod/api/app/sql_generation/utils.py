@@ -129,16 +129,18 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     if not messages:
         # ask the assistant to rephrase before generating the query
         schemas_str = get_table_schemas_str(table_names)
-        rephrase = [{
-            "role": "user",
-            "content": make_rephrase_msg_with_schema_and_warnings().format(
-                natural_language_query=natural_language_query,
-                schemas_str=schemas_str
-                )
-        }]
-        assistant_message = get_assistant_message(rephrase)
+        # rephrase = [{
+        #     "role": "user",
+        #     "content": make_rephrase_msg_with_schema_and_warnings().format(
+        #         natural_language_query=natural_language_query,
+        #         schemas_str=schemas_str
+        #         )
+        # }]
+        # rephrased_query = get_assistant_message(rephrase)["message"]["content"]
+        # natural_language_query = rephrased_query
+
         content = make_msg_with_schema_and_warnings().format(
-            natural_language_query=assistant_message["message"]["content"],
+            natural_language_query=natural_language_query,
             schemas_str=schemas_str
         )
 
