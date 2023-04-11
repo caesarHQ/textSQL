@@ -6,6 +6,8 @@ from flask_migrate import Migrate
 from app.api.routes import bp as api_bp
 from app.config import FlaskAppConfig, ENV
 from app.extensions import db
+
+from app.api.chat_gpt_plugin import plugin, plugin_config
 import newrelic.agent
 
 
@@ -30,6 +32,8 @@ def create_app(config_object=FlaskAppConfig):
 
 
     app.register_blueprint(api_bp, url_prefix='/api')
+    app.register_blueprint(plugin, url_prefix='/plugin')
+    app.register_blueprint(plugin_config)
 
     # from app.errors import bp as errors_bp
     # app.register_blueprint(errors_bp)

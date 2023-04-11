@@ -75,7 +75,7 @@ posthog.init('phc_iLMBZqxwjAjaKtgz29r4EWv18El2qg3BIJoOOpw7s2e', {
 // eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
 mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 
-let api_endpoint = 'https://text-sql-be.onrender.com'
+let api_endpoint = process.env.REACT_APP_API_URL || 'https://dev-text-sql-be.onrender.com'
 
 if (process.env.REACT_APP_HOST_ENV === 'dev') {
     api_endpoint = 'http://localhost:9000'
@@ -419,7 +419,7 @@ function App(props) {
             body: JSON.stringify(requestBody)
         }
 
-        return fetch((props.version === 'Census' ? api_endpoint : 'https://text-sql-be.onrender.com/') + '/api/get_tables', options)
+        return fetch(api_endpoint + '/api/get_tables', options)
             .then((response) => response.json())
             .then((response) => {
                 setIsGetTablesLoading(false)
@@ -506,7 +506,7 @@ function App(props) {
 
         let responseOuter = null
         // Send the request
-        fetch((props.version === 'Census' ? api_endpoint : 'https://text-sql-be.onrender.com/') + '/api/text_to_sql', options)
+        fetch(api_endpoint + '/api/text_to_sql', options)
             .then((response) => response.json())
             .then((response) => {
                 // Set the loading state to false
