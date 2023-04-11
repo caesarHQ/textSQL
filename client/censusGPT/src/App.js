@@ -907,7 +907,7 @@ function App(props) {
                         </div>
                     </div>
 
-                    <div className='flex flex-grow h-full min-h-[70vh] w-full relative rounded-lg shadow overflow-hidden'>
+                    <div className='flex flex-grow h-full w-full relative rounded-lg shadow overflow-hidden'>
                         <div className='absolute top-0 right-0 z-10 p-1'>
                             <VizSelector
                                 selected={visualization} setSelected={setVisualization}
@@ -916,7 +916,7 @@ function App(props) {
                                 viewsCanOpen={sql.length}
                             />
                         </div>
-                        <div className="overflow-hidden rounded-lg shadow flex w-full h-full relative">
+                        <div className="overflow-hidden rounded-lg shadow flex-grow-[2] min-h-[70vh] w-full h-full relative">
                             {visualization == 'map' ?
                                 <Map
                                     ref={mapRef}
