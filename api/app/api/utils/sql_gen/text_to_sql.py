@@ -25,7 +25,7 @@ def make_default_messages(schemas: str, scope="USA"):
     default_messages = [{
         "role": "system",
         "content": (
-            f"You are a helpful assistant for generating syntactically correct read-only {DIALECT} to answer a given question or command, generally about crime, demographics, and population."
+            f"You are an expert PostgreSQL engineer that is generating well thought out and syntactically correct read-only {DIALECT} to answer a given question or command, generally about crime, demographics, and population."
             "\n"
             "The following are tables you can query:\n"
             "---------------------\n"
@@ -59,7 +59,7 @@ def make_rephrase_msg_with_schema_and_warnings():
 
 def make_msg_with_schema_and_warnings():
     return (
-        f"Generate syntactically correct read-only {DIALECT} query to answer the following question/command: "
+        f"You are an expert PostgreSQL engineer that is generating correct read-only {DIALECT} query to answer the following question/command: "
         "{natural_language_query}"
         "The following are schemas of tables you can query:\n"
         "---------------------\n"
