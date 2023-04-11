@@ -12,6 +12,7 @@ from ..few_shot_examples import get_few_shot_example_messages
 from ..geo_data import city_lat_lon, neighborhood_shapes, zip_lat_lon
 from ..messages import extract_sql_query_from_message, get_assistant_message
 from ..table_selection.table_details import get_table_schemas
+from .prompts import get_initial_prompt
 
 MSG_WITH_ERROR_TRY_AGAIN = (
     "Try again. "
@@ -20,27 +21,12 @@ MSG_WITH_ERROR_TRY_AGAIN = (
     "{error_message}"
 )
 
-
 def make_default_messages(schemas: str, scope="USA"):
     default_messages = [{
         "role": "system",
-        "content": (
-            f"You are an expert PostgreSQL engineer that is generating well thought out and syntactically correct read-only {DIALECT} to answer a given question or command, generally about crime, demographics, and population."
-            "\n"
-            "The following are tables you can query:\n"
-            "---------------------\n"
-            + schemas +
-            "---------------------\n"
-            "Use state abbreviations for states."
-            " Table `crime_by_city` does not have columns 'zip_code' or 'county'."
-            " Do not use ambiguous column names."
-            " For example, `city` can be ambiguous because both tables `location_data` and `crime_by_city` have a column named `city`."
-            " Always specify the table where you are using the column."
-            " If you include a `city` or `county` column in the result table, include a `state` column too."
-            " Make sure each value in the result table is not null."
-            " Write your answer in markdown format.\n"
-        )
+        "content": get_initial_prompt(DIALECT, schemas, scope)
     }]
+    print('default_messages', default_messages)
     default_messages.extend(get_few_shot_example_messages(mode="text_to_sql", scope=scope))
     return default_messages
 
