@@ -3,6 +3,7 @@
         {
             "type": "NEIGHBORHOOD",
             "valid_values": [
+                "The Farallones",
                 "Western Addition",
                 "West of Twin Peaks",
                 "Visitacion Valley",
