@@ -1,4 +1,5 @@
 import json
+import re
 from typing import List
 
 import pinecone
@@ -6,9 +7,15 @@ from openai.embeddings_utils import get_embedding
 
 from ....config import PINECONE_ENV, PINECONE_KEY
 from ..few_shot_examples import get_few_shot_example_messages
-from ..messages import extract_code_from_markdown, get_assistant_message
+from ..messages import get_assistant_message
 from .table_details import get_table_schemas
 
+
+def _extract_text_from_markdown(text):
+    matches = re.findall(r"```([\s\S]+?)```", text)
+    if matches:
+        return matches[0]
+    return text
 
 def _get_table_selection_message_with_descriptions(scope="USA"):
     message = (
@@ -92,7 +99,7 @@ def get_relevant_tables_from_lm(natural_language_query, model="gpt-3.5-turbo"):
         "content": content
     })
 
-    tables_json_str = extract_code_from_markdown(
+    tables_json_str = _extract_text_from_markdown(
         get_assistant_message(
             messages=messages,
             model=model,
