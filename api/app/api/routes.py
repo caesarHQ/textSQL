@@ -1,3 +1,5 @@
+import re
+
 from flask import Blueprint, jsonify, make_response, request
 from sentry_sdk import capture_exception
 
@@ -7,9 +9,27 @@ from .utils.sql_gen.text_to_sql import (execute_sql,
                                         text_to_sql_chat_with_retry,
                                         text_to_sql_parallel,
                                         text_to_sql_with_retry)
+from .utils.table_selection.table_details import get_all_table_names
 from .utils.table_selection.table_selection import get_relevant_tables
 
-from .utils.table_selection.table_details import get_all_table_names
+
+def replace_unsupported_localities(original_string, scope="USA"):
+    if scope == "USA":
+        new_string = re.sub(r'\barea\b', 'zipcode', original_string, flags=re.IGNORECASE)
+        new_string = re.sub(r'\bareas\b', 'zipcodes', new_string, flags=re.IGNORECASE)
+        new_string = re.sub(r'\bplace\b', 'zipcode', new_string, flags=re.IGNORECASE)
+        new_string = re.sub(r'\bplaces\b', 'zipcodes', new_string, flags=re.IGNORECASE)
+        new_string = re.sub(r'\bpart\b', 'zipcode', new_string, flags=re.IGNORECASE)
+        new_string = re.sub(r'\bparts\b', 'zipcodes', new_string, flags=re.IGNORECASE)
+    elif scope == "SF":
+        new_string = re.sub(r'\barea\b', 'neighborhood', original_string, flags=re.IGNORECASE)
+        new_string = re.sub(r'\bareas\b', 'neighborhoods', new_string, flags=re.IGNORECASE)
+        new_string = re.sub(r'\bplace\b', 'neighborhood', new_string, flags=re.IGNORECASE)
+        new_string = re.sub(r'\bplaces\b', 'neighborhoods', new_string, flags=re.IGNORECASE)
+        new_string = re.sub(r'\bpart\b', 'neighborhood', new_string, flags=re.IGNORECASE)
+        new_string = re.sub(r'\bparts\b', 'neighborhoods', new_string, flags=re.IGNORECASE)
+    return new_string
+
 
 bp = Blueprint('api_bp', __name__)
 
@@ -25,6 +45,8 @@ def get_tables():
     if not natural_language_query:
         error_msg = 'natural_language_query is missing from request body'
         return make_response(jsonify({"error": error_msg}), 400)
+    
+    natural_language_query = replace_unsupported_localities(natural_language_query)
     
     scope = request_body.get('scope', "USA")
     
@@ -59,6 +81,8 @@ def text_to_sql():
     if not natural_language_query:
         error_msg = '`natural_language_query` is missing from request body'
         return make_response(jsonify({"error": error_msg}), 400)
+    
+    natural_language_query = replace_unsupported_localities(natural_language_query)
 
     # if not table_names or len(table_names) == 0:
     #     error_msg = 'non-empty `table_names` array is missing from request body'
