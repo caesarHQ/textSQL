@@ -60,7 +60,7 @@ const TableHeader = (props) => {
                 {props.columns.map((x) => (
                     <th
                         scope="col"
-                        className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-0 sticky top-0"
+                        className="py-3.5 pr-3 text-left text-sm font-semibold sticky top-0"
                     >
                         {convertToTitleCase(x)}
                     </th>
@@ -83,7 +83,7 @@ const TableRows = (props) => {
                     {row.map((rowValue, columnIndex) => (
                         <td
                             key={Math.random()}
-                            className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-left font-medium sm:pl-0"
+                            className="whitespace-nowrap py-4 pr-3 text-sm text-left font-medium"
                         >
                             {formatNumber(rowValue, props.columns[columnIndex])}
                         </td>
@@ -104,7 +104,7 @@ const Table = (props) => {
     let values = props.values
 
     return (
-        <div className="sm:dark:bg-dark-800 dark:text-white rounded-lg w-full h-full">
+        <div className="dark:bg-dark-800 dark:text-white rounded-lg w-full h-full">
             <div className="flow-root">
                 <div className="overflow-x-auto">
                     <div className="inline-block min-w-full align-middle px-6">
