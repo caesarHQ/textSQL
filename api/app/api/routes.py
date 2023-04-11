@@ -96,7 +96,6 @@ def text_to_sql():
         #     result, sql_query = text_to_sql_with_retry(natural_language_query, messages=messages)
         if not table_names:
             table_names = get_all_table_names(scope=scope)
-            print(table_names)
             # table_names = get_relevant_tables(natural_language_query, scope)
         result, sql_query = text_to_sql_with_retry(natural_language_query, table_names, scope=scope)
     except Exception as e:

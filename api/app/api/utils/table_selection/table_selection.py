@@ -75,8 +75,6 @@ def get_relevant_tables_from_pinecone(natural_language_query, scope="USA") -> Li
         for table_name in result.metadata["table_names"]:
             tables_set.add(table_name)
 
-    print(results["matches"])
-
     if scope == "USA" or scope == "SF":
         if len(tables_set) == 1 and "crime_by_city" in tables_set:
             pass
