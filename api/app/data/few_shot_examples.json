@@ -83,11 +83,11 @@
             },
             {
                 "user": "How many crimes involved knives?",
-                "assistant": "```SELECT COUNT(*) as num_knife_crimes\nFROM sf_crime_incidents\nWHERE LOWER(description) ~ '\\yknife\\y';```"
+                "assistant": "```SELECT COUNT(*) as num_knife_crimes\nFROM sf_crime_incidents\nWHERE description ~* '\\m(stabbing|knife)\\M';```"
             },
             {
                 "user": "How many crimes involved guns?",
-                "assistant": "```SELECT COUNT(*) as num_crimes\nFROM sf_crime_incidents\nWHERE LOWER(description) ~ '\\m(gun|firearm)\\M';```"
+                "assistant": "```SELECT COUNT(*) as num_gun_crimes\nFROM sf_crime_incidents\nWHERE description ~* '\\m(gun|firearm)\\M';```"
             }
         ],
         "table_selection": [
