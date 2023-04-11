@@ -20,7 +20,6 @@ import { VizSelector } from './components/vizSelector'
 
 // Utils
 import {
-    cleanupQuery,
     getCities,
     getZipcodes,
     getZipcodesMapboxFormatted,
@@ -476,9 +475,6 @@ function App(props) {
 
         // clear previous layers
         clearMapLayers()
-
-        // Sanitize the query
-        natural_language_query = cleanupQuery(natural_language_query, props.version)
 
         const table_names = await getTables(natural_language_query)
 
