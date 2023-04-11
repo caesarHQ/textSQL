@@ -1,6 +1,6 @@
 const Disclaimer = (props) => {
     const SF_disclaimer = `Disclaimer: SanFranciscoGPT currently only supports data about crime,
-    age, race, gender, income and population in San Francisco.
+    311 cases, age, race, gender, income and population in San Francisco.
     But we are working to add more data!`;
 
     const Census_disclaimer = `Disclaimer: CensusGPT currently only supports data about crime,
