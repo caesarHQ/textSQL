@@ -972,7 +972,7 @@ function App(props) {
                 </div>
 
                 {/* Mobile */}
-                <div className='absolute top-24 flex w-full justify-center sm:hidden z-50'>
+                <div className={`${mobileMenuIsOpen ? 'top-24' : 'bottom-32'} absolute flex w-full justify-center sm:hidden z-[100]`}>
                     {isLoading && <span className='animate-spin text-4xl text-blue-600'><ImSpinner /></span>}
                 </div>
 
