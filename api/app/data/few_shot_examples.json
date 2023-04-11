@@ -80,6 +80,14 @@
             {
                 "user": "Where is the most violent crime by percentage of crime",
                 "assistant": "```SELECT neighborhood, \n       100.0 * COUNT(CASE WHEN incident_type IN ('Aggravated Assault', 'Arson', 'Assault', 'Manslaughter', 'Robbery', 'Sexual Offense', 'Homicide') THEN 1 END) / COUNT(*) as violent_crime_percentage\nFROM sf_crime_incidents\nWHERE neighborhood IS NOT NULL\nGROUP BY neighborhood\nORDER BY violent_crime_percentage DESC;```"
+            },
+            {
+                "user": "How many crimes involved knives?",
+                "assistant": "```SELECT COUNT(*) as num_knife_crimes\nFROM sf_crime_incidents\nWHERE LOWER(description) ~ '\\yknife\\y';```"
+            },
+            {
+                "user": "How many crimes involved guns?",
+                "assistant": "```SELECT COUNT(*) as num_crimes\nFROM sf_crime_incidents\nWHERE LOWER(description) ~ '\\m(gun|firearm)\\M';```"
             }
         ],
         "table_selection": [
