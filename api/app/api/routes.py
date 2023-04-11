@@ -15,6 +15,8 @@ from .utils.table_selection.table_selection import get_relevant_tables
 
 def replace_unsupported_localities(original_string, scope="USA"):
     if scope == "USA":
+        new_string = re.sub(r'\bneighborhood\b', 'zipcode', original_string, flags=re.IGNORECASE)
+        new_string = re.sub(r'\bneighborhoods\b', 'zipcodes', new_string, flags=re.IGNORECASE)
         new_string = re.sub(r'\barea\b', 'zipcode', original_string, flags=re.IGNORECASE)
         new_string = re.sub(r'\bareas\b', 'zipcodes', new_string, flags=re.IGNORECASE)
         new_string = re.sub(r'\bplace\b', 'zipcode', new_string, flags=re.IGNORECASE)
