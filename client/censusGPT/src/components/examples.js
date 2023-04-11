@@ -21,10 +21,10 @@ const Examples = (props) => {
 
     if (props.version === 'San Francisco') {
         basic_example_queries = [
-            'Which four neigbhorhoods had the highest crime in 2021?',
-            'Which two neigbhorhoods have the most homeless people?',
-            'Which neigbhorhood has the most needles on the street?',
-            'Which neigbhorhood has the most poop on the street?',
+            'Which four neighborhoods had the highest crime in 2021?',
+            'Which two neighborhoods have the most homeless people?',
+            'Which neighborhoods has the most needles on the street?',
+            'Which neighborhoods has the most poop on the street?',
         ]
         advanced_example_queries = [
             '3 neighborhoods with the highest female to male ratio',
