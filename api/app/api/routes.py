@@ -9,6 +9,8 @@ from .utils.sql_gen.text_to_sql import (execute_sql,
                                         text_to_sql_with_retry)
 from .utils.table_selection.table_selection import get_relevant_tables
 
+from .utils.table_selection.table_details import get_all_table_names
+
 bp = Blueprint('api_bp', __name__)
 
 
@@ -69,7 +71,9 @@ def text_to_sql():
         # if result is None or sql_query is None:
         #     result, sql_query = text_to_sql_with_retry(natural_language_query, messages=messages)
         if not table_names:
-            table_names = get_relevant_tables(natural_language_query, scope)
+            table_names = get_all_table_names(scope=scope)
+            print(table_names)
+            # table_names = get_relevant_tables(natural_language_query, scope)
         result, sql_query = text_to_sql_with_retry(natural_language_query, table_names, scope=scope)
     except Exception as e:
         capture_exception(e)

@@ -23,6 +23,13 @@ def extract_text_from_markdown(text):
 
     return extracted_text
 
+def get_all_table_names(scope="USA") -> List[str]:
+    if scope == "USA":
+        return [table["name"] for table in table_details["tables"]]
+    elif scope == "SF":
+        return [table["name"] for table in sf_table_details["tables"]]
+    return []
+
 
 def get_table_schemas(table_names: List[str] = None, scope="USA") -> str:
     enums_list = []
