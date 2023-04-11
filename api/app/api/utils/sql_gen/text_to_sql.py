@@ -174,7 +174,7 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3, scope="USA"):
     Generates K SQL queries in parallel and returns the first one that does not produce an exception.
     """
     schemas = get_table_schemas(table_names, scope)
-    content = get_retry_prompt(DIALECT, natural_language_query, schemas)
+    content = get_retry_prompt(DIALECT, natural_language_query, schemas, scope)
 
     messages = make_default_messages(schemas)
     messages.append({
@@ -236,7 +236,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
         # print(f'[REPHRASED_QUERY] {rephrased_query}')
         # natural_language_query=rephrased_query
 
-        content = get_retry_prompt(DIALECT, natural_language_query, schemas)
+        content = get_retry_prompt(DIALECT, natural_language_query, schemas, scope)
         try:
             enc = len(tiktoken.encoding_for_model("gpt-3.5-turbo").encode(content))
             newrelic.agent.add_custom_attribute("encoding_length", enc)
@@ -309,7 +309,7 @@ def text_to_sql_chat_with_retry(messages, table_names=None, scope="USA"):
     }]
     rephrased_query = get_assistant_message(rephrase)["message"]["content"]
 
-    content = get_retry_prompt(DIALECT, rephrased_query, schemas) 
+    content = get_retry_prompt(DIALECT, rephrased_query, schemas, scope) 
     # Don't return messages_copy to the front-end. It contains extra information for prompting
     messages_copy = make_default_messages(schemas)
     messages_copy.extend(messages)
