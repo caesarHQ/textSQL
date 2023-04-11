@@ -19,7 +19,7 @@ def get_assistant_message(
     return assistant_message
 
 
-def clean_message_content(assistant_message_content):
+def clean_sql_message_content(assistant_message_content):
     """
     Cleans message content to extract the SQL query
     """
@@ -37,12 +37,12 @@ def clean_message_content(assistant_message_content):
 
 def extract_sql_query_from_message(assistant_message_content):
     print(assistant_message_content)
-    content = extract_code_from_markdown(assistant_message_content)
-    return clean_message_content(content)
+    content = extract_sql_from_markdown(assistant_message_content)
+    return clean_sql_message_content(content)
 
 
 
-def extract_code_from_markdown(assistant_message_content):
+def extract_sql_from_markdown(assistant_message_content):
     regex = r"```([\s\S]+?)```"
     matches = re.findall(regex, assistant_message_content)
 
