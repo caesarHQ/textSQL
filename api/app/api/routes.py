@@ -17,7 +17,7 @@ def replace_unsupported_localities(original_string, scope="USA"):
     if scope == "USA":
         new_string = re.sub(r'\bneighborhood\b', 'zipcode', original_string, flags=re.IGNORECASE)
         new_string = re.sub(r'\bneighborhoods\b', 'zipcodes', new_string, flags=re.IGNORECASE)
-        new_string = re.sub(r'\barea\b', 'zipcode', original_string, flags=re.IGNORECASE)
+        new_string = re.sub(r'\barea\b', 'zipcode', new_string, flags=re.IGNORECASE)
         new_string = re.sub(r'\bareas\b', 'zipcodes', new_string, flags=re.IGNORECASE)
         new_string = re.sub(r'\bplace\b', 'zipcode', new_string, flags=re.IGNORECASE)
         new_string = re.sub(r'\bplaces\b', 'zipcodes', new_string, flags=re.IGNORECASE)
@@ -52,6 +52,7 @@ def get_tables():
     natural_language_query = replace_unsupported_localities(natural_language_query, scope)
 
     
+
     table_names = get_relevant_tables(natural_language_query, scope)
     return make_response(jsonify({"table_names": table_names}), 200)
 
@@ -85,6 +86,8 @@ def text_to_sql():
         return make_response(jsonify({"error": error_msg}), 400)
     
     natural_language_query = replace_unsupported_localities(natural_language_query, scope)
+
+    print('PARSED NLQ: ', natural_language_query)
 
     # if not table_names or len(table_names) == 0:
     #     error_msg = 'non-empty `table_names` array is missing from request body'

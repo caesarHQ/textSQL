@@ -12,8 +12,8 @@
         ],
         "text_to_sql": [
             {
-                "user": "Which top 5 cities have the most total crime?",
-                "assistant": "```SELECT city, state, \n       (violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) AS total_crime\nFROM crime_by_city\nORDER BY total_crime DESC\nLIMIT 5;```"
+                "user": "Five cities in Florida with the highest crime",
+                "assistant": "```SELECT city, state, \n       (violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) AS total_crime\nFROM crime_by_city\nWHERE state = 'FL'\nORDER BY total_crime DESC\nLIMIT 5;```"
             },
             {
                 "user": "What zip code has the highest percentage of people of age 75?",

@@ -43,6 +43,8 @@ The following are schemas of tables you can query:
 - Make sure each value in the result table is not null.
 - Include a SQL comment (--) at the top explaining what the code will do and why in 1-2 sentences.
 - Write your answer in markdown format.
+
+Command: {}
 """,
     "SF": """You are an expert and empathetic database engineer that is generating correct read-only {} query to answer the following question/command: {}
 
@@ -57,6 +59,8 @@ Before writing the query, add a comment (--) explaining the data type(s) that ne
 Also add a comment (--) so other people can understand what your code is. The comment should include the goal, the plan, and how you're going to solve it
 Ensure to include which table each column is from
 Remember: if a table has a column for census_tract you need to sum over all the census tracts if you want to get neighborhood data.
+
+Command: {}
 """
 }
 
@@ -95,5 +99,5 @@ def get_retry_prompt(dialect: str, natural_language_query:str, schemas: str, sco
     if scope in RETRY_PROMPTS:
         prompt = RETRY_PROMPTS[scope]
     else: prompt = RETRY_PROMPTS["USA"]
-    prompt = prompt.format(dialect,natural_language_query, schemas)
+    prompt = prompt.format(dialect,natural_language_query, schemas, natural_language_query)
     return prompt
