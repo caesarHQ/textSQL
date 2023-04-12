@@ -91,10 +91,10 @@ def execute_sql(sql_query: str):
         rows = [list(r) for r in result.all()]
 
         # Check for null values
-        for row in rows:
-            for value in row:
-                if value is None:
-                    raise NullValueException("Make sure each value in the result table is not null.")
+        # for row in rows:
+        #     for value in row:
+        #         if value is None:
+        #             raise NullValueException("Make sure each value in the result table is not null.")
                 
         # Add neighborhood boundaries to results that have `neighborhood`
         neighborhood_idx = None

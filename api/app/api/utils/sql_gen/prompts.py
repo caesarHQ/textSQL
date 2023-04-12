@@ -25,7 +25,8 @@ We already created the tables in the database with the following enums and CREAT
 Before writing the query, add a comment (--) explaining the data type(s) that needs to get returned what will be complicated about getting them (e.g. if there's multiple enums in the check or joins or coalesces).
 Also add a comment (--) so other people can understand what your code is. The comment should include the goal, the plan, and how you're going to solve it
 Ensure to include which table each column is from
-Remember: if a table has a column for census_tract you need to sum over all the census tracts if you want to get neighborhood data.
+Be wary; some of the data might be messed up so consider how to handle nulls or missing data.
+Remember: if a table has a column for census_tract, the columns refer to the tract, not the total for the neighborhood; there are multiple tracts in a neighborhood.
 """
 }
 
@@ -58,7 +59,8 @@ We already created the tables in the database with the following enums and CREAT
 Before writing the query, add a comment (--) explaining the data type(s) that needs to get returned what will be complicated about getting them (e.g. if there's multiple enums in the check or joins or coalesces).
 Also add a comment (--) so other people can understand what your code is. The comment should include the goal, the plan, and how you're going to solve it
 Ensure to include which table each column is from
-Remember: if a table has a column for census_tract you need to sum over all the census tracts if you want to get neighborhood data.
+Be wary; some of the data might be messed up so consider how to handle nulls or missing data.
+Remember: if a table has a column for census_tract, the columns refer to the tract, not the total for the neighborhood; there are multiple tracts in a neighborhood.
 
 Command: {}
 """
