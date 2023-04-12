@@ -63,31 +63,27 @@
         "text_to_sql": [
             {
                 "user": "Which neighborhood had the most crime in 2021?",
-                "assistant": "```SELECT neighborhood, COUNT(*) as num_crimes \nFROM sf_crime_incidents\nWHERE occurred >= '2021-01-01' AND occurred < '2022-01-01'\nGROUP BY neighborhood\nORDER BY num_crimes DESC\nLIMIT 1;```"
+                "assistant": "```SELECT neighborhood, COUNT(*) as num_crimes \nFROM sf_crime_incidents\nWHERE occurred >= '2021-01-01' AND occurred < '2022-01-01'\nGROUP BY neighborhood\nORDER BY num_crimes DESC NULLS LAST\nLIMIT 1;```"
             },
             {
                 "user": "What are the largest 3 neighborhoods?",
-                "assistant": "```SELECT stp1.neighborhood, sum(total_population) as total_population\nFROM sf_total_pop stp1\nGROUP BY stp1.neighborhood\nORDER BY total_population DESC\nLIMIT 3;```"
+                "assistant": "```SELECT stp1.neighborhood, sum(total_population) as total_population\nFROM sf_total_pop stp1\nGROUP BY stp1.neighborhood\nORDER BY total_population DESC NULLS LAST\nLIMIT 3;```"
             },
             {
                 "user": "Which neighborhoods have the highest female to male ratio?",
-                "assistant": "```SELECT \n    sf_income.neighborhood, \n    COALESCE(SUM(total_population), 0) AS total_pop, \n    COALESCE(SUM(female_age_16_plus_with_earnings), 0) AS female_pop, \n    COALESCE(SUM(male_age_16_plus_with_earnings), 0) AS male_pop, \n    COALESCE((SUM(female_age_16_plus_with_earnings) / NULLIF(SUM(male_age_16_plus_with_earnings), 0)), 0) AS female_to_male_ratio\nFROM \n    sf_income \n    JOIN sf_total_pop ON sf_income.neighborhood = sf_total_pop.neighborhood \nWHERE \n    total_population > 0 --exclude neighborhoods with 0 population\nGROUP BY \n    sf_income.neighborhood \nHAVING\n    SUM(male_age_16_plus_with_earnings) > 0 --exclude neighborhoods with 0 male population\nORDER BY \n    female_to_male_ratio DESC \nLIMIT 10;```"
+                "assistant": "```SELECT \n    sf_income.neighborhood, \n    COALESCE(SUM(total_population), 0) AS total_pop, \n    COALESCE(SUM(female_age_16_plus_with_earnings), 0) AS female_pop, \n    COALESCE(SUM(male_age_16_plus_with_earnings), 0) AS male_pop, \n    COALESCE((SUM(female_age_16_plus_with_earnings) / NULLIF(SUM(male_age_16_plus_with_earnings), 0)), 0) AS female_to_male_ratio\nFROM \n    sf_income \n    JOIN sf_total_pop ON sf_income.neighborhood = sf_total_pop.neighborhood \nWHERE \n    total_population > 0 --exclude neighborhoods with 0 population\nGROUP BY \n    sf_income.neighborhood \nHAVING\n    SUM(male_age_16_plus_with_earnings) > 0 --exclude neighborhoods with 0 male population\nORDER BY \n    female_to_male_ratio DESC NULLS LAST \nLIMIT 10;```"
             },
             {
                 "user": "where are the places with the most poop per capita?",
-                "assistant": "```SELECT sfi.neighborhood, SUM(stp.total_population) as total_population, COUNT(*) as poop_count, COUNT(*) / SUM(stp.total_population) as poop_per_capita\nFROM sf_311_incidents sfi\nJOIN sf_total_pop stp ON sfi.neighborhood = stp.neighborhood\nWHERE sfi.incident_type = 'Feces/Urine'\nGROUP BY sfi.neighborhood\nORDER BY poop_per_capita DESC```"
+                "assistant": "```SELECT sfi.neighborhood, SUM(stp.total_population) as total_population, COUNT(*) as poop_count, COUNT(*) / SUM(stp.total_population) as poop_per_capita\nFROM sf_311_incidents sfi\nJOIN sf_total_pop stp ON sfi.neighborhood = stp.neighborhood\nWHERE sfi.incident_type = 'Feces/Urine'\nGROUP BY sfi.neighborhood\nORDER BY poop_per_capita DESC NULLS LAST;```"
             },
             {
                 "user": "Where is the most violent crime by percentage of crime",
-                "assistant": "```SELECT neighborhood, \n       100.0 * COUNT(CASE WHEN incident_type IN ('Aggravated Assault', 'Arson', 'Assault', 'Manslaughter', 'Robbery', 'Sexual Offense', 'Homicide') THEN 1 END) / COUNT(*) as violent_crime_percentage\nFROM sf_crime_incidents\nWHERE neighborhood IS NOT NULL\nGROUP BY neighborhood\nORDER BY violent_crime_percentage DESC;```"
+                "assistant": "```SELECT neighborhood, \n       100.0 * COUNT(CASE WHEN incident_type IN ('Aggravated Assault', 'Arson', 'Assault', 'Manslaughter', 'Robbery', 'Sexual Offense', 'Homicide') THEN 1 END) / COUNT(*) as violent_crime_percentage\nFROM sf_crime_incidents\nWHERE neighborhood IS NOT NULL\nGROUP BY neighborhood\nORDER BY violent_crime_percentage DESC NULLS LAST;```"
             },
             {
                 "user": "How many crimes involved knives?",
                 "assistant": "```SELECT COUNT(*) as num_knife_crimes\nFROM sf_crime_incidents\nWHERE description ~* '\\m(stabbing|knife)\\M';```"
-            },
-            {
-                "user": "How many crimes involved guns?",
-                "assistant": "```SELECT COUNT(*) as num_gun_crimes\nFROM sf_crime_incidents\nWHERE description ~* '\\m(gun|firearm)\\M';```"
             }
         ],
         "table_selection": [
