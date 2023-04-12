@@ -88,6 +88,10 @@
         ],
         "table_selection": [
             {
+                "user": "show me all the needles",
+                "assistant": "```\n{\n    \"tables\": [\"sf_311_incidents\"]\n}\n```"
+            },
+            {
                 "user": "how many needles per capita are there in hayes valley",
                 "assistant": "```\n{\n    \"tables\": [\"sf_311_incidents\", \"sf_total_pop_by_census_tract\"]\n}\n```"
             },
