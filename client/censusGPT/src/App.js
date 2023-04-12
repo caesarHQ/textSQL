@@ -868,17 +868,19 @@ function App(props) {
                 />
 
                 <div className="relative w-full flex flex-col p-6 space-y-1.5 bg-gradient-to-b bg/10 backdrop-blur-sm pb-2.5 from-white dark:from-transparent z-50">
+                    
+                <div className="inline-flex gap-x-2 align-middle justify-center mb-6">
+                        <GithubButton />
+                        <DiscordButton />
+                        <DarkModeButton />
+                    </div>
+
                     <h1
                         className="text-4xl font-bold text-black dark:text-white"
                         style={{ cursor: 'pointer' }}
                     >
                         {props.version} GPT
                     </h1>
-                    <div className="inline-flex gap-x-1.5 align-middle justify-center">
-                        <GithubButton />
-                        <DiscordButton />
-                        <DarkModeButton />
-                    </div>
                     <Toaster />
                     <div className='block px-6 pb-2'>
                         <form
