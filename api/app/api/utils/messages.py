@@ -46,8 +46,9 @@ def clean_sql_message_content(assistant_message_content):
     """
     Cleans message content to extract the SQL query
     """
-    # Ignore text after the SQL query terminator `;`
-    assistant_message_content = assistant_message_content.split(";")[0]
+    # Ignore text after the last SQL query terminator `;`
+    parts = assistant_message_content.split(";")
+    assistant_message_content = ";".join(parts[:-1])
 
     # Remove prefix for corrected query assistant message
     split_corrected_query_message = assistant_message_content.split(":")
@@ -63,8 +64,8 @@ def clean_sql_message_content(assistant_message_content):
 def extract_sql_query_from_message(assistant_message_content):
     print(assistant_message_content)
     content = extract_sql_from_markdown(assistant_message_content)
-    return clean_sql_message_content(content)
-
+    # return clean_sql_message_content(content)
+    return content
 
 
 def extract_sql_from_markdown(assistant_message_content):
