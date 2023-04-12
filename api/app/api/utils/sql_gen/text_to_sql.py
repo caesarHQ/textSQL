@@ -97,17 +97,17 @@ def execute_sql(sql_query: str):
         #             raise NullValueException("Make sure each value in the result table is not null.")
                 
         # Add neighborhood boundaries to results that have `neighborhood`
-        neighborhood_idx = None
-        try:
-            neighborhood_idx = column_names.index("neighborhood")
-        except ValueError:
-            neighborhood_idx = None
-        if neighborhood_idx is not None:
-            column_names.append("shape")
-            for row in rows:
-                neighborhood = row[neighborhood_idx]
-                shape = neighborhood_shapes["neighborhoods"].get(neighborhood, {}).get("shape")
-                row.append(shape)
+        # neighborhood_idx = None
+        # try:
+        #     neighborhood_idx = column_names.index("neighborhood")
+        # except ValueError:
+        #     neighborhood_idx = None
+        # if neighborhood_idx is not None:
+        #     column_names.append("shape")
+        #     for row in rows:
+        #         neighborhood = row[neighborhood_idx]
+        #         shape = neighborhood_shapes["neighborhoods"].get(neighborhood, {}).get("shape")
+        #         row.append(shape)
 
 
         # Add lat and lon to zip_code
