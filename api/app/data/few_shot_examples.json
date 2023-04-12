@@ -84,6 +84,10 @@
             {
                 "user": "What are the top 5 neighborhoods with the most encampments per capita?",
                 "assistant": "```SELECT \n    sfi.neighborhood, \n    stp.tract_population AS total_pop, \n    COUNT(*) AS num_encampments, \n    COUNT(*) / NULLIF(stp.tract_population, 0) AS encampments_per_capita -- calculate the encampments per capita by dividing the number of rows by the total population (if it's not 0) use NULLIF to handle cases where the total population is 0 to avoid a division by zero error\nFROM \n    sf_311_incidents sfi\n    JOIN (\t-- subquery to calculate the total population of each neighborhood\n        SELECT neighborhood, SUM(tract_population) AS total_population \n        FROM sf_total_pop_by_census_tract \n        GROUP BY neighborhood\n    ) stp ON sfi.neighborhood = stp.neighborhood\nWHERE \n    sfi.incident_type = 'Homeless Encampments'\nGROUP BY \n    sfi.neighborhood, stp.tract_population\nHAVING \n    stp.tract_population > 0\nORDER BY \n    encampments_per_capita DESC NULLS LAST\nLIMIT 5;```"
+            },
+            {
+                "user": "Give me the number of poop incidents per capita in the Mission neighborhood",
+                "assistant": "WITH stp AS (\n    SELECT neighborhood, SUM(tract_population) AS total_population\n    FROM sf_total_pop_by_census_tract\n    GROUP BY neighborhood\n), incidents_per_neighborhood AS (\n    SELECT sfi.neighborhood, COUNT(*) AS num_incidents\n    FROM sf_311_incidents sfi\n    WHERE sfi.neighborhood = 'Mission' AND sfi.incident_type = 'Feces/Urine'\n    GROUP BY sfi.neighborhood\n)\nSELECT\n    incidents_per_neighborhood.neighborhood,\n    incidents_per_neighborhood.num_incidents,\n    incidents_per_neighborhood.num_incidents / NULLIF(SUM(stp.total_population), 0) AS incidents_per_capita\nFROM stp\nJOIN incidents_per_neighborhood ON stp.neighborhood = incidents_per_neighborhood.neighborhood\nGROUP BY incidents_per_neighborhood.neighborhood, incidents_per_neighborhood.num_incidents;\n"
             }
         ],
         "table_selection": [
