@@ -16,7 +16,7 @@ const convertToTitleCase = (value) => {
 
 const formatNumber = (value, col) => {
     if (value === null) {
-        return value
+        return 'Unknown'
     }
     // Format the number to have commas
     if (col == 'zip_code') {
