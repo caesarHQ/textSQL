@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useReducer } from 'react'
+import React, { useState, useRef, useEffect, useReducer, useMemo } from 'react'
 import Map, { Layer, Source } from 'react-map-gl'
 import mapboxgl from 'mapbox-gl'
 import bbox from '@turf/bbox'
@@ -170,6 +170,9 @@ function App(props) {
     const [sqlExplanation, setSqlExplanation] = useState()
     const [isExplainSqlLoading, setIsExplainSqlLoading] = useState(false)
     const [minimizeTableNames, setMinimizeTableNames] = useState(false)
+
+    const tableColumns = tableInfo?.columns
+    const tableRows =  tableInfo?.rows
 
     const onTouchStart = (e) => {
         if (expandedMobileSearchRef.current?.contains(e.target)) return
@@ -457,7 +460,7 @@ function App(props) {
             {!minimizeTableNames && (
                 <ul className='font-medium text-left'>
                     {tableNames.map((tableName, index) => (
-                        <li className={`${index % 2 == 0 ? 'dark:bg-black/10 bg-gray-400/10' : 'dark:bg-black/20 bg-gray-400/20'} py-1 pl-2 backdrop-blur-md border-b dark:border-white/10 border-black/10 ${index === tableNames.length - 1 && 'rounded-b-lg border-b-0'}`}>
+                        <li className={`${index % 2 == 0 ? 'dark:bg-black/10 bg-gray-400/10' : 'dark:bg-black/20 bg-gray-400/20'} py-1 pl-2 backdrop-blur-md border-b dark:border-white/10 border-black/10 ${index === tableNames.length - 1 && 'rounded-b-lg border-b-0'}`} key={'name_' + index}>
                             <span className='text-sm'>{tableName}</span>
                         </li>
                     ))}
@@ -920,8 +923,8 @@ function App(props) {
                                     </div>
 
                                     <Table
-                                        columns={tableInfo.columns}
-                                        values={tableInfo.rows}
+                                        columns={tableColumns}
+                                        values={tableRows}
                                     />
                                 </>
                             )}

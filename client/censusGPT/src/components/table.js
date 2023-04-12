@@ -1,3 +1,5 @@
+import {useEffect, useState, memo} from 'react'
+
 // Path: client/src/components/table.js
 // Custom components for Table
 
@@ -81,12 +83,12 @@ const TableHeader = (props) => {
 const TableRows = (props) => {
 
     return (
-        <tbody key={Math.random()}>
+        <tbody>
             {props.values.map((row, i) => (
                 <tr key={'row' + i}>
                     {row.map((rowValue, columnIndex) => (
                         <td
-                            key={Math.random()}
+                            key={'row' + i + 'col' + columnIndex}
                             className="whitespace-nowrap py-4 pr-3 text-sm text-left font-medium"
                         >
                             {formatNumber(rowValue, props.columns[columnIndex])}
@@ -103,9 +105,12 @@ const TableRows = (props) => {
  * @param {*} props - The table columns and rows data
  * @returns {JSX.Element} – The table component
  */
-const Table = (props) => {
-    let columns = props.columns
-    let values = props.values
+const Table = ({columns, values}) => {
+
+
+    console.log('columns length: ', columns.length)
+    console.log('values length: ', values.length)
+    console.log('Rendering table')
 
     return (
         <div className="dark:bg-dark-800 dark:text-white rounded-lg w-full h-full">
@@ -114,11 +119,9 @@ const Table = (props) => {
                     <div className="inline-block min-w-full align-middle px-6">
                         <table className="min-w-full divide-y divide-dark-300">
                             <TableHeader
-                                key={Math.random()}
                                 columns={columns}
                             />
                             <TableRows
-                                key={Math.random()}
                                 columns={columns}
                                 values={values}
                             />
@@ -130,4 +133,7 @@ const Table = (props) => {
     )
 }
 
-export default Table
+export default memo(Table, (prevProps, nextProps) => {
+    return prevProps.columns === nextProps.columns && prevProps.values === nextProps.values;
+  });
+  
