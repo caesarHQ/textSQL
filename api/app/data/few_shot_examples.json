@@ -84,6 +84,10 @@
             {
                 "user": "Give me the number of poop incidents per capita in the Mission neighborhood",
                 "assistant": "```WITH stp AS (\n    SELECT neighborhood, SUM(tract_population) AS total_population\n    FROM sf_total_pop_by_census_tract\n    GROUP BY neighborhood\n), incidents_per_neighborhood AS (\n    SELECT sfi.neighborhood, COUNT(*) AS num_incidents\n    FROM sf_311_incidents sfi\n    WHERE sfi.neighborhood = 'Mission' AND sfi.incident_type = 'Feces/Urine'\n    GROUP BY sfi.neighborhood\n)\nSELECT\n    incidents_per_neighborhood.neighborhood,\n    incidents_per_neighborhood.num_incidents,\n    incidents_per_neighborhood.num_incidents / NULLIF(SUM(stp.total_population), 0) AS incidents_per_capita\nFROM stp\nJOIN incidents_per_neighborhood ON stp.neighborhood = incidents_per_neighborhood.neighborhood\nGROUP BY incidents_per_neighborhood.neighborhood, incidents_per_neighborhood.num_incidents;\n```"
+            },
+            {
+                "user": "3 neighborhoods with the highest female to male ratio",
+                "assistant": "```WITH total_population AS (\n    SELECT neighborhood, SUM(male_population + female_population) AS total_pop\n    FROM sf_sex_by_census_tract\n    GROUP BY neighborhood\n), female_to_male_ratio AS (\n    SELECT \n        sfs.neighborhood, \n        SUM(sfs.female_population) / NULLIF(SUM(sfs.male_population), 0) AS ratio\n    FROM sf_sex_by_census_tract sfs\n    JOIN total_population tp ON sfs.neighborhood = tp.neighborhood\n    GROUP BY sfs.neighborhood\n)\nSELECT \n    neighborhood, \n    ratio\nFROM female_to_male_ratio\nORDER BY ratio DESC NULLS LAST\nLIMIT 3;```"
             }
         ],
         "table_selection": [
