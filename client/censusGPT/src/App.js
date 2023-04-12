@@ -539,181 +539,191 @@ function App(props) {
         let responseOuter = null
         // Send the request
         const startTime = new Date().getTime()
-        fetch(api_endpoint + '/api/text_to_sql', options)
-            .then((response) => response.json())
-            .then((response) => {
-                // Set the loading state to false
-                setIsLoading(false)
+        const apiCall = fetch(api_endpoint + '/api/text_to_sql', options)
+        const TIMEOUT = 25000
+        const timeout = new Promise((_, reject) => {
+            setTimeout(() => {
+              
+              reject(new Error('Server failed to respond in time'));
+            }, TIMEOUT); // timeout after 5 seconds
+          });
+        Promise.race([apiCall, timeout])
+        .then(response => response.json())
+        .then((response) => {
+            // Set the loading state to false
+            setIsLoading(false)
 
-                // Handle errors
-                if (!response || !response.sql_query || !response.result) {
-                    posthog.capture('backend_error', response)
-                    setErrorMessage(
-                        'Something went wrong. Please try again or try a different query'
-                    )
-                    setTableNames()
-                    return
-                }
-
-                // Capture the response in posthog
-                const duration = new Date().getTime() - startTime
-                console.log({duration})
-                posthog.capture('backend_response', {...response, duration})
-
-                // Set the state for SQL and Status Code
-                responseOuter = response
-                setSQL(response.sql_query)
-
-                console.log('Backend Response ==>', response)
-
-                // Filter out geolocation columns (lat, long, shape)
-                let filteredColumns = []
-                if (props.version === 'Census') {
-                    filteredColumns = response.result.column_names.filter(
-                        (c) => c !== 'lat' && c !== 'long'
-                    )
-                } else {
-                    filteredColumns = response.result.column_names.filter(
-                        (c) => c !== 'lat' && c !== 'long' && c !== 'shape'
-                    )
-                }
-
-                // Fit the order of columns and filter out lat and long row values
-                let rows = response.result.results.map((value) => {
-                    let row = []
-                    // Find each of the filtered column value in the object and push it into the row
-                    filteredColumns.map((c) => row.push(value[c]))
-                    return row
-                })
-                setTableInfo({ rows, columns: filteredColumns })
-
-                if (props.version === 'San Francisco' && filteredColumns.indexOf('point') >= 0) {
-                    // Render points shapes on the map
-                    // Point: ( -122.41816048, 37.75876017)
-                    setPoints(response.result.results.filter(r => !!r.point).map(r => {
-                        const regex = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
-                        const match = r.point.match(regex);
-                        if (match) {
-                          const long = parseFloat(match[1]);
-                          const lat = parseFloat(match[2]);
-                          return { long, lat };
-                        }
-                        return null; // Return null if no match is found (you can handle this case as needed)
-                      }).filter(Boolean)); // Filter out any null values from the result
-
-                    setVisualization('map')
-                } else if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') >= 0) {
-                    // Render polygon shapes on the map
-                    // Get GeoJson shape for each neighborhood from the local file
-                    setPolygons(response.result.results.filter(r => !!r.neighborhood).map(r => [NeighborhoodGeoData.neighborhoods[r.neighborhood].shape]))
-                    setVisualization('map')
-                } else if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') == -1) {
-                    // No neighborhoods or points to render. Default to chart
-                    setVisualization('chart')
-                }
-                else if (
-                    // render cities layer on the map
-                    filteredColumns.indexOf('zip_code') === -1 &&
-                    filteredColumns.indexOf('city') >= 0
-                ) {
-                    // Get the cities
-                    let responseCities = getCities(response.result)
-                    console.log(responseCities)
-                    if (!responseCities.length) {
-                        setErrorMessage('No results were returned')
-                        setCities([])
-                        setZipcodes([]) // reset cities rendering
-                    } else if (responseCities.length < 2) {
-                        // Focus the map to relevant parts
-                        // Fitbounds needs at least two geo coordinates.
-                        // If less that 2 co-ordinates then use fly to.
-                        mapRef && mapRef.current && mapRef.current.flyTo({
-                            center: [
-                                responseCities[0].long,
-                                responseCities[0].lat,
-                            ],
-                            essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-                        })
-                    } else {
-                        let [minLng, minLat, maxLng, maxLat] = bbox(
-                            turf.lineString(
-                                responseCities.map((c) => [c.long, c.lat])
-                            )
-                        )
-                        mapRef && mapRef.current && mapRef.current.fitBounds(
-                            [
-                                [minLng, minLat],
-                                [maxLng, maxLat],
-                            ],
-                            { padding: '100', duration: 1000 }
-                        )
-                    }
-
-                    // Set the cities into the state
-                    setCities(responseCities)
-
-                    // reset zipcode rendering
-                    setZipcodes([])
-
-                    setVisualization('map')
-                } else if (filteredColumns.indexOf('zip_code') >= 0) {
-                    // Render zipcodes layer on the map
-                    let responseZipcodes = getZipcodes(response.result)
-                    setZipcodesFormatted(
-                        getZipcodesMapboxFormatted(responseZipcodes)
-                    )
-
-                    // Fitbounds needs at least two geo coordinates.
-                    if (!responseZipcodes.length) {
-                        setErrorMessage('No results were returned')
-                        setZipcodes([])
-                        setCities([]) // reset cities rendering
-                    } else if (responseZipcodes.length < 2) {
-                        // Fitbounds needs at least two geo coordinates.
-                        // If less that 2 co-ordinates then use fly to.
-                        mapRef && mapRef.current && mapRef.current.flyTo({
-                            center: [
-                                responseZipcodes[0].long,
-                                responseZipcodes[0].lat,
-                            ],
-                            essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-                        })
-                    } else {
-                        let [minLng, minLat, maxLng, maxLat] = bbox(
-                            turf.lineString(
-                                responseZipcodes.map((z) => [z.long, z.lat])
-                            )
-                        )
-                        mapRef && mapRef.current && mapRef.current.fitBounds(
-                            [
-                                [minLng, minLat],
-                                [maxLng, maxLat],
-                            ],
-                            { padding: '100', duration: 1000 }
-                        )
-                    }
-                    setVisualization('map')
-                    setZipcodes(responseZipcodes)
-                    setCities([]) // reset cities rendering
-                } else {
-                    // No zipcodes or cities to render. Default to chart
-                    setVisualization('chart')
-                }
-            })
-            .catch((err) => {
-                Sentry.setContext('queryContext', {
-                    query: query,
-                    ...responseOuter,
-                })
-                Sentry.captureException(err)
-                setIsLoading(false)
+            // Handle errors
+            if (!response || !response.sql_query || !response.result) {
+                posthog.capture('backend_error', response)
+                setErrorMessage(
+                    'Something went wrong. Please try again or try a different query'
+                )
                 setTableNames()
-                posthog.capture('backend_error', {
-                    error: err,
-                })
-                setErrorMessage(err.message || err)
-                console.error(err)
+                return
+            }
+
+            // Capture the response in posthog
+            const duration = new Date().getTime() - startTime
+            console.log({duration})
+            posthog.capture('backend_response', {...response, duration})
+
+            // Set the state for SQL and Status Code
+            responseOuter = response
+            setSQL(response.sql_query)
+
+            console.log('Backend Response ==>', response)
+
+            // Filter out geolocation columns (lat, long, shape)
+            let filteredColumns = []
+            if (props.version === 'Census') {
+                filteredColumns = response.result.column_names.filter(
+                    (c) => c !== 'lat' && c !== 'long'
+                )
+            } else {
+                filteredColumns = response.result.column_names.filter(
+                    (c) => c !== 'lat' && c !== 'long' && c !== 'shape'
+                )
+            }
+
+            // Fit the order of columns and filter out lat and long row values
+            let rows = response.result.results.map((value) => {
+                let row = []
+                // Find each of the filtered column value in the object and push it into the row
+                filteredColumns.map((c) => row.push(value[c]))
+                return row
             })
+            setTableInfo({ rows, columns: filteredColumns })
+
+            if (props.version === 'San Francisco' && filteredColumns.indexOf('point') >= 0) {
+                // Render points shapes on the map
+                // Point: ( -122.41816048, 37.75876017)
+                setPoints(response.result.results.filter(r => !!r.point).map(r => {
+                    const regex = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
+                    const match = r.point.match(regex);
+                    if (match) {
+                        const long = parseFloat(match[1]);
+                        const lat = parseFloat(match[2]);
+                        return { long, lat };
+                    }
+                    return null; // Return null if no match is found (you can handle this case as needed)
+                    }).filter(Boolean)); // Filter out any null values from the result
+
+                setVisualization('map')
+            } else if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') >= 0) {
+                // Render polygon shapes on the map
+                // Get GeoJson shape for each neighborhood from the local file
+                setPolygons(response.result.results.filter(r => !!r.neighborhood).map(r => [NeighborhoodGeoData.neighborhoods[r.neighborhood].shape]))
+                setVisualization('map')
+            } else if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') == -1) {
+                // No neighborhoods or points to render. Default to chart
+                setVisualization('chart')
+            }
+            else if (
+                // render cities layer on the map
+                filteredColumns.indexOf('zip_code') === -1 &&
+                filteredColumns.indexOf('city') >= 0
+            ) {
+                // Get the cities
+                let responseCities = getCities(response.result)
+                console.log(responseCities)
+                if (!responseCities.length) {
+                    setErrorMessage('No results were returned')
+                    setCities([])
+                    setZipcodes([]) // reset cities rendering
+                } else if (responseCities.length < 2) {
+                    // Focus the map to relevant parts
+                    // Fitbounds needs at least two geo coordinates.
+                    // If less that 2 co-ordinates then use fly to.
+                    mapRef && mapRef.current && mapRef.current.flyTo({
+                        center: [
+                            responseCities[0].long,
+                            responseCities[0].lat,
+                        ],
+                        essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+                    })
+                } else {
+                    let [minLng, minLat, maxLng, maxLat] = bbox(
+                        turf.lineString(
+                            responseCities.map((c) => [c.long, c.lat])
+                        )
+                    )
+                    mapRef && mapRef.current && mapRef.current.fitBounds(
+                        [
+                            [minLng, minLat],
+                            [maxLng, maxLat],
+                        ],
+                        { padding: '100', duration: 1000 }
+                    )
+                }
+
+                // Set the cities into the state
+                setCities(responseCities)
+
+                // reset zipcode rendering
+                setZipcodes([])
+
+                setVisualization('map')
+            } else if (filteredColumns.indexOf('zip_code') >= 0) {
+                // Render zipcodes layer on the map
+                let responseZipcodes = getZipcodes(response.result)
+                setZipcodesFormatted(
+                    getZipcodesMapboxFormatted(responseZipcodes)
+                )
+
+                // Fitbounds needs at least two geo coordinates.
+                if (!responseZipcodes.length) {
+                    setErrorMessage('No results were returned')
+                    setZipcodes([])
+                    setCities([]) // reset cities rendering
+                } else if (responseZipcodes.length < 2) {
+                    // Fitbounds needs at least two geo coordinates.
+                    // If less that 2 co-ordinates then use fly to.
+                    mapRef && mapRef.current && mapRef.current.flyTo({
+                        center: [
+                            responseZipcodes[0].long,
+                            responseZipcodes[0].lat,
+                        ],
+                        essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+                    })
+                } else {
+                    let [minLng, minLat, maxLng, maxLat] = bbox(
+                        turf.lineString(
+                            responseZipcodes.map((z) => [z.long, z.lat])
+                        )
+                    )
+                    mapRef && mapRef.current && mapRef.current.fitBounds(
+                        [
+                            [minLng, minLat],
+                            [maxLng, maxLat],
+                        ],
+                        { padding: '100', duration: 1000 }
+                    )
+                }
+                setVisualization('map')
+                setZipcodes(responseZipcodes)
+                setCities([]) // reset cities rendering
+            } else {
+                // No zipcodes or cities to render. Default to chart
+                setVisualization('chart')
+            }
+        })
+        .catch((err) => {
+
+            Sentry.setContext('queryContext', {
+                query: query,
+                ...responseOuter,
+            })
+            Sentry.captureException(err)
+            setIsLoading(false)
+            setTableNames()
+            posthog.capture('backend_error', {
+                error: err,
+                timeout: TIMEOUT
+            })
+            setErrorMessage(err.message || err)
+            console.error(err)
+        })
     }
 
     const debouncedFetchBackend = useDebouncedCallback((query) => {

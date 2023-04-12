@@ -62,10 +62,11 @@ const TableHeader = (props) => {
     return (
         <thead>
             <tr>
-                {props.columns.map((x) => (
+                {props.columns.map((x, index) => (
                     <th
                         scope="col"
                         className="py-3.5 pr-3 text-left text-sm font-semibold sticky top-0"
+                        key={'header_' + index}
                     >
                         {convertToTitleCase(x)}
                     </th>
@@ -106,12 +107,6 @@ const TableRows = (props) => {
  * @returns {JSX.Element} – The table component
  */
 const Table = ({columns, values}) => {
-
-
-    console.log('columns length: ', columns.length)
-    console.log('values length: ', values.length)
-    console.log('Rendering table')
-
     return (
         <div className="dark:bg-dark-800 dark:text-white rounded-lg w-full h-full">
             <div className="flow-root">
