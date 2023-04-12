@@ -84,7 +84,7 @@ const TableRows = (props) => {
 
     return (
         <tbody>
-            {props.values.map((row, i) => (
+            {props.values.slice(0, 50).map((row, i) => (
                 <tr key={'row' + i}>
                     {row.map((rowValue, columnIndex) => (
                         <td
