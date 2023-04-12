@@ -36,6 +36,7 @@ import {
     pointsFeatures,
     pointsLayer
 } from './mapbox-ui-config'
+import NeighborhoodGeoData from './sf_analysis_neighborhoods.js'
 
 // Plotly UI configuration
 import {
@@ -466,6 +467,7 @@ function App(props) {
     )
 
     const fetchBackend = async (natural_language_query) => {
+        // console.log("Neighborhood", NeighborhoodGeoData.neighborhoods["Hayes Valley"])
         if (natural_language_query == null) {
             return;
         }
