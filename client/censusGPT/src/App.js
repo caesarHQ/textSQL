@@ -540,7 +540,7 @@ function App(props) {
         // Send the request
         const startTime = new Date().getTime()
         const apiCall = fetch(api_endpoint + '/api/text_to_sql', options)
-        const TIMEOUT = 25000
+        const TIMEOUT = 45000
         const timeout = new Promise((_, reject) => {
             setTimeout(() => {
               
