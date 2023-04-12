@@ -32,7 +32,9 @@ import {
     zipcodeLayerHigh,
     zipcodeLayerLow,
     citiesLayer,
-    polygonsLayer
+    polygonsLayer,
+    pointsFeatures,
+    pointsLayer
 } from './mapbox-ui-config'
 
 // Plotly UI configuration
@@ -977,6 +979,16 @@ function App(props) {
                                         data={polygonsGeoJSON}
                                     >
                                         <Layer {...polygonsLayer} />
+                                    </Source>
+                                    <Source
+                                        id="points"
+                                        type="geojson"
+                                        data={{
+                                            type: "FeatureCollection",
+                                            features: pointsFeatures(points)
+                                        }
+                                    }>
+                                        <Layer {...pointsLayer} />
                                     </Source>
                                 </Map> :
                                 // following <div> helps plot better scale bar widths for responsiveness
