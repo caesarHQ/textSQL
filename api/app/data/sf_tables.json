@@ -254,7 +254,7 @@
             "table_creation_query": "--311 municipal services incidents in San Francisco\nCREATE TABLE sf_311_incidents (\n    opened DATETIME,\n    closed DATETIME,\n    status TEXT, --enum `311_STATUS`\n    incident_type TEXT, --enum `311_CASE_TYPE`\n    point TEXT, --longitude latitude of incident\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n);"
         },
         {
-            "name": "sf_age",
+            "name": "sf_age_by_census_tract",
             "description": "Population data by age in San Francisco",
             "columns": [
                 {
@@ -323,10 +323,10 @@
                     "type": "TEXT"
                 }
             ],
-            "table_creation_query": "--age population data in San Francisco by census tract\nCREATE TABLE sf_age (\n    census_tract TEXT PRIMARY KEY,\n    under_5 FLOAT,\n    age_5_to_9 FLOAT,\n    age_10_to_14 FLOAT,\n    age_25_to_34 FLOAT,\n    age_35_to_44 FLOAT,\n    age_45_to_54 FLOAT,\n    age_55_to_59 FLOAT,\n    age_60_to_64 FLOAT,\n    age_65_to_74 FLOAT,\n    age_75_to_84 FLOAT,\n    age_85_and_over FLOAT,\n    under_18 FLOAT,\n    age_18_and_over FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n);"
+            "table_creation_query": "--age population data in San Francisco by census tract\nCREATE TABLE sf_age_by_census_tract (\n    census_tract TEXT PRIMARY KEY,\n    under_5 FLOAT,\n    age_5_to_9 FLOAT,\n    age_10_to_14 FLOAT,\n    age_25_to_34 FLOAT,\n    age_35_to_44 FLOAT,\n    age_45_to_54 FLOAT,\n    age_55_to_59 FLOAT,\n    age_60_to_64 FLOAT,\n    age_65_to_74 FLOAT,\n    age_75_to_84 FLOAT,\n    age_85_and_over FLOAT,\n    under_18 FLOAT,\n    age_18_and_over FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n);"
         },
         {
-            "name": "sf_income",
+            "name": "sf_income_by_census_tract",
             "description": "Population data by income in San Francisco",
             "columns": [
                 {
@@ -583,10 +583,10 @@
                     "type": "TEXT"
                 }
             ],
-            "table_creation_query": "--income data in San Francisco by census tract\nCREATE TABLE sf_income (\n    census_tract TEXT PRIMARY KEY,\n    age_16_plus_with_earnings FLOAT,\n    age_16_plus_median_earnings FLOAT,\n    full_time_work_population FLOAT,\n    earning_1_to_9999_or_loss FLOAT,\n    earning_10000_to_14999 FLOAT,\n    earning_15000_to_24999 FLOAT,\n    earning_25000_to_34999 FLOAT,\n    earning_35000_to_49999 FLOAT,\n    earning_50000_to_64999 FLOAT,\n    earning_65000_to_74999 FLOAT,\n    earning_75000_to_99999 FLOAT,\n    earning_100000_and_over FLOAT,\n    age_16_plus_mean_earnings FLOAT,\n    age_25_plus_with_earnings FLOAT,\n    median_earnings_less_than_high_school FLOAT,\n    median_earnings_high_school FLOAT,\n    median_earnings_associates FLOAT,\n    median_earnings_bachelors FLOAT,\n    median_earnings_graduate FLOAT,\n    male_age_16_plus_with_earnings FLOAT,\n    male_age_16_plus_median_earnings FLOAT,\n    male_full_time_work_population FLOAT,\n    males_earning_1_to_9999_or_loss FLOAT,\n    males_earning_10000_to_14999 FLOAT,\n    males_earning_15000_to_24999 FLOAT,\n    males_earning_25000_to_34999 FLOAT,\n    males_earning_35000_to_49999 FLOAT,\n    males_earning_50000_to_64999 FLOAT,\n    males_earning_65000_to_74999 FLOAT,\n    males_earning_75000_to_99999 FLOAT,\n    males_earning_100000_and_over FLOAT,\n    male_age_16_plus_mean_earnings FLOAT,\n    male_age_25_plus_with_earnings FLOAT,\n    male_median_earnings_less_than_high_school FLOAT,\n    male_median_earnings_high_school FLOAT,\n    male_median_earnings_associates FLOAT,\n    male_median_earnings_bachelors FLOAT,\n    male_median_earnings_graduate FLOAT,\n    female_age_16_plus_with_earnings FLOAT,\n    female_age_16_plus_median_earnings FLOAT,\n    female_full_time_work_population FLOAT,\n    females_earning_1_to_9999_or_loss FLOAT,\n    females_earning_10000_to_14999 FLOAT,\n    females_earning_15000_to_24999 FLOAT,\n    females_earning_25000_to_34999 FLOAT,\n    females_earning_35000_to_49999 FLOAT,\n    females_earning_50000_to_64999 FLOAT,\n    females_earning_65000_to_74999 FLOAT,\n    females_earning_75000_to_99999 FLOAT,\n    females_earning_100000_and_over FLOAT,\n    female_age_16_plus_mean_earnings FLOAT,\n    female_age_25_plus_with_earnings FLOAT,\n    female_median_earnings_less_than_high_school FLOAT,\n    female_median_earnings_high_school FLOAT,\n    female_median_earnings_associates FLOAT,\n    female_median_earnings_bachelors FLOAT,\n    female_median_earnings_graduate FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n)"
+            "table_creation_query": "--income data in San Francisco by census tract\nCREATE TABLE sf_income_by_census_tract (\n    census_tract TEXT PRIMARY KEY,\n    age_16_plus_with_earnings FLOAT,\n    age_16_plus_median_earnings FLOAT,\n    full_time_work_population FLOAT,\n    earning_1_to_9999_or_loss FLOAT,\n    earning_10000_to_14999 FLOAT,\n    earning_15000_to_24999 FLOAT,\n    earning_25000_to_34999 FLOAT,\n    earning_35000_to_49999 FLOAT,\n    earning_50000_to_64999 FLOAT,\n    earning_65000_to_74999 FLOAT,\n    earning_75000_to_99999 FLOAT,\n    earning_100000_and_over FLOAT,\n    age_16_plus_mean_earnings FLOAT,\n    age_25_plus_with_earnings FLOAT,\n    median_earnings_less_than_high_school FLOAT,\n    median_earnings_high_school FLOAT,\n    median_earnings_associates FLOAT,\n    median_earnings_bachelors FLOAT,\n    median_earnings_graduate FLOAT,\n    male_age_16_plus_with_earnings FLOAT,\n    male_age_16_plus_median_earnings FLOAT,\n    male_full_time_work_population FLOAT,\n    males_earning_1_to_9999_or_loss FLOAT,\n    males_earning_10000_to_14999 FLOAT,\n    males_earning_15000_to_24999 FLOAT,\n    males_earning_25000_to_34999 FLOAT,\n    males_earning_35000_to_49999 FLOAT,\n    males_earning_50000_to_64999 FLOAT,\n    males_earning_65000_to_74999 FLOAT,\n    males_earning_75000_to_99999 FLOAT,\n    males_earning_100000_and_over FLOAT,\n    male_age_16_plus_mean_earnings FLOAT,\n    male_age_25_plus_with_earnings FLOAT,\n    male_median_earnings_less_than_high_school FLOAT,\n    male_median_earnings_high_school FLOAT,\n    male_median_earnings_associates FLOAT,\n    male_median_earnings_bachelors FLOAT,\n    male_median_earnings_graduate FLOAT,\n    female_age_16_plus_with_earnings FLOAT,\n    female_age_16_plus_median_earnings FLOAT,\n    female_full_time_work_population FLOAT,\n    females_earning_1_to_9999_or_loss FLOAT,\n    females_earning_10000_to_14999 FLOAT,\n    females_earning_15000_to_24999 FLOAT,\n    females_earning_25000_to_34999 FLOAT,\n    females_earning_35000_to_49999 FLOAT,\n    females_earning_50000_to_64999 FLOAT,\n    females_earning_65000_to_74999 FLOAT,\n    females_earning_75000_to_99999 FLOAT,\n    females_earning_100000_and_over FLOAT,\n    female_age_16_plus_mean_earnings FLOAT,\n    female_age_25_plus_with_earnings FLOAT,\n    female_median_earnings_less_than_high_school FLOAT,\n    female_median_earnings_high_school FLOAT,\n    female_median_earnings_associates FLOAT,\n    female_median_earnings_bachelors FLOAT,\n    female_median_earnings_graduate FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n)"
         },
         {
-            "name": "sf_race",
+            "name": "sf_race_by_census_tract",
             "description": "Population data by race in San Francisco",
             "columns": [
                 {
@@ -659,10 +659,10 @@
                     "type": "TEXT"
                 }
             ],
-            "table_creation_query": "--racial population data in San Francisco by census tract\nCREATE TABLE sf_race (\n    census_tract TEXT PRIMARY KEY,\n    two_or_more_races FLOAT,\n    white FLOAT,\n    black FLOAT,\n    native_american FLOAT,\n    asian FLOAT,\n    indian FLOAT,\n    chinese FLOAT,\n    filipino FLOAT,\n    japanese FLOAT,\n    korean FLOAT,\n    vietnamese FLOAT,\n    other_asian FLOAT,\n    pacific_islander FLOAT,\n    other_race FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n);"
+            "table_creation_query": "--racial population data in San Francisco by census tract\nCREATE TABLE sf_race_by_census_tract (\n    census_tract TEXT PRIMARY KEY,\n    two_or_more_races FLOAT,\n    white FLOAT,\n    black FLOAT,\n    native_american FLOAT,\n    asian FLOAT,\n    indian FLOAT,\n    chinese FLOAT,\n    filipino FLOAT,\n    japanese FLOAT,\n    korean FLOAT,\n    vietnamese FLOAT,\n    other_asian FLOAT,\n    pacific_islander FLOAT,\n    other_race FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n);"
         },
         {
-            "name": "sf_total_pop",
+            "name": "sf_total_pop_by_census_tract",
             "description": "Total population data in San Francisco",
             "columns": [
                 {
@@ -670,7 +670,7 @@
                     "type": "TEXT"
                 },
                 {
-                    "name": "total_population",
+                    "name": "tract_population",
                     "type": "FLOAT"
                 },
                 {
@@ -683,7 +683,35 @@
                     "type": "TEXT"
                 }
             ],
-            "table_creation_query": "--total population data in San Francisco by census tract\nCREATE TABLE sf_total_pop (\n    census_tract TEXT PRIMARY KEY,\n    total_population FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n);"
+            "table_creation_query": "--total population data in San Francisco by census tract\nCREATE TABLE sf_total_pop_by_census_tract (\n    census_tract TEXT PRIMARY KEY,\n    tract_population FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n);"
+        },
+        {
+            "name": "sf_sex_by_census_tract",
+            "description": " Population data by sex in San Francisco",
+            "columns": [
+                {
+                    "name": "census_tract",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "male_population",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "female_population",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "neighborhood",
+                    "type": "TEXT",
+                    "description": "enum `NEIGHBORHOOD`"
+                },
+                {
+                    "name": "zip_code",
+                    "type": "TEXT"
+                }
+            ],
+            "table_creation_query": "--sex population data in San Francisco by census tract\nCREATE TABLE sf_sex_by_census_tract (\n    census_tract TEXT PRIMARY KEY,\n    male_population FLOAT,\n    female_population FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n);"
         }
     ]
 }
