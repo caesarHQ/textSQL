@@ -204,6 +204,33 @@ function App(props) {
     const queryParameters = new URLSearchParams(window.location.search)
     const urlSearch = queryParameters.get('s')
 
+    const clearAll = () => {
+        setQuery('')
+        setSQL('')
+        setErrorMessage('')
+        setCities([])
+        setZipcodes([])
+        setZipcodesFormatted([])
+        setPolygons([])
+        setPoints([])
+        setTableInfo({ rows: [], columns: [] })
+        setTitle(props.version === 'Census' ? 'Census GPT' : 'San Francisco GPT')
+        setVisualization('map')
+        setEditingSql(false)
+        setCopied(false)
+        setMobileMenuIsOpen(false)
+        setMobileHelpIsOpen(true)
+        setMobileTableIsOpen(false)
+        setMobileSqlIsOpen(false)
+        setSqlExplanationIsOpen(false)
+        setSqlExplanation()
+        setMinimizeTableNames(false)
+        setTableNames()
+        setIsLoading(false)
+        setSearchParams({ })
+    }
+
+
     const clearMapLayers = () => {
         setCities([])
         setZipcodes([])
@@ -878,6 +905,9 @@ function App(props) {
                     <h1
                     className="text-4xl font-bold text-black dark:text-white flex items-start justify-center"
                     style={{ cursor: "pointer" }}
+                    onClick={() => {
+                        clearAll()
+                    }}
                     >
                     {props.version} GPT
                     {props.version === "San Francisco" && (
