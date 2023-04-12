@@ -88,6 +88,10 @@
         ],
         "table_selection": [
             {
+                "user": "how many needles per capita are there in hayes valley",
+                "assistant": "```\n{\n    \"tables\": [\"sf_311_incidents\", \"sf_total_pop_by_census_tract\"]\n}\n```"
+            },
+            {
                 "user": "Which neighborhood has the most crime?",
                 "assistant": "```\n{\n    \"tables\": [\"sf_crime_incidents\"]\n}\n```"
             },
