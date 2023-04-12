@@ -96,7 +96,7 @@
                 "assistant": "```\n{\n    \"tables\": [\"sf_311_incidents\"]\n}\n```"
             },
             {
-                "user": "Which neighborhood has the most homeless people?",
+                "user": "Which neighborhood has the most homeless activity?",
                 "assistant": "```\n{\n    \"tables\": [\"sf_311_incidents\"]\n}\n```"
             }
         ]
