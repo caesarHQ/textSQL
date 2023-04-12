@@ -7,28 +7,34 @@ def get_assistant_message(
         messages: List[Dict[str, str]],
         temperature: int = 0,
         model: str = "gpt-3.5-turbo",
+        scope: str = "USA",
         # model: str = "gpt-4",
 ):
     # alright, it looks like gpt-3.5-turbo is ignoring the user messages in history
     # let's go and re-create the chat in the last message!
+    final_payload = messages
+    if scope == "USA":
 
-    stringified_messages = []
-    for message in messages:
-        if message['role'] == 'user':
-            stringified_messages.append(f'{message["role"]}: {message["content"]}')
-        if message['role'] == 'assistant':
-            stringified_messages.append(f'Correct Output: {message["content"]}')
-    stringified_messages = '\n---\n'.join(stringified_messages)
+        stringified_messages = []
+        for message in messages:
+            if message['role'] == 'user':
+                stringified_messages.append(f'{message["role"]}: {message["content"]}')
+            if message['role'] == 'assistant':
+                stringified_messages.append(f'Correct Output: {message["content"]}')
+        stringified_messages = '\n---\n'.join(stringified_messages)
 
-    simplified_payload = [{
-        "role": "user",
-        "content": stringified_messages + '\n--pay close attention to the earlier examples for tricks for how to efficiently query this database.',
-    }]
+        simplified_payload = [{
+            "role": "user",
+            "content": stringified_messages + '\n--pay close attention to the earlier examples for tricks for how to efficiently query this database.',
+        }]
+        final_payload = simplified_payload
+
+
 
     res = openai.ChatCompletion.create(
         model=model,
         temperature=temperature,
-        messages=simplified_payload
+        messages=final_payload
     )
     # completion = res['choices'][0]["message"]["content"]
     assistant_message = res['choices'][0]

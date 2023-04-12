@@ -259,7 +259,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
                 model = "gpt-3.5-turbo"
             else:
                 model = "gpt-3.5-turbo"
-            assistant_message = get_assistant_message(messages, model=model)
+            assistant_message = get_assistant_message(messages, model=model, scope=scope)
             sql_query = extract_sql_query_from_message(assistant_message["message"]["content"])
 
             response = execute_sql(sql_query)
@@ -319,7 +319,7 @@ def text_to_sql_chat_with_retry(messages, table_names=None, scope="USA"):
     }
 
     # Send all messages
-    response, sql_query = text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=messages_copy)
+    response, sql_query = text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=messages_copy, scope=scope)
 
     if response is None and sql_query is None:
         messages.append({
