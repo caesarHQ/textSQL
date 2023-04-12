@@ -89,3 +89,28 @@ export const polygonsLayer = {
         'fill-opacity': 0.8,
     },
 }
+
+export const pointsFeatures = (points) => {
+    return points.map((p) => {
+        return {
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [p.long, p.lat],
+            },
+        }
+    })
+}
+
+export const pointsLayer = {
+    id: 'points',
+    type: 'circle',
+    layout: {
+        visibility: 'visible',
+    },
+    paint: {
+        'circle-radius': 5,
+        'circle-color': '#006AF9',
+        'circle-opacity': 0.8,
+    },
+}
