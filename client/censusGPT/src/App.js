@@ -876,9 +876,16 @@ function App(props) {
                     </div>
 
                     <h1
-                        className="text-4xl font-bold text-black dark:text-white"
+                        className="text-4xl font-bold text-black dark:text-white flex items-center justify-center"
                         style={{ cursor: 'pointer' }}
                     >
+                        {
+                            props.version === 'San Francisco' && (
+                                <div className="text-blue-500 font-bold uppercase text-3xl mr-2" style={{ color: '#3498db', fontSize: '90%' }}>
+                                BETA
+                              </div>
+                                                        )
+                        }
                         {props.version} GPT
                     </h1>
                     <Toaster />
