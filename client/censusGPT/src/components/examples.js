@@ -23,8 +23,8 @@ const Examples = (props) => {
         basic_example_queries = [
             'Which four neighborhoods had the highest crime in 2021?',
             'Which two neighborhoods have the most homeless activity?',
-            'Which neighborhoods has the most needles on the street?',
-            'Which neighborhoods has the most poop on the street?',
+            'Which three neighborhoods have the most needles on the street?',
+            'Which five neighborhoods have the most poop on the street?',
         ]
         advanced_example_queries = [
             '3 neighborhoods with the highest female to male ratio',
