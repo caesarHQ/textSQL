@@ -19,22 +19,25 @@ def _extract_text_from_markdown(text):
 
 def _get_table_selection_message_with_descriptions(scope="USA"):
     message = (
-        "Return a JSON object with relevant SQL tables for answering the following natural language query: {natural_language_query}"
-        " Respond in JSON format with your answer in a field named \"tables\" which is a list of strings."
-        " Respond with an empty list if you cannot identify any relevant tables."
-        " Write your answer in markdown format."
-        "\n"
+        """
+        Return a JSON object with relevant SQL tables for answering the following natural language query:
+        ---------------
+        {natural_language_query}
+        ---------------
+        Respond in JSON format with your answer in a field named \"tables\" which is a list of strings.
+        Respond with an empty list if you cannot identify any relevant tables.
+        Write your answer in markdown format.
+        """
     )
-    if scope == "USA":
-        return (
+    return (
         message +
-        "The following are descriptions of available tables and enums:\n"
-        "---------------------\n"
-        + get_table_schemas(scope=scope) +
-        "---------------------\n"
-        )
-    else:
-        return message
+        f"""
+        The following are descriptions of available tables and enums:
+        ---------------------
+        {get_table_schemas(scope=scope)}
+        ---------------------
+        """
+    )
     
 
 def _get_table_selection_messages(scope="USA"):
@@ -96,6 +99,8 @@ def get_relevant_tables_from_lm(natural_language_query, scope="USA", model="gpt-
         "role": "user",
         "content": content
     })
+
+    print(messages)
 
     tables_json_str = _extract_text_from_markdown(
         get_assistant_message(
