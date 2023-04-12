@@ -26,6 +26,7 @@ Before writing the query, add a comment (--) explaining the data type(s) that ne
 Also add a comment (--) so other people can understand what your code is. The comment should include the goal, the plan, and how you're going to solve it
 Ensure to include which table each column is from
 Be wary; some of the data might be messed up so consider how to handle nulls or missing data.
+Write your answer in markdown format.
 Use CTE format for computing subqueries.
 """
 }
@@ -60,6 +61,7 @@ Before writing the query, add a comment (--) explaining the data type(s) that ne
 Also add a comment (--) so other people can understand what your code is. The comment should include the goal, the plan, and how you're going to solve it
 Ensure to include which table each column is from
 Be wary; some of the data might be messed up so consider how to handle nulls or missing data.
+Write your answer in markdown format.
 Use CTE format for computing subqueries.
 
 Command: {}
