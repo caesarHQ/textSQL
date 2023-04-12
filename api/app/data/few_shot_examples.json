@@ -70,10 +70,6 @@
                 "assistant": "```SELECT stp1.neighborhood, sum(tract_population) as total_population\nFROM sf_total_pop_by_census_tract stp1\nGROUP BY stp1.neighborhood\nORDER BY total_population DESC NULLS LAST\nLIMIT 3;```"
             },
             {
-                "user": "Which neighborhoods have the highest female to male ratio?",
-                "assistant": "```SELECT \n    sf_income_by_census_tract.neighborhood, \n    COALESCE(SUM(tract_population), 0) AS total_pop, \n    COALESCE(SUM(female_age_16_plus_with_earnings), 0) AS female_pop, \n    COALESCE(SUM(male_age_16_plus_with_earnings), 0) AS male_pop, \n    COALESCE((SUM(female_age_16_plus_with_earnings) / NULLIF(SUM(male_age_16_plus_with_earnings), 0)), 0) AS female_to_male_ratio\nFROM \n    sf_income_by_census_tract \n    JOIN sf_total_pop_by_census_tract ON sf_income_by_census_tract.neighborhood = sf_total_pop_by_census_tract.neighborhood \nWHERE \n    tract_population > 0 --exclude neighborhoods with 0 population\nGROUP BY \n    sf_income_by_census_tract.neighborhood \nHAVING\n    SUM(male_age_16_plus_with_earnings) > 0 --exclude neighborhoods with 0 male population\nORDER BY \n    female_to_male_ratio DESC NULLS LAST \nLIMIT 10;```"
-            },
-            {
                 "user": "where are the places with the most poop per capita?",
                 "assistant": "```SELECT sfi.neighborhood, SUM(stp.tract_population) as total_population, COUNT(*) as poop_count, COUNT(*) / SUM(stp.tract_population) as poop_per_capita\nFROM sf_311_incidents sfi\nJOIN sf_total_pop_by_census_tract stp ON sfi.neighborhood = stp.neighborhood\nWHERE sfi.incident_type = 'Feces/Urine'\nGROUP BY sfi.neighborhood\nORDER BY poop_per_capita DESC NULLS LAST;```"
             },
