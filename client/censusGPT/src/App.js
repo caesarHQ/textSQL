@@ -205,6 +205,7 @@ function App(props) {
         setZipcodes([])
         setZipcodesFormatted([])
         setPolygons([])
+        setPoints([])
     }
 
     const handleSearchChange = (event) => {
