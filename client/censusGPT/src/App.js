@@ -508,6 +508,7 @@ function App(props) {
 
         let responseOuter = null
         // Send the request
+        const startTime = new Date().getTime()
         fetch(api_endpoint + '/api/text_to_sql', options)
             .then((response) => response.json())
             .then((response) => {
@@ -525,7 +526,9 @@ function App(props) {
                 }
 
                 // Capture the response in posthog
-                posthog.capture('backend_response', response)
+                const duration = new Date().getTime() - startTime
+                console.log({duration})
+                posthog.capture('backend_response', {...response, duration})
 
                 // Set the state for SQL and Status Code
                 responseOuter = response
