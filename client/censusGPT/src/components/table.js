@@ -15,6 +15,9 @@ const convertToTitleCase = (value) => {
 }
 
 const formatNumber = (value, col) => {
+    if (value === null) {
+        return value
+    }
     // Format the number to have commas
     if (col == 'zip_code') {
         // Don't format the zip code
@@ -76,6 +79,7 @@ const TableHeader = (props) => {
  * @returns {JSX.Element} – The table rows component
  */
 const TableRows = (props) => {
+
     return (
         <tbody key={Math.random()}>
             {props.values.map((row, i) => (
