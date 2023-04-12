@@ -670,7 +670,7 @@
                     "type": "TEXT"
                 },
                 {
-                    "name": "total_population",
+                    "name": "tract_population",
                     "type": "FLOAT"
                 },
                 {
