@@ -467,7 +467,6 @@ function App(props) {
     )
 
     const fetchBackend = async (natural_language_query) => {
-        // console.log("Neighborhood", NeighborhoodGeoData.neighborhoods["Hayes Valley"])
         if (natural_language_query == null) {
             return;
         }
@@ -572,10 +571,11 @@ function App(props) {
                     setVisualization('map')
                 } else if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') >= 0) {
                     // Render polygon shapes on the map
-                    setPolygons(response.result.results.filter(r => !!r.shape).map(r => [r.shape]))
+                    // Get GeoJson shape for each neighborhood from the local file
+                    setPolygons(response.result.results.filter(r => !!r.neighborhood).map(r => [NeighborhoodGeoData.neighborhoods[r.neighborhood].shape]))
                     setVisualization('map')
                 } else if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') == -1) {
-                    // No neighborhoods to render. Default to chart
+                    // No neighborhoods or points to render. Default to chart
                     setVisualization('chart')
                 }
                 else if (
