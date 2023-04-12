@@ -21,9 +21,9 @@ const Examples = (props) => {
 
     if (props.version === 'San Francisco') {
         basic_example_queries = [
+            'Show me all the needles in SF',
             'Which four neighborhoods had the highest crime in 2021?',
             'Which two neighborhoods have the most homeless activity?',
-            'Which three neighborhoods have the most needles on the street?',
             'Which five neighborhoods have the most poop on the street?',
         ]
         advanced_example_queries = [
