@@ -683,7 +683,7 @@
                     "type": "TEXT"
                 }
             ],
-            "table_creation_query": "--total population data in San Francisco by census tract\nCREATE TABLE sf_total_pop_by_census_tract (\n    census_tract TEXT PRIMARY KEY,\n    total_population FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n);"
+            "table_creation_query": "--total population data in San Francisco by census tract\nCREATE TABLE sf_total_pop_by_census_tract (\n    census_tract TEXT PRIMARY KEY,\n    tract_population FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n);"
         }
     ]
 }
