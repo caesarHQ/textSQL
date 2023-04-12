@@ -106,6 +106,10 @@
             {
                 "user": "Which neighborhood has the most homeless activity?",
                 "assistant": "```\n{\n    \"tables\": [\"sf_311_incidents\"]\n}\n```"
+            },
+            {
+                "user": "Which neighborhood has the highest female to male ratio?",
+                "assistant": "```\n{\n    \"tables\": [\"sf_sex_by_census_tract\"]\n}\n```"
             }
         ]
     }
