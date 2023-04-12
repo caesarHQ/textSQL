@@ -553,7 +553,7 @@ function App(props) {
                 if (props.version === 'San Francisco' && filteredColumns.indexOf('point') >= 0) {
                     // Render points shapes on the map
                     // Point: ( -122.41816048, 37.75876017)
-                    setPoints(response.result.results.map(r => {
+                    setPoints(response.result.results.filter(r => !!r.point).map(r => {
                         const regex = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
                         const match = r.point.match(regex);
                         if (match) {
@@ -567,7 +567,7 @@ function App(props) {
                     setVisualization('map')
                 } else if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') >= 0) {
                     // Render polygon shapes on the map
-                    setPolygons(response.result.results.map(r => [r.shape]))
+                    setPolygons(response.result.results.filter(r => !!r.shape).map(r => [r.shape]))
                     setVisualization('map')
                 } else if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') == -1) {
                     // No neighborhoods to render. Default to chart
