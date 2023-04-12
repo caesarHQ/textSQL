@@ -334,11 +334,11 @@
                     "type": "TEXT"
                 },
                 {
-                    "name": "age_16_plus_with_earnings",
+                    "name": "age_16_plus_with_earnings_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "age_16_plus_median_earnings",
+                    "name": "age_16_plus_median_earnings_dollars",
                     "type": "FLOAT"
                 },
                 {
@@ -346,79 +346,75 @@
                     "type": "FLOAT"
                 },
                 {
-                    "name": "earning_1_to_9999_or_loss",
+                    "name": "earning_1_to_9999_or_loss_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "earning_10000_to_14999",
+                    "name": "earning_10000_to_14999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "earning_15000_to_24999",
+                    "name": "earning_15000_to_24999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "earning_25000_to_34999",
+                    "name": "earning_25000_to_34999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "earning_35000_to_49999",
+                    "name": "earning_35000_to_49999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "earning_50000_to_64999",
+                    "name": "earning_50000_to_64999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "earning_65000_to_74999",
+                    "name": "earning_65000_to_74999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "earning_75000_to_99999",
+                    "name": "earning_75000_to_99999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "earning_100000_and_over",
+                    "name": "earning_100000_and_over_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "age_16_plus_median_earnings",
+                    "name": "age_16_plus_mean_earnings_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "age_16_plus_mean_earnings",
+                    "name": "age_25_plus_with_earnings_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "age_25_plus_with_earnings",
+                    "name": "median_earnings_less_than_high_school_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "median_earnings_less_than_high_school",
+                    "name": "median_earnings_high_school_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "median_earnings_high_school",
+                    "name": "median_earnings_associates_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "median_earnings_associates",
+                    "name": "median_earnings_bachelors_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "median_earnings_bachelors",
+                    "name": "median_earnings_graduate_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "median_earnings_graduate",
+                    "name": "male_age_16_plus_with_earnings_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "male_age_16_plus_with_earnings",
-                    "type": "FLOAT"
-                },
-                {
-                    "name": "male_age_16_plus_median_earnings",
+                    "name": "male_age_16_plus_median_earnings_dollars",
                     "type": "FLOAT"
                 },
                 {
@@ -426,79 +422,75 @@
                     "type": "FLOAT"
                 },
                 {
-                    "name": "males_earning_1_to_9999_or_loss",
+                    "name": "males_earning_1_to_9999_or_loss_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "males_earning_10000_to_14999",
+                    "name": "males_earning_10000_to_14999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "males_earning_15000_to_24999",
+                    "name": "males_earning_15000_to_24999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "males_earning_25000_to_34999",
+                    "name": "males_earning_25000_to_34999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "males_earning_35000_to_49999",
+                    "name": "males_earning_35000_to_49999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "males_earning_50000_to_64999",
+                    "name": "males_earning_50000_to_64999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "males_earning_65000_to_74999",
+                    "name": "males_earning_65000_to_74999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "males_earning_75000_to_99999",
+                    "name": "males_earning_75000_to_99999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "males_earning_100000_and_over",
+                    "name": "males_earning_100000_and_over_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "male_age_16_plus_median_earnings",
+                    "name": "male_age_16_plus_mean_earnings_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "male_age_16_plus_mean_earnings",
+                    "name": "male_age_25_plus_with_earnings_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "male_age_25_plus_with_earnings",
+                    "name": "male_median_earnings_less_than_high_school_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "male_median_earnings_less_than_high_school",
+                    "name": "male_median_earnings_high_school_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "male_median_earnings_high_school",
+                    "name": "male_median_earnings_associates_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "male_median_earnings_associates",
+                    "name": "male_median_earnings_bachelors_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "male_median_earnings_bachelors",
+                    "name": "male_median_earnings_graduate_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "male_median_earnings_graduate",
+                    "name": "female_age_16_plus_with_earnings_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "female_age_16_plus_with_earnings",
-                    "type": "FLOAT"
-                },
-                {
-                    "name": "female_age_16_plus_median_earnings",
+                    "name": "female_age_16_plus_median_earnings_dollars",
                     "type": "FLOAT"
                 },
                 {
@@ -506,71 +498,67 @@
                     "type": "FLOAT"
                 },
                 {
-                    "name": "females_earning_1_to_9999_or_loss",
+                    "name": "females_earning_1_to_9999_or_loss_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "females_earning_10000_to_14999",
+                    "name": "females_earning_10000_to_14999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "females_earning_15000_to_24999",
+                    "name": "females_earning_15000_to_24999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "females_earning_25000_to_34999",
+                    "name": "females_earning_25000_to_34999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "females_earning_35000_to_49999",
+                    "name": "females_earning_35000_to_49999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "females_earning_50000_to_64999",
+                    "name": "females_earning_50000_to_64999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "females_earning_65000_to_74999",
+                    "name": "females_earning_65000_to_74999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "females_earning_75000_to_99999",
+                    "name": "females_earning_75000_to_99999_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "females_earning_100000_and_over",
+                    "name": "females_earning_100000_and_over_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "female_age_16_plus_median_earnings",
+                    "name": "female_age_16_plus_mean_earnings_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "female_age_16_plus_mean_earnings",
+                    "name": "female_age_25_plus_with_earnings_count",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "female_age_25_plus_with_earnings",
+                    "name": "female_median_earnings_less_than_high_school_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "female_median_earnings_less_than_high_school",
+                    "name": "female_median_earnings_high_school_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "female_median_earnings_high_school",
+                    "name": "female_median_earnings_associates_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "female_median_earnings_associates",
+                    "name": "female_median_earnings_bachelors_dollars",
                     "type": "FLOAT"
                 },
                 {
-                    "name": "female_median_earnings_bachelors",
-                    "type": "FLOAT"
-                },
-                {
-                    "name": "female_median_earnings_graduate",
+                    "name": "female_median_earnings_graduate_dollars",
                     "type": "FLOAT"
                 },
                 {
@@ -583,7 +571,7 @@
                     "type": "TEXT"
                 }
             ],
-            "table_creation_query": "--income data in San Francisco by census tract\nCREATE TABLE sf_income_by_census_tract (\n    census_tract TEXT PRIMARY KEY,\n    age_16_plus_with_earnings FLOAT,\n    age_16_plus_median_earnings FLOAT,\n    full_time_work_population FLOAT,\n    earning_1_to_9999_or_loss FLOAT,\n    earning_10000_to_14999 FLOAT,\n    earning_15000_to_24999 FLOAT,\n    earning_25000_to_34999 FLOAT,\n    earning_35000_to_49999 FLOAT,\n    earning_50000_to_64999 FLOAT,\n    earning_65000_to_74999 FLOAT,\n    earning_75000_to_99999 FLOAT,\n    earning_100000_and_over FLOAT,\n    age_16_plus_mean_earnings FLOAT,\n    age_25_plus_with_earnings FLOAT,\n    median_earnings_less_than_high_school FLOAT,\n    median_earnings_high_school FLOAT,\n    median_earnings_associates FLOAT,\n    median_earnings_bachelors FLOAT,\n    median_earnings_graduate FLOAT,\n    male_age_16_plus_with_earnings FLOAT,\n    male_age_16_plus_median_earnings FLOAT,\n    male_full_time_work_population FLOAT,\n    males_earning_1_to_9999_or_loss FLOAT,\n    males_earning_10000_to_14999 FLOAT,\n    males_earning_15000_to_24999 FLOAT,\n    males_earning_25000_to_34999 FLOAT,\n    males_earning_35000_to_49999 FLOAT,\n    males_earning_50000_to_64999 FLOAT,\n    males_earning_65000_to_74999 FLOAT,\n    males_earning_75000_to_99999 FLOAT,\n    males_earning_100000_and_over FLOAT,\n    male_age_16_plus_mean_earnings FLOAT,\n    male_age_25_plus_with_earnings FLOAT,\n    male_median_earnings_less_than_high_school FLOAT,\n    male_median_earnings_high_school FLOAT,\n    male_median_earnings_associates FLOAT,\n    male_median_earnings_bachelors FLOAT,\n    male_median_earnings_graduate FLOAT,\n    female_age_16_plus_with_earnings FLOAT,\n    female_age_16_plus_median_earnings FLOAT,\n    female_full_time_work_population FLOAT,\n    females_earning_1_to_9999_or_loss FLOAT,\n    females_earning_10000_to_14999 FLOAT,\n    females_earning_15000_to_24999 FLOAT,\n    females_earning_25000_to_34999 FLOAT,\n    females_earning_35000_to_49999 FLOAT,\n    females_earning_50000_to_64999 FLOAT,\n    females_earning_65000_to_74999 FLOAT,\n    females_earning_75000_to_99999 FLOAT,\n    females_earning_100000_and_over FLOAT,\n    female_age_16_plus_mean_earnings FLOAT,\n    female_age_25_plus_with_earnings FLOAT,\n    female_median_earnings_less_than_high_school FLOAT,\n    female_median_earnings_high_school FLOAT,\n    female_median_earnings_associates FLOAT,\n    female_median_earnings_bachelors FLOAT,\n    female_median_earnings_graduate FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n)"
+            "table_creation_query": "--income data in San Francisco by census tract\nCREATE TABLE sf_income_by_census_tract (\n    census_tract TEXT PRIMARY KEY,\n    age_16_plus_with_earnings_count FLOAT,\n    age_16_plus_median_earnings_dollars FLOAT,\n    full_time_work_population FLOAT,\n    earning_1_to_9999_or_loss_count FLOAT,\n    earning_10000_to_14999_count FLOAT,\n    earning_15000_to_24999_count FLOAT,\n    earning_25000_to_34999_count FLOAT,\n    earning_35000_to_49999_count FLOAT,\n    earning_50000_to_64999_count FLOAT,\n    earning_65000_to_74999_count FLOAT,\n    earning_75000_to_99999_count FLOAT,\n    earning_100000_and_over_count FLOAT,\n    age_16_plus_mean_earnings_dollars FLOAT,\n    age_25_plus_with_earnings_count FLOAT,\n    median_earnings_less_than_high_school_dollars FLOAT,\n    median_earnings_high_school_dollars FLOAT,\n    median_earnings_associates_dollars FLOAT,\n    median_earnings_bachelors_dollars FLOAT,\n    median_earnings_graduate_dollars FLOAT,\n    male_age_16_plus_with_earnings_count FLOAT,\n    male_age_16_plus_median_earnings_dollars FLOAT,\n    male_full_time_work_population FLOAT,\n    males_earning_1_to_9999_or_loss_count FLOAT,\n    males_earning_10000_to_14999_count FLOAT,\n    males_earning_15000_to_24999_count FLOAT,\n    males_earning_25000_to_34999_count FLOAT,\n    males_earning_35000_to_49999_count FLOAT,\n    males_earning_50000_to_64999_count FLOAT,\n    males_earning_65000_to_74999_count FLOAT,\n    males_earning_75000_to_99999_count FLOAT,\n    males_earning_100000_and_over_count FLOAT,\n    male_age_16_plus_mean_earnings_dollars FLOAT,\n    male_age_25_plus_with_earnings_count FLOAT,\n    male_median_earnings_less_than_high_school_dollars FLOAT,\n    male_median_earnings_high_school_dollars FLOAT,\n    male_median_earnings_associates_dollars FLOAT,\n    male_median_earnings_bachelors_dollars FLOAT,\n    male_median_earnings_graduate_dollars FLOAT,\n    female_age_16_plus_with_earnings_count FLOAT,\n    female_age_16_plus_median_earnings_dollars FLOAT,\n    female_full_time_work_population FLOAT,\n    females_earning_1_to_9999_or_loss_count FLOAT,\n    females_earning_10000_to_14999_count FLOAT,\n    females_earning_15000_to_24999_count FLOAT,\n    females_earning_25000_to_34999_count FLOAT,\n    females_earning_35000_to_49999_count FLOAT,\n    females_earning_50000_to_64999_count FLOAT,\n    females_earning_65000_to_74999_count FLOAT,\n    females_earning_75000_to_99999_count FLOAT,\n    females_earning_100000_and_over_count FLOAT,\n    female_age_16_plus_mean_earnings_dollars FLOAT,\n    female_age_25_plus_with_earnings_count FLOAT,\n    female_median_earnings_less_than_high_school_dollars FLOAT,\n    female_median_earnings_high_school_dollars FLOAT,\n    female_median_earnings_associates_dollars FLOAT,\n    female_median_earnings_bachelors_dollars FLOAT,\n    female_median_earnings_graduate_dollars FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n)"
         },
         {
             "name": "sf_race_by_census_tract",
