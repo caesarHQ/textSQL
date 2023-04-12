@@ -943,7 +943,7 @@ function App(props) {
                                     style={{ width: '100%', height: '100%' }}
                                     mapStyle="mapbox://styles/mapbox/dark-v11"
                                     initialViewState={initialView}
-                                    minZoom={props.version === 'San Francisco' ? 11 : 0}
+                                    minZoom={props.version === 'San Francisco' ? 11.5 : 0}
                                 >
                                     <Source
                                         id="zips-kml"
