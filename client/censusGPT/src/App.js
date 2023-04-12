@@ -876,17 +876,17 @@ function App(props) {
                     </div>
 
                     <h1
-                        className="text-4xl font-bold text-black dark:text-white flex items-center justify-center"
-                        style={{ cursor: 'pointer' }}
+                    className="text-4xl font-bold text-black dark:text-white flex items-start justify-center"
+                    style={{ cursor: "pointer" }}
                     >
-                        {
-                            props.version === 'San Francisco' && (
-                                <div className="text-blue-500 font-bold uppercase text-3xl mr-2" style={{ color: '#3498db', fontSize: '90%' }}>
-                                BETA
-                              </div>
-                                                        )
-                        }
-                        {props.version} GPT
+                    {props.version} GPT
+                    {props.version === "San Francisco" && (
+                        <div
+                        className="text-blue-600 font-bold uppercase text-sm ml-2 mt-[4px]"
+                        >
+                        BETA
+                        </div>
+                    )}
                     </h1>
                     <Toaster />
                     <div className='block px-6 pb-2'>
