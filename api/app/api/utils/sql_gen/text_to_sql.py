@@ -256,7 +256,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
         try:
             if scope == "SF":
                 # model = "gpt-4"
-                model = "gpt-3.5-turbo"
+                model = "gpt-3.5-turbo-0301"
             else:
                 model = "gpt-3.5-turbo"
             assistant_message = get_assistant_message(messages, model=model, scope=scope)
