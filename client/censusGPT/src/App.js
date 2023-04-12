@@ -111,8 +111,8 @@ const DataPlot = (props) => {
 const SearchInput = (props) => {
     const { value, onSearchChange, onClear } = props
     return (
-        <div className="flex rounded-md shadow-sm w-full md:max-w-lg bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
-            <div className="relative flex flex-grow items-stretch focus-within:z-10">
+    <div className="flex rounded-md shadow-sm w-full max-w-full md:max-w-3xl bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
+        <div className="relative flex flex-grow items-stretch focus-within:z-10">
                 <input
                     type="text"
                     name="search"
