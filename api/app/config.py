@@ -30,6 +30,7 @@ class FlaskAppConfig:
     CORS_HEADERS = "Content-Type"
     SQLALCHEMY_DATABASE_URI = DB_URL
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
+    TIMEOUT = 60
 
 if DB_URL:
     ENGINE = create_engine(DB_URL)
