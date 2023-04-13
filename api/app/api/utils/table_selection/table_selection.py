@@ -41,20 +41,23 @@ def _get_table_selection_message_with_descriptions(scope="USA"):
     
 
 def _get_table_selection_messages(scope="USA"):
-    default_messages = [{
-        "role": "system",
-        "content": (
-            "You are a helpful assistant for identifying relevant SQL tables to use for answering a natural language query."
-            " You respond in JSON format with your answer in a field named \"tables\" which is a list of strings."
-            " Respond with an empty list if you cannot identify any relevant tables."
-            " Write your answer in markdown format."
-            "\n"
-            "The following are descriptions of available tables and enums:\n"
-            "---------------------\n"
-            + get_table_schemas(scope=scope) +
-            "---------------------\n"
-        )
-    }]
+    if scope == "USA":
+        default_messages = [{
+            "role": "system",
+            "content": (
+                "You are a helpful assistant for identifying relevant SQL tables to use for answering a natural language query."
+                " You respond in JSON format with your answer in a field named \"tables\" which is a list of strings."
+                " Respond with an empty list if you cannot identify any relevant tables."
+                " Write your answer in markdown format."
+                "\n"
+                "The following are descriptions of available tables and enums:\n"
+                "---------------------\n"
+                + get_table_schemas(scope=scope) +
+                "---------------------\n"
+            )
+        }]
+    else:
+        default_messages = []
     default_messages.extend(get_few_shot_example_messages(mode="table_selection", scope=scope))
     return default_messages
 
@@ -100,12 +103,12 @@ def get_relevant_tables_from_lm(natural_language_query, scope="USA", model="gpt-
         "content": content
     })
 
-    print(messages)
-
     tables_json_str = _extract_text_from_markdown(
         get_assistant_message(
             messages=messages,
             model=model,
+            scope=scope,
+            purpose="table_selection"
         )["message"]["content"]
     )
 

@@ -1,6 +1,8 @@
+import time
 import openai
 import re
 from typing import List, Dict
+from app.api.utils.caesar_logging import log_apicall
 
 
 def get_assistant_message(
@@ -8,11 +10,13 @@ def get_assistant_message(
         temperature: int = 0,
         model: str = "gpt-3.5-turbo",
         scope: str = "USA",
+        purpose: str = "Generic",
         # model: str = "gpt-4",
 ):
     # alright, it looks like gpt-3.5-turbo is ignoring the user messages in history
     # let's go and re-create the chat in the last message!
     final_payload = messages
+
     if scope == "USA":
 
         stringified_messages = []
@@ -28,14 +32,31 @@ def get_assistant_message(
             "content": stringified_messages + '\n--pay close attention to the earlier examples for tricks for how to efficiently query this database.',
         }]
         final_payload = simplified_payload
+    else:
+        final_payload = messages
 
-
-
+    start = time.time()
     res = openai.ChatCompletion.create(
         model=model,
         temperature=temperature,
         messages=final_payload
     )
+    duration = time.time() - start
+
+    usage = res['usage']
+    input_tokens = usage['prompt_tokens']
+    output_tokens = usage['completion_tokens']
+
+    log_apicall(
+        duration,
+        'openai',
+        model,
+        input_tokens,
+        output_tokens,
+        scope,
+        purpose,
+    )
+
     # completion = res['choices'][0]["message"]["content"]
     assistant_message = res['choices'][0]
   

@@ -14,6 +14,7 @@ DB_URL = getenv("DB_URL")
 OPENAI_KEY = getenv("OPENAI_KEY")
 PINECONE_KEY = getenv("PINECONE_KEY")
 PINECONE_ENV = getenv("PINECONE_ENV")
+EVENTS_URL = getenv("EVENTS_URL")
 
 openai.api_key = OPENAI_KEY
 
@@ -42,6 +43,11 @@ if DB_URL:
 else:
     print('DB_URL not found, please check your environment')
     exit(1)
+
+if EVENTS_URL:
+    EVENTS_ENGINE = create_engine(EVENTS_URL)
+else:
+    EVENTS_ENGINE = None
 
 if PINECONE_KEY and PINECONE_ENV:
     pinecone.init(
