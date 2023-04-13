@@ -8,7 +8,7 @@ from openai.embeddings_utils import get_embedding
 from ....config import PINECONE_ENV, PINECONE_KEY
 from ..few_shot_examples import get_few_shot_example_messages
 from ..messages import get_assistant_message
-from .table_details import get_table_schemas
+from .table_details import get_table_schemas, get_all_table_names
 
 
 def _extract_text_from_markdown(text):
@@ -38,10 +38,14 @@ def _get_table_selection_message_with_descriptions(scope="USA"):
         {get_table_schemas(scope=scope)}
         ---------------------
 
-        Provide a comment above the markdown explaining why/why not tables may/maybe not be relevant in this format. You can provide data for if someone asks for 'all the muggings' from tables related to crime for instance.
-        <comment goes here>
+        in your answer, provide the following information:
+        
+        - <one to two sentence comment explaining what tables can be relevant goes here>
+        - <for each table identified, comment double checking the table is in the schema above along with what the first column in the table is or (none) if it doesn't exist. be careful that any tables suggested were actually above>
+        - <if any tables were incorrectly identified, make a note here about what tables from the schema should actually be used if any>
+        - the markdown formatted like this:
         ```
-        <explanation goes here>
+        <json of the tables>
         ```
 
         Thanks!
@@ -112,19 +116,30 @@ def get_relevant_tables_from_lm(natural_language_query, scope="USA", model="gpt-
         "content": content
     })
 
-    tables_json_str = _extract_text_from_markdown(
-        get_assistant_message(
+    response = get_assistant_message(
             messages=messages,
             model=model,
             scope=scope,
             purpose="table_selection"
         )["message"]["content"]
+
+    tables_json_str = _extract_text_from_markdown(
+        response
     )
 
     try:
         tables = json.loads(tables_json_str).get("tables")
     except:
         tables = []
+
+    print('intiial tables: ', tables)
+
+    possible_tables = get_all_table_names(scope=scope)
+
+    tables = [table for table in tables if table in possible_tables]
+
+    print('final tables: ', tables)
+
     return tables
 
 
