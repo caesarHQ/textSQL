@@ -113,12 +113,10 @@ def clean_sql_message_content(assistant_message_content):
     else:
         sql_query = assistant_message_content
 
-    print('SQL QUERY: ', sql_query)
     return sql_query
 
 
 def extract_sql_query_from_message(assistant_message_content):
-
     content = extract_sql_from_markdown(assistant_message_content)
     # return clean_sql_message_content(content)
     return content

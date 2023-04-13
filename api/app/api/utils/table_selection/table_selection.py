@@ -128,13 +128,9 @@ def get_relevant_tables_from_lm(natural_language_query, scope="USA", model="gpt-
     except:
         tables = []
 
-    print('initial tables: ', tables)
-
     possible_tables = get_all_table_names(scope=scope)
 
     tables = [table for table in tables if table in possible_tables]
-
-    print('final tables: ', tables)
 
     return tables
 
