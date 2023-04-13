@@ -17,6 +17,7 @@ import * as Sentry from '@sentry/react'
 import toast, { Toaster } from 'react-hot-toast'
 import Disclaimer from './components/disclaimer'
 import { VizSelector } from './components/vizSelector'
+import { ExplanationModal } from './components/explanationModal'
 
 // Utils
 import {
@@ -143,6 +144,7 @@ function App(props) {
     const [zipcodes, setZipcodes] = useState([])
     const [tableInfo, setTableInfo] = useState({ rows: [], columns: [] })
     const [errorMessage, setErrorMessage] = useState('')
+    const [showExplanationModal, setShowExplanationModal] = useState(false)
     const [cities, setCities] = useState([])
     const [isGetTablesLoading, setIsGetTablesLoading] = useState(false)
     const [tableNames, setTableNames] = useState()
@@ -462,7 +464,12 @@ function App(props) {
                     setTableNames()
                     posthog.capture('getTables_backend_error', response)
                     setErrorMessage('Something went wrong. Please try again or try a different query')
-                    return
+                    return false
+                }
+
+                if (response.table_names.length === 0) {
+                    setShowExplanationModal(true)
+                    return false
                 }
 
                 posthog.capture('getTables_backend_response', response)
@@ -507,11 +514,14 @@ function App(props) {
         setMobileHelpIsOpen(false)
         setTableNames()
         setSqlExplanation()
+        setShowExplanationModal(false)
 
         // clear previous layers
         clearMapLayers()
 
         const table_names = await getTables(natural_language_query)
+
+        if (!table_names) return
 
         // Set the loading state
         setIsLoading(true)
@@ -898,6 +908,7 @@ function App(props) {
 
     return (
         <main className='h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen'>
+            {showExplanationModal && <ExplanationModal setShowExplanationModal={setShowExplanationModal} version={props.version}/>}
             <div className="App flex flex-col h-full" onClick={(e) => sqlExplanationRef.current && !sqlExplanationRef.current.contains(e.target) && setSqlExplanationIsOpen(false)}>
                 <link
                     href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
