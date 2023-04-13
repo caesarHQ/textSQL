@@ -831,7 +831,7 @@ function App(props) {
                                     Submit
                                 </button>
                             )}
-                            <EditSqlButton />
+                            {/* <EditSqlButton /> */}
                             <CopySqlToClipboardButton text={sqlRef.current} />
                         </div>
                     </div>
@@ -860,7 +860,7 @@ function App(props) {
                                 executeSql(sqlRef.current)
                             }
                         }}
-                        onDoubleClickCapture={() => !editingSql && setEditingSql(true)}
+                        // onDoubleClickCapture={() => !editingSql && setEditingSql(true)}
                     >
                         {editingSql ? sqlRef.current : sql}
                     </SyntaxHighlighter>
