@@ -2,8 +2,9 @@
 
 ### 
 
+:bridge_at_night: Demo on San Francisco City Data: [SanFranciscoGPT.com](http://sanfranciscogpt.com)
 
-:point_right: Demo on US Census Data: [CensusGPT.com](https://censusgpt.com)
+:us: Demo on US Census Data: [CensusGPT.com](https://censusgpt.com)
 
 
 <h3 align="center">
@@ -42,7 +43,7 @@ Here are some examples:
 
 ## :world_map: Roadmap:
 
-We're splitting the roadmap for this project broadly into three categories:
+We're splitting the roadmap for this project broadly into two categories:
 
 
 ### 1. Visualizations: 
@@ -68,14 +69,6 @@ You can now connect your own database & datasets to textSQL. Our vision is to co
 * Public-facing interactive interfaces for government & NGO data — democratizing public data
 * Empowering researchers — enabling journalists and other researchers to more easily explore data
 
-### 3. Integrations
-
-|   |  |
-|---|---|
-| <img width="120" alt="Screenshot 2023-03-10 at 12 58 33 AM" src="https://download.logo.wine/logo/Snowflake_Inc./Snowflake_Inc.-Logo.wine.png">  | Snowflake (coming soon)  |
-| <img width="120" alt="Screenshot 2023-03-10 at 12 58 33 AM" src="https://retool.com/logo.png">  | ReTool (coming soon)  |
-| <img width="120" alt="Screenshot 2023-03-10 at 12 58 33 AM" src="https://www.looker.com/static/assets/looker_logo_meta.png">   |  Looker (coming soon) |
-|  <img width="120" alt="Screenshot 2023-03-10 at 12 58 33 AM" src="https://www.vectorlogo.zone/logos/google_bigquery/google_bigquery-ar21.png"> | Big Query (coming soon)  |
 
 ## :pencil: Additional Notes
 
