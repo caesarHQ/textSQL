@@ -749,19 +749,22 @@ function App(props) {
 
     useEffect(() => {
         const queryFromURL = searchParams.get('s')
-        if (queryFromURL != query) {
-            posthog.capture('search_clicked', {
-                natural_language_query: urlSearch,
-            })
-            setQuery(urlSearch)
-            debouncedFetchBackend(urlSearch)
-        }
-    }, [searchParams])
+        if (queryFromURL) {
+            if (queryFromURL != query) {
+                posthog.capture('search_clicked', {
+                    natural_language_query: urlSearch,
+                    trigger: 'url',
+                })
+                setQuery(urlSearch)
+                debouncedFetchBackend(urlSearch)
+            }
+    }
+    }, [])
 
     const handleSearchClick = (event) => {
         setSearchParams(`?${new URLSearchParams({ s: query })}`)
         setTitle(query)
-        posthog.capture('search_clicked', { natural_language_query: query })
+        posthog.capture('search_clicked', { natural_language_query: query, trigger: 'button' })
         fetchBackend(query)
     }
 
