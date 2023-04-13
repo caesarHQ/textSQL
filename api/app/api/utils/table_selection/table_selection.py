@@ -134,7 +134,7 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
     # temporary hack to always use LM for SF
     if scope == "SF":
         # model = "gpt-4"
-        model = "gpt-3.5-turbo"
+        model = "gpt-3.5-turbo-0301"
         return get_relevant_tables_from_lm(natural_language_query, scope, model)
 
     if PINECONE_KEY and PINECONE_ENV:
@@ -142,7 +142,7 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
     
     if scope == "SF":
         # model = "gpt-4"
-        model = "gpt-3.5-turbo"
+        model = "gpt-3.5-turbo-0301"
     else:
         model = "gpt-3.5-turbo"
 
