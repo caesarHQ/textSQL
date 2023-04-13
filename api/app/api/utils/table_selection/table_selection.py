@@ -41,23 +41,22 @@ def _get_table_selection_message_with_descriptions(scope="USA"):
     
 
 def _get_table_selection_messages(scope="USA"):
-    if scope == "USA":
-        default_messages = [{
-            "role": "system",
-            "content": (
-                "You are a helpful assistant for identifying relevant SQL tables to use for answering a natural language query."
-                " You respond in JSON format with your answer in a field named \"tables\" which is a list of strings."
-                " Respond with an empty list if you cannot identify any relevant tables."
-                " Write your answer in markdown format."
-                "\n"
-                "The following are descriptions of available tables and enums:\n"
-                "---------------------\n"
-                + get_table_schemas(scope=scope) +
-                "---------------------\n"
-            )
-        }]
-    else:
-        default_messages = []
+    # default_messages = [{
+    #     "role": "system",
+    #     "content": (
+    #         f"""
+    #         You are a helpful assistant for identifying relevant SQL tables to use for answering a natural language query.
+    #         You respond in JSON format with your answer in a field named \"tables\" which is a list of strings.
+    #         Respond with an empty list if you cannot identify any relevant tables.
+    #         Write your answer in markdown format.
+    #         The following are descriptions of available tables and enums:
+    #         ---------------------
+    #         {get_table_schemas(scope=scope)}
+    #         ---------------------
+    #         """
+    #     )
+    # }]
+    default_messages = []
     default_messages.extend(get_few_shot_example_messages(mode="table_selection", scope=scope))
     return default_messages
 
@@ -81,7 +80,7 @@ def get_relevant_tables_from_pinecone(natural_language_query, scope="USA") -> Li
         for table_name in result.metadata["table_names"]:
             tables_set.add(table_name)
 
-    if scope == "USA" or scope == "SF":
+    if scope == "USA":
         if len(tables_set) == 1 and "crime_by_city" in tables_set:
             pass
         else:
