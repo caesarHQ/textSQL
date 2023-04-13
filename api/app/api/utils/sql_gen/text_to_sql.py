@@ -22,10 +22,7 @@ MSG_WITH_ERROR_TRY_AGAIN = (
 )
 
 def make_default_messages(schemas: str, scope="USA"):
-    default_messages = [{
-        "role": "system",
-        "content": get_initial_prompt(DIALECT, schemas, scope)
-    }]
+    default_messages = []
 
     default_messages.extend(get_few_shot_example_messages(mode="text_to_sql", scope=scope))
     return default_messages
@@ -252,14 +249,15 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
 
     assistant_message = None
 
-    for _ in range(k):
+    for attempt_number in range(k):
         try:
             if scope == "SF":
                 # model = "gpt-4"
                 model = "gpt-3.5-turbo-0301"
             else:
                 model = "gpt-3.5-turbo"
-            assistant_message = get_assistant_message(messages, model=model, scope=scope)
+            purpose = "text_to_sql" if attempt_number == 0 else "text_to_sql_retry"
+            assistant_message = get_assistant_message(messages, model=model, scope=scope, purpose=purpose)
             sql_query = extract_sql_query_from_message(assistant_message["message"]["content"])
 
             response = execute_sql(sql_query)

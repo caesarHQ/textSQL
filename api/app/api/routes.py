@@ -87,8 +87,6 @@ def text_to_sql():
     
     natural_language_query = replace_unsupported_localities(natural_language_query, scope)
 
-    print('PARSED NLQ: ', natural_language_query)
-
     # if not table_names or len(table_names) == 0:
     #     error_msg = 'non-empty `table_names` array is missing from request body'
     #     return make_response(jsonify({"error": error_msg}), 400)
