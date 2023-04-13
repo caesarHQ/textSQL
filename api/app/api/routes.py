@@ -1,3 +1,4 @@
+import asyncio
 import re
 
 from flask import Blueprint, jsonify, make_response, request
@@ -9,8 +10,9 @@ from .utils.sql_gen.text_to_sql import (execute_sql,
                                         text_to_sql_chat_with_retry,
                                         text_to_sql_parallel,
                                         text_to_sql_with_retry)
+from .utils.classification.input_clasification import create_labels 
 from .utils.table_selection.table_details import get_all_table_names
-from .utils.table_selection.table_selection import get_relevant_tables
+from .utils.table_selection.table_selection import get_relevant_tables_async
 
 
 def replace_unsupported_localities(original_string, scope="USA"):
@@ -51,9 +53,16 @@ def get_tables():
     scope = request_body.get('scope', "USA")
     natural_language_query = replace_unsupported_localities(natural_language_query, scope)
 
-    
+    async def run_tasks():
+        relevant_tables_task = asyncio.create_task(get_relevant_tables_async(natural_language_query, scope))
+        labels_task = asyncio.create_task(create_labels(natural_language_query, scope))
 
-    table_names = get_relevant_tables(natural_language_query, scope)
+        table_names = await relevant_tables_task
+        await labels_task
+        return table_names
+
+    table_names = asyncio.run(run_tasks())
+
     return make_response(jsonify({"table_names": table_names}), 200)
 
 

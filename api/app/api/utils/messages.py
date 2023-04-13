@@ -62,6 +62,41 @@ def get_assistant_message(
   
     return assistant_message
 
+def call_chat(
+        messages: List[Dict[str, str]],
+        temperature: int = 0,
+        model: str = "gpt-3.5-turbo",
+        scope: str = "USA",
+        purpose: str = "Generic",
+        # model: str = "gpt-4",
+):
+
+    start = time.time()
+    res = openai.ChatCompletion.create(
+        model=model,
+        temperature=temperature,
+        messages=messages
+    )
+    duration = time.time() - start
+
+    usage = res['usage']
+    input_tokens = usage['prompt_tokens']
+    output_tokens = usage['completion_tokens']
+
+    log_apicall(
+        duration,
+        'openai',
+        model,
+        input_tokens,
+        output_tokens,
+        scope,
+        purpose,
+    )
+
+    # completion = res['choices'][0]["message"]["content"]
+    assistant_message = res['choices'][0]['message']['content']
+  
+    return assistant_message
 
 def clean_sql_message_content(assistant_message_content):
     """
@@ -83,7 +118,7 @@ def clean_sql_message_content(assistant_message_content):
 
 
 def extract_sql_query_from_message(assistant_message_content):
-    print(assistant_message_content)
+
     content = extract_sql_from_markdown(assistant_message_content)
     # return clean_sql_message_content(content)
     return content
