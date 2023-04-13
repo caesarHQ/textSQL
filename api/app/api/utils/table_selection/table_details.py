@@ -93,3 +93,27 @@ def get_table_schemas(table_names: List[str] = None, scope="USA") -> str:
 
     # return tables_description
     return enums_description + "\n\n" + tables_description
+
+def get_minimal_table_schemas(scope="USA") -> str:
+    
+    tables_list = []
+
+    if scope == "USA":
+        tables_list = table_details["tables"]
+    elif scope == "SF":
+        tables_list = sf_table_details["tables"]
+
+    tables_str_list = []
+    for table in tables_list:
+        if scope == "SF":
+            tables_str = f"table name: {table['name']}\n"
+            tables_str += f"table description: {table['description']}\n"
+        else:
+            tables_str = f"table name: {table['name']}\n"
+            tables_str += f"table description: {table['description']}\n"
+        tables_str_list.append(tables_str)
+
+    tables_description = "\n\n".join(tables_str_list)
+
+    # return tables_description
+    return tables_description

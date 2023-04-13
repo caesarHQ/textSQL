@@ -4,24 +4,35 @@ from app.config import EVENTS_ENGINE
 from app.api.utils.messages import call_chat
 from app.api.utils.caesar_logging import log_input_classification
 
-async def create_labels(user_input, scope="USA"):
+from app.api.utils.table_selection.table_details import get_minimal_table_schemas
+
+async def create_labels(user_input, scope="USA") -> bool:
     """
     Create labels for the user input
     """
 
     if not EVENTS_ENGINE:
         return {"status": "no engine"}
+    
+    table_prefix = get_minimal_table_schemas(scope)
 
     user_message = f"""The user asked our database for:
 ----
 {user_input}
 ----
 
-give me a JSON object for classifying it in our database. The object needs to consist of
+Our schema has the following tables (here's parts of the script to create them):
+---
+{table_prefix}
+---
+
+give me a JSON object for classifying it in our database as well as if we have it. The object needs to consist of
  {{
   topics: str[],
   categories: str[],
-  locations: str[]
+  locations: str[],
+  relevant_tables_from_schema: str[],
+  has_relevant_table: bool,
 }}
 Thanks! Provide the JSON and only the JSON. Values should be in all lowercase."""
 
@@ -36,4 +47,6 @@ Thanks! Provide the JSON and only the JSON. Values should be in all lowercase.""
 
     log_input_classification(scope, user_input, parsed)
 
-    return {"status": "success"}
+    is_relevant_query = parsed.get("has_relevant_table", False)
+
+    return is_relevant_query
