@@ -38,7 +38,7 @@ def _get_table_selection_message_with_descriptions(scope="USA"):
         {get_table_schemas(scope=scope)}
         ---------------------
 
-        Provide a comment above the markdown explaining why/why not tables may/maybe not be relevant in this format
+        Provide a comment above the markdown explaining why/why not tables may/maybe not be relevant in this format. You can provide data for if someone asks for 'all the muggings' from tables related to crime for instance.
         <comment goes here>
         ```
         <explanation goes here>
