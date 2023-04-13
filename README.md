@@ -8,7 +8,8 @@
 
 
 <h3 align="center">
-  <a href="https://censusgpt.com/" target="_blank"> Website </a>&bull;
+<a href="http://sanfranciscogpt.com" target="_blank"> SanFranciscoGPT </a>&bull;
+  <a href="https://censusgpt.com/" target="_blank"> CensusGPT </a>&bull;
   <a href="https://t.co/FuOOcB6aGr"><b>Join the Discord Server</b></a>
 </h3>
 
@@ -21,7 +22,7 @@
    <a href="https://github.com/caesarHQ/textSQL/commits/main"><img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/caesarHQ/textSQL?color=8b55e3"/></a>
 </p>
 
-Welcome to textSQL, a project which uses LLMs to democratize access to data analysis. An example use case of textSQL is CensusGPT — a natural language interface to US census data, enabling anyone to analyze and gain insights from the data.
+Welcome to textSQL, a project which uses LLMs to democratize access to data analysis. Example use cases of textSQL are San Francisco GPT and CensusGPT — natural language interfaces to public data (SF city data and US census data), enabling anyone to analyze and gain insights from the data.
 
 <img width="1316" alt="Screenshot 2023-03-10 at 12 55 44 AM" src="https://user-images.githubusercontent.com/10172332/224270303-087495bd-2391-4e1f-a8ad-ef5ae49ace0c.png">
 
@@ -34,6 +35,10 @@ Here are some examples:
 
 * [🔍 Five cities with a population over 100,000 and lowest crime](https://censusgpt.com/?s=five%20cities%20with%20a%20population%20over%20100%2C000%20and%20lowest%20crime)
 * [🔍 10 highest income areas in california](https://censusgpt.com/?s=10%20highest%20income%20areas%20in%20california)
+
+Here is a similar example from sfGPT:
+
+* [🔍 Which four neighborhoods had the most crime in San Francisco in 2021?](https://censusgpt.com/sf?s=Which+four+neighborhoods+had+the+most+crime+in+San+Francisco+in+2021%3F)
 
 
 #### Diagram:
@@ -74,9 +79,9 @@ You can now connect your own database & datasets to textSQL. Our vision is to co
 
 #### Datasets: 
 
-A lot of the users of this project have asked for historical census data (trends), weather, health, transportation and real-estate data. Feel free to create a pull request, drop a link to your dataset in our [Discord](https://discord.gg/JZtxhZQQus), or contribute data via our [dedicated submission form](https://airtable.com/shrDKRRGyRCihWEZd).
+A lot of the users of this project have asked for additional data for both CensusGPT and sfGPT — historical census data (trends), weather, health, transportation and real-estate data. Feel free to create a pull request, drop a link to your dataset in our [Discord](https://discord.gg/JZtxhZQQus), or contribute data via our [dedicated submission form](https://airtable.com/shrDKRRGyRCihWEZd).
 
-More data → Better CensusGPT
+More data → Better CensusGPT and sfGPT
 
 #### Query Building:
 
