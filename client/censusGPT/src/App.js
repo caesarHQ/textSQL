@@ -232,6 +232,28 @@ function App(props) {
         setSearchParams({ })
     }
 
+    const clearAllButQuery = () => {
+        setSQL('')
+        setErrorMessage('')
+        setZipcodes([])
+        setZipcodesFormatted([])
+        setPoints([])
+        setTableInfo({ rows: [], columns: [] })
+        setTitle(props.version === 'Census' ? 'Census GPT' : 'San Francisco GPT')
+        setVisualization('map')
+        setEditingSql(false)
+        setCopied(false)
+        setMobileMenuIsOpen(false)
+        setMobileHelpIsOpen(true)
+        setMobileTableIsOpen(false)
+        setMobileSqlIsOpen(false)
+        setSqlExplanationIsOpen(false)
+        setSqlExplanation()
+        setMinimizeTableNames(false)
+        setTableNames()
+        setIsLoading(false)
+    }
+
 
     const clearMapLayers = () => {
         setCities([])
@@ -518,7 +540,7 @@ function App(props) {
 
         // clear previous layers
         clearMapLayers()
-
+        clearAllButQuery()
         const table_names = await getTables(natural_language_query)
 
         if (!table_names) return
@@ -630,7 +652,7 @@ function App(props) {
             } else if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') >= 0) {
                 // Render polygon shapes on the map
                 // Get GeoJson shape for each neighborhood from the local file
-                setPolygons(response.result.results.filter(r => !!r.neighborhood).map(r => [NeighborhoodGeoData.neighborhoods[r.neighborhood].shape]))
+                setPolygons(response.result.results.filter(r => !!r.neighborhood).map(r => [NeighborhoodGeoData.neighborhoods[r.neighborhood]?.shape]))
                 setVisualization('map')
             } else if (props.version === 'San Francisco' && filteredColumns.indexOf('neighborhood') == -1) {
                 // No neighborhoods or points to render. Default to chart
