@@ -1,5 +1,5 @@
 from ..few_shot_examples import get_few_shot_example_messages
-from ..messages import get_assistant_message
+from ..messages import get_assistant_message_from_openai
 from app.config import DIALECT
 
 
@@ -36,5 +36,9 @@ def get_sql_explanation(sql) -> str:
     # model = "gpt-4"
     model = "gpt-3.5-turbo"
 
-    assistant_message_content = get_assistant_message(messages=messages, model=model)["message"]["content"]
+    assistant_message_content = get_assistant_message_from_openai(
+        messages=messages,
+        model=model,
+        purpose="sql_explanation"
+    )["message"]["content"]
     return assistant_message_content

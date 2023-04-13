@@ -7,7 +7,7 @@ from openai.embeddings_utils import get_embedding
 
 from ....config import PINECONE_ENV, PINECONE_KEY
 from ..few_shot_examples import get_few_shot_example_messages
-from ..messages import get_assistant_message
+from ..messages import get_assistant_message_from_openai
 from .table_details import get_table_schemas, get_all_table_names
 
 
@@ -54,23 +54,22 @@ def _get_table_selection_message_with_descriptions(scope="USA"):
     
 
 def _get_table_selection_messages(scope="USA"):
-    if scope == "USA":
-        default_messages = [{
-            "role": "system",
-            "content": (
-                "You are a helpful assistant for identifying relevant SQL tables to use for answering a natural language query."
-                " You respond in JSON format with your answer in a field named \"tables\" which is a list of strings."
-                " Respond with an empty list if you cannot identify any relevant tables."
-                " Write your answer in markdown format."
-                "\n"
-                "The following are descriptions of available tables and enums:\n"
-                "---------------------\n"
-                + get_table_schemas(scope=scope) +
-                "---------------------\n"
-            )
-        }]
-    else:
-        default_messages = []
+    # default_messages = [{
+    #     "role": "system",
+    #     "content": (
+    #         f"""
+    #         You are a helpful assistant for identifying relevant SQL tables to use for answering a natural language query.
+    #         You respond in JSON format with your answer in a field named \"tables\" which is a list of strings.
+    #         Respond with an empty list if you cannot identify any relevant tables.
+    #         Write your answer in markdown format.
+    #         The following are descriptions of available tables and enums:
+    #         ---------------------
+    #         {get_table_schemas(scope=scope)}
+    #         ---------------------
+    #         """
+    #     )
+    # }]
+    default_messages = []
     default_messages.extend(get_few_shot_example_messages(mode="table_selection", scope=scope))
     return default_messages
 
@@ -94,7 +93,7 @@ def get_relevant_tables_from_pinecone(natural_language_query, scope="USA") -> Li
         for table_name in result.metadata["table_names"]:
             tables_set.add(table_name)
 
-    if scope == "USA" or scope == "SF":
+    if scope == "USA":
         if len(tables_set) == 1 and "crime_by_city" in tables_set:
             pass
         else:
@@ -116,23 +115,20 @@ def get_relevant_tables_from_lm(natural_language_query, scope="USA", model="gpt-
         "content": content
     })
 
-    response = get_assistant_message(
+    response = get_assistant_message_from_openai(
             messages=messages,
             model=model,
             scope=scope,
             purpose="table_selection"
         )["message"]["content"]
-
-    tables_json_str = _extract_text_from_markdown(
-        response
-    )
+    tables_json_str = _extract_text_from_markdown(response)
 
     try:
         tables = json.loads(tables_json_str).get("tables")
     except:
         tables = []
 
-    print('intiial tables: ', tables)
+    print('initial tables: ', tables)
 
     possible_tables = get_all_table_names(scope=scope)
 
@@ -148,11 +144,10 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
     Identify relevant tables for answering a natural language query
     """
 
-
     # temporary hack to always use LM for SF
     if scope == "SF":
         # model = "gpt-4"
-        model = "gpt-3.5-turbo"
+        model = "gpt-3.5-turbo-0301"
         return get_relevant_tables_from_lm(natural_language_query, scope, model)
 
     if PINECONE_KEY and PINECONE_ENV:
@@ -160,11 +155,12 @@ def get_relevant_tables(natural_language_query, scope="USA") -> List[str]:
     
     if scope == "SF":
         # model = "gpt-4"
-        model = "gpt-3.5-turbo"
+        model = "gpt-3.5-turbo-0301"
     else:
         model = "gpt-3.5-turbo"
 
     return get_relevant_tables_from_lm(natural_language_query, scope, model)
+
 
 async def get_relevant_tables_async(natural_language_query, scope="USA") -> List[str]:
     """

@@ -5,7 +5,7 @@ from typing import List, Dict
 from app.api.utils.caesar_logging import log_apicall
 
 
-def get_assistant_message(
+def get_assistant_message_from_openai(
         messages: List[Dict[str, str]],
         temperature: int = 0,
         model: str = "gpt-3.5-turbo",
@@ -17,7 +17,7 @@ def get_assistant_message(
     # let's go and re-create the chat in the last message!
     final_payload = messages
 
-    if scope == "USA":
+    if scope == "USA" and "text_to_sql" in purpose:
 
         stringified_messages = []
         for message in messages:

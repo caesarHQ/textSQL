@@ -10,7 +10,7 @@ from sqlalchemy import text
 
 from ..few_shot_examples import get_few_shot_example_messages
 from ..geo_data import city_lat_lon, neighborhood_shapes, zip_lat_lon
-from ..messages import extract_sql_query_from_message, get_assistant_message
+from ..messages import extract_sql_query_from_message, get_assistant_message_from_openai
 from ..table_selection.table_details import get_table_schemas
 from .prompts import get_initial_prompt, get_retry_prompt
 from ..caesar_logging import log_sql_failure
@@ -188,7 +188,7 @@ def text_to_sql_parallel(natural_language_query, table_names, k=3, scope="USA"):
             model = "gpt-3.5-turbo"
         else:
             model = "gpt-3.5-turbo"
-        jobs.append(joblib.delayed(get_assistant_message)(messages, 0, model))
+        jobs.append(joblib.delayed(get_assistant_message_from_openai)(messages, 0, model))
     assistant_messages = joblib.Parallel(n_jobs=k, verbose=10)(jobs)
 
     # Try each completion in order
@@ -258,7 +258,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             else:
                 model = "gpt-3.5-turbo"
             purpose = "text_to_sql" if attempt_number == 0 else "text_to_sql_retry"
-            assistant_message = get_assistant_message(messages, model=model, scope=scope, purpose=purpose)
+            assistant_message = get_assistant_message_from_openai(messages, model=model, scope=scope, purpose=purpose)
 
             sql_query = extract_sql_query_from_message(assistant_message["message"]["content"])
 
@@ -310,7 +310,7 @@ def text_to_sql_chat_with_retry(messages, table_names=None, scope="USA"):
             schemas=schemas
             )
     }]
-    rephrased_query = get_assistant_message(rephrase)["message"]["content"]
+    rephrased_query = get_assistant_message_from_openai(rephrase)["message"]["content"]
 
     content = get_retry_prompt(DIALECT, rephrased_query, schemas, scope) 
     # Don't return messages_copy to the front-end. It contains extra information for prompting
