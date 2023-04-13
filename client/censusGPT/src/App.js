@@ -144,7 +144,7 @@ function App(props) {
     const [zipcodes, setZipcodes] = useState([])
     const [tableInfo, setTableInfo] = useState({ rows: [], columns: [] })
     const [errorMessage, setErrorMessage] = useState('')
-    const [showExplanationModal, setShowExplanationModal] = useState(false)
+    const [showExplanationModal, setShowExplanationModal] = useState('')
     const [cities, setCities] = useState([])
     const [isGetTablesLoading, setIsGetTablesLoading] = useState(false)
     const [tableNames, setTableNames] = useState()
@@ -468,7 +468,7 @@ function App(props) {
                 }
 
                 if (response.table_names.length === 0) {
-                    setShowExplanationModal(true)
+                    setShowExplanationModal('no_tables')
                     return false
                 }
 
@@ -564,13 +564,20 @@ function App(props) {
             setIsLoading(false)
 
             // Handle errors
-            if (!response || !response.sql_query || !response.result) {
+            if (!response) {
                 posthog.capture('backend_error', response)
                 setErrorMessage(
                     'Something went wrong. Please try again or try a different query'
                 )
                 setTableNames()
                 return
+            }
+            if (!response.sql_query || !response.result){
+                posthog.capture('backend_error', response)
+                setShowExplanationModal('attempted')
+                setTableNames()
+                return
+
             }
 
             // Capture the response in posthog
@@ -908,7 +915,7 @@ function App(props) {
 
     return (
         <main className='h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen'>
-            {showExplanationModal && <ExplanationModal setShowExplanationModal={setShowExplanationModal} version={props.version}/>}
+            {showExplanationModal && <ExplanationModal showExplanationModal={showExplanationModal} setShowExplanationModal={setShowExplanationModal} version={props.version}/>}
             <div className="App flex flex-col h-full" onClick={(e) => sqlExplanationRef.current && !sqlExplanationRef.current.contains(e.target) && setSqlExplanationIsOpen(false)}>
                 <link
                     href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
