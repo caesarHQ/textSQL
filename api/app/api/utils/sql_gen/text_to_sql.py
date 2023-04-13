@@ -13,6 +13,7 @@ from ..geo_data import city_lat_lon, neighborhood_shapes, zip_lat_lon
 from ..messages import extract_sql_query_from_message, get_assistant_message
 from ..table_selection.table_details import get_table_schemas
 from .prompts import get_initial_prompt, get_retry_prompt
+from ..caesar_logging import log_sql_failure
 
 MSG_WITH_ERROR_TRY_AGAIN = (
     "Try again. "
@@ -258,6 +259,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
                 model = "gpt-3.5-turbo"
             purpose = "text_to_sql" if attempt_number == 0 else "text_to_sql_retry"
             assistant_message = get_assistant_message(messages, model=model, scope=scope, purpose=purpose)
+
             sql_query = extract_sql_query_from_message(assistant_message["message"]["content"])
 
             response = execute_sql(sql_query)
@@ -265,6 +267,9 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             return response, sql_query
 
         except Exception as e:
+            
+            log_sql_failure(natural_language_query, sql_query, str(e), attempt_number, scope)
+
             messages.append({
                 "role": "assistant",
                 "content": assistant_message["message"]["content"]

@@ -99,3 +99,26 @@ def log_input_classification(app_name, input_text, metadata):
         conn.commit()
     
     return {"status": "success"}
+
+def log_sql_failure(input_text, sql_script, failure_message, attempt_number, app_name):
+    if not EVENTS_ENGINE:
+        return {"status": "no engine"}
+
+    params = {
+        "input_text": input_text,
+        "sql_script": sql_script,
+        "failure_message": failure_message,
+        "attempt_number": attempt_number,
+        "app_name": app_name,
+    }
+
+    insert_query = text("""
+        INSERT INTO sql_failures (input_text, sql_script, failure_message, attempt_number, app_name)
+        VALUES (:input_text, :sql_script, :failure_message, :attempt_number, :app_name)
+    """)
+
+    with EVENTS_ENGINE.connect() as conn:
+        conn.execute(insert_query, params)
+        conn.commit()
+    
+    return {"status": "success"}

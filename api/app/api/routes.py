@@ -8,7 +8,6 @@ from .utils.geo_data import zip_lat_lon
 from .utils.sql_explanation.sql_explanation import get_sql_explanation
 from .utils.sql_gen.text_to_sql import (execute_sql,
                                         text_to_sql_chat_with_retry,
-                                        text_to_sql_parallel,
                                         text_to_sql_with_retry)
 from .utils.classification.input_clasification import create_labels 
 from .utils.table_selection.table_details import get_all_table_names
