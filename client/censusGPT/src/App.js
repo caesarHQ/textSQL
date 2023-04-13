@@ -12,7 +12,6 @@ import Plot from 'react-plotly.js'
 import Table from './components/table'
 import LoadingSpinner from './components/loadingSpinner'
 import Examples from './components/examples'
-import Header from './components/header'
 import ErrorMessage from './components/error'
 import * as Sentry from '@sentry/react'
 import toast, { Toaster } from 'react-hot-toast'
@@ -906,7 +905,29 @@ function App(props) {
                 />
 
                 <div className="relative w-full flex flex-col p-6 space-y-1.5 bg-gradient-to-b bg/10 backdrop-blur-sm pb-2.5 from-white dark:from-transparent z-50">
-                    <Header version={props.version} clearAll={clearAll} />
+                    
+                <div className="inline-flex gap-x-2 align-middle justify-center mb-6">
+                        <GithubButton />
+                        <DiscordButton />
+                        <DarkModeButton />
+                    </div>
+
+                    <h1
+                    className="text-4xl font-bold text-black dark:text-white flex items-start justify-center"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                        clearAll()
+                    }}
+                    >
+                    {props.version} GPT
+                    {props.version === "San Francisco" && (
+                        <div
+                        className="text-blue-600 font-bold uppercase text-sm ml-2 mt-[4px]"
+                        >
+                        BETA
+                        </div>
+                    )}
+                    </h1>
                     <Toaster />
                     <div className='block px-6 pb-2'>
                         <form
@@ -926,7 +947,7 @@ function App(props) {
                             <SearchButton />
                         </form>
                     </div>
-                    {/* <Disclaimer version={props.version} /> */}
+                    <Disclaimer version={props.version} />
                 </div>
 
                 <div className="flex flex-col lg:flex-row h-full w-full gap-6 p-6">
