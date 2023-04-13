@@ -95,7 +95,7 @@ Join our [discord](https://discord.gg/JZtxhZQQus)
 
 ReadMe for the backend [here](https://github.com/caesarHQ/textSQL/blob/main/api/README.md)
 
-ReadMe for the frontend [here](https://github.com/caesarHQ/textSQL/blob/main/client/README.md)
+ReadMe for the frontend [here](https://github.com/caesarHQ/textSQL/blob/main/client/censusGPT/README.md)
 
 <a href="https://github.com/caesarHQ/textSQL/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=caesarHQ/textSQL" />
