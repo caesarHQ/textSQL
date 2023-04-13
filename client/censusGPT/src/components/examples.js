@@ -23,13 +23,14 @@ const Examples = (props) => {
         basic_example_queries = [
             'Show me all the needles in SF',
             'Show me all the muggings',
-            'Which four neighborhoods had the highest crime in 2021?',
             'Which two neighborhoods have the most homeless activity?',
             'Which five neighborhoods have the most poop on the street?',
         ]
         advanced_example_queries = [
+            'Which four neighborhoods had the most crime incidents involving guns or knives in 2021?',
             '3 neighborhoods with the highest female to male ratio',
             'What are the top 5 neighborhoods with the most encampments per capita?',
+            'What hour of the day do most burglaries occur?',
         ]
     }
 

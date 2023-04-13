@@ -88,6 +88,18 @@
             {
                 "user": "3 neighborhoods with the highest female to male ratio",
                 "assistant": "```WITH total_population AS (\n    SELECT neighborhood, SUM(male_population + female_population) AS total_pop\n    FROM sf_sex_by_census_tract\n    GROUP BY neighborhood\n), female_to_male_ratio AS (\n    SELECT \n        sfs.neighborhood, \n        SUM(sfs.female_population) / NULLIF(SUM(sfs.male_population), 0) AS ratio\n    FROM sf_sex_by_census_tract sfs\n    JOIN total_population tp ON sfs.neighborhood = tp.neighborhood\n    GROUP BY sfs.neighborhood\n)\nSELECT \n    neighborhood, \n    ratio\nFROM female_to_male_ratio\nORDER BY ratio DESC NULLS LAST\nLIMIT 3;```"
+            },
+            {
+                "user": "which 5 neighborhoods had the most drug violations involving heroin?",
+                "assistant": "```WITH heroin_violations AS (\n    SELECT neighborhood, COUNT(*) AS num_heroin_violations\n    FROM sf_crime_incidents\n    WHERE incident_type = 'Drug Violation' AND description ILIKE '%heroin%'\n    GROUP BY neighborhood\n)\nSELECT neighborhood, num_heroin_violations\nFROM heroin_violations\nORDER BY num_heroin_violations DESC NULLS LAST\nLIMIT 5;```"
+            },
+            {
+                "user": "How many crimes were related to guns?",
+                "assistant": "```SELECT COUNT(*) as num_gun_crimes\nFROM sf_crime_incidents\nWHERE description ~* '\\m(gun|firearm)\\M';```"
+            },
+            {
+                "user": "How many crimes had ties to knives?",
+                "assistant": "```SELECT COUNT(*) as num_gun_crimes\nFROM sf_crime_incidents\nWHERE description ~* '\\m(knife|stabbing)\\M';```"
             }
         ],
         "table_selection": [
