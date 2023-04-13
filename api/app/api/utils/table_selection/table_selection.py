@@ -20,6 +20,7 @@ def _extract_text_from_markdown(text):
 def _get_table_selection_message_with_descriptions(scope="USA"):
     message = (
         """
+        You are an expert data scientiest.
         Return a JSON object with relevant SQL tables for answering the following natural language query:
         ---------------
         {natural_language_query}
@@ -32,10 +33,18 @@ def _get_table_selection_message_with_descriptions(scope="USA"):
     return (
         message +
         f"""
-        The following are descriptions of available tables and enums:
+        The following are the scripts that created the tables and the definition of their enums:
         ---------------------
         {get_table_schemas(scope=scope)}
         ---------------------
+
+        Provide a comment above the markdown explaining why/why not tables may/maybe not be relevant in this format
+        <comment goes here>
+        ```
+        <explanation goes here>
+        ```
+
+        Thanks!
         """
     )
     
