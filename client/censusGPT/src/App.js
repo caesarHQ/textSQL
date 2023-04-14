@@ -78,6 +78,8 @@ if (process.env.REACT_APP_HOST_ENV === 'dev') {
     api_endpoint = 'http://localhost:9000'
 }
 
+let currentGenerationId = null
+
 
 function App(props) {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -220,12 +222,14 @@ function App(props) {
     }
 
     const getSuggestionForFailedQuery = async () => {
+        console.log('generationId: ', currentGenerationId)
         const options = {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
                 natural_language_query: query,
                 scope: props.version === 'San Francisco' ? 'SF' : 'USA',
+                generation_id: currentGenerationId
             }),
         }
 
@@ -242,6 +246,8 @@ function App(props) {
                 posthog.capture('backend_response', response)
                 // Set the state for SQL and Status Code
                 console.log('Backend Response ==>', response)
+
+                if (response.generation_id) currentGenerationId = response.generation_id
 
                 setSuggestedQuery(response.suggested_query)
             })
@@ -498,6 +504,15 @@ function App(props) {
         const response = await fetch(api_endpoint + '/api/get_tables', options)
         const response_1 = await response.json()
         setIsGetTablesLoading(false)
+
+        try{
+            if (response_1?.generation_id){
+                currentGenerationId = response_1.generation_id
+            }
+        }catch{
+            //do nothing
+        }
+
         if (!response_1 || !response_1.table_names) {
             setTableNames()
             posthog.capture('getTables_backend_error', response_1)
@@ -508,6 +523,7 @@ function App(props) {
             setShowExplanationModal('no_tables')
             return false
         }
+
         posthog.capture('getTables_backend_response', response_1)
         setTableNames(response_1.table_names)
         return response_1.table_names
@@ -583,12 +599,12 @@ function App(props) {
         // Send the request
         const startTime = new Date().getTime()
         const apiCall = fetch(api_endpoint + '/api/text_to_sql', options)
-        const TIMEOUT = 45000
+        const TIMEOUT_DURATION = 45000
         const timeout = new Promise((_, reject) => {
             setTimeout(() => {
               
               reject(new Error('Server failed to respond in time'));
-            }, TIMEOUT); // timeout after 5 seconds
+            }, TIMEOUT_DURATION); // timeout after 45 seconds
           });
         Promise.race([apiCall, timeout])
         .then(response => response.json())
@@ -774,7 +790,7 @@ function App(props) {
             setTableNames()
             posthog.capture('backend_error', {
                 error: err,
-                timeout: TIMEOUT
+                timeout: TIMEOUT_DURATION
             })
             setErrorMessage(err.message || err)
             console.error(err)
@@ -786,6 +802,7 @@ function App(props) {
     }, 100)
 
     useEffect(() => {
+        currentGenerationId = null
         const queryFromURL = searchParams.get('s')
         if (queryFromURL) {
             if (queryFromURL != query) {
@@ -800,6 +817,7 @@ function App(props) {
     }, [])
 
     const handleSearchClick = (event) => {
+        currentGenerationId = null
         setSearchParams(`?${new URLSearchParams({ s: query })}`)
         setTitle(query)
         posthog.capture('search_clicked', { natural_language_query: query, trigger: 'button' })
