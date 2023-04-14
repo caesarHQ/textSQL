@@ -3,18 +3,18 @@
 
 You can now connect your own database & datasets to textSQL and self-host the service. Our vision is to continue to modularize and improve this process.
 
-## Use cases
+### Use cases
 
 - Public-facing interactive interfaces for data. Democratizing public data
 - Empowering researchers. Enabling journalists and other researchers to more easily explore data
 - Business intelligence. Reducing the burden on technical employees to build & run queries for non-technical
 
 
-## Setup instructions
+### Setup instructions
 
 These instructions will walk you through running your own API and client. You can run this all on localhost and then deploy it wherever you would like.
 
-### API
+## API
 
 #### Prerequisites
 - `python3.10`
@@ -50,8 +50,42 @@ Run local instance
 $ ./scripts/dev.sh
 ```
 
-### Client
+## Client
 
-You can build your own front-end or use the one in BYOD (built on streamlit).
+A front-end streamlit application for Text-to-SQL (or you can use your own UI)
 
+#### Prerequisites
+`python3.10`
 
+#### Required configuration for development:
+- base URL for TextSQL API
+
+Configure the above in `.env`
+
+Example of `.env` file that should go in the following path `/byod/client`
+```
+API_BASE="http://localhost:9000"
+```
+
+When everything on localhost, this will point to the BYOD API on port 9000.
+
+#### Local development
+
+Initial setup
+```
+$ ./scripts/setup.sh
+```
+
+Activate virtual env
+```
+$ source ./venv/bin/activate
+```
+
+Run local instance
+```
+$ ./scripts/dev.sh
+```
+
+## Facing issues? Got questions? 
+
+Reach out in the discord for support: https://discord.com/invite/JZtxhZQQus
