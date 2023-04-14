@@ -955,7 +955,7 @@ function App(props) {
     }
 
     return (
-        <main className='h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen'>
+        <main className='h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen' style={{position:'relative'}}>
             {showExplanationModal && <ExplanationModal showExplanationModal={showExplanationModal} setShowExplanationModal={setShowExplanationModal} version={props.version}/>}
             <div className="App flex flex-col h-full" onClick={(e) => sqlExplanationRef.current && !sqlExplanationRef.current.contains(e.target) && setSqlExplanationIsOpen(false)}>
                 <link
@@ -1041,6 +1041,7 @@ function App(props) {
                             )}
                         </div>
                     </div>
+                    { (!!zipcodesFormatted?.length || !!zipcodes?.length || !!cities?.length || !!points?.length || !!tableInfo?.columns?.length) &&
 
                     <div className='flex flex-grow h-full w-full relative rounded-lg shadow overflow-hidden'>
                         <div className='absolute top-0 right-0 z-10 p-1'>
@@ -1051,70 +1052,72 @@ function App(props) {
                                 viewsCanOpen={sql.length}
                             />
                         </div>
-                        <div className="overflow-hidden rounded-lg shadow flex-grow-[2] min-h-[70vh] w-full h-full relative">
-                            {visualization == 'map' ?
-                                <Map
-                                    ref={mapRef}
-                                    mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
-                                    style={{ width: '100%', height: '100%' }}
-                                    mapStyle="mapbox://styles/mapbox/dark-v11"
-                                    initialViewState={initialView}
-                                    minZoom={props.version === 'San Francisco' ? 11.5 : 0}
-                                >
-                                    <Source
-                                        id="zips-kml"
-                                        type="vector"
-                                        url="mapbox://darsh99137.4nf1q4ec"
+                            <div className="overflow-hidden rounded-lg shadow flex-grow-[2] min-h-[70vh] w-full h-full relative">
+                                {visualization == 'map' ?
+                                    <Map
+                                        ref={mapRef}
+                                        mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
+                                        style={{ width: '100%', height: '100%' }}
+                                        mapStyle="mapbox://styles/mapbox/dark-v11"
+                                        initialViewState={initialView}
+                                        minZoom={props.version === 'San Francisco' ? 11.5 : 0}
                                     >
-                                        <Layer
-                                            {...zipcodeLayerLow(zipcodesFormatted)}
-                                        />
-                                    </Source>
-                                    <Source
-                                        id="zip-zoomed-out"
-                                        type="geojson"
-                                        data={{
-                                            type: 'FeatureCollection',
-                                            features: zipcodeFeatures(zipcodes),
-                                        }}
-                                    >
-                                        <Layer {...zipcodeLayerHigh} />
-                                    </Source>
-                                    <Source
-                                        id="cities"
-                                        type="geojson"
-                                        data={{
-                                            type: 'FeatureCollection',
-                                            features: citiesFeatures(cities),
-                                        }}
-                                    >
-                                        <Layer {...citiesLayer} />
-                                    </Source>
-                                    <Source
-                                        id="polygons"
-                                        type="geojson"
-                                        data={polygonsGeoJSON}
-                                    >
-                                        <Layer {...polygonsLayer} />
-                                    </Source>
-                                    <Source
-                                        id="points"
-                                        type="geojson"
-                                        data={{
-                                            type: "FeatureCollection",
-                                            features: pointsFeatures(points)
-                                        }
-                                    }>
-                                        <Layer {...pointsLayer} />
-                                    </Source>
-                                </Map> :
-                                // following <div> helps plot better scale bar widths for responsiveness
-                                <div className='overflow-x-auto flex w-full overflow-hidden mb-32'>
-                                    <DataPlot cols={tableInfo.columns} rows={tableInfo.rows} />
-                                </div>
-                            }
-                        </div>
+                                        <Source
+                                            id="zips-kml"
+                                            type="vector"
+                                            url="mapbox://darsh99137.4nf1q4ec"
+                                        >
+                                            <Layer
+                                                {...zipcodeLayerLow(zipcodesFormatted)}
+                                            />
+                                        </Source>
+                                        <Source
+                                            id="zip-zoomed-out"
+                                            type="geojson"
+                                            data={{
+                                                type: 'FeatureCollection',
+                                                features: zipcodeFeatures(zipcodes),
+                                            }}
+                                        >
+                                            <Layer {...zipcodeLayerHigh} />
+                                        </Source>
+                                        <Source
+                                            id="cities"
+                                            type="geojson"
+                                            data={{
+                                                type: 'FeatureCollection',
+                                                features: citiesFeatures(cities),
+                                            }}
+                                        >
+                                            <Layer {...citiesLayer} />
+                                        </Source>
+                                        <Source
+                                            id="polygons"
+                                            type="geojson"
+                                            data={polygonsGeoJSON}
+                                        >
+                                            <Layer {...polygonsLayer} />
+                                        </Source>
+                                        <Source
+                                            id="points"
+                                            type="geojson"
+                                            data={{
+                                                type: "FeatureCollection",
+                                                features: pointsFeatures(points)
+                                            }
+                                        }>
+                                            <Layer {...pointsLayer} />
+                                        </Source>
+                                    </Map> :
+                                    // following <div> helps plot better scale bar widths for responsiveness
+                                    <div className='overflow-x-auto flex w-full overflow-hidden mb-32'>
+                                        <DataPlot cols={tableInfo.columns} rows={tableInfo.rows} />
+                                    </div>
+                                }
+                            </div>
+                        
                     </div>
+                    }
                 </div>
             </div>
         </main>
