@@ -16,7 +16,22 @@ def _get_failed_query_suggestion_message(scope="USA", natural_language_query="")
         {get_table_schemas(scope=scope)}
         ---------------------
         """
-    
+
+
+def _get_query_suggestion_message(scope="USA", natural_language_query=""):
+    return f"""
+        The following is a natural language query:
+        ---------------------
+        {natural_language_query}
+        ---------------------
+        Suggest a different query, similar to the one given, that can be answered with the available data.
+        If possible, build on top of the given query to generate deeper insights into the data available.
+        The following are descriptions of available tables and enums:
+        ---------------------
+        {get_table_schemas(scope=scope)}
+        ---------------------
+        """
+
 
 def _get_failed_query_suggestion_messages(scope="USA"):
     # default_messages = [{
@@ -38,9 +53,27 @@ def _get_failed_query_suggestion_messages(scope="USA"):
     return default_messages
 
 
+def _get_query_suggestion_messages(scope="USA"):
+    # default_messages = [{
+    #     "role": "system",
+    #     "content": (
+    #         """
+    #         Users come to you with a natural language query that has been answered from available data.
+    #         You are a helpful assistant for suggesting a different query, similar to the one given, that can be answered with the available data.
+    #         If possible, build on top of the given query to generate deeper insights into the data available.
+    #         The following are descriptions of available tables and enums:
+    #         ---------------------
+    #         {get_table_schemas(scope=scope)}
+    #         ---------------------
+    #         """
+    #     )
+    # }]
+    default_messages = []
+    default_messages.extend(get_few_shot_example_messages(mode="query_suggestion", scope=scope))
+    return default_messages
 
 
-def generate_suggested_query(scope, failed_query):
+def generate_suggestion_failed_query(scope, failed_query):
     """
     Get suggested query based on failed query
     """
@@ -54,6 +87,25 @@ def generate_suggested_query(scope, failed_query):
         model="gpt-3.5-turbo",
         scope="USA",
         purpose="failed_query_suggestion"
+        )["message"]["content"]
+    suggested_query = response
+    return suggested_query
+
+
+def generate_suggestion(scope, failed_query):
+    """
+    Get suggested query to build on top of a given query or as a similar query
+    """
+    messages = _get_query_suggestion_messages(scope)
+    messages.append({
+        "role": "user",
+        "content": _get_query_suggestion_message(scope, failed_query)
+        })
+    response = get_assistant_message_from_openai(
+        messages=messages,
+        model="gpt-3.5-turbo",
+        scope="USA",
+        purpose="query_suggestion"
         )["message"]["content"]
     suggested_query = response
     return suggested_query
