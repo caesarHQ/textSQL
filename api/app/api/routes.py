@@ -6,9 +6,10 @@ from sentry_sdk import capture_exception
 
 from .utils.geo_data import zip_lat_lon
 from .utils.sql_explanation.sql_explanation import get_sql_explanation
-from .utils.sql_gen.text_to_sql import (execute_sql,
-                                        text_to_sql_chat_with_retry,
-                                        text_to_sql_with_retry)
+from .utils.sql_gen.text_to_sql import text_to_sql_with_retry
+from .utils.sql_gen.sql_helper import execute_sql
+from .utils.sql_gen.text_to_sql_chat import text_to_sql_chat_with_retry
+
 from .utils.classification.input_classification import create_labels 
 from .utils.table_selection.table_details import get_all_table_names
 from .utils.table_selection.table_selection import get_relevant_tables_async
@@ -95,16 +96,7 @@ def text_to_sql():
     
     natural_language_query = replace_unsupported_localities(natural_language_query, scope)
 
-    # if not table_names or len(table_names) == 0:
-    #     error_msg = 'non-empty `table_names` array is missing from request body'
-    #     return make_response(jsonify({"error": error_msg}), 400)
-
     try:
-        # LM outputs are non-deterministic, so same natural language query may result in different SQL queries (some of which may be invalid)
-        # Generate queries in parallel and use the first one that works
-        # result, sql_query, messages = text_to_sql_parallel(natural_language_query)
-        # if result is None or sql_query is None:
-        #     result, sql_query = text_to_sql_with_retry(natural_language_query, messages=messages)
         if not table_names:
             table_names = get_all_table_names(scope=scope)
             # table_names = get_relevant_tables(natural_language_query, scope)
