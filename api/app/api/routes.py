@@ -9,7 +9,7 @@ from .utils.sql_explanation.sql_explanation import get_sql_explanation
 from .utils.sql_gen.text_to_sql import (execute_sql,
                                         text_to_sql_chat_with_retry,
                                         text_to_sql_with_retry)
-from .utils.classification.input_clasification import create_labels 
+from .utils.classification.input_classification import create_labels 
 from .utils.table_selection.table_details import get_all_table_names
 from .utils.table_selection.table_selection import get_relevant_tables_async
 
