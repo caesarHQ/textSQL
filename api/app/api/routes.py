@@ -13,7 +13,7 @@ from .utils.sql_gen.text_to_sql_chat import text_to_sql_chat_with_retry
 from .utils.classification.input_classification import create_labels 
 from .utils.table_selection.table_details import get_all_table_names
 from .utils.table_selection.table_selection import get_relevant_tables_async
-from .utils.suggestions.suggestions import generate_suggested_query
+from .utils.suggestions.suggestions import generate_suggestion_failed_query, generate_suggestion
 
 
 def replace_unsupported_localities(original_string, scope="USA"):
@@ -110,8 +110,8 @@ def text_to_sql():
     return make_response(jsonify({'result': result, 'sql_query': sql_query}), 200)
 
 
-@bp.route('/get_suggested_query', methods=['POST'])
-def get_suggested_query():
+@bp.route('/get_suggestion_failed_query', methods=['POST'])
+def get_suggestion_failed_query():
     """
     Get suggested query for a query that we don't have data for
     """
@@ -119,10 +119,34 @@ def get_suggested_query():
     natural_language_query = request_body.get("natural_language_query")
     scope = request_body.get("scope", "USA")
 
-    suggested_query = generate_suggested_query(scope, natural_language_query)
+    suggested_query = generate_suggestion_failed_query(scope, natural_language_query)
     return make_response(jsonify({"suggested_query": suggested_query}), 200)
 
 
+@bp.route('/get_suggestion', methods=['POST'])
+def get_suggestion():
+    """
+    Get suggested query, to build on top of a given query or as a similar query
+    """
+    request_body = request.get_json()
+    natural_language_query = request_body.get("natural_language_query")
+    scope = request_body.get("scope", "USA")
+
+    suggested_query = generate_suggestion(scope, natural_language_query)
+    return make_response(jsonify({"suggested_query": suggested_query}), 200)
+
+
+@bp.route('/execute_sql', methods=['POST'])
+def run_sql():
+    request_body = request.get_json()
+    try:
+        result = execute_sql(request_body.get('sql'))
+    except Exception as e:
+        return make_response(jsonify({"error": f'Error processing request: {str(e)}' }), 400)
+    return make_response(jsonify({'result': result}), 200)
+
+
+# DEPRECATED
 @bp.route('/text_to_sql_chat', methods=['POST'])
 def text_to_sql_chat():
     """
@@ -147,34 +171,3 @@ def text_to_sql_chat():
         'sql_query': sql_query,
         'messages': messages
         }), 200)
-
-
-@bp.route('/zip_to_lat_lon', methods=['GET'])
-def zip_to_lat_lon():
-    """
-    Get lat/lon coordinates for a zip code
-    """
-    zip_code = request.args.get('zip_code')
-
-    if not zip_code:
-        error_msg = '`zip_code` is missing from request parameters'
-        return make_response(jsonify({"error": error_msg}), 400)
-
-    try:
-        lat = zip_lat_lon[zip_code]['lat']
-        lon = zip_lat_lon[zip_code]['lon']
-    except KeyError as e:
-        capture_exception(e)
-        error_msg = f'Invalid zip_code: {zip_code}'
-        return make_response(jsonify({"error": error_msg}), 400)
-
-    return make_response(jsonify({'lat': lat, 'lon': lon}), 200)
-
-@bp.route('/execute_sql', methods=['POST'])
-def run_sql():
-    request_body = request.get_json()
-    try:
-        result = execute_sql(request_body.get('sql'))
-    except Exception as e:
-        return make_response(jsonify({"error": f'Error processing request: {str(e)}' }), 400)
-    return make_response(jsonify({'result': result}), 200)
