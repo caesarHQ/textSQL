@@ -35,9 +35,9 @@ const SearchBar = (props) => {
                         id="search"
                         placeholder={`Ask anything about ${
                             props.version === "Census" ?
-                                "US crime, demographics, housing..."
+                                "US crime, demographics, housing, income..."
                                 :
-                                "San Francisco crime, 311 cases, demographics..."
+                                "San Francisco crime, 311 cases, demographics, income..."
                         }`}
                         className="block w-full rounded-none rounded-l-md border-0 py-1.5 ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 text-sm leading-6 bg-transparent dark:placeholder-neutral-400"
                         value={value}
