@@ -10,8 +10,8 @@ def _get_failed_query_suggestion_message(scope="USA", natural_language_query="")
         ---------------------
         {natural_language_query}
         ---------------------
-        Suggest a different query (as similar as possible to the one given) that can be answered with a SQL query and the available data.
-        Only return the suggested query.
+        Suggest a different natural language query (as similar as possible to the one given) that can be answered with a SQL query and the available data.
+        Only return the suggested natural language query.
         Avoid using table names and column names in the suggested query.
         The following are descriptions of available tables and enums:
         ---------------------
@@ -26,8 +26,8 @@ def _get_query_suggestion_message(scope="USA", natural_language_query=""):
         ---------------------
         {natural_language_query}
         ---------------------
-        Suggest a different query, similar to the one given, that can be answered with a SQL query and the available data.
-        Only return the suggested query.
+        Suggest a different natural language query, similar to the one given, that can be answered with a SQL query and the available data.
+        Only return the suggested natural language query.
         If possible, build on top of the given query to generate deeper insights into the data available.
         The following are descriptions of available tables and enums:
         ---------------------
@@ -42,8 +42,8 @@ def _get_failed_query_suggestion_messages(scope="USA"):
     #     "content": (
     #         f"""
     #         Users come to you with a natural language query that cannot be answered with available data.
-    #         You are a helpful assistant for suggesting a different query (as similar as possible to the one given) that can be answered with a SQL query and the available data.
-    #         Only return the suggested query.        
+    #         You are a helpful assistant for suggesting a different natural language query (as similar as possible to the one given) that can be answered with a SQL query and the available data.
+    #         Only return the suggested natural language query.        
     #         Avoid using table names and column names in the suggested query.        
     #         The following are descriptions of available tables and enums:
     #         ---------------------
@@ -64,7 +64,7 @@ def _get_query_suggestion_messages(scope="USA"):
     #         """
     #         Users come to you with a natural language query that has been answered from available data.
     #         You are a helpful assistant for suggesting a different query, similar to the one given, that can be answered with a SQL query and the available data.
-    #         Only return the suggested query.
+    #         Only return the suggested natural language query.
     #         If possible, build on top of the given query to generate deeper insights into the data available.
     #         The following are descriptions of available tables and enums:
     #         ---------------------
