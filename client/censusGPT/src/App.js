@@ -16,7 +16,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import Disclaimer from './components/disclaimer'
 import { VizSelector } from './components/vizSelector'
 import { ExplanationModal } from './components/explanationModal'
-import DataPlot from './components/dataplot'
+import DataPlot from './components/dataPlot'
 
 // Utils
 import {
