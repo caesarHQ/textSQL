@@ -127,3 +127,33 @@ def log_sql_failure(input_text, sql_script, failure_message, attempt_number, app
         conn.commit()
     
     return {"status": "success"}
+
+def log_suggested_query(input_text="", reason="", app_name="", parent_id=None, suggested_query="", prompt="", model=""):
+    if not EVENTS_ENGINE:
+        None
+
+    params = {
+        "input_text": input_text,
+        "reason": reason,
+        "app_name": app_name,
+        "parent_id": parent_id,
+        "suggested_query": suggested_query,
+        "prompt": prompt,
+        "model": model,
+    }
+
+    insert_query = text("""
+        INSERT INTO suggested_queries (input_text, reason, app_name, parent_id, suggested_query, prompt, model)
+        VALUES (:input_text, :reason, :app_name, :parent_id, :suggested_query, :prompt, :model)
+        returning id
+    """)
+    with EVENTS_ENGINE.connect() as conn:
+        # get the ID back
+        result = conn.execute(insert_query, params)
+        conn.commit()
+        row = result.fetchone()
+        generation_id = row[0]
+
+    print('suggested query id: ', generation_id)
+
+    return str(generation_id)
