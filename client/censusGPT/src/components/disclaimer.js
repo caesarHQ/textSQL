@@ -16,11 +16,6 @@ const Disclaimer = (props) => {
             Census data is sourced from the 2021 ACS (latest). Crime data is sourced from the FBI's 2019 UCR (latest).
         </>
     );
-    
-    
-    `Disclaimer: CensusGPT currently only supports data about crime, age, race, gender, income, education levels and population in the USA. But we are working to add more data!
-    Census data is sourced from the 2021 ACS (latest). Crime data is sourced from the FBI's 2019 UCR (latest).
-    `; 
 
     return (
         <div className="hidden items-center mt-2 justify-center md:block">
