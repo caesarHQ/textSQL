@@ -46,7 +46,7 @@ const Suggestion = (props) => {
 
     const clickableQuery = (
         <div style={{ wordWrap: 'break-word' }}>
-            Try: <span onClick={handleClick} style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}>{props.suggestedQuery}</span>
+            Try this: <span onClick={handleClick} style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}>{props.suggestedQuery}</span>
         </div>
     );
 
