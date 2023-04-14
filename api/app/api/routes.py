@@ -123,9 +123,11 @@ def get_suggestion_failed_query():
     request_body = request.get_json()
     natural_language_query = request_body.get("natural_language_query")
     scope = request_body.get("scope", "USA")
+    parent_id = request_body.get("generation_id")
 
-    suggested_query = generate_suggestion_failed_query(scope, natural_language_query)
-    return make_response(jsonify({"suggested_query": suggested_query}), 200)
+    suggested_query, generation_id = generate_suggestion_failed_query(scope, natural_language_query, parent_id)
+
+    return make_response(jsonify({"suggested_query": suggested_query, "generation_id": generation_id}), 200)
 
 
 @bp.route('/get_suggestion', methods=['POST'])
