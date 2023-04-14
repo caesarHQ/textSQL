@@ -2,7 +2,6 @@ import asyncio
 import re
 
 from flask import Blueprint, jsonify, make_response, request
-from sentry_sdk import capture_exception
 
 from .utils.geo_data import zip_lat_lon
 from .utils.sql_explanation.sql_explanation import get_sql_explanation
@@ -15,7 +14,7 @@ from .utils.table_selection.table_details import get_all_table_names
 from .utils.table_selection.table_selection import get_relevant_tables_async
 from .utils.suggestions.suggestions import generate_suggestion_failed_query, generate_suggestion
 from .utils.caesar_logging import update_suggestion_as_used
-
+from .utils.logging.sentry import capture_exception
 
 def replace_unsupported_localities(original_string, scope="USA"):
     if scope == "USA":
@@ -181,7 +180,6 @@ def text_to_sql_chat():
 
 @bp.route('/accept_suggestion', methods=['POST'])
 def accept_suggestion():
-    print('accept_suggestion called')
     # get id from route
     request_body = request.get_json()
     generation_id = request_body.get('id')

@@ -154,8 +154,6 @@ def log_suggested_query(input_text="", reason="", app_name="", parent_id=None, s
         row = result.fetchone()
         generation_id = row[0]
 
-    print('suggested query id: ', generation_id)
-
     return str(generation_id)
 
 def update_suggestion_as_used(suggestion_id):
