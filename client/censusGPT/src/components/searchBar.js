@@ -20,7 +20,9 @@ const SearchBar = (props) => {
         value,
         onSearchChange,
         onClear,
-        suggestedQuery
+        suggestedQuery,
+        setTitle,
+        fetchBackend,
     } = props
 
     return (
@@ -51,7 +53,11 @@ const SearchBar = (props) => {
             <div className="text-left">
             {
                 suggestedQuery ?
-                <Suggestion suggestedQuery={suggestedQuery}/>
+                <Suggestion
+                    suggestedQuery={suggestedQuery}
+                    setTitle={setTitle}
+                    fetchBackend={fetchBackend}
+                    />
                 :
                 null
             }

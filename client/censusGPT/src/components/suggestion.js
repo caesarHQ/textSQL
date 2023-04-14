@@ -1,17 +1,32 @@
+import { useSearchParams } from 'react-router-dom'
+
+
 const Suggestion = (props) => {
 
-    const urlEncodedQuery = encodeURIComponent(props.suggestedQuery);
+    const {
+        suggestedQuery,
+        setTitle,
+        fetchBackend,
+    } = props
 
-    const suggestedQuery = (
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const handleClick = () => {
+        setSearchParams(new URLSearchParams({ s: props.suggestedQuery }));
+        setTitle(suggestedQuery);
+        fetchBackend(suggestedQuery);
+    };
+
+    const clickableQuery = (
         <div style={{ wordWrap: 'break-word' }}>
-            Try: <a href={`/sf?s=${urlEncodedQuery}`} style={{ color: 'blue', textDecoration: 'underline' }}>{props.suggestedQuery}</a>
+            Try: <span onClick={handleClick} style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }}>{props.suggestedQuery}</span>
         </div>
     );
 
     return (
         <div className="hidden items-center mt-2 justify-center md:block">
             <div style={{"whiteSpace":"pre"}} className="text-sm tracking-tight text-gray-600 dark:text-white">
-                {suggestedQuery}
+                {clickableQuery}
             </div>
         </div>
     )
