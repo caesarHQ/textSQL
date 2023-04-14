@@ -2,10 +2,11 @@ from os import getenv
 
 import openai
 import pinecone
-import sentry_sdk
 from dotenv import load_dotenv
-from sentry_sdk.integrations.flask import FlaskIntegration
 from sqlalchemy import create_engine
+
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 
 load_dotenv()
 
@@ -15,17 +16,20 @@ OPENAI_KEY = getenv("OPENAI_KEY")
 PINECONE_KEY = getenv("PINECONE_KEY")
 PINECONE_ENV = getenv("PINECONE_ENV")
 EVENTS_URL = getenv("EVENTS_URL")
+SENTRY_URL = getenv("SENTRY_URL")
 
-openai.api_key = OPENAI_KEY
-
-sentry_sdk.init(
-    dsn="https://0e7943646a4242138f99898cd421560e@o4504813129826304.ingest.sentry.io/4504817446617088",
+if SENTRY_URL:
+    sentry_sdk.init(
+    dsn=SENTRY_URL,
     environment=ENV,
     integrations=[
         FlaskIntegration(),
     ],
     traces_sample_rate=1.0
 )
+
+
+openai.api_key = OPENAI_KEY
 
 class FlaskAppConfig:
     CORS_HEADERS = "Content-Type"

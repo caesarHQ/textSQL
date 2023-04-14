@@ -2,7 +2,6 @@ import asyncio
 import re
 
 from flask import Blueprint, jsonify, make_response, request
-from sentry_sdk import capture_exception
 
 from .utils.geo_data import zip_lat_lon
 from .utils.sql_explanation.sql_explanation import get_sql_explanation
@@ -14,7 +13,8 @@ from .utils.classification.input_classification import create_labels
 from .utils.table_selection.table_details import get_all_table_names
 from .utils.table_selection.table_selection import get_relevant_tables_async
 from .utils.suggestions.suggestions import generate_suggestion_failed_query, generate_suggestion
-
+from .utils.caesar_logging import update_suggestion_as_used
+from .utils.logging.sentry import capture_exception
 
 def replace_unsupported_localities(original_string, scope="USA"):
     if scope == "USA":
@@ -46,6 +46,9 @@ def get_tables():
     """
     request_body = request.get_json()
     natural_language_query = request_body.get("natural_language_query")
+    parent_id = request_body.get("parent_id")
+    if parent_id in ["", "None", "null" ]:
+        parent_id = None
 
     if not natural_language_query:
         error_msg = 'natural_language_query is missing from request body'
@@ -56,15 +59,15 @@ def get_tables():
 
     async def run_tasks():
         relevant_tables_task = asyncio.create_task(get_relevant_tables_async(natural_language_query, scope))
-        labels_task = asyncio.create_task(create_labels(natural_language_query, scope))
+        labels_task = asyncio.create_task(create_labels(natural_language_query, scope, parent_id=parent_id))
 
         table_names = await relevant_tables_task
-        await labels_task
-        return table_names
+        generation_id = await labels_task
+        return table_names, generation_id
 
-    table_names = asyncio.run(run_tasks())
+    table_names, generation_id = asyncio.run(run_tasks())
 
-    return make_response(jsonify({"table_names": table_names}), 200)
+    return make_response(jsonify({"table_names": table_names, 'generation_id': generation_id}), 200)
 
 
 @bp.route('/explain_sql', methods=['POST'])
@@ -118,9 +121,11 @@ def get_suggestion_failed_query():
     request_body = request.get_json()
     natural_language_query = request_body.get("natural_language_query")
     scope = request_body.get("scope", "USA")
+    parent_id = request_body.get("generation_id")
 
-    suggested_query = generate_suggestion_failed_query(scope, natural_language_query)
-    return make_response(jsonify({"suggested_query": suggested_query}), 200)
+    suggested_query, generation_id = generate_suggestion_failed_query(scope, natural_language_query, parent_id)
+
+    return make_response(jsonify({"suggested_query": suggested_query, "generation_id": generation_id}), 200)
 
 
 @bp.route('/get_suggestion', methods=['POST'])
@@ -131,9 +136,10 @@ def get_suggestion():
     request_body = request.get_json()
     natural_language_query = request_body.get("natural_language_query")
     scope = request_body.get("scope", "USA")
+    parent_id = request_body.get("generation_id")
 
-    suggested_query = generate_suggestion(scope, natural_language_query)
-    return make_response(jsonify({"suggested_query": suggested_query}), 200)
+    suggested_query, generation_id = generate_suggestion(scope, natural_language_query)
+    return make_response(jsonify({"suggested_query": suggested_query, "generation_id": generation_id}), 200)
 
 
 @bp.route('/execute_sql', methods=['POST'])
@@ -171,3 +177,11 @@ def text_to_sql_chat():
         'sql_query': sql_query,
         'messages': messages
         }), 200)
+
+@bp.route('/accept_suggestion', methods=['POST'])
+def accept_suggestion():
+    # get id from route
+    request_body = request.get_json()
+    generation_id = request_body.get('id')
+    update_suggestion_as_used(generation_id)
+    return {"status": "success"}

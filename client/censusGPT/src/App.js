@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useReducer, useMemo } from 'react'
 import Map, { Layer, Source } from 'react-map-gl'
 import mapboxgl from 'mapbox-gl'
 import bbox from '@turf/bbox'
-import posthog from 'posthog-js'
 import * as turf from '@turf/turf'
 import { ImSpinner } from 'react-icons/im'
 
@@ -11,12 +10,15 @@ import Table from './components/table'
 import LoadingSpinner from './components/loadingSpinner'
 import Examples from './components/examples'
 import ErrorMessage from './components/error'
-import * as Sentry from '@sentry/react'
 import toast, { Toaster } from 'react-hot-toast'
 import Disclaimer from './components/disclaimer'
 import { VizSelector } from './components/vizSelector'
 import { ExplanationModal } from './components/explanationModal'
 import DataPlot from './components/dataPlot'
+
+import { logSentryError } from './utils/loggers/sentry'
+import { capturePosthog } from './utils/loggers/posthog'
+
 
 // Utils
 import {
@@ -60,11 +62,6 @@ localStorage.theme === 'dark' ||
     ? document.documentElement.classList.add('dark')
     : document.documentElement.classList.remove('dark')
 
-// Init posthog
-posthog.init('phc_iLMBZqxwjAjaKtgz29r4EWv18El2qg3BIJoOOpw7s2e', {
-    api_host: 'https://app.posthog.com',
-})
-
 // The following is required to stop "npm build" from transpiling mapbox code.
 // notice the exclamation point in the import.
 // @ts-ignore
@@ -77,6 +74,9 @@ let api_endpoint = process.env.REACT_APP_API_URL || 'https://dev-text-sql-be.onr
 if (process.env.REACT_APP_HOST_ENV === 'dev') {
     api_endpoint = 'http://localhost:9000'
 }
+
+let currentGenerationId = null
+let currentSuggestionId = null
 
 
 function App(props) {
@@ -220,12 +220,14 @@ function App(props) {
     }
 
     const getSuggestionForFailedQuery = async () => {
+        currentSuggestionId = null
         const options = {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
                 natural_language_query: query,
                 scope: props.version === 'San Francisco' ? 'SF' : 'USA',
+                generation_id: currentGenerationId
             }),
         }
 
@@ -234,24 +236,23 @@ function App(props) {
             .then((response) => {
                 // Handle errors
                 if (!response || !response.suggested_query) {
-                    posthog.capture('backend_error', response)
+                    capturePosthog('backend_error', response)
                     return
                 }
 
                 // Capture the response in posthog
-                posthog.capture('backend_response', response)
+                capturePosthog('backend_response', response)
                 // Set the state for SQL and Status Code
                 console.log('Backend Response ==>', response)
+
+                if (response.generation_id) currentSuggestionId = response.generation_id
 
                 setSuggestedQuery(response.suggested_query)
             })
             .catch((err) => {
-                Sentry.setContext('queryContext', {
-                    query: query
-                })
-                Sentry.captureException(err)
+                logSentryError({query}, err)
                 setIsLoading(false)
-                posthog.capture('backend_error', {
+                capturePosthog('backend_error', {
                     error: err,
                 })
                 console.error(err)
@@ -259,12 +260,14 @@ function App(props) {
     }
 
     const getSuggestionForQuery = async () => {
+        currentSuggestionId = null
         const options = {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
                 natural_language_query: query,
                 scope: props.version === 'San Francisco' ? 'SF' : 'USA',
+                generation_id: currentGenerationId
             }),
         }
 
@@ -273,24 +276,23 @@ function App(props) {
             .then((response) => {
                 // Handle errors
                 if (!response || !response.suggested_query) {
-                    posthog.capture('backend_error', response)
+                    capturePosthog('backend_error', response)
                     return
                 }
 
                 // Capture the response in posthog
-                posthog.capture('backend_response', response)
+                capturePosthog('backend_response', response)
                 // Set the state for SQL and Status Code
                 console.log('Backend Response ==>', response)
+                
+                if (response.generation_id) currentSuggestionId = response.generation_id
 
                 setSuggestedQuery(response.suggested_query)
             })
             .catch((err) => {
-                Sentry.setContext('queryContext', {
-                    query: query
-                })
-                Sentry.captureException(err)
+                logSentryError({query}, err)
                 setIsLoading(false)
-                posthog.capture('backend_error', {
+                capturePosthog('backend_error', {
                     error: err,
                 })
                 console.error(err)
@@ -319,7 +321,7 @@ function App(props) {
 
                 // Handle errors
                 if (!response || !response.result) {
-                    posthog.capture('backend_error', response)
+                    capturePosthog('backend_error', response)
                     setErrorMessage(
                         'Something went wrong. Please try again or try a different query'
                     )
@@ -327,7 +329,7 @@ function App(props) {
                 }
 
                 // Capture the response in posthog
-                posthog.capture('backend_response', response)
+                capturePosthog('backend_response', response)
 
                 // Set the state for SQL and Status Code
                 console.log('Backend Response ==>', response)
@@ -436,12 +438,9 @@ function App(props) {
                 }
             })
             .catch((err) => {
-                Sentry.setContext('queryContext', {
-                    query: query
-                })
-                Sentry.captureException(err)
+                logSentryError({query}, err)
                 setIsLoading(false)
-                posthog.capture('backend_error', {
+                capturePosthog('backend_error', {
                     error: err,
                 })
                 setErrorMessage(err.message || err)
@@ -468,12 +467,9 @@ function App(props) {
             })
             .catch((err) => {
                 setSqlExplanation()
-                Sentry.setContext('queryContext', {
-                    query: query
-                })
-                Sentry.captureException(err)
+                logSentryError({query}, err)
                 setIsExplainSqlLoading(false)
-                posthog.capture('explainSql_backend_error', {
+                capturePosthog('explainSql_backend_error', {
                     error: err,
                 })
                 setErrorMessage(err.message || err)
@@ -498,9 +494,18 @@ function App(props) {
         const response = await fetch(api_endpoint + '/api/get_tables', options)
         const response_1 = await response.json()
         setIsGetTablesLoading(false)
+
+        try{
+            if (response_1?.generation_id){
+                currentGenerationId = response_1.generation_id
+            }
+        }catch{
+            //do nothing
+        }
+
         if (!response_1 || !response_1.table_names) {
             setTableNames()
-            posthog.capture('getTables_backend_error', response_1)
+            capturePosthog('getTables_backend_error', response_1)
             setErrorMessage('Something went wrong. Please try again or try a different query')
             return false
         }
@@ -508,7 +513,8 @@ function App(props) {
             setShowExplanationModal('no_tables')
             return false
         }
-        posthog.capture('getTables_backend_response', response_1)
+
+        capturePosthog('getTables_backend_response', response_1)
         setTableNames(response_1.table_names)
         return response_1.table_names
     }
@@ -583,12 +589,12 @@ function App(props) {
         // Send the request
         const startTime = new Date().getTime()
         const apiCall = fetch(api_endpoint + '/api/text_to_sql', options)
-        const TIMEOUT = 45000
+        const TIMEOUT_DURATION = 45000
         const timeout = new Promise((_, reject) => {
             setTimeout(() => {
               
               reject(new Error('Server failed to respond in time'));
-            }, TIMEOUT); // timeout after 5 seconds
+            }, TIMEOUT_DURATION); // timeout after 45 seconds
           });
         Promise.race([apiCall, timeout])
         .then(response => response.json())
@@ -598,7 +604,7 @@ function App(props) {
 
             // Handle errors
             if (!response) {
-                posthog.capture('backend_error', response)
+                capturePosthog('backend_error', response)
                 setErrorMessage(
                     'Something went wrong. Please try again or try a different query'
                 )
@@ -607,7 +613,7 @@ function App(props) {
             }
 
             if (!('sql_query' in response) || !response.result){
-                posthog.capture('backend_error', response)
+                capturePosthog('backend_error', response)
                 setShowExplanationModal('attempted')
                 await getSuggestionForFailedQuery()
                 setTableNames()
@@ -618,7 +624,7 @@ function App(props) {
             // Capture the response in posthog
             const duration = new Date().getTime() - startTime
             console.log({duration})
-            posthog.capture('backend_response', {...response, duration})
+            capturePosthog('backend_response', {...response, duration})
 
             // Set the state for SQL and Status Code
             responseOuter = response
@@ -764,17 +770,15 @@ function App(props) {
             }
         })
         .catch((err) => {
-
-            Sentry.setContext('queryContext', {
+            logSentryError({
                 query: query,
                 ...responseOuter,
-            })
-            Sentry.captureException(err)
+            }, err)
             setIsLoading(false)
             setTableNames()
-            posthog.capture('backend_error', {
+            capturePosthog('backend_error', {
                 error: err,
-                timeout: TIMEOUT
+                timeout: TIMEOUT_DURATION
             })
             setErrorMessage(err.message || err)
             console.error(err)
@@ -786,10 +790,11 @@ function App(props) {
     }, 100)
 
     useEffect(() => {
+        currentGenerationId = null
         const queryFromURL = searchParams.get('s')
         if (queryFromURL) {
             if (queryFromURL != query) {
-                posthog.capture('search_clicked', {
+                capturePosthog('search_clicked', {
                     natural_language_query: urlSearch,
                     trigger: 'url',
                 })
@@ -800,9 +805,10 @@ function App(props) {
     }, [])
 
     const handleSearchClick = (event) => {
+        currentGenerationId = null
         setSearchParams(`?${new URLSearchParams({ s: query })}`)
         setTitle(query)
-        posthog.capture('search_clicked', { natural_language_query: query, trigger: 'button' })
+        capturePosthog('search_clicked', { natural_language_query: query, trigger: 'button' })
         fetchBackend(query)
     }
 
@@ -1007,6 +1013,7 @@ function App(props) {
                                 suggestedQuery={suggestedQuery}
                                 setTitle={setTitle}
                                 fetchBackend={fetchBackend}
+                                currentSuggestionId = {currentSuggestionId}
                             />
                         </form>
                     </div>
@@ -1018,7 +1025,6 @@ function App(props) {
                         <LoadingSpinner isLoading={isLoading || isGetTablesLoading} />
                         {sql.length === 0 && !isLoading && !isGetTablesLoading ? (
                             <Examples
-                                postHogInstance={posthog}
                                 setQuery={setQuery}
                                 handleClick={fetchBackend}
                                 version={props.version}

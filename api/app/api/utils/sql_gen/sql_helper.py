@@ -107,7 +107,7 @@ def is_read_only_query(sql_query: str):
 
     # Check if the query contains any modifying statements
     for statement in modifying_statements:
-        if statement in sql_query.upper():
+        if not sql_query or statement in sql_query.upper():
             return False
 
     # If no modifying statements are found, the query is read-only

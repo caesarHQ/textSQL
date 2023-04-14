@@ -8,15 +8,12 @@ from app.config import FlaskAppConfig, ENV
 from app.extensions import db
 
 from app.api.chat_gpt_plugin import plugin, plugin_config
-import newrelic.agent
 
 
 def create_app(config_object=FlaskAppConfig):
     app = Flask(__name__)
     app.config.from_object(config_object)
     CORS(app)
-    if ENV in ["production", "development"]:
-        newrelic.agent.initialize('/etc/secrets/newrelic.ini')
 
     # Initialize app with extensions
     db.init_app(app)

@@ -1,5 +1,5 @@
 // Examples
-
+import { capturePosthog } from "../utils/loggers/posthog"
 /**
  * Examples component
  * @param {*} props – The props for the example component used to pass in callback functions
@@ -49,7 +49,7 @@ const Examples = (props) => {
                                 <p
                                     className="focus:outline-none hover:cursor-pointer"
                                     onClick={() => {
-                                        props.postHogInstance.capture(
+                                        capturePosthog(
                                             'example_clicked',
                                             { natural_language_query: q }
                                         )
@@ -87,7 +87,7 @@ const Examples = (props) => {
                                 <p
                                     className="focus:outline-none hover:cursor-pointer"
                                     onClick={() => {
-                                        props.postHogInstance.capture(
+                                        capturePosthog(
                                             'example_clicked',
                                             { natural_language_query: q }
                                         )

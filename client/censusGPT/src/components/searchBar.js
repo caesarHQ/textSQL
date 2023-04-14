@@ -23,6 +23,7 @@ const SearchBar = (props) => {
         suggestedQuery,
         setTitle,
         fetchBackend,
+        currentSuggestionId,
     } = props
 
     return (
@@ -60,6 +61,7 @@ const SearchBar = (props) => {
                     suggestedQuery={suggestedQuery}
                     setTitle={setTitle}
                     fetchBackend={fetchBackend}
+                    currentSuggestionId={currentSuggestionId}
                     />
                 :
                 null
