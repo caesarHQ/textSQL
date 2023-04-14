@@ -4,7 +4,6 @@ import mapboxgl from 'mapbox-gl'
 import bbox from '@turf/bbox'
 import posthog from 'posthog-js'
 import * as turf from '@turf/turf'
-import { FaTimes } from 'react-icons/fa'
 import { ImSpinner } from 'react-icons/im'
 import Plot from 'react-plotly.js'
 
@@ -24,7 +23,7 @@ import {
     getCities,
     getZipcodes,
     getZipcodesMapboxFormatted,
-} from './utils'
+} from './utils/utils'
 
 // Mapbox UI configuration
 import {
@@ -36,13 +35,13 @@ import {
     polygonsLayer,
     pointsFeatures,
     pointsLayer
-} from './mapbox-ui-config'
-import NeighborhoodGeoData from './sf_analysis_neighborhoods.js'
+} from './utils/mapbox-ui-config'
+import NeighborhoodGeoData from './utils/sf_analysis_neighborhoods.js'
 
 // Plotly UI configuration
 import {
     getPlotConfig
-} from './plotly-ui-config'
+} from './utils/plotly-ui-config'
 
 import './css/App.css'
 import {
@@ -50,13 +49,13 @@ import {
     DarkModeButton,
     DiscordButton,
     GithubButton,
-} from './Discord'
-import { notify } from './Toast'
+} from './components/headerButtons'
+import SearchBar from './components/searchBar'
+import { notify } from './components/toast'
 import { useDebouncedCallback } from 'use-debounce'
 import { useSearchParams } from 'react-router-dom'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs'
-import { AiOutlineSearch } from 'react-icons/ai'
 import { BsChevronCompactDown, BsClipboard2, BsClipboard2Check, BsDashLg, BsPatchQuestion, BsPencilSquare, BsQuestionCircle, BsTable } from 'react-icons/bs'
 
 // Add system dark mode
@@ -84,17 +83,6 @@ if (process.env.REACT_APP_HOST_ENV === 'dev') {
     api_endpoint = 'http://localhost:9000'
 }
 
-const SearchButton = (props) => {
-    return (
-        <button
-            type="submit"
-            className="text-white bg-blue-600 focus:ring-2 focus:ring-blue-300 focus:outline-none inline-flex items-center rounded-md px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 ml-3"
-        >
-            <span className="hidden md:block">Search</span>
-            <AiOutlineSearch className="md:hidden" />
-        </button>
-    )
-}
 
 const DataPlot = (props) => {
     let config = getPlotConfig(props.rows, props.cols)
@@ -109,31 +97,6 @@ const DataPlot = (props) => {
     );
 };
 
-const SearchInput = (props) => {
-    const { value, onSearchChange, onClear } = props
-    return (
-    <div className="flex rounded-md shadow-sm w-full max-w-full md:max-w-3xl bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
-        <div className="relative flex flex-grow items-stretch focus-within:z-10">
-                <input
-                    type="text"
-                    name="search"
-                    id="search"
-                    placeholder={`Ask anything about ${props.version === 'Census' ? 'US' : props.version} Demographics...`}
-                    className="block w-full rounded-none rounded-l-md border-0 py-1.5 ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 text-sm leading-6 bg-transparent dark:placeholder-neutral-400"
-                    value={value}
-                    onChange={onSearchChange}
-                />
-            </div>
-            <button
-                type="button"
-                className="focus:text-blue-600 hover:text-blue-600 dark:text-white/50 dark:hover:text-blue-600 relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md p-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none hover:bg-gray-50 hover:dark:bg-dark-900"
-                onClick={onClear}
-            >
-                <FaTimes />
-            </button>
-        </div>
-    )
-}
 
 function App(props) {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -172,6 +135,8 @@ function App(props) {
     const [sqlExplanation, setSqlExplanation] = useState()
     const [isExplainSqlLoading, setIsExplainSqlLoading] = useState(false)
     const [minimizeTableNames, setMinimizeTableNames] = useState(false)
+    const [suggestionForFailedQuery, setSuggestionForFailedQuery] = useState(null)
+
 
     const tableColumns = tableInfo?.columns
     const tableRows =  tableInfo?.rows
@@ -271,6 +236,45 @@ function App(props) {
 
     const handleClearSearch = () => {
         setQuery('')
+    }
+
+    const getSuggestionForFailedQuery = async (natural_language_query) => {
+        const options = {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+                natural_language_query,
+                scope: props.version === 'San Francisco' ? 'SF' : 'USA',
+            }),
+        }
+
+        fetch(api_endpoint + '/api/get_suggested_query', options)
+            .then((response) => response.json())
+            .then((response) => {
+                // Handle errors
+                if (!response || !response.suggested_query) {
+                    posthog.capture('backend_error', response)
+                    return
+                }
+
+                // Capture the response in posthog
+                posthog.capture('backend_response', response)
+                // Set the state for SQL and Status Code
+                console.log('Backend Response ==>', response)
+
+                setSuggestionForFailedQuery(response.suggested_query)
+            })
+            .catch((err) => {
+                Sentry.setContext('queryContext', {
+                    query: query
+                })
+                Sentry.captureException(err)
+                setIsLoading(false)
+                posthog.capture('backend_error', {
+                    error: err,
+                })
+                console.error(err)
+            })
     }
 
     const executeSql = (sql) => {
@@ -461,14 +465,8 @@ function App(props) {
         setIsGetTablesLoading(true)
 
         let requestBody = {
-            natural_language_query
-        }
-
-        if (props.version === 'San Francisco') {
-            requestBody = {
-                natural_language_query,
-                scope: 'SF'
-            }
+            natural_language_query,
+            scope: props.version === 'San Francisco' ? 'SF' : 'USA',
         }
 
         const options = {
@@ -543,22 +541,20 @@ function App(props) {
         clearAllButQuery()
         const table_names = await getTables(natural_language_query)
 
-        if (!table_names) return
+        console.log(table_names)
+
+        if (!table_names) {
+            await getSuggestionForFailedQuery()
+            return
+        }
 
         // Set the loading state
         setIsLoading(true)
 
         let requestBody = {
             natural_language_query,
-            table_names
-        }
-
-        if (props.version === 'San Francisco') {
-            requestBody = {
-                natural_language_query,
-                scope: 'SF',
-                table_names
-            }
+            table_names,
+            scope: props.version === 'San Francisco' ? 'SF' : 'USA',
         }
 
         // Set the options for the fetch request
@@ -981,13 +977,13 @@ function App(props) {
                                 handleSearchClick(event)
                             }}
                         >
-                            <SearchInput
+                            <SearchBar
                                 value={query}
                                 onSearchChange={handleSearchChange}
                                 onClear={handleClearSearch}
                                 version={props.version}
+                                suggestionForFailedQuery={suggestionForFailedQuery}
                             />
-                            <SearchButton />
                         </form>
                     </div>
                     <Disclaimer version={props.version} />

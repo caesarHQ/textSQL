@@ -12,8 +12,8 @@ import {
     createBrowserRouter,
     RouterProvider,
 } from 'react-router-dom'
-import TermsOfService from './tos'
-import PrivacyPolicy from './privacy'
+import TermsOfService from './misc/tos'
+import PrivacyPolicy from './misc/privacy'
 
 Sentry.init({
     dsn: 'https://5072f8efa99b414788bf6b7307464081@o4504813129826304.ingest.sentry.io/4504813131530240',

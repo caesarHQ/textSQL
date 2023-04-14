@@ -13,6 +13,7 @@ from .utils.sql_gen.text_to_sql_chat import text_to_sql_chat_with_retry
 from .utils.classification.input_classification import create_labels 
 from .utils.table_selection.table_details import get_all_table_names
 from .utils.table_selection.table_selection import get_relevant_tables_async
+from .utils.suggestions.suggestions import generate_suggested_query
 
 
 def replace_unsupported_localities(original_string, scope="USA"):
@@ -107,6 +108,19 @@ def text_to_sql():
         return make_response(jsonify({"error": error_msg}), 500)
 
     return make_response(jsonify({'result': result, 'sql_query': sql_query}), 200)
+
+
+@bp.route('/get_suggested_query', methods=['POST'])
+def get_suggested_query():
+    """
+    Get suggested query for a query that we don't have data for
+    """
+    request_body = request.get_json()
+    natural_language_query = request_body.get("natural_language_query")
+    scope = request_body.get("scope", "USA")
+
+    suggested_query = generate_suggested_query(scope, natural_language_query)
+    return make_response(jsonify({"suggested_query": suggested_query}), 200)
 
 
 @bp.route('/text_to_sql_chat', methods=['POST'])
