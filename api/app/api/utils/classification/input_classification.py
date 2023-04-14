@@ -12,7 +12,7 @@ async def create_labels(user_input, scope="USA") -> bool:
     """
 
     if not EVENTS_ENGINE:
-        return {"status": "no engine"}
+        return None
     
     table_prefix = get_minimal_table_schemas(scope)
 
@@ -45,8 +45,8 @@ Thanks! Provide the JSON and only the JSON. Values should be in all lowercase.""
     except:
         parsed = {}
 
-    log_input_classification(scope, user_input, parsed)
+    generation_id = log_input_classification(scope, user_input, parsed)
 
-    is_relevant_query = parsed.get("has_relevant_table", False)
+    # is_relevant_query = parsed.get("has_relevant_table", False)
 
-    return is_relevant_query
+    return generation_id

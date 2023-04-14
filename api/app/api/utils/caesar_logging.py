@@ -81,7 +81,7 @@ def calculate_cost(model, input_tokens, output_tokens):
 
 def log_input_classification(app_name, input_text, metadata):
     if not EVENTS_ENGINE:
-        return {"status": "no engine"}
+        return None
 
     params = {
         "app_name": app_name,
@@ -92,13 +92,17 @@ def log_input_classification(app_name, input_text, metadata):
     insert_query = text("""
         INSERT INTO input_classifications (app_name, input_text, metadata)
         VALUES (:app_name, :input_text, :metadata)
+        returning id
     """)
 
     with EVENTS_ENGINE.connect() as conn:
-        conn.execute(insert_query, params)
+        # get the ID back
+        result = conn.execute(insert_query, params)
         conn.commit()
+        row = result.fetchone()
+        generation_id = row[0]
     
-    return {"status": "success"}
+    return str(generation_id)
 
 def log_sql_failure(input_text, sql_script, failure_message, attempt_number, app_name):
     if not EVENTS_ENGINE:

@@ -59,12 +59,14 @@ def get_tables():
         labels_task = asyncio.create_task(create_labels(natural_language_query, scope))
 
         table_names = await relevant_tables_task
-        await labels_task
-        return table_names
+        generation_id = await labels_task
+        return table_names, generation_id
 
-    table_names = asyncio.run(run_tasks())
+    table_names, generation_id = asyncio.run(run_tasks())
 
-    return make_response(jsonify({"table_names": table_names}), 200)
+    print('generation id: ', generation_id)
+
+    return make_response(jsonify({"table_names": table_names, 'generation_id': generation_id}), 200)
 
 
 @bp.route('/explain_sql', methods=['POST'])
