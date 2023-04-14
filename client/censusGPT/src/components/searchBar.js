@@ -16,7 +16,13 @@ const SearchButton = (props) => {
 }
 
 const SearchBar = (props) => {
-    const { value, onSearchChange, onClear, suggestionForFailedQuery } = props
+    const {
+        value,
+        onSearchChange,
+        onClear,
+        suggestedQuery
+    } = props
+
     return (
         <div className="flex flex-col w-full max-w-full md:max-w-3xl">
             <div className="flex rounded-md shadow-sm bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
@@ -44,8 +50,10 @@ const SearchBar = (props) => {
             </div>
             <div className="text-left">
             {
-                suggestionForFailedQuery ?
-                <Suggestion suggestionForFailedQuery={suggestionForFailedQuery}/> : null
+                suggestedQuery ?
+                <Suggestion suggestedQuery={suggestedQuery}/>
+                :
+                null
             }
             </div>
         </div>
