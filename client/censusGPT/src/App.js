@@ -605,12 +605,17 @@ function App(props) {
                 setTableNames()
                 return
             }
-            if (!response.sql_query || !response.result){
+
+            if (!('sql_query' in response) || !response.result){
                 posthog.capture('backend_error', response)
                 setShowExplanationModal('attempted')
                 setTableNames()
                 return
+            }
 
+            if (response.result.MissingData){
+                await getSuggestionForFailedQuery()
+                return
             }
 
             // Capture the response in posthog

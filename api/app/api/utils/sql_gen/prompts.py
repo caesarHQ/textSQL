@@ -76,14 +76,14 @@ Provide a properly formatted JSON object with the following information. Ensure 
 
 {{
     "Schema": "<1 to 2 sentences about the tables/columns/enums above to use>",
-    "Applicability": "<1 to 2 sentences about whether the columns and enums in those tables can provide the required information, explaining any possible issues or terms in the enums that could be relevant>",
+    "Applicability": "<1 to 2 sentences about which columns and enums are relevant, or which ones are missing>",
     "SQL": "<your query>"
 }}
 
 However, if the tables don't contain all the required data (e.g. the column isn't there or there aren't relevant enums), instead return a JSON object with just: 
 {{
     "Schema": "<1 to 2 sentences about the tables/columns/enums above to use>",
-    "Applicability": "<1 to 2 sentences about whether the columns and enums in those tables can provide the required information, explaining any possible issues or terms in the enums that could be relevant>",
+    "Applicability": "<1 to 2 sentences about which columns and enums are relevant, or which ones are missing>",
     "MissingData": "<1 to 2 sentences about what data is missing>"
 }}
 However, if a query can be close enough to the intent of the question/command, generate the SQL that gets it instead of returning MissingData.
