@@ -67,8 +67,6 @@ def get_tables():
 
     table_names, generation_id = asyncio.run(run_tasks())
 
-    print('generation id: ', generation_id)
-
     return make_response(jsonify({"table_names": table_names, 'generation_id': generation_id}), 200)
 
 
@@ -138,9 +136,10 @@ def get_suggestion():
     request_body = request.get_json()
     natural_language_query = request_body.get("natural_language_query")
     scope = request_body.get("scope", "USA")
+    parent_id = request_body.get("generation_id")
 
-    suggested_query = generate_suggestion(scope, natural_language_query)
-    return make_response(jsonify({"suggested_query": suggested_query}), 200)
+    suggested_query, generation_id = generate_suggestion(scope, natural_language_query)
+    return make_response(jsonify({"suggested_query": suggested_query, "generation_id": generation_id}), 200)
 
 
 @bp.route('/execute_sql', methods=['POST'])

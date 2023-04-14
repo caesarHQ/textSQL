@@ -110,20 +110,35 @@ def generate_suggestion_failed_query(scope, failed_query, parent_id=None):
     return suggested_query, str(suggestion_id)
 
 
-def generate_suggestion(scope, failed_query):
+def generate_suggestion(scope, failed_query, parent_id=None):
     """
     Get suggested query to build on top of a given query or as a similar query
     """
     messages = _get_query_suggestion_messages(scope)
+
+    prompt = _get_query_suggestion_message(scope, failed_query)
+    model = "gpt-3.5-turbo"
+
     messages.append({
         "role": "user",
-        "content": _get_query_suggestion_message(scope, failed_query)
+        "content": prompt
         })
     response = get_assistant_message_from_openai(
         messages=messages,
-        model="gpt-3.5-turbo",
+        model=model,
         scope="USA",
         purpose="query_suggestion"
         )["message"]["content"]
     suggested_query = response
-    return suggested_query
+
+    suggestion_id = log_suggested_query(
+        input_text=failed_query,
+        reason="failed_query_suggestion",
+        parent_id=parent_id,
+        suggested_query=suggested_query,
+        app_name=scope,
+        prompt=prompt,
+        model=model
+    )
+
+    return suggested_query, str(suggestion_id)
