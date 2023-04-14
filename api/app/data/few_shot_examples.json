@@ -2,60 +2,60 @@
     "USA": {
         "sql_explanation": [
             {
-                "user": "```SELECT city, state, \n       (violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) AS total_crime\nFROM crime_by_city\nORDER BY total_crime DESC\nLIMIT 5```",
+                "user": "SELECT city, state, \n       (violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) AS total_crime\nFROM crime_by_city\nORDER BY total_crime DESC\nLIMIT 5",
                 "assistant": "This SQL query retrieves the top 5 cities with the highest total crime from the `crime_by_city` table, where the total crime is calculated by adding up the values of various types of crimes, such as violent crimes and property crimes, and the results are sorted in descending order based on the total crime."
             },
             {
-                "user": "```SELECT location_data.county, location_data.state, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN location_data ON crime_by_city.city = location_data.city AND crime_by_city.state = location_data.state\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY location_data.county\nORDER BY total_arson DESC\nLIMIT 5```",
+                "user": "SELECT location_data.county, location_data.state, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN location_data ON crime_by_city.city = location_data.city AND crime_by_city.state = location_data.state\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY location_data.county\nORDER BY total_arson DESC\nLIMIT 5",
                 "assistant": "This SQL query retrieves the top 5 counties with the highest total arson cases from the `crime_by_city` table, where the total arson cases are summed up and grouped by county. It joins with the `location_data` table to match the cities and states, then filters the results to only include rows where the arson column is not null. Finally, the results are sorted in descending order based on the total arson cases."
             }
         ],
         "text_to_sql": [
             {
                 "user": "Five cities in Florida with the highest crime",
-                "assistant": "```SELECT city, state, \n       (violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) AS total_crime\nFROM crime_by_city\nWHERE state = 'FL'\nORDER BY total_crime DESC\nLIMIT 5;```"
+                "assistant": "SELECT city, state, \\n       (violent_crime + murder_and_nonnegligent_manslaughter + rape + robbery + aggravated_assault + property_crime + burglary + larceny_theft + motor_vehicle_theft + arson) AS total_crime\\nFROM crime_by_city\\nWHERE state = 'FL'\\nORDER BY total_crime DESC NULLS LAST\\nLIMIT 5;"
             },
             {
                 "user": "What zip code has the highest percentage of people of age 75?",
-                "assistant": "```SELECT location_data.zip_code, \n       (population_by_age.population_75_to_84_years / total_population.total_population) * 100 AS percentage_75_to_84\nFROM population_by_age\nJOIN location_data ON population_by_age.geo_id = location_data.geo_id\nJOIN total_population ON population_by_age.geo_id = total_population.geo_id\nWHERE total_population.total_population > 0\nORDER BY percentage_75_to_84 DESC\nLIMIT 1;```"
+                "assistant": "SELECT location_data.zip_code, \\n       (population_by_age.population_75_to_84_years / total_population.total_population) * 100 AS percentage_75_to_84\\nFROM population_by_age\\nJOIN location_data ON population_by_age.geo_id = location_data.geo_id\\nJOIN total_population ON population_by_age.geo_id = total_population.geo_id\\nWHERE total_population.total_population > 0\\nORDER BY percentage_75_to_84 DESC NULLS LAST\\nLIMIT 1;"
             },
             {
                 "user": "Which 5 counties have the most arson?",
-                "assistant": "```SELECT location_data.county, location_data.state, SUM(crime_by_city.arson) AS total_arson\nFROM crime_by_city\nJOIN location_data ON crime_by_city.city = location_data.city AND crime_by_city.state = location_data.state\nWHERE crime_by_city.arson IS NOT NULL\nGROUP BY location_data.county\nORDER BY total_arson DESC\nLIMIT 5;```"
+                "assistant": "SELECT location_data.county, location_data.state, SUM(crime_by_city.arson) AS total_arson\\nFROM crime_by_city\\nJOIN location_data ON crime_by_city.city = location_data.city AND crime_by_city.state = location_data.state\\nWHERE crime_by_city.arson IS NOT NULL\\nGROUP BY location_data.county\\nORDER BY total_arson DESC NULLS LAST\\nLIMIT 5;"
             },
             {
                 "user": "Which 5 cities have the most females?",
-                "assistant": "```SELECT location_data.city, location_data.state, population_by_gender.female_population\nFROM location_data\nJOIN population_by_gender ON location_data.geo_id = population_by_gender.geo_id\nORDER BY population_by_gender.female_population DESC\nLIMIT 5;```"
+                "assistant": "SELECT location_data.city, location_data.state, population_by_gender.female_population\\nFROM location_data\\nJOIN population_by_gender ON location_data.geo_id = population_by_gender.geo_id\\nORDER BY population_by_gender.female_population DESC NULLS LAST\\nLIMIT 5;"
             },
             {
                 "user": "Which city in Washington has the highest population?",
-                "assistant": "```SELECT location_data.city, location_data.state, \n       SUM(population_by_gender.male_population) + SUM(population_by_gender.female_population) AS total_population\nFROM location_data\nJOIN population_by_gender ON location_data.geo_id = population_by_gender.geo_id\nWHERE location_data.state = 'WA'\nGROUP BY location_data.city, location_data.state\nORDER BY total_population DESC\nLIMIT 1;```"
+                "assistant": "SELECT location_data.city, location_data.state, \\n       SUM(population_by_gender.male_population) + SUM(population_by_gender.female_population) AS total_population\\nFROM location_data\\nJOIN population_by_gender ON location_data.geo_id = population_by_gender.geo_id\\nWHERE location_data.state = 'WA'\\nGROUP BY location_data.city, location_data.state\\nORDER BY total_population DESC NULLS LAST\\nLIMIT 1;"
             },
             {
                 "user": "Which zip code in San Francisco has the highest racial diversity and what is the percentage population of each race in that zip code?",
-                "assistant": "```SELECT location_data.zip_code, \n       (population_by_race.white_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_white,\n       (population_by_race.black_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_black,\n       (population_by_race.native_american_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_native_american,\n       (population_by_race.asian_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_asian,\n       (population_by_race.hispanic_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_hispanic,\n       (population_by_race.two_or_more_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_two_or_more\nFROM population_by_race\nJOIN location_data ON population_by_race.geo_id = location_data.geo_id\nJOIN (SELECT geo_id, SUM(white_population + black_population + native_american_population + asian_population + hispanic_population + two_or_more_population) AS total_population\n      FROM population_by_race\n      GROUP BY geo_id) AS total_population ON population_by_race.geo_id = total_population.geo_id\nWHERE location_data.city = 'San Francisco' AND location_data.state = 'CA'\nORDER BY (population_by_race.white_population + population_by_race.black_population + population_by_race.native_american_population + population_by_race.asian_population + population_by_race.hispanic_population + population_by_race.two_or_more_population) DESC\nLIMIT 1;```"
+                "assistant": "SELECT location_data.zip_code, \\n       (population_by_race.white_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_white,\\n       (population_by_race.black_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_black,\\n       (population_by_race.native_american_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_native_american,\\n       (population_by_race.asian_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_asian,\\n       (population_by_race.hispanic_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_hispanic,\\n       (population_by_race.two_or_more_population / NULLIF(total_population.total_population, 0)) * 100 AS percentage_two_or_more\\nFROM population_by_race\\nJOIN location_data ON population_by_race.geo_id = location_data.geo_id\\nJOIN (SELECT geo_id, SUM(white_population + black_population + native_american_population + asian_population + hispanic_population + two_or_more_population) AS total_population\\n      FROM population_by_race\\n      GROUP BY geo_id) AS total_population ON population_by_race.geo_id = total_population.geo_id\\nWHERE location_data.city = 'San Francisco' AND location_data.state = 'CA'\\nORDER BY (population_by_race.white_population + population_by_race.black_population + population_by_race.native_american_population + population_by_race.asian_population + population_by_race.hispanic_population + population_by_race.two_or_more_population) DESC NULLS LAST\\nLIMIT 1;"
             },
             {
                 "user": "Zip code in California with the most advanced degree holders",
-                "assistant": "```SELECT location_data.zip_code, population_by_education_level.masters_degree + population_by_education_level.professional_school_degree + population_by_education_level.doctorate_degree AS total_advanced_degrees\nFROM population_by_education_level\nJOIN location_data ON population_by_education_level.geo_id = location_data.geo_id\nWHERE location_data.state = 'CA'\nORDER BY total_advanced_degrees DESC\nLIMIT 1;```"
+                "assistant": "SELECT location_data.zip_code, population_by_education_level.masters_degree + population_by_education_level.professional_school_degree + population_by_education_level.doctorate_degree AS total_advanced_degrees\\nFROM population_by_education_level\\nJOIN location_data ON population_by_education_level.geo_id = location_data.geo_id\\nWHERE location_data.state = 'CA'\\nORDER BY total_advanced_degrees DESC NULLS LAST\\nLIMIT 1;"
             }
         ],
         "table_selection": [
             {
                 "user": "Which top 5 cities have the most total crime?",
-                "assistant": "```\n{\n    \"tables\": [\"crime_by_city\"]\n}\n```"
+                "assistant": "\n{\n    \"tables\": [\"crime_by_city\"]\n}\n"
             },
             {
                 "user": "What zip code has the highest percentage of people of age 75 and over?",
-                "assistant": "```\n{\n    \"tables\": [\"location_data\", \"population_by_age\"]\n}\n```"
+                "assistant": "\n{\n    \"tables\": [\"location_data\", \"population_by_age\"]\n}\n"
             },
             {
                 "user": "Which 5 counties have the most arson?",
-                "assistant": "```\n{\n    \"tables\": [\"crime_by_city\", \"location_data\"]\n}\n```"
+                "assistant": "\n{\n    \"tables\": [\"crime_by_city\", \"location_data\"]\n}\n"
             },
             {
                 "user": "Which city has the most total crime and what is the racial makeup of that city?",
-                "assistant": "```\n{\n    \"tables\": [\"crime_by_city\", \"location_data\", \"population_by_race\"]\n}\n```"
+                "assistant": "\n{\n    \"tables\": [\"crime_by_city\", \"location_data\", \"population_by_race\"]\n}\n"
             }
         ]
     },
@@ -63,69 +63,69 @@
         "text_to_sql": [
             {
                 "user": "Which neighborhood had the most crime in 2021?",
-                "assistant": "```SELECT neighborhood, COUNT(*) as num_crimes \nFROM sf_crime_incidents\nWHERE occurred >= '2021-01-01' AND occurred < '2022-01-01'\nGROUP BY neighborhood\nORDER BY num_crimes DESC NULLS LAST\nLIMIT 1;```"
+                "assistant": "SELECT neighborhood, COUNT(*) as num_crimes \\nFROM sf_crime_incidents\\nWHERE occurred >= '2021-01-01' AND occurred < '2022-01-01'\\nGROUP BY neighborhood\\nORDER BY num_crimes DESC NULLS LAST\\nLIMIT 1;"
             },
             {
                 "user": "What are the largest 3 neighborhoods?",
-                "assistant": "```SELECT stp1.neighborhood, sum(tract_population) as total_population\nFROM sf_total_pop_by_census_tract stp1\nGROUP BY stp1.neighborhood\nORDER BY total_population DESC NULLS LAST\nLIMIT 3;```"
+                "assistant": "SELECT stp1.neighborhood, sum(tract_population) as total_population\\nFROM sf_total_pop_by_census_tract stp1\\nGROUP BY stp1.neighborhood\\nORDER BY total_population DESC NULLS LAST\\nLIMIT 3;"
             },
             {
                 "user": "where are the places with the most poop per capita?",
-                "assistant": "```WITH total_population AS (\nSELECT neighborhood, tract_population\nFROM sf_total_pop_by_census_tract\n),\nincident_counts AS (\nSELECT\nsfi.neighborhood,\nCOUNT(*) as poop_count\nFROM\nsf_311_incidents sfi\nWHERE\nsfi.incident_type = 'Feces/Urine'\nGROUP BY\nsfi.neighborhood\n),\nneighborhood_stats AS (\nSELECT\nic.neighborhood,\nSUM(tp.tract_population) as total_population,\nic.poop_count\nFROM\nincident_counts ic\nJOIN total_population tp ON ic.neighborhood = tp.neighborhood\nGROUP BY\nic.neighborhood, ic.poop_count\n)\nSELECT\nneighborhood,\ntotal_population,\npoop_count,\npoop_count / NULLIF(total_population, 0) as poop_per_capita\nFROM\nneighborhood_stats\nORDER BY\npoop_per_capita DESC NULLS LAST;```"
+                "assistant": "WITH total_population AS (\\nSELECT neighborhood, tract_population\\nFROM sf_total_pop_by_census_tract\\n),\\nincident_counts AS (\\nSELECT\\nsfi.neighborhood,\\nCOUNT(*) as poop_count\\nFROM\\nsf_311_incidents sfi\\nWHERE\\nsfi.incident_type = 'Feces/Urine'\\nGROUP BY\\nsfi.neighborhood\\n),\\nneighborhood_stats AS (\\nSELECT\\nic.neighborhood,\\nSUM(tp.tract_population) as total_population,\\nic.poop_count\\nFROM\\nincident_counts ic\\nJOIN total_population tp ON ic.neighborhood = tp.neighborhood\\nGROUP BY\\nic.neighborhood, ic.poop_count\\n)\\nSELECT\\nneighborhood,\\ntotal_population,\\npoop_count,\\npoop_count / NULLIF(total_population, 0) as poop_per_capita\\nFROM\\nneighborhood_stats\\nORDER BY\\npoop_per_capita DESC NULLS LAST;"
             },
             {
                 "user": "Where is the most violent crime by percentage of crime",
-                "assistant": "```SELECT neighborhood, \n       100.0 * COUNT(CASE WHEN incident_type IN ('Aggravated Assault', 'Arson', 'Assault', 'Manslaughter', 'Robbery', 'Sexual Offense', 'Homicide') THEN 1 END) / COUNT(*) as violent_crime_percentage\nFROM sf_crime_incidents\nWHERE neighborhood IS NOT NULL\nGROUP BY neighborhood\nORDER BY violent_crime_percentage DESC NULLS LAST;```"
+                "assistant": "SELECT neighborhood, \\n       100.0 * COUNT(CASE WHEN incident_type IN ('Aggravated Assault', 'Arson', 'Assault', 'Manslaughter', 'Robbery', 'Sexual Offense', 'Homicide') THEN 1 END) / COUNT(*) as violent_crime_percentage\\nFROM sf_crime_incidents\\nWHERE neighborhood IS NOT NULL\\nGROUP BY neighborhood\\nORDER BY violent_crime_percentage DESC NULLS LAST;"
             },
             {
                 "user": "What are the top 5 neighborhoods with the most encampments per capita?",
-                "assistant": "```WITH total_population AS (\nSELECT neighborhood, SUM(tract_population) AS total_population\nFROM sf_total_pop_by_census_tract\nGROUP BY neighborhood\n),\nencampments AS (\nSELECT\nsfi.neighborhood,\ntp.total_population AS total_pop,\nCOUNT(*) AS num_encampments\nFROM\nsf_311_incidents sfi\nJOIN total_population tp ON sfi.neighborhood = tp.neighborhood\nWHERE\nsfi.incident_type = 'Homeless Encampments'\nGROUP BY\nsfi.neighborhood, tp.total_population\n)\nSELECT\nneighborhood,\ntotal_pop,\nnum_encampments,\nnum_encampments / NULLIF(total_pop, 0) AS encampments_per_capita\nFROM\nencampments\nWHERE\ntotal_pop > 0\nORDER BY\nencampments_per_capita DESC NULLS LAST\nLIMIT 5;```"
+                "assistant": "WITH total_population AS (\\nSELECT neighborhood, SUM(tract_population) AS total_population\\nFROM sf_total_pop_by_census_tract\\nGROUP BY neighborhood\\n),\\nencampments AS (\\nSELECT\\nsfi.neighborhood,\\ntp.total_population AS total_pop,\\nCOUNT(*) AS num_encampments\\nFROM\\nsf_311_incidents sfi\\nJOIN total_population tp ON sfi.neighborhood = tp.neighborhood\\nWHERE\\nsfi.incident_type = 'Homeless Encampments'\\nGROUP BY\\nsfi.neighborhood, tp.total_population\\n)\\nSELECT\\nneighborhood,\\ntotal_pop,\\nnum_encampments,\\nnum_encampments / NULLIF(total_pop, 0) AS encampments_per_capita\\nFROM\\nencampments\\nWHERE\\ntotal_pop > 0\\nORDER BY\\nencampments_per_capita DESC NULLS LAST\\nLIMIT 5;"
             },
             {
                 "user": "Give me the number of poop incidents per capita in the Mission neighborhood",
-                "assistant": "```WITH stp AS (\n    SELECT neighborhood, SUM(tract_population) AS total_population\n    FROM sf_total_pop_by_census_tract\n    GROUP BY neighborhood\n), incidents_per_neighborhood AS (\n    SELECT sfi.neighborhood, COUNT(*) AS num_incidents\n    FROM sf_311_incidents sfi\n    WHERE sfi.neighborhood = 'Mission' AND sfi.incident_type = 'Feces/Urine'\n    GROUP BY sfi.neighborhood\n)\nSELECT\n    incidents_per_neighborhood.neighborhood,\n    incidents_per_neighborhood.num_incidents,\n    incidents_per_neighborhood.num_incidents / NULLIF(SUM(stp.total_population), 0) AS incidents_per_capita\nFROM stp\nJOIN incidents_per_neighborhood ON stp.neighborhood = incidents_per_neighborhood.neighborhood\nGROUP BY incidents_per_neighborhood.neighborhood, incidents_per_neighborhood.num_incidents;\n```"
+                "assistant": "WITH stp AS (\\n    SELECT neighborhood, SUM(tract_population) AS total_population\\n    FROM sf_total_pop_by_census_tract\\n    GROUP BY neighborhood\\n), incidents_per_neighborhood AS (\\n    SELECT sfi.neighborhood, COUNT(*) AS num_incidents\\n    FROM sf_311_incidents sfi\\n    WHERE sfi.neighborhood = 'Mission' AND sfi.incident_type = 'Feces/Urine'\\n    GROUP BY sfi.neighborhood\\n)\\nSELECT\\n    incidents_per_neighborhood.neighborhood,\\n    incidents_per_neighborhood.num_incidents,\\n    incidents_per_neighborhood.num_incidents / NULLIF(SUM(stp.total_population), 0) AS incidents_per_capita\\nFROM stp\\nJOIN incidents_per_neighborhood ON stp.neighborhood = incidents_per_neighborhood.neighborhood\\nGROUP BY incidents_per_neighborhood.neighborhood, incidents_per_neighborhood.num_incidents;\\n"
             },
             {
                 "user": "3 neighborhoods with the highest female to male ratio",
-                "assistant": "```WITH total_population AS (\n    SELECT neighborhood, SUM(male_population + female_population) AS total_pop\n    FROM sf_sex_by_census_tract\n    GROUP BY neighborhood\n), female_to_male_ratio AS (\n    SELECT \n        sfs.neighborhood, \n        SUM(sfs.female_population) / NULLIF(SUM(sfs.male_population), 0) AS ratio\n    FROM sf_sex_by_census_tract sfs\n    JOIN total_population tp ON sfs.neighborhood = tp.neighborhood\n    GROUP BY sfs.neighborhood\n)\nSELECT \n    neighborhood, \n    ratio\nFROM female_to_male_ratio\nORDER BY ratio DESC NULLS LAST\nLIMIT 3;```"
+                "assistant": "WITH total_population AS (\\n    SELECT neighborhood, SUM(male_population + female_population) AS total_pop\\n    FROM sf_sex_by_census_tract\\n    GROUP BY neighborhood\\n), female_to_male_ratio AS (\\n    SELECT \\n        sfs.neighborhood, \\n        SUM(sfs.female_population) / NULLIF(SUM(sfs.male_population), 0) AS ratio\\n    FROM sf_sex_by_census_tract sfs\\n    JOIN total_population tp ON sfs.neighborhood = tp.neighborhood\\n    GROUP BY sfs.neighborhood\\n)\\nSELECT \\n    neighborhood, \\n    ratio\\nFROM female_to_male_ratio\\nORDER BY ratio DESC NULLS LAST\\nLIMIT 3;"
             },
             {
                 "user": "which 5 neighborhoods had the most drug violations involving heroin?",
-                "assistant": "```WITH heroin_violations AS (\n    SELECT neighborhood, COUNT(*) AS num_heroin_violations\n    FROM sf_crime_incidents\n    WHERE incident_type = 'Drug Violation' AND description ILIKE '%heroin%'\n    GROUP BY neighborhood\n)\nSELECT neighborhood, num_heroin_violations\nFROM heroin_violations\nORDER BY num_heroin_violations DESC NULLS LAST\nLIMIT 5;```"
+                "assistant": "WITH heroin_violations AS (\\n    SELECT neighborhood, COUNT(*) AS num_heroin_violations\\n    FROM sf_crime_incidents\\n    WHERE incident_type = 'Drug Violation' AND description ILIKE '%heroin%'\\n    GROUP BY neighborhood\\n)\\nSELECT neighborhood, num_heroin_violations\\nFROM heroin_violations\\nORDER BY num_heroin_violations DESC NULLS LAST\\nLIMIT 5;"
             },
             {
                 "user": "How many crimes were related to guns?",
-                "assistant": "```SELECT COUNT(*) as num_gun_crimes\nFROM sf_crime_incidents\nWHERE description ~* '\\m(gun|firearm)\\M';```"
+                "assistant": "SELECT COUNT(*) as num_gun_crimes\\nFROM sf_crime_incidents\\nWHERE description ~* '\\\\m(gun|firearm)\\\\M';"
             },
             {
                 "user": "How many crimes had ties to knives?",
-                "assistant": "```SELECT COUNT(*) as num_gun_crimes\nFROM sf_crime_incidents\nWHERE description ~* '\\m(knife|stabbing)\\M';```"
+                "assistant": "SELECT COUNT(*) as num_gun_crimes\\nFROM sf_crime_incidents\\nWHERE description ~* '\\\\m(knife|stabbing)\\\\M';"
             }
         ],
         "table_selection": [
             {
                 "user": "show me all the needles",
-                "assistant": "```\n{\n    \"tables\": [\"sf_311_incidents\"]\n}\n```"
+                "assistant": "\n{\n    \"tables\": [\"sf_311_incidents\"]\n}\n"
             },
             {
                 "user": "how many needles per capita are there in hayes valley",
-                "assistant": "```\n{\n    \"tables\": [\"sf_311_incidents\", \"sf_total_pop_by_census_tract\"]\n}\n```"
+                "assistant": "\n{\n    \"tables\": [\"sf_311_incidents\", \"sf_total_pop_by_census_tract\"]\n}\n"
             },
             {
                 "user": "Which neighborhood has the most crime?",
-                "assistant": "```\n{\n    \"tables\": [\"sf_crime_incidents\"]\n}\n```"
+                "assistant": "\n{\n    \"tables\": [\"sf_crime_incidents\"]\n}\n"
             },
             {
                 "user": "Which neighborhood has the most poop on the street?",
-                "assistant": "```\n{\n    \"tables\": [\"sf_311_incidents\"]\n}\n```"
+                "assistant": "\n{\n    \"tables\": [\"sf_311_incidents\"]\n}\n"
             },
             {
                 "user": "Which neighborhood has the most homeless activity?",
-                "assistant": "```\n{\n    \"tables\": [\"sf_311_incidents\"]\n}\n```"
+                "assistant": "\n{\n    \"tables\": [\"sf_311_incidents\"]\n}\n"
             },
             {
                 "user": "Which neighborhood has the highest female to male ratio?",
-                "assistant": "```\n{\n    \"tables\": [\"sf_sex_by_census_tract\"]\n}\n```"
+                "assistant": "\n{\n    \"tables\": [\"sf_sex_by_census_tract\"]\n}\n"
             }
         ]
     }
