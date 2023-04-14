@@ -10,7 +10,7 @@ const Suggestion = (props) => {
 
     return (
         <div className="hidden items-center mt-2 justify-center md:block">
-            <div style={{"white-space":"pre"}} className="text-sm tracking-tight text-gray-600 dark:text-white">
+            <div style={{"whiteSpace":"pre"}} className="text-sm tracking-tight text-gray-600 dark:text-white">
                 {suggestedQuery}
             </div>
         </div>
