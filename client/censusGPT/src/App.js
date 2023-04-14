@@ -1003,6 +1003,8 @@ function App(props) {
                                 onClear={handleClearSearch}
                                 version={props.version}
                                 suggestedQuery={suggestedQuery}
+                                setTitle={setTitle}
+                                fetchBackend={fetchBackend}
                             />
                         </form>
                     </div>
