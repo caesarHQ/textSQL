@@ -1,7 +1,10 @@
-import time
-import openai
+import json
 import re
+import time
 from typing import List, Dict
+
+import openai
+
 from app.api.utils.caesar_logging import log_apicall
 
 
@@ -17,28 +20,12 @@ def get_assistant_message_from_openai(
     # let's go and re-create the chat in the last message!
     final_payload = messages
 
-    if scope == "USA" and "text_to_sql" in purpose:
-
-        stringified_messages = []
-        for message in messages:
-            if message['role'] == 'user':
-                stringified_messages.append(f'{message["role"]}: {message["content"]}')
-            if message['role'] == 'assistant':
-                stringified_messages.append(f'Correct Output: {message["content"]}')
-        stringified_messages = '\n---\n'.join(stringified_messages)
-
-        simplified_payload = [{
-            "role": "user",
-            "content": stringified_messages + '\n--pay close attention to the earlier examples for tricks for how to efficiently query this database.',
-        }]
-        final_payload = simplified_payload
-    else:
-        final_payload = messages
+    final_payload = messages
 
     start = time.time()
     res = openai.ChatCompletion.create(
         model=model,
-        temperature=temperature,
+        temperature=0,
         messages=final_payload
     )
     duration = time.time() - start
@@ -117,9 +104,17 @@ def clean_sql_message_content(assistant_message_content):
 
 
 def extract_sql_query_from_message(assistant_message_content):
-    content = extract_sql_from_markdown(assistant_message_content)
-    # return clean_sql_message_content(content)
-    return content
+    print('assistant_message_content: ', assistant_message_content)
+    try:
+        data = json.loads(assistant_message_content)
+    except Exception as e:
+        print('e: ', e)
+        raise e
+    print('data: ', data)
+
+    sql = data['SQL']
+
+    return sql
 
 
 def extract_sql_from_markdown(assistant_message_content):

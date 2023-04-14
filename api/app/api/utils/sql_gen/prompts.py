@@ -11,8 +11,13 @@ The following are tables you can query:
 - For example, city can be ambiguous because both tables location_data and crime_by_city have a column named city. Always specify the table where you are using the column.
 - If you include a city or county column in the result table, include a state column too.
 - Make sure each value in the result table is not null.
-- before writing each query, you add a comment (--) so other people can understand what your code is about.
-- Write your answer in markdown format.
+- Use CTE format for computing subqueries.
+
+Provide a properly formatted JSON object with the following information. Ensure to escape any special characters so it can be parsed as JSON.
+{{
+    "Schema": "<1 to 2 sentences about the tables/columns/enums above to use>",
+    "SQL": "<your query>"
+}}
 """,
     "SF": """You are an expert and empathetic database engineer who writes well thought out and syntactically correct read-only {} to answer a given question or command.
 
@@ -24,12 +29,12 @@ We already created the tables in the database with the following enums and CREAT
 Ensure to include which table each column is from
 Use CTE format for computing subqueries.
 
-Write your answer as:
-<1 to 2 sentences about the tables/columns/enums above to use>
-<1 to 2 sentences about whether the columns and enums in those tables will handle that data, explaining any possible issues or terms in the enums that could be relevant>
-```
-<your query>
-```
+Provide a properly formatted JSON object with the following information. Ensure to escape any special characters so it can be parsed as JSON.
+{{
+    "Schema": "<1 to 2 sentences about the tables/columns/enums above to use>",
+    "applicability": "<1 to 2 sentences about whether the columns and enums in those tables will handle that data, explaining any possible issues or terms in the enums that could be relevant>",
+    "SQL": "<your query>"
+}}
 """
 }
 
@@ -45,8 +50,13 @@ The following are schemas of tables you can query:
 - For example, city can be ambiguous because both tables location_data and crime_by_city have a column named city. Always specify the table where you are using the column.
 - If you include a city or county column in the result table, include a state column too.
 - Make sure each value in the result table is not null.
-- Include a SQL comment (--) at the top explaining what the code will do and why in 1-2 sentences.
-- Write your answer in markdown format.
+- Use CTE format for computing subqueries.
+
+Provide a properly formatted JSON object with the following information. Ensure to escape any special characters (e.g. \n should be \\n, \m \\m and such) so it can be parsed as JSON.
+{{
+    "Schema": "<1 to 2 sentences about the tables/columns/enums above to use>",
+    "SQL": "<your query>"
+}}
 
 Command: {}
 """,
@@ -60,13 +70,12 @@ We already created the tables in the database with the following enums and CREAT
 Ensure to include which table each column is from
 Use CTE format for computing subqueries.
 
-Write your answer as:
-<1 to 2 sentences about the tables/columns/enums above to use>
-<1 to 2 sentences about whether the columns and enums in those tables will handle that data, explaining any possible issues or terms in the enums that could be relevant>
-if the data isn't available, just return a select statement with why it won't work (e.g. select 'no data about space aliens' if asked about space aliens)
-```
-<your query>
-```
+Provide a properly formatted JSON object with the following information. Ensure to escape any special characters so it can be parsed as JSON.
+{{
+    "Schema": "<1 to 2 sentences about the tables/columns/enums above to use>",
+    "applicability": "<1 to 2 sentences about whether the columns and enums in those tables will handle that data, explaining any possible issues or terms in the enums that could be relevant>",
+    "SQL": "<your query>"
+}}
 """
 }
 

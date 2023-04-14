@@ -72,10 +72,9 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     for attempt_number in range(k):
         try:
             if scope == "SF":
-                # model = "gpt-4"
                 model = "gpt-3.5-turbo-0301"
             else:
-                model = "gpt-3.5-turbo"
+                model = "gpt-3.5-turbo-0301"
             purpose = "text_to_sql" if attempt_number == 0 else "text_to_sql_retry"
             assistant_message = get_assistant_message_from_openai(messages, model=model, scope=scope, purpose=purpose)
 
