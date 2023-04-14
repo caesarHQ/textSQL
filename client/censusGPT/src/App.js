@@ -609,15 +609,12 @@ function App(props) {
             if (!('sql_query' in response) || !response.result){
                 posthog.capture('backend_error', response)
                 setShowExplanationModal('attempted')
+                await getSuggestionForFailedQuery()
                 setTableNames()
                 return
             }
 
-            if (response.result.MissingData){
-                await getSuggestionForFailedQuery()
-                return
-            }
-
+       
             // Capture the response in posthog
             const duration = new Date().getTime() - startTime
             console.log({duration})

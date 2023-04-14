@@ -69,7 +69,7 @@ We already created the tables in the database with the following enums and CREAT
 {}
 ---------------------
 
-Ensure to include which table each column is from
+Ensure to include which table each column is from (table.column)
 Use CTE format for computing subqueries.
 
 Provide a properly formatted JSON object with the following information. Ensure to escape any special characters so it can be parsed as JSON.
