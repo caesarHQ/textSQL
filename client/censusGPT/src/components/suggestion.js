@@ -1,21 +1,22 @@
-const Suggestion  = (props) => {
+const Suggestion = (props) => {
 
-    const urlEncodedQuery = encodeURIComponent(props.suggestionForFailedQuery);
+    const urlEncodedQuery = encodeURIComponent(props.suggestedQuery);
 
-    const suggestionForFailedQuery = (
-        <>
-            Suggested query: <a href={`/sf?s=${urlEncodedQuery}`} style={{ color: 'blue', textDecoration: 'underline' }}>{props.suggestionForFailedQuery}</a>
-        </>
+    const suggestedQuery = (
+        <div style={{ wordWrap: 'break-word' }}>
+            Try: <a href={`/sf?s=${urlEncodedQuery}`} style={{ color: 'blue', textDecoration: 'underline' }}>{props.suggestedQuery}</a>
+        </div>
     );
 
     return (
         <div className="hidden items-center mt-2 justify-center md:block">
             <div style={{"white-space":"pre"}} className="text-sm tracking-tight text-gray-600 dark:text-white">
-                {suggestionForFailedQuery}
+                {suggestedQuery}
             </div>
         </div>
     )
 }
+
 
 
 export default Suggestion

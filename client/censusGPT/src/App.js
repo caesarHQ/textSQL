@@ -116,8 +116,7 @@ function App(props) {
     const [sqlExplanation, setSqlExplanation] = useState()
     const [isExplainSqlLoading, setIsExplainSqlLoading] = useState(false)
     const [minimizeTableNames, setMinimizeTableNames] = useState(false)
-    const [suggestionForFailedQuery, setSuggestionForFailedQuery] = useState(null)
-
+    const [suggestedQuery, setSuggestedQuery] = useState(null)
 
     const tableColumns = tableInfo?.columns
     const tableRows =  tableInfo?.rows
@@ -198,6 +197,7 @@ function App(props) {
         setMinimizeTableNames(false)
         setTableNames()
         setIsLoading(false)
+        setSuggestedQuery(null)
     }
 
 
@@ -219,12 +219,12 @@ function App(props) {
         setQuery('')
     }
 
-    const getSuggestionForFailedQuery = async (natural_language_query) => {
+    const getSuggestionForFailedQuery = async () => {
         const options = {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
-                natural_language_query,
+                natural_language_query: query,
                 scope: props.version === 'San Francisco' ? 'SF' : 'USA',
             }),
         }
@@ -243,7 +243,46 @@ function App(props) {
                 // Set the state for SQL and Status Code
                 console.log('Backend Response ==>', response)
 
-                setSuggestionForFailedQuery(response.suggested_query)
+                setSuggestedQuery(response.suggested_query)
+            })
+            .catch((err) => {
+                Sentry.setContext('queryContext', {
+                    query: query
+                })
+                Sentry.captureException(err)
+                setIsLoading(false)
+                posthog.capture('backend_error', {
+                    error: err,
+                })
+                console.error(err)
+            })
+    }
+
+    const getSuggestionForQuery = async () => {
+        const options = {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+                natural_language_query: query,
+                scope: props.version === 'San Francisco' ? 'SF' : 'USA',
+            }),
+        }
+
+        fetch(api_endpoint + '/api/get_suggestion', options)
+            .then((response) => response.json())
+            .then((response) => {
+                // Handle errors
+                if (!response || !response.suggested_query) {
+                    posthog.capture('backend_error', response)
+                    return
+                }
+
+                // Capture the response in posthog
+                posthog.capture('backend_response', response)
+                // Set the state for SQL and Status Code
+                console.log('Backend Response ==>', response)
+
+                setSuggestedQuery(response.suggested_query)
             })
             .catch((err) => {
                 Sentry.setContext('queryContext', {
@@ -553,7 +592,7 @@ function App(props) {
           });
         Promise.race([apiCall, timeout])
         .then(response => response.json())
-        .then((response) => {
+        .then(async (response) => {
             // Set the loading state to false
             setIsLoading(false)
 
@@ -584,6 +623,9 @@ function App(props) {
             setSQL(response.sql_query)
 
             console.log('Backend Response ==>', response)
+
+            // Get suggested query built on top of the current query
+            await getSuggestionForQuery()
 
             // Filter out geolocation columns (lat, long, shape)
             let filteredColumns = []
@@ -958,7 +1000,7 @@ function App(props) {
                                 onSearchChange={handleSearchChange}
                                 onClear={handleClearSearch}
                                 version={props.version}
-                                suggestionForFailedQuery={suggestionForFailedQuery}
+                                suggestedQuery={suggestedQuery}
                             />
                         </form>
                     </div>
