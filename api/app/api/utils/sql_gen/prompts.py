@@ -30,9 +30,10 @@ Ensure to include which table each column is from
 Use CTE format for computing subqueries.
 
 Provide a properly formatted JSON object with the following information. Ensure to escape any special characters so it can be parsed as JSON.
+If there's no way to pull the data from the tables, include a key "Error" explaining why you can't pull the data after Schema.
 {{
     "Schema": "<1 to 2 sentences about the tables/columns/enums above to use>",
-    "applicability": "<1 to 2 sentences about whether the columns and enums in those tables will handle that data, explaining any possible issues or terms in the enums that could be relevant>",
+    "Applicability": "<1 to 2 sentences about whether the columns and enums in those tables will handle that data, explaining any possible issues or terms in the enums that could be relevant>",
     "SQL": "<your query>"
 }}
 """
@@ -54,6 +55,7 @@ The following are schemas of tables you can query:
 
 Provide a properly formatted JSON object with the following information. Ensure to escape any special characters (e.g. \n should be \\n, \m \\m and such) so it can be parsed as JSON.
 {{
+    
     "Schema": "<1 to 2 sentences about the tables/columns/enums above to use>",
     "SQL": "<your query>"
 }}
@@ -71,11 +73,20 @@ Ensure to include which table each column is from
 Use CTE format for computing subqueries.
 
 Provide a properly formatted JSON object with the following information. Ensure to escape any special characters so it can be parsed as JSON.
+
 {{
     "Schema": "<1 to 2 sentences about the tables/columns/enums above to use>",
-    "applicability": "<1 to 2 sentences about whether the columns and enums in those tables will handle that data, explaining any possible issues or terms in the enums that could be relevant>",
+    "Applicability": "<1 to 2 sentences about whether the columns and enums in those tables can provide the required information, explaining any possible issues or terms in the enums that could be relevant>",
     "SQL": "<your query>"
 }}
+
+However, if the tables don't contain all the required data (e.g. the column isn't there or there aren't relevant enums), instead return a JSON object with just: 
+{{
+    "Schema": "<1 to 2 sentences about the tables/columns/enums above to use>",
+    "Applicability": "<1 to 2 sentences about whether the columns and enums in those tables can provide the required information, explaining any possible issues or terms in the enums that could be relevant>",
+    "MissingData": "<1 to 2 sentences about what data is missing>"
+}}
+However, if a query can be close enough to the intent of the question/command, generate the SQL that gets it instead of returning MissingData.
 """
 }
 

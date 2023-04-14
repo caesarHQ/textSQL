@@ -104,17 +104,18 @@ def clean_sql_message_content(assistant_message_content):
 
 
 def extract_sql_query_from_message(assistant_message_content):
-    print('assistant_message_content: ', assistant_message_content)
     try:
         data = json.loads(assistant_message_content)
     except Exception as e:
         print('e: ', e)
         raise e
-    print('data: ', data)
+
+    if data.get('MissingData'):
+        return data
 
     sql = data['SQL']
 
-    return sql
+    return {"SQL": sql}
 
 
 def extract_sql_from_markdown(assistant_message_content):

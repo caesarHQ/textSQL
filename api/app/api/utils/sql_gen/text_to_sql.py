@@ -11,9 +11,10 @@ from .sql_helper import execute_sql
 
 MSG_WITH_ERROR_TRY_AGAIN = (
     "Try again. "
-    f"Only respond with valid {DIALECT}. Write your answer in markdown format. "
+    f"Only respond with valid {DIALECT}. Write your answer in JSON. "
     f"The {DIALECT} query you just generated resulted in the following error message:\n"
     "{error_message}"
+    "Check the table schema and ensure that the columns for the table exist and will provide the expected results."
 )
 
 def make_default_messages(schemas: str, scope="USA"):
@@ -70,6 +71,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     assistant_message = None
 
     for attempt_number in range(k):
+        sql_query_data = {}
         try:
             if scope == "SF":
                 model = "gpt-3.5-turbo-0301"
@@ -78,7 +80,12 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             purpose = "text_to_sql" if attempt_number == 0 else "text_to_sql_retry"
             assistant_message = get_assistant_message_from_openai(messages, model=model, scope=scope, purpose=purpose)
 
-            sql_query = extract_sql_query_from_message(assistant_message["message"]["content"])
+            sql_query_data = extract_sql_query_from_message(assistant_message["message"]["content"])
+
+            if sql_query_data.get('MissingData'):
+                return {"MissingData": sql_query_data['MissingData']}, ""
+
+            sql_query = sql_query_data["SQL"]
 
             response = execute_sql(sql_query)
             # Generated SQL query did not produce exception. Return result
@@ -86,7 +93,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
 
         except Exception as e:
             
-            log_sql_failure(natural_language_query, sql_query, str(e), attempt_number, scope)
+            log_sql_failure(natural_language_query, sql_query_data.get('SQL', ""), str(e), attempt_number, scope)
 
             messages.append({
                 "role": "assistant",
