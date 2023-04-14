@@ -175,3 +175,22 @@ def update_suggestion_as_used(suggestion_id):
         conn.commit()
 
     return True
+
+def create_session(app_name, user_id):
+    parms = {
+        "app_name": app_name,
+        "user_id": user_id,
+    }
+    create_query = text("""
+        INSERT INTO sessions (app_name, user_id)
+        VALUES (:app_name, :user_id)
+        returning id
+    """)
+    with EVENTS_ENGINE.connect() as conn:
+        # get the ID back
+        result = conn.execute(create_query, parms)
+        conn.commit()
+        row = result.fetchone()
+        session_id = row[0]
+
+    return str(session_id)
