@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useReducer, useMemo } from 'react'
 import Map, { Layer, Source } from 'react-map-gl'
 import mapboxgl from 'mapbox-gl'
 import bbox from '@turf/bbox'
-import posthog from 'posthog-js'
 import * as turf from '@turf/turf'
 import { ImSpinner } from 'react-icons/im'
 
@@ -18,6 +17,8 @@ import { ExplanationModal } from './components/explanationModal'
 import DataPlot from './components/dataPlot'
 
 import { logSentryError } from './utils/loggers/sentry'
+import { capturePosthog } from './utils/loggers/posthog'
+
 
 // Utils
 import {
@@ -60,13 +61,6 @@ localStorage.theme === 'dark' ||
         window.matchMedia('(prefers-color-scheme: dark)').matches)
     ? document.documentElement.classList.add('dark')
     : document.documentElement.classList.remove('dark')
-
-
-const POSTHOG_KEY = process.env.REACT_APP_POSTHOG_KEY
-// Init posthog
-posthog.init('phc_iLMBZqxwjAjaKtgz29r4EWv18El2qg3BIJoOOpw7s2e', {
-    api_host: 'https://app.posthog.com',
-})
 
 // The following is required to stop "npm build" from transpiling mapbox code.
 // notice the exclamation point in the import.
@@ -242,12 +236,12 @@ function App(props) {
             .then((response) => {
                 // Handle errors
                 if (!response || !response.suggested_query) {
-                    posthog.capture('backend_error', response)
+                    capturePosthog('backend_error', response)
                     return
                 }
 
                 // Capture the response in posthog
-                posthog.capture('backend_response', response)
+                capturePosthog('backend_response', response)
                 // Set the state for SQL and Status Code
                 console.log('Backend Response ==>', response)
 
@@ -258,7 +252,7 @@ function App(props) {
             .catch((err) => {
                 logSentryError({query}, err)
                 setIsLoading(false)
-                posthog.capture('backend_error', {
+                capturePosthog('backend_error', {
                     error: err,
                 })
                 console.error(err)
@@ -282,12 +276,12 @@ function App(props) {
             .then((response) => {
                 // Handle errors
                 if (!response || !response.suggested_query) {
-                    posthog.capture('backend_error', response)
+                    capturePosthog('backend_error', response)
                     return
                 }
 
                 // Capture the response in posthog
-                posthog.capture('backend_response', response)
+                capturePosthog('backend_response', response)
                 // Set the state for SQL and Status Code
                 console.log('Backend Response ==>', response)
                 
@@ -298,7 +292,7 @@ function App(props) {
             .catch((err) => {
                 logSentryError({query}, err)
                 setIsLoading(false)
-                posthog.capture('backend_error', {
+                capturePosthog('backend_error', {
                     error: err,
                 })
                 console.error(err)
@@ -327,7 +321,7 @@ function App(props) {
 
                 // Handle errors
                 if (!response || !response.result) {
-                    posthog.capture('backend_error', response)
+                    capturePosthog('backend_error', response)
                     setErrorMessage(
                         'Something went wrong. Please try again or try a different query'
                     )
@@ -335,7 +329,7 @@ function App(props) {
                 }
 
                 // Capture the response in posthog
-                posthog.capture('backend_response', response)
+                capturePosthog('backend_response', response)
 
                 // Set the state for SQL and Status Code
                 console.log('Backend Response ==>', response)
@@ -446,7 +440,7 @@ function App(props) {
             .catch((err) => {
                 logSentryError({query}, err)
                 setIsLoading(false)
-                posthog.capture('backend_error', {
+                capturePosthog('backend_error', {
                     error: err,
                 })
                 setErrorMessage(err.message || err)
@@ -475,7 +469,7 @@ function App(props) {
                 setSqlExplanation()
                 logSentryError({query}, err)
                 setIsExplainSqlLoading(false)
-                posthog.capture('explainSql_backend_error', {
+                capturePosthog('explainSql_backend_error', {
                     error: err,
                 })
                 setErrorMessage(err.message || err)
@@ -511,7 +505,7 @@ function App(props) {
 
         if (!response_1 || !response_1.table_names) {
             setTableNames()
-            posthog.capture('getTables_backend_error', response_1)
+            capturePosthog('getTables_backend_error', response_1)
             setErrorMessage('Something went wrong. Please try again or try a different query')
             return false
         }
@@ -520,7 +514,7 @@ function App(props) {
             return false
         }
 
-        posthog.capture('getTables_backend_response', response_1)
+        capturePosthog('getTables_backend_response', response_1)
         setTableNames(response_1.table_names)
         return response_1.table_names
     }
@@ -610,7 +604,7 @@ function App(props) {
 
             // Handle errors
             if (!response) {
-                posthog.capture('backend_error', response)
+                capturePosthog('backend_error', response)
                 setErrorMessage(
                     'Something went wrong. Please try again or try a different query'
                 )
@@ -619,7 +613,7 @@ function App(props) {
             }
 
             if (!('sql_query' in response) || !response.result){
-                posthog.capture('backend_error', response)
+                capturePosthog('backend_error', response)
                 setShowExplanationModal('attempted')
                 await getSuggestionForFailedQuery()
                 setTableNames()
@@ -630,7 +624,7 @@ function App(props) {
             // Capture the response in posthog
             const duration = new Date().getTime() - startTime
             console.log({duration})
-            posthog.capture('backend_response', {...response, duration})
+            capturePosthog('backend_response', {...response, duration})
 
             // Set the state for SQL and Status Code
             responseOuter = response
@@ -782,7 +776,7 @@ function App(props) {
             }, err)
             setIsLoading(false)
             setTableNames()
-            posthog.capture('backend_error', {
+            capturePosthog('backend_error', {
                 error: err,
                 timeout: TIMEOUT_DURATION
             })
@@ -800,7 +794,7 @@ function App(props) {
         const queryFromURL = searchParams.get('s')
         if (queryFromURL) {
             if (queryFromURL != query) {
-                posthog.capture('search_clicked', {
+                capturePosthog('search_clicked', {
                     natural_language_query: urlSearch,
                     trigger: 'url',
                 })
@@ -814,7 +808,7 @@ function App(props) {
         currentGenerationId = null
         setSearchParams(`?${new URLSearchParams({ s: query })}`)
         setTitle(query)
-        posthog.capture('search_clicked', { natural_language_query: query, trigger: 'button' })
+        capturePosthog('search_clicked', { natural_language_query: query, trigger: 'button' })
         fetchBackend(query)
     }
 
@@ -1031,7 +1025,6 @@ function App(props) {
                         <LoadingSpinner isLoading={isLoading || isGetTablesLoading} />
                         {sql.length === 0 && !isLoading && !isGetTablesLoading ? (
                             <Examples
-                                postHogInstance={posthog}
                                 setQuery={setQuery}
                                 handleClick={fetchBackend}
                                 version={props.version}
