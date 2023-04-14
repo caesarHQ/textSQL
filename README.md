@@ -65,14 +65,19 @@ Bar Chart:
 
 [coming soon] Visualization-GPT: A way to use natural language to create and iterate on data visualizations in natural language through a text-to-vega engine.
 
-### 2. Bring Your Own Data (BYOD):
+### 2. 🔌 Text-to-SQL BYOD (Bring Your Own Data) [here](https://github.com/caesarHQ/textSQL/tree/main/byod)
 
-You can now connect your own database & datasets to textSQL. Our vision is to continue to modularize and improve this process.
+
+You can now connect your own database & datasets to textSQL and self-host the service. Our vision is to continue to modularize and improve this process.
 
 #### Use cases
-* Business intelligence — reducing the burden on technical employees to build & run queries for non-technical
-* Public-facing interactive interfaces for government & NGO data — democratizing public data
-* Empowering researchers — enabling journalists and other researchers to more easily explore data
+
+- Public-facing interactive interfaces for data. Democratizing public data
+- Empowering researchers. Enabling journalists and other researchers to more easily explore data
+- Business intelligence. Reducing the burden on technical employees to build & run queries for non-technical
+
+
+Setup instructions for BYOD are [here](https://github.com/caesarHQ/textSQL/tree/main/byod).
 
 
 ## :pencil: Additional Notes
