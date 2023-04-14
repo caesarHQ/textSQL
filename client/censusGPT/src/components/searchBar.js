@@ -22,6 +22,7 @@ const SearchBar = (props) => {
         onClear,
         suggestedQuery,
         setTitle,
+        setQuery,
         fetchBackend,
         currentSuggestionId,
     } = props
@@ -62,6 +63,7 @@ const SearchBar = (props) => {
                     setTitle={setTitle}
                     fetchBackend={fetchBackend}
                     currentSuggestionId={currentSuggestionId}
+                    setQuery={setQuery}
                     />
                 :
                 null

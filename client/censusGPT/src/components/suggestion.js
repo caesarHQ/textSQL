@@ -29,6 +29,7 @@ const Suggestion = (props) => {
     const {
         suggestedQuery,
         setTitle,
+        setQuery,
         fetchBackend,
         currentSuggestionId,
     } = props
@@ -37,9 +38,10 @@ const Suggestion = (props) => {
 
     const handleClick = () => {
         acceptSuggestion(currentSuggestionId)
-        setSearchParams(new URLSearchParams({ s: props.suggestedQuery }));
-        setTitle(suggestedQuery);
-        fetchBackend(suggestedQuery, currentSuggestionId);
+        setSearchParams(new URLSearchParams({ s: props.suggestedQuery }))
+        setTitle(suggestedQuery)
+        setQuery(suggestedQuery)
+        fetchBackend(suggestedQuery, currentSuggestionId)
     };
 
     const clickableQuery = (

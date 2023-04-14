@@ -1012,6 +1012,7 @@ function App(props) {
                                 version={props.version}
                                 suggestedQuery={suggestedQuery}
                                 setTitle={setTitle}
+                                setQuery={setQuery}
                                 fetchBackend={fetchBackend}
                                 currentSuggestionId = {currentSuggestionId}
                             />
