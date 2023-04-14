@@ -954,6 +954,8 @@ function App(props) {
         }
     }
 
+    const isStartingState = (!zipcodesFormatted?.length && !zipcodes?.length && !cities?.length && !points?.length && !tableInfo?.columns?.length)
+
     return (
         <main className='h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen' style={{position:'relative'}}>
             {showExplanationModal && <ExplanationModal showExplanationModal={showExplanationModal} setShowExplanationModal={setShowExplanationModal} version={props.version}/>}
@@ -1008,7 +1010,6 @@ function App(props) {
                             />
                         </form>
                     </div>
-                    <Disclaimer version={props.version} />
                 </div>
 
                 <div className="flex flex-col lg:flex-row h-full w-full gap-6 p-6">
@@ -1043,7 +1044,7 @@ function App(props) {
                             )}
                         </div>
                     </div>
-                    { (!!zipcodesFormatted?.length || !!zipcodes?.length || !!cities?.length || !!points?.length || !!tableInfo?.columns?.length) &&
+                    { !isStartingState &&
 
                     <div className='flex flex-grow h-full w-full relative rounded-lg shadow overflow-hidden'>
                         <div className='absolute top-0 right-0 z-10 p-1'>
@@ -1121,6 +1122,11 @@ function App(props) {
                     </div>
                     }
                 </div>
+                <div className='mb-5'>
+                    <Disclaimer version={props.version} />
+                </div>
+                
+
             </div>
         </main>
     )
