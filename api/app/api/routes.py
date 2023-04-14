@@ -14,6 +14,7 @@ from .utils.classification.input_classification import create_labels
 from .utils.table_selection.table_details import get_all_table_names
 from .utils.table_selection.table_selection import get_relevant_tables_async
 from .utils.suggestions.suggestions import generate_suggestion_failed_query, generate_suggestion
+from .utils.caesar_logging import update_suggestion_as_used
 
 
 def replace_unsupported_localities(original_string, scope="USA"):
@@ -177,3 +178,12 @@ def text_to_sql_chat():
         'sql_query': sql_query,
         'messages': messages
         }), 200)
+
+@bp.route('/accept_suggestion', methods=['POST'])
+def accept_suggestion():
+    print('accept_suggestion called')
+    # get id from route
+    request_body = request.get_json()
+    generation_id = request_body.get('id')
+    update_suggestion_as_used(generation_id)
+    return {"status": "success"}

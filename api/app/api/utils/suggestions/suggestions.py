@@ -133,7 +133,7 @@ def generate_suggestion(scope, failed_query, parent_id=None):
 
     suggestion_id = log_suggested_query(
         input_text=failed_query,
-        reason="failed_query_suggestion",
+        reason="successful_query_suggestion",
         parent_id=parent_id,
         suggested_query=suggested_query,
         app_name=scope,

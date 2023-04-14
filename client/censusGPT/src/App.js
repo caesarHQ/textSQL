@@ -79,6 +79,7 @@ if (process.env.REACT_APP_HOST_ENV === 'dev') {
 }
 
 let currentGenerationId = null
+let currentSuggestionId = null
 
 
 function App(props) {
@@ -222,7 +223,7 @@ function App(props) {
     }
 
     const getSuggestionForFailedQuery = async () => {
-        console.log('generationId: ', currentGenerationId)
+        currentSuggestionId = null
         const options = {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
@@ -247,7 +248,7 @@ function App(props) {
                 // Set the state for SQL and Status Code
                 console.log('Backend Response ==>', response)
 
-                if (response.generation_id) currentGenerationId = response.generation_id
+                if (response.generation_id) currentSuggestionId = response.generation_id
 
                 setSuggestedQuery(response.suggested_query)
             })
@@ -265,12 +266,14 @@ function App(props) {
     }
 
     const getSuggestionForQuery = async () => {
+        currentSuggestionId = null
         const options = {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
                 natural_language_query: query,
                 scope: props.version === 'San Francisco' ? 'SF' : 'USA',
+                generation_id: currentGenerationId
             }),
         }
 
@@ -287,6 +290,8 @@ function App(props) {
                 posthog.capture('backend_response', response)
                 // Set the state for SQL and Status Code
                 console.log('Backend Response ==>', response)
+                
+                if (response.generation_id) currentSuggestionId = response.generation_id
 
                 setSuggestedQuery(response.suggested_query)
             })
@@ -1025,6 +1030,7 @@ function App(props) {
                                 suggestedQuery={suggestedQuery}
                                 setTitle={setTitle}
                                 fetchBackend={fetchBackend}
+                                currentSuggestionId = {currentSuggestionId}
                             />
                         </form>
                     </div>

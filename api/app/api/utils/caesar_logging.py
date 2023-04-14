@@ -157,3 +157,23 @@ def log_suggested_query(input_text="", reason="", app_name="", parent_id=None, s
     print('suggested query id: ', generation_id)
 
     return str(generation_id)
+
+def update_suggestion_as_used(suggestion_id):
+    if not EVENTS_ENGINE:
+        None
+
+    params = {
+        "suggestion_id": suggestion_id,
+    }
+
+    update_query = text("""
+        UPDATE suggested_queries
+        SET used_at = CURRENT_TIMESTAMP
+        WHERE id = :suggestion_id
+    """)
+    with EVENTS_ENGINE.connect() as conn:
+        # get the ID back
+        result = conn.execute(update_query, params)
+        conn.commit()
+
+    return True
