@@ -442,7 +442,7 @@ function App(props) {
             })
     }
 
-    const getTables = (natural_language_query) => {
+    const getTables = async (natural_language_query) => {
         setIsGetTablesLoading(true)
 
         let requestBody = {
@@ -456,27 +456,22 @@ function App(props) {
             body: JSON.stringify(requestBody)
         }
 
-        return fetch(api_endpoint + '/api/get_tables', options)
-            .then((response) => response.json())
-            .then((response) => {
-                setIsGetTablesLoading(false)
-
-                if (!response || !response.table_names) {
-                    setTableNames()
-                    posthog.capture('getTables_backend_error', response)
-                    setErrorMessage('Something went wrong. Please try again or try a different query')
-                    return false
-                }
-
-                if (response.table_names.length === 0) {
-                    setShowExplanationModal('no_tables')
-                    return false
-                }
-
-                posthog.capture('getTables_backend_response', response)
-                setTableNames(response.table_names)
-                return response.table_names
-            })
+        const response = await fetch(api_endpoint + '/api/get_tables', options)
+        const response_1 = await response.json()
+        setIsGetTablesLoading(false)
+        if (!response_1 || !response_1.table_names) {
+            setTableNames()
+            posthog.capture('getTables_backend_error', response_1)
+            setErrorMessage('Something went wrong. Please try again or try a different query')
+            return false
+        }
+        if (response_1.table_names.length === 0) {
+            setShowExplanationModal('no_tables')
+            return false
+        }
+        posthog.capture('getTables_backend_response', response_1)
+        setTableNames(response_1.table_names)
+        return response_1.table_names
     }
 
     const TableNamesDisplay = () => (
