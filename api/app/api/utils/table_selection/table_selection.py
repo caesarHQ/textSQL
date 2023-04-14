@@ -20,7 +20,7 @@ def _extract_text_from_markdown(text):
 def _get_table_selection_message_with_descriptions(scope="USA"):
     message = (
         """
-        You are an expert data scientiest.
+        You are an expert data scientist.
         Return a JSON object with relevant SQL tables for answering the following natural language query:
         ---------------
         {natural_language_query}
