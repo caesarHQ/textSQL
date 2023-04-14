@@ -11,12 +11,13 @@ import Table from './components/table'
 import LoadingSpinner from './components/loadingSpinner'
 import Examples from './components/examples'
 import ErrorMessage from './components/error'
-import * as Sentry from '@sentry/react'
 import toast, { Toaster } from 'react-hot-toast'
 import Disclaimer from './components/disclaimer'
 import { VizSelector } from './components/vizSelector'
 import { ExplanationModal } from './components/explanationModal'
 import DataPlot from './components/dataPlot'
+
+import { logSentryError } from './utils/loggers/sentry'
 
 // Utils
 import {
@@ -60,6 +61,8 @@ localStorage.theme === 'dark' ||
     ? document.documentElement.classList.add('dark')
     : document.documentElement.classList.remove('dark')
 
+
+const POSTHOG_KEY = process.env.REACT_APP_POSTHOG_KEY
 // Init posthog
 posthog.init('phc_iLMBZqxwjAjaKtgz29r4EWv18El2qg3BIJoOOpw7s2e', {
     api_host: 'https://app.posthog.com',
@@ -253,10 +256,7 @@ function App(props) {
                 setSuggestedQuery(response.suggested_query)
             })
             .catch((err) => {
-                Sentry.setContext('queryContext', {
-                    query: query
-                })
-                Sentry.captureException(err)
+                logSentryError({query}, err)
                 setIsLoading(false)
                 posthog.capture('backend_error', {
                     error: err,
@@ -296,10 +296,7 @@ function App(props) {
                 setSuggestedQuery(response.suggested_query)
             })
             .catch((err) => {
-                Sentry.setContext('queryContext', {
-                    query: query
-                })
-                Sentry.captureException(err)
+                logSentryError({query}, err)
                 setIsLoading(false)
                 posthog.capture('backend_error', {
                     error: err,
@@ -447,10 +444,7 @@ function App(props) {
                 }
             })
             .catch((err) => {
-                Sentry.setContext('queryContext', {
-                    query: query
-                })
-                Sentry.captureException(err)
+                logSentryError({query}, err)
                 setIsLoading(false)
                 posthog.capture('backend_error', {
                     error: err,
@@ -479,10 +473,7 @@ function App(props) {
             })
             .catch((err) => {
                 setSqlExplanation()
-                Sentry.setContext('queryContext', {
-                    query: query
-                })
-                Sentry.captureException(err)
+                logSentryError({query}, err)
                 setIsExplainSqlLoading(false)
                 posthog.capture('explainSql_backend_error', {
                     error: err,
@@ -785,12 +776,10 @@ function App(props) {
             }
         })
         .catch((err) => {
-
-            Sentry.setContext('queryContext', {
+            logSentryError({
                 query: query,
                 ...responseOuter,
-            })
-            Sentry.captureException(err)
+            }, err)
             setIsLoading(false)
             setTableNames()
             posthog.capture('backend_error', {
