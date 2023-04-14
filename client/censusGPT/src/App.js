@@ -16,6 +16,7 @@ import toast, { Toaster } from 'react-hot-toast'
 import Disclaimer from './components/disclaimer'
 import { VizSelector } from './components/vizSelector'
 import { ExplanationModal } from './components/explanationModal'
+import DataPlot from './components/dataplot'
 
 // Utils
 import {
@@ -228,7 +229,7 @@ function App(props) {
             }),
         }
 
-        fetch(api_endpoint + '/api/get_suggested_query', options)
+        fetch(api_endpoint + '/api/get_suggestion_failed_query', options)
             .then((response) => response.json())
             .then((response) => {
                 // Handle errors
