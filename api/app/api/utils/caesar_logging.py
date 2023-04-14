@@ -79,7 +79,7 @@ def calculate_cost(model, input_tokens, output_tokens):
     return cost
 
 
-def log_input_classification(app_name, input_text, metadata):
+def log_input_classification(app_name, input_text, metadata, parent_id):
     if not EVENTS_ENGINE:
         return None
 
@@ -87,11 +87,12 @@ def log_input_classification(app_name, input_text, metadata):
         "app_name": app_name,
         "input_text": input_text,
         "metadata": json.dumps(metadata),
+        "parent_id": parent_id,
     }
 
     insert_query = text("""
-        INSERT INTO input_classifications (app_name, input_text, metadata)
-        VALUES (:app_name, :input_text, :metadata)
+        INSERT INTO input_classifications (app_name, input_text, metadata, parent_id)
+        VALUES (:app_name, :input_text, :metadata, :parent_id)
         returning id
     """)
 

@@ -46,6 +46,9 @@ def get_tables():
     """
     request_body = request.get_json()
     natural_language_query = request_body.get("natural_language_query")
+    parent_id = request_body.get("parent_id")
+    if parent_id in ["", "None", "null" ]:
+        parent_id = None
 
     if not natural_language_query:
         error_msg = 'natural_language_query is missing from request body'
@@ -56,7 +59,7 @@ def get_tables():
 
     async def run_tasks():
         relevant_tables_task = asyncio.create_task(get_relevant_tables_async(natural_language_query, scope))
-        labels_task = asyncio.create_task(create_labels(natural_language_query, scope))
+        labels_task = asyncio.create_task(create_labels(natural_language_query, scope, parent_id=parent_id))
 
         table_names = await relevant_tables_task
         generation_id = await labels_task

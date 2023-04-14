@@ -6,7 +6,7 @@ from app.api.utils.caesar_logging import log_input_classification
 
 from app.api.utils.table_selection.table_details import get_minimal_table_schemas
 
-async def create_labels(user_input, scope="USA") -> bool:
+async def create_labels(user_input, scope="USA", parent_id=None) -> bool:
     """
     Create labels for the user input
     """
@@ -45,7 +45,7 @@ Thanks! Provide the JSON and only the JSON. Values should be in all lowercase.""
     except:
         parsed = {}
 
-    generation_id = log_input_classification(scope, user_input, parsed)
+    generation_id = log_input_classification(scope, user_input, parsed, parent_id)
 
     # is_relevant_query = parsed.get("has_relevant_table", False)
 
