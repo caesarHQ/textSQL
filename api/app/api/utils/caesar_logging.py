@@ -130,7 +130,7 @@ def log_sql_failure(input_text, sql_script, failure_message, attempt_number, app
 
 def log_suggested_query(input_text="", reason="", app_name="", parent_id=None, suggested_query="", prompt="", model=""):
     if not EVENTS_ENGINE:
-        None
+        return None
 
     params = {
         "input_text": input_text,
@@ -158,7 +158,7 @@ def log_suggested_query(input_text="", reason="", app_name="", parent_id=None, s
 
 def update_suggestion_as_used(suggestion_id):
     if not EVENTS_ENGINE:
-        None
+        return None
 
     params = {
         "suggestion_id": suggestion_id,
@@ -177,6 +177,9 @@ def update_suggestion_as_used(suggestion_id):
     return True
 
 def create_session(app_name, user_id):
+    if not EVENTS_ENGINE:
+        return None
+
     parms = {
         "app_name": app_name,
         "user_id": user_id,
