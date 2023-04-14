@@ -9,7 +9,6 @@ You can now connect your own database & datasets to textSQL and self-host the se
 - Empowering researchers. Enabling journalists and other researchers to more easily explore data
 - Business intelligence. Reducing the burden on technical employees to build & run queries for non-technical
 
-
 ### Setup instructions
 
 These instructions will walk you through running your own API and client. You can run this all on localhost and then deploy it wherever you would like.
@@ -52,7 +51,9 @@ $ ./scripts/dev.sh
 
 ## Client
 
-A front-end streamlit application for Text-to-SQL (or you can use your own UI)
+A front-end streamlit application for Text-to-SQL (alternatively you can use your own frontend)
+
+<img width="600" alt="Screenshot 2023-04-13 at 8 48 24 PM" src="https://user-images.githubusercontent.com/10172332/231936806-80274258-7c3d-414c-bc1e-a2f98e6c4dff.png">
 
 #### Prerequisites
 `python3.10`
