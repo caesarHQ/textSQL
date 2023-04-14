@@ -5,7 +5,6 @@ import bbox from '@turf/bbox'
 import posthog from 'posthog-js'
 import * as turf from '@turf/turf'
 import { ImSpinner } from 'react-icons/im'
-import Plot from 'react-plotly.js'
 
 // Components
 import Table from './components/table'
@@ -37,11 +36,6 @@ import {
     pointsLayer
 } from './utils/mapbox-ui-config'
 import NeighborhoodGeoData from './utils/sf_analysis_neighborhoods.js'
-
-// Plotly UI configuration
-import {
-    getPlotConfig
-} from './utils/plotly-ui-config'
 
 import './css/App.css'
 import {
@@ -82,20 +76,6 @@ let api_endpoint = process.env.REACT_APP_API_URL || 'https://dev-text-sql-be.onr
 if (process.env.REACT_APP_HOST_ENV === 'dev') {
     api_endpoint = 'http://localhost:9000'
 }
-
-
-const DataPlot = (props) => {
-    let config = getPlotConfig(props.rows, props.cols)
-
-    return (
-        <Plot
-            data={config.data}
-            layout={{ ...config.layout, paper_bgcolor: 'transparent', plot_bgcolor: 'transparent' }}
-            style={{ width: '100%', height: '100%' }}
-            config={{ responsive: true, displayModeBar: false }}
-        />
-    );
-};
 
 
 function App(props) {
