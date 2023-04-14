@@ -23,9 +23,10 @@ We already created the tables in the database with the following enums and CREAT
 
 Ensure to include which table each column is from
 Use CTE format for computing subqueries.
+
 Write your answer as:
-<comments about the tables/columns/enums above to use>
-<comments about whether the columns and enums in those tables will handle that data, explaining any possible issues or terms in the enums that could be relevant>
+<1 to 2 sentences about the tables/columns/enums above to use>
+<1 to 2 sentences about whether the columns and enums in those tables will handle that data, explaining any possible issues or terms in the enums that could be relevant>
 ```
 <your query>
 ```
@@ -56,9 +57,13 @@ We already created the tables in the database with the following enums and CREAT
 {}
 ---------------------
 
+Ensure to include which table each column is from
+Use CTE format for computing subqueries.
+
 Write your answer as:
-<comments about the tables/columns/enums above to use and what might be causing errors>
-<comments about whether the columns and enums in those tables will handle that data, explaining any possible issues or terms in the enums that could be relevant>
+<1 to 2 sentences about the tables/columns/enums above to use>
+<1 to 2 sentences about whether the columns and enums in those tables will handle that data, explaining any possible issues or terms in the enums that could be relevant>
+if the data isn't available, just return a select statement with why it won't work (e.g. select 'no data about space aliens' if asked about space aliens)
 ```
 <your query>
 ```
@@ -70,7 +75,7 @@ def get_initial_prompt(dialect: str, schemas: str, scope: str="USA") -> str:
     Crates the initial prompt for the given scope formatted to the given dialect and schemas.
 
     Args:
-        dialect (str): This is somehting I should know what it is
+        dialect (str): This is something I should know what it is
         schemas (str): The schemas of the tables (currently formatted as CREATE TABLE...)
         scope (str, optional): The project the prompt belongs to (e.g. USA, SF, etc.), defaults to 'USA'
 
@@ -88,7 +93,7 @@ def get_retry_prompt(dialect: str, natural_language_query:str, schemas: str, sco
     Crates the retry prompt for the given scope formatted to the given dialect and schemas.
 
     Args:
-        dialect (str): This is somehting I should know what it is
+        dialect (str): This is something I should know what it is
         natural_language_query (str): The natural language query that the user is trying to answer
         schemas (str): The schemas of the tables (currently formatted as CREATE TABLE...)
         scope (str, optional): The project the prompt belongs to (e.g. USA, SF, etc.), defaults to 'USA'
