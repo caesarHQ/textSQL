@@ -18,6 +18,7 @@ import DataPlot from './components/dataPlot'
 
 import { logSentryError } from './utils/loggers/sentry'
 import { capturePosthog } from './utils/loggers/posthog'
+import { getUserId } from './utils/user'
 
 
 // Utils
@@ -77,6 +78,8 @@ if (process.env.REACT_APP_HOST_ENV === 'dev') {
 
 let currentGenerationId = null
 let currentSuggestionId = null
+let userId = null
+let sessionId = null
 
 
 function App(props) {
@@ -218,6 +221,30 @@ function App(props) {
     const handleClearSearch = () => {
         setQuery('')
     }
+
+    const getSession = async () =>{
+        console.log('getting session')
+        const options = {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                scope: props.version === 'San Francisco' ? 'SF' : 'USA'
+            })
+        }
+        console.log('ooo?', api_endpoint + '/api/session')
+        fetch(api_endpoint + '/api/session', options)
+            .then((response) => response.json())
+            .then((response) => {
+                console.log('Backend Response ==>', response)
+                sessionId = response.session_id
+            })
+            .catch((error) => {
+                console.log('error', error)
+                capturePosthog('backend_error', error)
+            })
+    }
+    console.log('session data: ', {userId, sessionId})
 
     const getSuggestionForFailedQuery = async () => {
         currentSuggestionId = null
@@ -801,7 +828,9 @@ function App(props) {
                 setQuery(urlSearch)
                 debouncedFetchBackend(urlSearch)
             }
-    }
+        }
+        userId = getUserId()
+        getSession()
     }, [])
 
     const handleSearchClick = (event) => {

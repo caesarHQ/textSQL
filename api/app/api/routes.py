@@ -13,7 +13,7 @@ from .utils.classification.input_classification import create_labels
 from .utils.table_selection.table_details import get_all_table_names
 from .utils.table_selection.table_selection import get_relevant_tables_async
 from .utils.suggestions.suggestions import generate_suggestion_failed_query, generate_suggestion
-from .utils.caesar_logging import update_suggestion_as_used
+from .utils.caesar_logging import update_suggestion_as_used, create_session
 from .utils.logging.sentry import capture_exception
 
 def replace_unsupported_localities(original_string, scope="USA"):
@@ -185,3 +185,12 @@ def accept_suggestion():
     generation_id = request_body.get('id')
     update_suggestion_as_used(generation_id)
     return {"status": "success"}
+
+@bp.route('/session', methods=['POST'])
+def get_session():
+    # check the JSON
+    request_body = request.get_json()
+    user_id = request_body.get('user_id')
+    scope = request_body.get('scope', 'USA')
+    session = create_session(scope, user_id)
+    return make_response(jsonify({'session_id': session}), 200)
