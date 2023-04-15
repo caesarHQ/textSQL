@@ -78,7 +78,7 @@ def _get_query_suggestion_messages(scope="USA"):
     return default_messages
 
 
-def generate_suggestion_failed_query(scope, failed_query, parent_id=None):
+def generate_suggestion_failed_query(scope, failed_query, parent_id=None, session_id=None):
     """
     Get suggested query based on failed query
     """
@@ -97,7 +97,8 @@ def generate_suggestion_failed_query(scope, failed_query, parent_id=None):
         messages=messages,
         model=model,
         scope="USA",
-        purpose="failed_query_suggestion"
+        purpose="failed_query_suggestion",
+        session_id=session_id
         )["message"]["content"]
     suggested_query = response
 
@@ -108,7 +109,8 @@ def generate_suggestion_failed_query(scope, failed_query, parent_id=None):
         suggested_query=suggested_query,
         app_name=scope,
         prompt=prompt,
-        model=model
+        model=model,
+        session_id=session_id
     )
 
     return suggested_query, str(suggestion_id)
