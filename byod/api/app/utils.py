@@ -3,6 +3,7 @@ import re
 from typing import Dict, List
 
 import openai
+from app.config import DB_MANAGED_METADATA
 from app.extensions import db
 from app.models.in_context_examples import InContextExamples
 
@@ -12,6 +13,11 @@ def load_in_context_examples():
     Setup in context examples dict
     """
     global IN_CONTEXT_EXAMPLES_DICT
+
+    if not DB_MANAGED_METADATA:
+        with open("app/models/json/in_context_examples.json", "r") as f:
+            IN_CONTEXT_EXAMPLES_DICT = json.load(f)
+        return
 
     try:
         in_context_examples = InContextExamples.query.all()
@@ -42,7 +48,8 @@ def get_few_shot_messages(mode: str = "text_to_sql") -> List[Dict]:
 def get_assistant_message(
         messages: List[Dict[str, str]],
         temperature: int = 0,
-        model: str = "gpt-3.5-turbo",
+        model: str = "gpt-3.5-0301",
+        # model: str = "gpt-3.5-turbo",
         # model: str = "gpt-4",
 ):
     res = openai.ChatCompletion.create(

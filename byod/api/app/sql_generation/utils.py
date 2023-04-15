@@ -9,55 +9,63 @@ from ..utils import (extract_sql_query_from_message, get_assistant_message,
                      get_few_shot_messages)
 
 MSG_WITH_ERROR_TRY_AGAIN = (
-    "Try again. "
-    "Only respond with valid SQL. Write your answer in markdown format. "
-    "The SQL query you just generated resulted in the following error message:\n"
-    "{error_message}"
+    """
+    Try again.
+    Only respond with valid SQL. Make sure to write your answer in markdown format.
+    The SQL query you just generated resulted in the following error message:
+    ---------------------
+    {error_message}
+    ---------------------
+    """
 )
 
 
 def make_default_messages(schemas_str: str) -> List[Dict[str, str]]:
-    default_messages = [{
-        "role": "system",
-        "content": (
-            "You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command."
-            "\n"
-            "The following are tables you can query:\n"
-            "---------------------\n"
-            + schemas_str +
-            "---------------------\n"
-            # TODO: place warnings here
-            # " Make sure each value in the result table is not null."
-            " Write your answer in markdown format.\n"
-        )
-    }]
+    # default_messages = [{
+    #     "role": "system",
+    #     "content": (
+    #         f"""
+    #         You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command.
+    #         The following are tables you can query:
+    #         ---------------------
+    #         {schemas_str}
+    #         ---------------------
+    #         Make sure to write your answer in markdown format.
+    #         """
+    #         # TODO: place warnings here
+    #         # i.e. "Make sure each value in the result table is not null."
+    #     )
+    # }]
+    default_messages = []
     default_messages.extend(get_few_shot_messages(mode="text_to_sql"))
     return default_messages
 
 
 def make_rephrase_msg_with_schema_and_warnings():
     return (
-        "Let's start by fixing and rephrasing the query to be more analytical. Use the schema context to rephrase the user question in a way that leads to optimal query results: {natural_language_query}"
-        "The following are schemas of tables you can query:\n"
-        "---------------------\n"
-        "{schemas_str}"
-        "\n"
-        "---------------------\n"
-        "Do not include any of the table names in the query."
-        " Ask the natural language query the way a data analyst, with knowledge of these tables, would."
+        """
+        Let's start by fixing and rephrasing the query to be more analytical. Use the schema context to rephrase the user question in a way that leads to optimal query results: {natural_language_query}
+        The following are schemas of tables you can query:
+        ---------------------
+        {schemas_str}
+        ---------------------
+        Do not include any of the table names in the query.
+        Ask the natural language query the way a data analyst, with knowledge of these tables, would.
+        """
     )
 
 def make_msg_with_schema_and_warnings():
     return (
-        "Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}"
-        "The following are schemas of tables you can query:\n"
-        "---------------------\n"
-        "{schemas_str}"
-        "\n"
-        "---------------------\n"
+        """
+        Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}
+        The following are schemas of tables you can query:
+        ---------------------
+        {schemas_str}
+        ---------------------
+        Make sure to write your answer in markdown format.
+        """
         # TODO: place warnings here
-        # " Make sure each value in the result table is not null."
-        " Write your answer in markdown format.\n"
+        #  i.e. "Make sure each value in the result table is not null.""
     )
 
 def is_read_only_query(sql_query: str) -> bool:
@@ -155,7 +163,8 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     for _ in range(k):
         try:
             # model = "gpt-4"
-            model = "gpt-3.5-turbo"
+            # model = "gpt-3.5-turbo"
+            model = "gpt-3.5-turbo-0301"
             assistant_message = get_assistant_message(messages, model=model)
             sql_query = extract_sql_query_from_message(assistant_message["message"]["content"])
 

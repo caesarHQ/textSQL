@@ -11,9 +11,7 @@ def get_message_with_descriptions():
 def get_default_messages():
     default_messages = [{
         "role": "system",
-        "content": (
-            "You are a helpful assistant for providing an explanation for a SQL query."
-        )
+        "content": "You are a helpful assistant for providing an explanation for a SQL query."
     }]
     default_messages.extend(get_few_shot_messages(mode="sql_explanation"))
     return default_messages

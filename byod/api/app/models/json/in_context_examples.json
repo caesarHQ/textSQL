@@ -1,0 +1,99 @@
+{
+    "table_selection": [
+        {
+          "user": "What causes of death have increased the most for all individuals in Alameda County from 2020 to 2016",
+          "assistant": "```\n{\n    \"tables\": [\"rates_county_age_adjusted_rate\"]\n}\n```"
+        },
+        {
+          "user": "What zip codes have had the most deaths in 2020",
+          "assistant": "```\n{\n    \"tables\": [\"rates_zip_death_count\"]\n}\n```"
+        },
+        {
+          "user": "What zip codes and races had the most deaths in 2020 ",
+          "assistant": "```\n{\n    \"tables\": [\"rates_zip_death_count\"]\n}\n```"
+        },
+        {
+          "user": "What zip codes had the most deaths in 2020 by sex",
+          "assistant": "```\n{\n    \"tables\": [\"rates_zip_death_count\"]\n}\n```"
+        },
+        {
+          "user": "What zip codes had the most deaths in 2020 by race",
+          "assistant": "```\n{\n    \"tables\": [\"rates_zip_death_count\"]\n}\n```"
+        },
+        {
+          "user": "How many deaths per year have occurred by zip code and by cause of death",
+          "assistant": "```\n{\n    \"tables\": [\"rates_zip_death_count\"]\n}\n```"
+        },
+        {
+          "user": "How many deaths per year in black people have occurred by zip code and by cause of death",
+          "assistant": "```\n{\n    \"tables\": [\"rates_zip_death_count\"]\n}\n```"
+        },
+        {
+          "user": "How many deaths per year have occurred by zip code and race for suicide",
+          "assistant": "```\n{\n    \"tables\": [\"rates_zip_death_count\"]\n}\n```"
+        },
+        {
+          "user": "What are the homicide rates by sex, race, and year for all of alameda",
+          "assistant": "```\n{\n    \"tables\": [\"rates_county_age_adjusted_rate\"]\n}\n```"
+        },
+        {
+          "user": "What are the homicide rates by city and year for all of alameda",
+          "assistant": "```\n{\n    \"tables\": [\"rates_city_age_adjusted_rate\"]\n}\n```"
+        },
+        {
+          "user": "What are the top mortality rates by cause of death by city and year",
+          "assistant": "```\n{\n    \"tables\": [\"rates_city_age_adjusted_rate\"]\n}\n```"
+        }
+    ],
+    "text_to_sql": [
+        {
+          "user": "What causes of death have increased the most for all individuals in Alameda County from 2020 to 2016?",
+          "assistant": "```SELECT t1.\"Year\",\n       t2.\"Year\",\n       t1.\"Place\",\n       t1.\"Indicator\",\n       t1.age_adjusted_rate - t2.age_adjusted_rate AS difference\nFROM public.rates_county_age_adjusted_rate t1\nINNER JOIN public.rates_county_age_adjusted_rate t2 ON t1.\"Sex\" = t2.\"Sex\"\nAND t1.final_race = t2.final_race\nAND t1.\"Indicator\" = t2.\"Indicator\"\nWHERE t2.\"Year\" = '2020'\n  AND t1.\"Year\" = '2016'\n  AND t1.\"Sex\"= 'Both Sexes'\n  AND t2.\"Sex\"= 'Both Sexes'\n  AND t1.final_race = 'All Races'\n  AND t2.final_race = 'All Races'\nORDER BY difference DESC;```"
+        },
+        {
+          "user": "What zip codes have had the most deaths in 2020",
+          "assistant": "```SELECT \"Place\",\n       SUM(\"Numerator_total\")\nFROM public.rates_zip_death_count\nWHERE \"Sex\"= 'Both Sexes'\n  AND final_race = 'All Races'\n  AND \"Indicator\"= 'All Cause Mortality'\n  AND \"Year\" = '2020'\nGROUP BY \"Place\"\nORDER BY SUM(\"Numerator_total\") DESC;```"
+        },
+        {
+          "user": "What zip codes and races had the most deaths in 2020",
+          "assistant": "```SELECT \"Place\",\n       final_race,\n       SUM(\"Numerator_total\")\nFROM public.rates_zip_death_count\nWHERE \"Sex\"= 'Both Sexes'\n  AND \"Indicator\"= 'All Cause Mortality'\n  AND final_race != 'All Races'\n  AND \"Year\" = '2020'\nGROUP BY \"Place\",\n         final_race\nORDER BY SUM(\"Numerator_total\") DESC;```"
+        },{
+          "user": "What zip codes had the most deaths in 2020 by sex",
+          "assistant": "```SELECT \"Place\",\n       \"Sex\",\n       SUM(\"Numerator_total\")\nFROM public.rates_zip_death_count\nWHERE \"Sex\"!= 'Both Sexes'\n  AND \"Indicator\"= 'All Cause Mortality'\n  AND final_race = 'All Races'\n  AND \"Year\" = '2020'\nGROUP BY \"Place\",\n         \"Sex\"\nORDER BY SUM(\"Numerator_total\") DESC;```"
+        },
+        {
+          "user": "What zip codes had the most deaths in 2020 by race",
+          "assistant": "```SELECT \"Place\",\n       final_race,\n       \"Year\",\n       SUM(\"Numerator_total\")\nFROM public.rates_zip_death_count\nWHERE \"Sex\"= 'Both Sexes'\n  AND \"Indicator\"= 'All Cause Mortality'\n  AND final_race != 'All Races'\nGROUP BY \"Place\",\n         final_race,\n         \"Year\"\nORDER BY SUM(\"Numerator_total\") DESC;```"
+        },
+        {
+          "user": "How many deaths per year have occurred by zip code and by cause of death",
+          "assistant": "```SELECT \"Indicator\",\n       \"Year\",\n       SUM(\"Numerator_total\")\nFROM public.rates_zip_death_count\nWHERE \"Sex\"= 'Both Sexes'\n  AND \"Indicator\" != 'All Cause Mortality'\n  AND final_race = 'All Races'\nGROUP BY \"Indicator\",\n         \"Year\"\nORDER BY SUM(\"Numerator_total\") DESC;```"
+        },
+        {
+          "user": "How many deaths per year in black people have occurred by zip code and by cause of death",
+          "assistant": "```SELECT \"Indicator\",\n       \"Year\",\n       SUM(\"Numerator_total\")\nFROM public.rates_zip_death_count\nWHERE \"Sex\"= 'Both Sexes'\n  AND \"Indicator\" != 'All Cause Mortality'\n  AND final_race = 'African American/Black'\nGROUP BY \"Indicator\",\n         \"Year\"\nORDER BY SUM(\"Numerator_total\") DESC;```"
+        },
+        {
+          "user": "How many deaths per year have occurred by zip code and race for suicide",
+          "assistant": "```SELECT \"Sex\",\n       final_race,\n       \"Year\",\n       SUM(\"Numerator_total\")\nFROM public.rates_zip_death_count\nWHERE \"Sex\"!= 'Both Sexes'\n  AND \"Indicator\" = 'Intentional self-harm (suicide)'\n  AND final_race != 'All Races'\nGROUP BY \"Sex\",\n         final_race,\n         \"Year\"\nORDER BY SUM(\"Numerator_total\") DESC;```"
+        },
+        {
+          "user": "What are the homicide rates by sex, race, and year for all of alameda",
+          "assistant": "```SELECT \"Sex\",\n       final_race,\n       \"Year\",\n       age_adjusted_rate\nFROM public.rates_county_age_adjusted_rate\nWHERE \"Sex\"!= 'Both Sexes'\n  AND \"Indicator\" = 'Assault (homicide)'\n  AND final_race != 'All Races'\nORDER BY age_adjusted_rate DESC;```"
+        },
+        {
+          "user": "What are the homicide rates by city and year for all of alameda",
+          "assistant": "```SELECT \"Year\",\n       \"Place\",\n       age_adjusted_rate\nFROM public.rates_city_age_adjusted_rate\nWHERE \"Sex\"= 'Both Sexes'\n  AND \"Indicator\" = 'Assault (homicide)'\n  AND final_race = 'All Races'\nORDER BY age_adjusted_rate DESC;```"
+        },
+        {
+          "user": "What are the top mortality rates by cause of death by city and year",
+          "assistant": "```SELECT \"Year\",\n       \"Place\",\n       \"Indicator\",\n       age_adjusted_rate\nFROM public.rates_city_age_adjusted_rate\nWHERE \"Sex\"= 'Both Sexes'\n  AND \"Indicator\" != 'All Cause Mortality'\n  AND final_race = 'All Races'\nORDER BY age_adjusted_rate DESC;```"
+        }
+    ],
+    "visualization": [
+        {
+          "user": "{\n  \"fields\": [\n    {\n      \"name\": \"a\",\n      \"type\": \"quantitative\",\n      \"sample_value\": 1\n    },\n    {\n      \"name\": \"b\",\n      \"type\": \"quantitative\",\n      \"sample_value\": 2\n    }\n  ],\n  \"total_rows\": 10\n}",
+          "assistant": "{\n  \"mark\": {\n    \"type\": \"circle\",\n    \"tooltip\": true\n  },\n  \"encoding\": {\n    \"x\": {\n      \"field\": \"a\",\n      \"type\": \"quantitative\"\n    },\n    \"y\": {\n      \"field\": \"b\",\n      \"type\": \"quantitative\"\n    },\n    \"size\": {\n      \"field\": \"c\",\n      \"type\": \"quantitative\"\n    },\n    \"color\": {\n      \"field\": \"c\",\n      \"type\": \"quantitative\"\n    }\n  }\n}"
+        }
+    ]
+}

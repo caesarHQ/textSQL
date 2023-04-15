@@ -1,4 +1,4 @@
-from app.config import FlaskAppConfig
+from app.config import FlaskAppConfig, DB_MANAGED_METADATA
 from app.extensions import db
 # import models to create tables if they don't exist
 from app.models import in_context_examples, table_metadata, type_metadata
@@ -25,7 +25,8 @@ def create_app(config_object=FlaskAppConfig):
     db.init_app(app)
     migrate = Migrate(app, db)
     with app.app_context():
-        db.create_all()
+        if DB_MANAGED_METADATA:
+            db.create_all()
         load_tables_and_types_metadata()
         load_in_context_examples()
     admin = Admin(None, name='admin', template_mode='bootstrap3')

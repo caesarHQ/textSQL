@@ -1,19 +1,28 @@
 from typing import Dict, List
 
+from app.config import DB_MANAGED_METADATA
+from app.extensions import db
 from sqlalchemy import text
 
 from ..config import ENGINE
 from ..models.in_context_examples import InContextExamples
 from ..models.table_metadata import TableMetadata
 from ..models.type_metadata import TypeMetadata
-from app.extensions import db
+from ..table_selection.utils import (ENUMS_METADATA_DICT, TABLES_METADATA_DICT,
+                                     save_enums_metadata_to_json,
+                                     save_tables_metadata_to_json)
 
 # TODO: implement commands for MySQL
+
 
 def save_table_metadata(table_name, table_metadata):
     """
     Save table metadata to database
     """
+    if not DB_MANAGED_METADATA:
+        TABLES_METADATA_DICT[table_name] = table_metadata
+        save_tables_metadata_to_json()
+        return
     try:
         tm = TableMetadata.query.filter_by(table_name=table_name).one_or_none()
         if tm:
@@ -34,6 +43,10 @@ def save_type_metadata(type_name, type_metadata):
     """
     Save type metadata to database
     """
+    if not DB_MANAGED_METADATA:
+        ENUMS_METADATA_DICT[type_name] = type_metadata
+        save_enums_metadata_to_json()
+        return
     try:
         tm = TypeMetadata.query.filter_by(type_name=type_name).one_or_none()
         if tm:
