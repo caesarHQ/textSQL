@@ -114,7 +114,7 @@ def generate_suggestion_failed_query(scope, failed_query, parent_id=None):
     return suggested_query, str(suggestion_id)
 
 
-def generate_suggestion(scope, failed_query, parent_id=None):
+def generate_suggestion(scope, failed_query, parent_id=None, session_id=None):
     """
     Get suggested query to build on top of a given query or as a similar query
     """
@@ -142,7 +142,8 @@ def generate_suggestion(scope, failed_query, parent_id=None):
         suggested_query=suggested_query,
         app_name=scope,
         prompt=prompt,
-        model=model
+        model=model,
+        session_id=session_id
     )
 
     return suggested_query, str(suggestion_id)

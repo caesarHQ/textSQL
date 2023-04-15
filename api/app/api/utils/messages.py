@@ -14,6 +14,7 @@ def get_assistant_message_from_openai(
         model: str = "gpt-3.5-turbo",
         scope: str = "USA",
         purpose: str = "Generic",
+        session_id: str = None,
         # model: str = "gpt-4",
 ):
     # alright, it looks like gpt-3.5-turbo is ignoring the user messages in history
@@ -42,6 +43,7 @@ def get_assistant_message_from_openai(
         output_tokens,
         scope,
         purpose,
+        session_id = session_id,
     )
 
     # completion = res['choices'][0]["message"]["content"]
@@ -55,6 +57,7 @@ def call_chat(
         model: str = "gpt-3.5-turbo",
         scope: str = "USA",
         purpose: str = "Generic",
+        session_id: str = None,
         # model: str = "gpt-4",
 ):
 
@@ -78,6 +81,7 @@ def call_chat(
         output_tokens,
         scope,
         purpose,
+        session_id = session_id,
     )
 
     # completion = res['choices'][0]["message"]["content"]

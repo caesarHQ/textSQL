@@ -46,9 +46,12 @@ def get_tables():
     """
     request_body = request.get_json()
     natural_language_query = request_body.get("natural_language_query")
+    session_id = request_body.get("session_id")
     parent_id = request_body.get("parent_id")
     if parent_id in ["", "None", "null" ]:
         parent_id = None
+    if session_id in ["", "None", "null" ]:
+        session_id = None
 
     if not natural_language_query:
         error_msg = 'natural_language_query is missing from request body'
@@ -58,8 +61,8 @@ def get_tables():
     natural_language_query = replace_unsupported_localities(natural_language_query, scope)
 
     async def run_tasks():
-        relevant_tables_task = asyncio.create_task(get_relevant_tables_async(natural_language_query, scope))
-        labels_task = asyncio.create_task(create_labels(natural_language_query, scope, parent_id=parent_id))
+        relevant_tables_task = asyncio.create_task(get_relevant_tables_async(natural_language_query, scope, session_id = session_id))
+        labels_task = asyncio.create_task(create_labels(natural_language_query, scope, parent_id=parent_id, session_id = session_id))
 
         table_names = await relevant_tables_task
         generation_id = await labels_task
@@ -93,6 +96,9 @@ def text_to_sql():
     natural_language_query = request_body.get("natural_language_query")
     table_names = request_body.get("table_names")
     scope = request_body.get('scope', "USA")
+    session_id = request_body.get("session_id")
+    if session_id in ["", "None", "null" ]:
+        session_id = None
 
     if not natural_language_query:
         error_msg = '`natural_language_query` is missing from request body'
@@ -104,7 +110,7 @@ def text_to_sql():
         if not table_names:
             table_names = get_all_table_names(scope=scope)
             # table_names = get_relevant_tables(natural_language_query, scope)
-        result, sql_query = text_to_sql_with_retry(natural_language_query, table_names, scope=scope)
+        result, sql_query = text_to_sql_with_retry(natural_language_query, table_names, scope=scope, session_id=session_id)
     except Exception as e:
         capture_exception(e)
         error_msg = f'Error processing request: {str(e)}'
@@ -122,8 +128,11 @@ def get_suggestion_failed_query():
     natural_language_query = request_body.get("natural_language_query")
     scope = request_body.get("scope", "USA")
     parent_id = request_body.get("generation_id")
+    session_id = request_body.get("session_id")
+    if session_id in ["", "None", "null" ]:
+        session_id = None
 
-    suggested_query, generation_id = generate_suggestion_failed_query(scope, natural_language_query, parent_id)
+    suggested_query, generation_id = generate_suggestion_failed_query(scope, natural_language_query, parent_id, session_id)
 
     return make_response(jsonify({"suggested_query": suggested_query, "generation_id": generation_id}), 200)
 
@@ -137,8 +146,11 @@ def get_suggestion():
     natural_language_query = request_body.get("natural_language_query")
     scope = request_body.get("scope", "USA")
     parent_id = request_body.get("generation_id")
+    session_id = request_body.get("session_id")
+    if session_id in ["", "None", "null" ]:
+        session_id = None
 
-    suggested_query, generation_id = generate_suggestion(scope, natural_language_query)
+    suggested_query, generation_id = generate_suggestion(scope, natural_language_query, parent_id, session_id)
     return make_response(jsonify({"suggested_query": suggested_query, "generation_id": generation_id}), 200)
 
 
@@ -187,7 +199,7 @@ def accept_suggestion():
     return {"status": "success"}
 
 @bp.route('/session', methods=['POST'])
-def get_session():
+def get_session_id():
     # check the JSON
     request_body = request.get_json()
     user_id = request_body.get('user_id')

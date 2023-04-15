@@ -3,7 +3,7 @@ from sqlalchemy import text
 
 from app.config import EVENTS_ENGINE
 
-def log_apicall(duration, provider, model, input_tokens, output_tokens, service, purpose):
+def log_apicall(duration, provider, model, input_tokens, output_tokens, service, purpose, session_id=None):
     if not EVENTS_ENGINE:
         return {"status": "no engine"}
     cost = calculate_cost(model, input_tokens, output_tokens)
@@ -17,12 +17,13 @@ def log_apicall(duration, provider, model, input_tokens, output_tokens, service,
         "service": service,
         "purpose": purpose,
         "cost": cost,
-        "success": "true"
+        "success": "true",
+        "session_id": session_id,
     }
 
     insert_query = text("""
-        INSERT INTO apicalls (duration, provider, model, input_tokens, output_tokens, service, purpose, cost, success)
-        VALUES (:duration, :provider, :model, :input_tokens, :output_tokens, :service, :purpose, :cost, :success)
+        INSERT INTO apicalls (duration, provider, model, input_tokens, output_tokens, service, purpose, cost, success, session_id)
+        VALUES (:duration, :provider, :model, :input_tokens, :output_tokens, :service, :purpose, :cost, :success, :session_id)
     """)
 
     with EVENTS_ENGINE.connect() as conn:
@@ -31,7 +32,7 @@ def log_apicall(duration, provider, model, input_tokens, output_tokens, service,
     
     return {"status": "success"}
 
-def log_apicall_failure(duration, provider, model, input_tokens, service, purpose):
+def log_apicall_failure(duration, provider, model, input_tokens, service, purpose, session_id=None):
     if not EVENTS_ENGINE:
         return {"status": "no engine"}
 
@@ -44,12 +45,13 @@ def log_apicall_failure(duration, provider, model, input_tokens, service, purpos
         "service": service,
         "purpose": purpose,
         "cost": 0,
-        "success": "false"
+        "success": "false",
+        "session_id": session_id,
     }
 
     insert_query = text("""
-        INSERT INTO apicalls (duration, provider, model, input_tokens, output_tokens, service, purpose, cost, success)
-        VALUES (:duration, :provider, :model, :input_tokens, :output_tokens, :service, :purpose, :cost, :success)
+        INSERT INTO apicalls (duration, provider, model, input_tokens, output_tokens, service, purpose, cost, success, session_id)
+        VALUES (:duration, :provider, :model, :input_tokens, :output_tokens, :service, :purpose, :cost, :success, :session_id)
     """)
 
     with EVENTS_ENGINE.connect() as conn:
@@ -79,7 +81,7 @@ def calculate_cost(model, input_tokens, output_tokens):
     return cost
 
 
-def log_input_classification(app_name, input_text, metadata, parent_id):
+def log_input_classification(app_name, input_text, metadata, parent_id, session_id=None):
     if not EVENTS_ENGINE:
         return None
 
@@ -88,11 +90,12 @@ def log_input_classification(app_name, input_text, metadata, parent_id):
         "input_text": input_text,
         "metadata": json.dumps(metadata),
         "parent_id": parent_id,
+        "session_id": session_id
     }
 
     insert_query = text("""
-        INSERT INTO input_classifications (app_name, input_text, metadata, parent_id)
-        VALUES (:app_name, :input_text, :metadata, :parent_id)
+        INSERT INTO input_classifications (app_name, input_text, metadata, parent_id, session_id)
+        VALUES (:app_name, :input_text, :metadata, :parent_id, :session_id)
         returning id
     """)
 
@@ -105,7 +108,7 @@ def log_input_classification(app_name, input_text, metadata, parent_id):
     
     return str(generation_id)
 
-def log_sql_failure(input_text, sql_script, failure_message, attempt_number, app_name):
+def log_sql_failure(input_text, sql_script, failure_message, attempt_number, app_name, session_id=None):
     if not EVENTS_ENGINE:
         return {"status": "no engine"}
 
@@ -115,11 +118,12 @@ def log_sql_failure(input_text, sql_script, failure_message, attempt_number, app
         "failure_message": failure_message,
         "attempt_number": attempt_number,
         "app_name": app_name,
+        "session_id": session_id
     }
 
     insert_query = text("""
-        INSERT INTO sql_failures (input_text, sql_script, failure_message, attempt_number, app_name)
-        VALUES (:input_text, :sql_script, :failure_message, :attempt_number, :app_name)
+        INSERT INTO sql_failures (input_text, sql_script, failure_message, attempt_number, app_name, session_id)
+        VALUES (:input_text, :sql_script, :failure_message, :attempt_number, :app_name, :session_id)
     """)
 
     with EVENTS_ENGINE.connect() as conn:
@@ -128,7 +132,7 @@ def log_sql_failure(input_text, sql_script, failure_message, attempt_number, app
     
     return {"status": "success"}
 
-def log_suggested_query(input_text="", reason="", app_name="", parent_id=None, suggested_query="", prompt="", model=""):
+def log_suggested_query(input_text="", reason="", app_name="", parent_id=None, suggested_query="", prompt="", model="", session_id=None):
     if not EVENTS_ENGINE:
         return None
 
@@ -140,11 +144,12 @@ def log_suggested_query(input_text="", reason="", app_name="", parent_id=None, s
         "suggested_query": suggested_query,
         "prompt": prompt,
         "model": model,
+        "session_id": session_id,
     }
 
     insert_query = text("""
-        INSERT INTO suggested_queries (input_text, reason, app_name, parent_id, suggested_query, prompt, model)
-        VALUES (:input_text, :reason, :app_name, :parent_id, :suggested_query, :prompt, :model)
+        INSERT INTO suggested_queries (input_text, reason, app_name, parent_id, suggested_query, prompt, model, session_id)
+        VALUES (:input_text, :reason, :app_name, :parent_id, :suggested_query, :prompt, :model, :session_id)
         returning id
     """)
     with EVENTS_ENGINE.connect() as conn:

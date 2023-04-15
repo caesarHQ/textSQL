@@ -6,7 +6,7 @@ from app.api.utils.caesar_logging import log_input_classification
 
 from app.api.utils.table_selection.table_details import get_minimal_table_schemas
 
-async def create_labels(user_input, scope="USA", parent_id=None) -> bool:
+async def create_labels(user_input, scope="USA", parent_id=None, session_id=None) -> bool:
     """
     Create labels for the user input
     """
@@ -38,14 +38,14 @@ Thanks! Provide the JSON and only the JSON. Values should be in all lowercase.""
 
     messages = [{"role": "user", "content": user_message}]
 
-    assistant_message = call_chat(messages, model="gpt-3.5-turbo", scope=scope, purpose="input_classification")
+    assistant_message = call_chat(messages, model="gpt-3.5-turbo", scope=scope, purpose="input_classification", session_id=session_id)
 
     try:
         parsed = json.loads(assistant_message)
     except:
         parsed = {}
 
-    generation_id = log_input_classification(scope, user_input, parsed, parent_id)
+    generation_id = log_input_classification(scope, user_input, parsed, parent_id, session_id)
 
     # is_relevant_query = parsed.get("has_relevant_table", False)
 

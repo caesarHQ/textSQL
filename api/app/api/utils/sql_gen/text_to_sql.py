@@ -34,7 +34,7 @@ def make_rephrase_msg_with_schema_and_warnings():
         " Ask the natural language query the way a data analyst, with knowledge of these tables, would."
     )
 
-def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=None, scope="USA"):
+def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=None, scope="USA", session_id=None):
     """
     Tries to take a natural language query and generate valid SQL to answer it K times
     """
@@ -69,7 +69,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             else:
                 model = "gpt-3.5-turbo-0301"
             purpose = "text_to_sql" if attempt_number == 0 else "text_to_sql_retry"
-            assistant_message = get_assistant_message_from_openai(messages, model=model, scope=scope, purpose=purpose)
+            assistant_message = get_assistant_message_from_openai(messages, model=model, scope=scope, purpose=purpose, session_id=session_id)
 
             sql_query_data = extract_sql_query_from_message(assistant_message["message"]["content"])
 
@@ -84,7 +84,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
 
         except Exception as e:
             
-            log_sql_failure(natural_language_query, sql_query_data.get('SQL', ""), str(e), attempt_number, scope)
+            log_sql_failure(natural_language_query, sql_query_data.get('SQL', ""), str(e), attempt_number, scope, session_id=session_id)
 
             messages.append({
                 "role": "assistant",
