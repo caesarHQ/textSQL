@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, make_response, request
 
 from ..config import ENGINE
-from .utils import (generate_few_shot_queries, generate_table_metadata,
+from .utils import (ENUMS_METADATA_DICT, TABLES_METADATA_DICT,
+                    generate_few_shot_queries, generate_table_metadata,
                     generate_type_metadata, get_table_names, get_type_names,
                     save_table_metadata, save_type_metadata)
 
@@ -97,6 +98,10 @@ def save_metadata():
 # DEPRECATED
 @bp.route('/setup_metadata', methods=['POST'])
 def setup_metadata():
+
+    # overwrite existing tables and enums metadata
+    TABLES_METADATA_DICT = {}
+    ENUMS_METADATA_DICT = {}
 
     for table_name in get_table_names():
         save_table_metadata(table_name, generate_table_metadata(table_name))
