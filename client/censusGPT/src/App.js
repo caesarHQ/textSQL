@@ -223,7 +223,7 @@ function App(props) {
     }
 
     const getSession = async () =>{
-        console.log('getting session')
+
         const options = {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
@@ -232,11 +232,11 @@ function App(props) {
                 scope: props.version === 'San Francisco' ? 'SF' : 'USA'
             })
         }
-        console.log('ooo?', api_endpoint + '/api/session')
+
         fetch(api_endpoint + '/api/session', options)
             .then((response) => response.json())
             .then((response) => {
-                console.log('Backend Response ==>', response)
+
                 sessionId = response.session_id
             })
             .catch((error) => {
@@ -244,7 +244,6 @@ function App(props) {
                 capturePosthog('backend_error', error)
             })
     }
-    console.log('session data: ', {userId, sessionId})
 
     const getSuggestionForFailedQuery = async () => {
         currentSuggestionId = null
@@ -254,7 +253,8 @@ function App(props) {
             body: JSON.stringify({
                 natural_language_query: query,
                 scope: props.version === 'San Francisco' ? 'SF' : 'USA',
-                generation_id: currentGenerationId
+                generation_id: currentGenerationId,
+                session_id: sessionId
             }),
         }
 
@@ -270,8 +270,6 @@ function App(props) {
                 // Capture the response in posthog
                 capturePosthog('backend_response', response)
                 // Set the state for SQL and Status Code
-                console.log('Backend Response ==>', response)
-
                 if (response.generation_id) currentSuggestionId = response.generation_id
 
                 setSuggestedQuery(response.suggested_query)
@@ -294,7 +292,8 @@ function App(props) {
             body: JSON.stringify({
                 natural_language_query: query,
                 scope: props.version === 'San Francisco' ? 'SF' : 'USA',
-                generation_id: currentGenerationId
+                generation_id: currentGenerationId,
+                session_id: sessionId
             }),
         }
 
@@ -310,7 +309,6 @@ function App(props) {
                 // Capture the response in posthog
                 capturePosthog('backend_response', response)
                 // Set the state for SQL and Status Code
-                console.log('Backend Response ==>', response)
                 
                 if (response.generation_id) currentSuggestionId = response.generation_id
 
@@ -336,7 +334,8 @@ function App(props) {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
-                sql
+                sql,
+                session_id: sessionId
             }),
         }
 
@@ -358,8 +357,6 @@ function App(props) {
                 // Capture the response in posthog
                 capturePosthog('backend_response', response)
 
-                // Set the state for SQL and Status Code
-                console.log('Backend Response ==>', response)
 
                 // Filter out lat and long columns
                 let filteredColumns = response.result.column_names.filter(
@@ -382,7 +379,7 @@ function App(props) {
                 ) {
                     // Get the cities
                     let responseCities = getCities(response.result)
-                    console.log(responseCities)
+
                     if (!responseCities.length) {
                         setErrorMessage('No results were returned')
                         setCities([])
@@ -482,7 +479,8 @@ function App(props) {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
-                sql
+                sql,
+                session_id: sessionId
             })
         }
 
@@ -510,6 +508,7 @@ function App(props) {
         let requestBody = {
             natural_language_query,
             scope: props.version === 'San Francisco' ? 'SF' : 'USA',
+            session_id: sessionId,
         }
 
         const options = {
@@ -589,7 +588,6 @@ function App(props) {
         clearAllButQuery()
         const table_names = await getTables(natural_language_query)
 
-        console.log(table_names)
 
         if (!table_names) {
             await getSuggestionForFailedQuery()
@@ -603,6 +601,7 @@ function App(props) {
             natural_language_query,
             table_names,
             scope: props.version === 'San Francisco' ? 'SF' : 'USA',
+            session_id: sessionId,
         }
 
         // Set the options for the fetch request
@@ -650,14 +649,12 @@ function App(props) {
        
             // Capture the response in posthog
             const duration = new Date().getTime() - startTime
-            console.log({duration})
+
             capturePosthog('backend_response', {...response, duration})
 
             // Set the state for SQL and Status Code
             responseOuter = response
             setSQL(response.sql_query)
-
-            console.log('Backend Response ==>', response)
 
             // Get suggested query built on top of the current query
             await getSuggestionForQuery()
@@ -714,7 +711,7 @@ function App(props) {
             ) {
                 // Get the cities
                 let responseCities = getCities(response.result)
-                console.log(responseCities)
+
                 if (!responseCities.length) {
                     setErrorMessage('No results were returned')
                     setCities([])
