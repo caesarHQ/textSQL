@@ -104,8 +104,6 @@ function App(props) {
     const [mobileHelpIsOpen, setMobileHelpIsOpen] = useState(true)
     const [mobileTableIsOpen, setMobileTableIsOpen] = useState(false)
     const [mobileSqlIsOpen, setMobileSqlIsOpen] = useState(false)
-    const mobileMenuRef = useRef()
-    const mobileHelpRef = useRef()
     const mobileTableRef = useRef()
     const mobileSqlRef = useRef()
     const mapRef = useRef()
@@ -123,22 +121,6 @@ function App(props) {
 
     const tableColumns = tableInfo?.columns
     const tableRows =  tableInfo?.rows
-
-    const onTouchStart = (e) => {
-        if (expandedMobileSearchRef.current?.contains(e.target)) return
-        setTouchEnd(null)
-        setTouchStart(e.targetTouches[0].clientY)
-    }
-
-    const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientY)
-
-    const onTouchEnd = () => {
-        if (!touchStart || !touchEnd) return
-        const distance = touchStart - touchEnd
-        const swipeUp = distance > 50
-        const swipeDown = distance < -225
-        swipeUp && !mobileMenuIsOpen ? setMobileMenuIsOpen(true) : swipeDown && mobileMenuIsOpen ? setMobileMenuIsOpen(false) : null
-    }
 
     useEffect(() => {
         document.title = query || (props.version === 'Census' ? 'Census GPT' : 'San Francisco GPT')
