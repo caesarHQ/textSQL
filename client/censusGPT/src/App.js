@@ -268,7 +268,7 @@ function App(props) {
                 }
 
                 // Capture the response in posthog
-                capturePosthog('backend_response', response)
+                capturePosthog('backend_response', {'origin': 'get_suggestion_failed_query'})
                 // Set the state for SQL and Status Code
                 if (response.generation_id) currentSuggestionId = response.generation_id
 
@@ -307,7 +307,7 @@ function App(props) {
                 }
 
                 // Capture the response in posthog
-                capturePosthog('backend_response', response)
+                capturePosthog('backend_response', {'origin': 'getSuggestionForQuery'})
                 // Set the state for SQL and Status Code
                 
                 if (response.generation_id) currentSuggestionId = response.generation_id
@@ -355,7 +355,7 @@ function App(props) {
                 }
 
                 // Capture the response in posthog
-                capturePosthog('backend_response', response)
+                capturePosthog('backend_response', {'origin': 'executeSql'})
 
 
                 // Filter out lat and long columns
@@ -650,7 +650,7 @@ function App(props) {
             // Capture the response in posthog
             const duration = new Date().getTime() - startTime
 
-            capturePosthog('backend_response', {...response, duration})
+            capturePosthog('backend_response', {origin: 'fetchBackend', duration})
 
             // Set the state for SQL and Status Code
             responseOuter = response
