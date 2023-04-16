@@ -3,7 +3,7 @@ from sqlalchemy import text
 
 from app.config import EVENTS_ENGINE
 
-def log_apicall(duration, provider, model, input_tokens, output_tokens, service, purpose, session_id=None, success=True):
+def log_apicall(duration, provider, model, input_tokens, output_tokens, service, purpose, session_id=None, success=True, log_message=None):
     if not EVENTS_ENGINE:
         return {"status": "no engine"}
     cost = calculate_cost(model, input_tokens, output_tokens)
@@ -19,11 +19,12 @@ def log_apicall(duration, provider, model, input_tokens, output_tokens, service,
         "cost": cost,
         "success": success,
         "session_id": session_id,
+        "log_message": log_message,
     }
 
     insert_query = text("""
-        INSERT INTO apicalls (duration, provider, model, input_tokens, output_tokens, service, purpose, cost, success, session_id)
-        VALUES (:duration, :provider, :model, :input_tokens, :output_tokens, :service, :purpose, :cost, :success, :session_id)
+        INSERT INTO apicalls (duration, provider, model, input_tokens, output_tokens, service, purpose, cost, success, session_id, log_message)
+        VALUES (:duration, :provider, :model, :input_tokens, :output_tokens, :service, :purpose, :cost, :success, :session_id, :log_message)
     """)
 
     with EVENTS_ENGINE.connect() as conn:

@@ -42,6 +42,7 @@ def get_assistant_message_from_openai(
             purpose,
             session_id = session_id,
             success=False,
+            log_message = str(e),
         )
         raise e
     duration = time.time() - start
@@ -95,6 +96,7 @@ def call_chat(
             purpose,
             session_id = session_id,
             success=False,
+            log_message = str(e),
         )
         raise e
 
