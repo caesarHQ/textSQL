@@ -3,7 +3,7 @@ from sqlalchemy import text
 
 from app.config import EVENTS_ENGINE
 
-def log_apicall(duration, provider, model, input_tokens, output_tokens, service, purpose, session_id=None):
+def log_apicall(duration, provider, model, input_tokens, output_tokens, service, purpose, session_id=None, success=True):
     if not EVENTS_ENGINE:
         return {"status": "no engine"}
     cost = calculate_cost(model, input_tokens, output_tokens)
@@ -17,7 +17,7 @@ def log_apicall(duration, provider, model, input_tokens, output_tokens, service,
         "service": service,
         "purpose": purpose,
         "cost": cost,
-        "success": "true",
+        "success": success,
         "session_id": session_id,
     }
 

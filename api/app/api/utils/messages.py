@@ -24,11 +24,26 @@ def get_assistant_message_from_openai(
     final_payload = messages
 
     start = time.time()
-    res = openai.ChatCompletion.create(
-        model=model,
-        temperature=0,
-        messages=final_payload
-    )
+    try:
+        res = openai.ChatCompletion.create(
+            model=model,
+            temperature=0,
+            messages=final_payload
+        )
+    except Exception as e:
+        duration = time.time() - start
+        log_apicall(
+            duration,
+            'openai',
+            model,
+            0,
+            0,
+            scope,
+            purpose,
+            session_id = session_id,
+            success=False,
+        )
+        raise e
     duration = time.time() - start
 
     usage = res['usage']
@@ -62,11 +77,27 @@ def call_chat(
 ):
 
     start = time.time()
-    res = openai.ChatCompletion.create(
-        model=model,
-        temperature=temperature,
-        messages=messages
-    )
+    try:
+        res = openai.ChatCompletion.create(
+            model=model,
+            temperature=temperature,
+            messages=messages
+        )
+    except Exception as e:
+        duration = time.time() - start
+        log_apicall(
+            duration,
+            'openai',
+            model,
+            0,
+            0,
+            scope,
+            purpose,
+            session_id = session_id,
+            success=False,
+        )
+        raise e
+
     duration = time.time() - start
 
     usage = res['usage']
