@@ -27,9 +27,21 @@ def get_db_credentials():
 
 
 @localhost_only
-def set_db_credentials(new_db_url):
+def set_db_credentials(request_body):
     """
     Set database credentials in request body
     """
+    db_credentials = {}
+    db_credentials["address"] = request_body.get("host")
+    db_credentials["database"] = request_body.get("database")
+    db_credentials["username"] = request_body.get("username")
+    db_credentials["password"] = request_body.get("password")
+    db_credentials["port"] = request_body.get("port", 5432)
 
-    return update_engine(new_db_url)
+    for key, value in db_credentials.items():
+        if not value:
+            error_msg = f"`{key}` is missing from request body"
+            raise Exception(error_msg)
+    db_connection_string = f"postgresql://{db_credentials['username']}:{db_credentials['password']}@{db_credentials['address']}:{db_credentials['port']}/{db_credentials['database']}"
+
+    return update_engine(db_connection_string)

@@ -24,23 +24,13 @@ def set_db_auth():
     """
     Set database credentials in storage
     """
-    request_body = request.get_json()
-    db_credentials = {}
-    db_credentials["address"] = request_body.get("host")
-    db_credentials["database"] = request_body.get("database")
-    db_credentials["username"] = request_body.get("username")
-    db_credentials["password"] = request_body.get("password")
-    db_credentials["port"] = request_body.get("port", 5432)
-
-    for key, value in db_credentials.items():
-        if not value:
-            error_msg = f"`{key}` is missing from request body"
-            return make_response(jsonify({"error": error_msg}), 400)
-    db_connection_string = f"postgresql://{db_credentials['username']}:{db_credentials['password']}@{db_credentials['address']}:{db_credentials['port']}/{db_credentials['database']}"
-
+    try:
+        request_body = request.get_json()
+    except Exception as e:
+        return make_response(jsonify({"error": 'Unable to parse form'}), 400)
     # try to connect to database
     try:
-        admin_helper.set_db_credentials(db_connection_string)
+        admin_helper.set_db_credentials(request_body)
     except Exception as e:
         return make_response(jsonify({"error": str(e)}), 400)
 
