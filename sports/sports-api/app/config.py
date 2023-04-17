@@ -3,7 +3,7 @@ from os import getenv
 import openai
 import pinecone
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 load_dotenv()
 
@@ -36,9 +36,19 @@ def update_engine(new_db_url):
     DB_URL = new_db_url
     try:
         ENGINE = create_engine(DB_URL)
+        # try to get the current user
+        with ENGINE.connect() as connection:
+            connection = connection.execution_options(
+                postgresql_readonly=True
+            )
+            with connection.begin():
+                sql_text = text(f"""SELECT CURRENT_USER;""")
+                result = connection.execute(sql_text)
+                rows = [list(r) for r in result.all()]
+                return rows[0][0]
+
     except Exception as e:
-        print(e)
-        return False
+        raise e
 
 
 if PINECONE_KEY and PINECONE_ENV:
