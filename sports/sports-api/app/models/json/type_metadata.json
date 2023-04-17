@@ -1,0 +1,87 @@
+{
+    "sex": {
+        "type": "sex",
+        "valid_values": [
+            "Both Sexes",
+            "Female",
+            "Male"
+        ]
+    },
+    "race": {
+        "type": "race",
+        "valid_values": [
+            "African American/Black",
+            "All Races",
+            "Asian",
+            "Hispanic/Latino",
+            "Multirace",
+            "Native American",
+            "Pacific Islander",
+            "Some other race",
+            "White"
+        ]
+    },
+    "mortality_reasons": {
+        "type": "mortality_reasons",
+        "valid_values": [
+            "All Cause Mortality",
+            "All other and unspecified accidents and adverse effects",
+            "All other diseases (residual)",
+            "All other external causes",
+            "Alzheimers disease",
+            "Assault (homicide)",
+            "Assault (homicide) by discharge of firearms",
+            "Assault (homicide) by other and unspecified means",
+            "Atherosclerosis",
+            "Cerebrovascular diseases",
+            "Certain conditions originating in the perinatal period",
+            "Chronic liver disease and cirrhosis",
+            "Chronic lower respiratory diseases",
+            "Complications of medical and surgical care",
+            "Congenital malformations",
+            "Diabetes mellitus",
+            "Essential hypertension and hypertensive renal disease",
+            "Human immunodeficiency virus (HIV) disease",
+            "Hypertensive heart disease with or without renal disease",
+            "Influenza and pneumonia",
+            "Intentional self-harm (suicide)",
+            "Intentional self-harm (suicide) by discharge of firearms",
+            "Intentional self-harm (suicide) by other and unspecified means",
+            "Ischemic heart diseases",
+            "Leukemia",
+            "Malignant neoplasm of breast",
+            "Malignant neoplasm of pancreas",
+            "Malignant neoplasm of prostate",
+            "Malignant neoplasm of stomach",
+            "Malignant neoplasms of cervix uteri, corpus uteri and ovary",
+            "Malignant neoplasms of colon, rectum and anus",
+            "Malignant neoplasms of trachea, bronchus and lung",
+            "Malignant neoplasms of urinary tract",
+            "Motor vehicle accidents",
+            "Nephritis, nephrotic syndrome and nephrosis",
+            "Non-Hodgkins lymphoma",
+            "Other diseases of circulatory system",
+            "Other diseases of heart",
+            "Other malignant neoplasms",
+            "Peptic ulcer",
+            "Pregnancy, childbirth and the puerperium",
+            "Sudden infant death syndrome",
+            "Other neonatal (excluding SIDS)",
+            "Tuberculosis"
+        ]
+    },
+    "Year": {
+        "type": "Year",
+        "valid_values": [
+            "2012",
+            "2013",
+            "2014",
+            "2015",
+            "2016",
+            "2017",
+            "2018",
+            "2019",
+            "2020"
+        ]
+    }
+}

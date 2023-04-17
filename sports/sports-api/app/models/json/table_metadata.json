@@ -1,0 +1,477 @@
+{
+    "rates_all": {
+        "name": "rates_all",
+        "description": "",
+        "columns": [
+            {
+                "name": "Sex",
+                "type": "sex"
+            },
+            {
+                "name": "final_race",
+                "type": "race"
+            },
+            {
+                "name": "Place",
+                "type": "character"
+            },
+            {
+                "name": "GeogLevel",
+                "type": "character"
+            },
+            {
+                "name": "Indicator",
+                "type": "character"
+            },
+            {
+                "name": "Year",
+                "type": "character"
+            }
+        ]
+    },
+    "rates_census_tract_death_count": {
+        "name": "rates_census_tract_death_count",
+        "description": "",
+        "columns": [
+            {
+                "name": "Year",
+                "type": "Year"
+            },
+            {
+                "name": "Numerator_total",
+                "type": "double precision"
+            },
+            {
+                "name": "final_race",
+                "type": "race"
+            },
+            {
+                "name": "Sex",
+                "type": "sex"
+            },
+            {
+                "name": "Indicator",
+                "type": "mortality_reasons"
+            },
+            {
+                "name": "GeogLevel",
+                "type": "character"
+            },
+            {
+                "name": "Place",
+                "type": "character"
+            }
+        ]
+    },
+    "rates_census_tract_population": {
+        "name": "rates_census_tract_population",
+        "description": "",
+        "columns": [
+            {
+                "name": "Year",
+                "type": "Year"
+            },
+            {
+                "name": "Denominator_total",
+                "type": "double precision"
+            },
+            {
+                "name": "final_race",
+                "type": "race"
+            },
+            {
+                "name": "Sex",
+                "type": "sex"
+            },
+            {
+                "name": "Indicator",
+                "type": "mortality_reasons"
+            },
+            {
+                "name": "GeogLevel",
+                "type": "character"
+            },
+            {
+                "name": "Place",
+                "type": "character"
+            }
+        ]
+    },
+    "rates_zip_population": {
+        "name": "rates_zip_population",
+        "description": "",
+        "columns": [
+            {
+                "name": "Year",
+                "type": "Year"
+            },
+            {
+                "name": "Denominator_total",
+                "type": "double precision"
+            },
+            {
+                "name": "final_race",
+                "type": "race"
+            },
+            {
+                "name": "Sex",
+                "type": "sex"
+            },
+            {
+                "name": "Indicator",
+                "type": "mortality_reasons"
+            },
+            {
+                "name": "GeogLevel",
+                "type": "character"
+            },
+            {
+                "name": "Place",
+                "type": "character"
+            }
+        ]
+    },
+    "rates_census_tract_age_adjusted_rate": {
+        "name": "rates_census_tract_age_adjusted_rate",
+        "description": "",
+        "columns": [
+            {
+                "name": "upper_confidence_interval",
+                "type": "double precision"
+            },
+            {
+                "name": "final_race",
+                "type": "race"
+            },
+            {
+                "name": "lower_confidence_interval",
+                "type": "double precision"
+            },
+            {
+                "name": "Sex",
+                "type": "sex"
+            },
+            {
+                "name": "Indicator",
+                "type": "mortality_reasons"
+            },
+            {
+                "name": "Year",
+                "type": "Year"
+            },
+            {
+                "name": "age_adjusted_rate",
+                "type": "double precision"
+            },
+            {
+                "name": "Place",
+                "type": "character"
+            },
+            {
+                "name": "GeogLevel",
+                "type": "character"
+            }
+        ]
+    },
+    "rates_zip_death_count": {
+        "name": "rates_zip_death_count",
+        "description": "",
+        "columns": [
+            {
+                "name": "Year",
+                "type": "Year"
+            },
+            {
+                "name": "Numerator_total",
+                "type": "double precision"
+            },
+            {
+                "name": "final_race",
+                "type": "race"
+            },
+            {
+                "name": "Sex",
+                "type": "sex"
+            },
+            {
+                "name": "Indicator",
+                "type": "mortality_reasons"
+            },
+            {
+                "name": "GeogLevel",
+                "type": "character"
+            },
+            {
+                "name": "Place",
+                "type": "character"
+            }
+        ]
+    },
+    "rates_zip_age_adjusted_rate": {
+        "name": "rates_zip_age_adjusted_rate",
+        "description": "",
+        "columns": [
+            {
+                "name": "upper_confidence_interval",
+                "type": "double precision"
+            },
+            {
+                "name": "final_race",
+                "type": "race"
+            },
+            {
+                "name": "lower_confidence_interval",
+                "type": "double precision"
+            },
+            {
+                "name": "Sex",
+                "type": "sex"
+            },
+            {
+                "name": "Indicator",
+                "type": "mortality_reasons"
+            },
+            {
+                "name": "Year",
+                "type": "Year"
+            },
+            {
+                "name": "age_adjusted_rate",
+                "type": "double precision"
+            },
+            {
+                "name": "Place",
+                "type": "character"
+            },
+            {
+                "name": "GeogLevel",
+                "type": "character"
+            }
+        ]
+    },
+    "rates_general": {
+        "name": "rates_general",
+        "description": "",
+        "columns": []
+    },
+    "rates_county_population": {
+        "name": "rates_county_population",
+        "description": "",
+        "columns": [
+            {
+                "name": "Year",
+                "type": "Year"
+            },
+            {
+                "name": "Denominator_total",
+                "type": "double precision"
+            },
+            {
+                "name": "final_race",
+                "type": "race"
+            },
+            {
+                "name": "Sex",
+                "type": "sex"
+            },
+            {
+                "name": "Indicator",
+                "type": "mortality_reasons"
+            },
+            {
+                "name": "GeogLevel",
+                "type": "character"
+            },
+            {
+                "name": "Place",
+                "type": "character"
+            }
+        ]
+    },
+    "rates_county_death_count": {
+        "name": "rates_county_death_count",
+        "description": "",
+        "columns": [
+            {
+                "name": "Year",
+                "type": "Year"
+            },
+            {
+                "name": "Numerator_total",
+                "type": "double precision"
+            },
+            {
+                "name": "final_race",
+                "type": "race"
+            },
+            {
+                "name": "Sex",
+                "type": "sex"
+            },
+            {
+                "name": "Indicator",
+                "type": "mortality_reasons"
+            },
+            {
+                "name": "GeogLevel",
+                "type": "character"
+            },
+            {
+                "name": "Place",
+                "type": "character"
+            }
+        ]
+    },
+    "rates_county_age_adjusted_rate": {
+        "name": "rates_county_age_adjusted_rate",
+        "description": "",
+        "columns": [
+            {
+                "name": "upper_confidence_interval",
+                "type": "double precision"
+            },
+            {
+                "name": "final_race",
+                "type": "race"
+            },
+            {
+                "name": "lower_confidence_interval",
+                "type": "double precision"
+            },
+            {
+                "name": "Sex",
+                "type": "sex"
+            },
+            {
+                "name": "Indicator",
+                "type": "mortality_reasons"
+            },
+            {
+                "name": "Year",
+                "type": "Year"
+            },
+            {
+                "name": "age_adjusted_rate",
+                "type": "double precision"
+            },
+            {
+                "name": "Place",
+                "type": "character"
+            },
+            {
+                "name": "GeogLevel",
+                "type": "character"
+            }
+        ]
+    },
+    "rates_city_population": {
+        "name": "rates_city_population",
+        "description": "",
+        "columns": [
+            {
+                "name": "Year",
+                "type": "Year"
+            },
+            {
+                "name": "Denominator_total",
+                "type": "double precision"
+            },
+            {
+                "name": "final_race",
+                "type": "race"
+            },
+            {
+                "name": "Sex",
+                "type": "sex"
+            },
+            {
+                "name": "Indicator",
+                "type": "mortality_reasons"
+            },
+            {
+                "name": "GeogLevel",
+                "type": "character"
+            },
+            {
+                "name": "Place",
+                "type": "character"
+            }
+        ]
+    },
+    "rates_city_death_count": {
+        "name": "rates_city_death_count",
+        "description": "",
+        "columns": [
+            {
+                "name": "Year",
+                "type": "Year"
+            },
+            {
+                "name": "Numerator_total",
+                "type": "double precision"
+            },
+            {
+                "name": "final_race",
+                "type": "race"
+            },
+            {
+                "name": "Sex",
+                "type": "sex"
+            },
+            {
+                "name": "Indicator",
+                "type": "mortality_reasons"
+            },
+            {
+                "name": "GeogLevel",
+                "type": "character"
+            },
+            {
+                "name": "Place",
+                "type": "character"
+            }
+        ]
+    },
+    "rates_city_age_adjusted_rate": {
+        "name": "rates_city_age_adjusted_rate",
+        "description": "",
+        "columns": [
+            {
+                "name": "upper_confidence_interval",
+                "type": "double precision"
+            },
+            {
+                "name": "final_race",
+                "type": "race"
+            },
+            {
+                "name": "lower_confidence_interval",
+                "type": "double precision"
+            },
+            {
+                "name": "Sex",
+                "type": "sex"
+            },
+            {
+                "name": "Indicator",
+                "type": "mortality_reasons"
+            },
+            {
+                "name": "Year",
+                "type": "Year"
+            },
+            {
+                "name": "age_adjusted_rate",
+                "type": "double precision"
+            },
+            {
+                "name": "Place",
+                "type": "character"
+            },
+            {
+                "name": "GeogLevel",
+                "type": "character"
+            }
+        ]
+    }
+}
