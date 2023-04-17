@@ -1,11 +1,9 @@
 from functools import wraps
 import os
 import json
-from app.config import ENV, update_engine
+from app.config import CREDS, update_engine, ENV
 
 # wrapper function; if ENV is localhost returns it, else returns None
-
-CREDS_PATH = "./app/models/creds.json"
 
 
 def localhost_only(f):
@@ -23,21 +21,15 @@ def get_db_credentials():
     """
     Get database credentials from request body
     """
-
-    with open(CREDS_PATH) as f:
-        creds = json.load(f)
     return {
-        "creds": creds, 'status': 'success'
+        "creds": CREDS, 'status': 'success'
     }
 
 
 @localhost_only
-def set_db_credentials(new_creds):
+def set_db_credentials(new_db_url):
     """
     Set database credentials in request body
     """
-    with open(CREDS_PATH, 'w') as f:
-        json.dump(new_creds, f)
-    return {
-        "status": "success"
-    }
+
+    return update_engine(new_db_url)

@@ -24,9 +24,7 @@ def set_db_auth():
     """
     Set database credentials in storage
     """
-    print('got request')
     request_body = request.get_json()
-    print('request body: ', request_body)
     db_credentials = {}
     db_credentials["address"] = request_body.get("host")
     db_credentials["database"] = request_body.get("database")
@@ -39,14 +37,13 @@ def set_db_auth():
             error_msg = f"`{key}` is missing from request body"
             return make_response(jsonify({"error": error_msg}), 400)
     db_connection_string = f"postgresql://{db_credentials['username']}:{db_credentials['password']}@{db_credentials['address']}:{db_credentials['port']}/{db_credentials['database']}"
-    print('NEW DB CONNECTION STRING: ', db_connection_string)
+
     # try to connect to database
     try:
-        update_engine(db_connection_string)
+        admin_helper.set_db_credentials(db_connection_string)
     except Exception as e:
         return make_response(jsonify({"error": str(e)}), 400)
 
-    admin_helper.set_db_credentials(db_credentials)
     return make_response(jsonify({"status": "success", "message": "database connection established"}), 200)
 
 
