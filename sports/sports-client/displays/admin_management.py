@@ -1,5 +1,7 @@
+import requests
 
 import streamlit as st
+from config import API_BASE
 
 
 def parse_database_fields_connection(database_url):
@@ -22,18 +24,34 @@ def parse_database_fields_connection(database_url):
 
 
 def admin_management_display():
-    st.title("Admin Management")
+    st.title("Set up your Database")
 
-    # add a form to include a database URL or the user/host/database/port
-    database_url = st.text_input(
-        label="Database URL", label_visibility="hidden", placeholder="Database URL")
-    if database_url:
-        values = parse_database_fields_connection(database_url)
-        if values:
-            for key, value in values.items():
-                if key == 'password':
-                    st.write(f"{key}: ********")
+    # closable container
+    with st.expander("Database URL"):
+        database_url = st.text_input(
+            label="Database URL", label_visibility="hidden", placeholder="Database URL")
+        if database_url:
+            values = parse_database_fields_connection(database_url)
+            if values:
+                for key, value in values.items():
+                    if key == 'password':
+                        # add a password field that hides the password
+                        st.text_input(
+                            label=key, label_visibility="visible", value=value, type="password")
+                    else:
+                        # have the label as a display before it followed by the input
+                        st.text_input(
+                            label=key, label_visibility="visible", value=value)
+
+            if st.button("Update"):
+                # send the values to the backend to set up the database
+                response = requests.post(f"{API_BASE}/db_auth",
+                                         json=parse_database_fields_connection(database_url))
+                response = response.json()
+                if response.get('status') == 'success':
+                    st.success(response.get('message'))
                 else:
-                    st.write(f"{key}: {value}")
-        else:
-            st.error("Invalid database URL")
+                    st.error(response.get('error'))
+
+    with st.expander("Tables"):
+        st.write("Tables")

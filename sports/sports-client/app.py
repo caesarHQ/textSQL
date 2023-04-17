@@ -6,9 +6,9 @@ from config import API_BASE
 
 def main():
 
-    is_locahost = 'localhost' in API_BASE
+    is_localhost = 'localhost' in API_BASE
 
-    if is_locahost:
+    if is_localhost:
         state = st.sidebar.radio("Change Mode", ["Admin", "Query"])
     else:
         state = 'Query'

@@ -12,20 +12,34 @@ OPENAI_KEY = getenv("OPENAI_KEY")
 PINECONE_KEY = getenv("PINECONE_KEY")
 PINECONE_ENV = getenv("PINECONE_ENV")
 DB_MANAGED_METADATA = getenv("DB_MANAGED_METADATA")
-DB_MANAGED_METADATA= False if DB_MANAGED_METADATA is None else DB_MANAGED_METADATA.lower() == 'true'
+DB_MANAGED_METADATA = False if DB_MANAGED_METADATA is None else DB_MANAGED_METADATA.lower() == 'true'
+ENV = getenv("ENV")
 
 openai.api_key = OPENAI_KEY
+
 
 class FlaskAppConfig:
     CORS_HEADERS = "Content-Type"
     SQLALCHEMY_DATABASE_URI = DB_URL
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
 
+
 if DB_URL:
     ENGINE = create_engine(DB_URL)
 else:
     print('DB_URL not found, please check your environment')
     exit(1)
+
+
+def update_engine(new_db_url):
+    global ENGINE, DB_URL
+    DB_URL = new_db_url
+    try:
+        ENGINE = create_engine(DB_URL)
+    except Exception as e:
+        print(e)
+        return False
+
 
 if PINECONE_KEY and PINECONE_ENV:
     pinecone.init(

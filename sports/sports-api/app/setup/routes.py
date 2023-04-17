@@ -1,13 +1,56 @@
 from flask import Blueprint, jsonify, make_response, request
 
-from ..config import ENGINE
+from ..config import ENGINE, update_engine
 from .utils import (ENUMS_METADATA_DICT, TABLES_METADATA_DICT,
                     generate_few_shot_queries, generate_table_metadata,
                     generate_type_metadata, get_table_names, get_type_names,
                     save_table_metadata, save_type_metadata)
 
+from . import admin_helper
+
 bp = Blueprint('setup_bp', __name__)
 
+
+@bp.route('/db_auth', methods=['GET'])
+def get_db_auth():
+    """
+    Get database credentials from storage
+    """
+    return make_response(jsonify(admin_helper.get_db_credentials()), 200)
+
+
+@bp.route('/db_auth', methods=['POST'])
+def set_db_auth():
+    """
+    Set database credentials in storage
+    """
+    print('got request')
+    request_body = request.get_json()
+    print('request body: ', request_body)
+    db_credentials = {}
+    db_credentials["address"] = request_body.get("host")
+    db_credentials["database"] = request_body.get("database")
+    db_credentials["username"] = request_body.get("username")
+    db_credentials["password"] = request_body.get("password")
+    db_credentials["port"] = request_body.get("port", 5432)
+
+    for key, value in db_credentials.items():
+        if not value:
+            error_msg = f"`{key}` is missing from request body"
+            return make_response(jsonify({"error": error_msg}), 400)
+    db_connection_string = f"postgresql://{db_credentials['username']}:{db_credentials['password']}@{db_credentials['address']}:{db_credentials['port']}/{db_credentials['database']}"
+    print('NEW DB CONNECTION STRING: ', db_connection_string)
+    # try to connect to database
+    try:
+        update_engine(db_connection_string)
+    except Exception as e:
+        return make_response(jsonify({"error": str(e)}), 400)
+
+    admin_helper.set_db_credentials(db_credentials)
+    return make_response(jsonify({"status": "success", "message": "database connection established"}), 200)
+
+
+@bp.route('/test', methods=['POST'])
 @bp.route('/setup', methods=['POST'])
 def setup_db():
     """
@@ -25,7 +68,7 @@ def setup_db():
         if not value:
             error_msg = f"`{key}` is missing from request body"
             return make_response(jsonify({"error": error_msg}), 400)
-        
+
 
 @bp.route('/tables', methods=['GET'])
 def get_tables():
@@ -107,5 +150,5 @@ def setup_metadata():
         save_table_metadata(table_name, generate_table_metadata(table_name))
     for type_name in get_type_names():
         save_type_metadata(type_name, generate_type_metadata(type_name))
-    
+
     return "Success"
