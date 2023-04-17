@@ -1,7 +1,7 @@
 from functools import wraps
 import os
 import json
-from app.config import CREDS, update_engine, ENV
+from app.config import CREDS, update_engine, ENV, load_openai_key
 
 # wrapper function; if ENV is localhost returns it, else returns None
 
@@ -22,7 +22,7 @@ def get_db_credentials():
     Get database credentials from request body
     """
     return {
-        'status': 'success', **CREDS
+        'status': 'success', "DB_URL": CREDS.get("DB_URL")
     }
 
 
@@ -45,3 +45,29 @@ def set_db_credentials(request_body):
     db_connection_string = f"postgresql://{db_credentials['username']}:{db_credentials['password']}@{db_credentials['address']}:{db_credentials['port']}/{db_credentials['database']}"
 
     return update_engine(db_connection_string)
+
+
+@localhost_only
+def get_openai_credentials():
+    """
+    Get openAI credentials from request body
+    """
+    return {
+        'status': 'success', 'OPENAI_API_KEY': CREDS.get("OPENAI_API_KEY")
+    }
+
+
+@localhost_only
+def set_openai_credentials(request_body):
+    """
+    Set openAI credentials in request body
+    """
+    openai_credentials = {}
+    openai_credentials["OPENAI_API_KEY"] = request_body.get("OPENAI_API_KEY")
+
+    for key, value in openai_credentials.items():
+        if not value:
+            error_msg = f"`{key}` is missing from request body"
+            raise Exception(error_msg)
+
+    return load_openai_key(openai_credentials["OPENAI_API_KEY"])

@@ -21,7 +21,7 @@ try:
 except:
     CREDS = {}
 
-OPENAI_KEY = CREDS.get("OPENAI_KEY")
+OPENAI_KEY = CREDS.get("OPENAI_API_KEY")
 
 
 def load_openai_key(new_openai_key=None):
@@ -29,10 +29,10 @@ def load_openai_key(new_openai_key=None):
     if new_openai_key:
         OPENAI_KEY = new_openai_key
         with open(CREDS_PATH, 'w') as f:
-            CREDS["OPENAI_KEY"] = OPENAI_KEY
+            CREDS["OPENAI_API_KEY"] = OPENAI_KEY
             json.dump(CREDS, f)
     else:
-        OPENAI_KEY = CREDS.get("OPENAI_KEY")
+        OPENAI_KEY = CREDS.get("OPENAI_API_KEY")
 
 
 load_openai_key()

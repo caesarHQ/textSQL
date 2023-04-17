@@ -24,7 +24,7 @@ def parse_database_fields_connection(database_url):
 
 
 DB_DATA = requests.get(f"{API_BASE}/db_auth").json()
-print('DB_DATA', DB_DATA)
+OPENAI_DATA = requests.get(f"{API_BASE}/openai_auth").json()
 
 
 def admin_management_display():
@@ -47,7 +47,7 @@ def admin_management_display():
                         st.text_input(
                             label=key, label_visibility="visible", value=value)
 
-            if st.button("Update"):
+            if st.button("Update", key="update_db"):
                 # send the values to the backend to set up the database
                 response = requests.post(f"{API_BASE}/db_auth",
                                          json=parse_database_fields_connection(database_url))
@@ -60,7 +60,17 @@ def admin_management_display():
     with st.expander("OpenAI Config"):
         # input form with the openai api key, hidden
         openai_api_key = st.text_input(
-            label="OpenAI API Key", label_visibility="hidden", placeholder="OpenAI API Key", type="password")
+            label="OpenAI API Key", label_visibility="hidden", placeholder="OpenAI API Key", type="password", value=OPENAI_DATA.get('OPENAI_API_KEY', ''))
+        if openai_api_key:
+            if st.button("Update", key="update_openai"):
+                # send the values to the backend to set up the database
+                response = requests.post(f"{API_BASE}/openai_auth",
+                                         json={'OPENAI_API_KEY': openai_api_key})
+                response = response.json()
+                if response.get('status') == 'success':
+                    st.success(response.get('message'))
+                else:
+                    st.error(response.get('error'))
 
     with st.expander("Tables"):
         st.write("Tables")
