@@ -1,7 +1,19 @@
+from functools import wraps
 import json
+
 from sqlalchemy import text
 
 from app.config import EVENTS_ENGINE
+
+def failsoft(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            result = func(*args, **kwargs)
+        except Exception:
+            result = None
+        return result
+    return wrapper
 
 def log_apicall(duration, provider, model, input_tokens, output_tokens, service, purpose, session_id=None, success=True, log_message=None):
     if not EVENTS_ENGINE:
@@ -33,6 +45,7 @@ def log_apicall(duration, provider, model, input_tokens, output_tokens, service,
     
     return {"status": "success"}
 
+@failsoft
 def log_apicall_failure(duration, provider, model, input_tokens, service, purpose, session_id=None):
     if not EVENTS_ENGINE:
         return {"status": "no engine"}
@@ -82,6 +95,7 @@ def calculate_cost(model, input_tokens, output_tokens):
     return cost
 
 
+@failsoft
 def log_input_classification(app_name, input_text, metadata, parent_id, session_id=None):
     if not EVENTS_ENGINE:
         return None
@@ -109,6 +123,7 @@ def log_input_classification(app_name, input_text, metadata, parent_id, session_
     
     return str(generation_id)
 
+@failsoft
 def log_sql_failure(input_text, sql_script, failure_message, attempt_number, app_name, session_id=None):
     if not EVENTS_ENGINE:
         return {"status": "no engine"}
@@ -133,6 +148,7 @@ def log_sql_failure(input_text, sql_script, failure_message, attempt_number, app
     
     return {"status": "success"}
 
+@failsoft
 def log_suggested_query(input_text="", reason="", app_name="", parent_id=None, suggested_query="", prompt="", model="", session_id=None):
     if not EVENTS_ENGINE:
         return None
@@ -162,6 +178,7 @@ def log_suggested_query(input_text="", reason="", app_name="", parent_id=None, s
 
     return str(generation_id)
 
+@failsoft
 def update_suggestion_as_used(suggestion_id):
     if not EVENTS_ENGINE:
         return None
@@ -182,6 +199,7 @@ def update_suggestion_as_used(suggestion_id):
 
     return True
 
+@failsoft
 def create_session(app_name, user_id):
     if not EVENTS_ENGINE:
         return None
