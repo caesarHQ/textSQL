@@ -755,7 +755,7 @@
                     "type": "INT"
                 }
             ],
-            "table_creation_query": "--places in San Francisco\nCREATE TABLE sf_places (\n    name TEXT,\n    place_type TEXT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT,\n    point TEXT, --longitude latitude of place\n    address TEXT,\n    rating FLOAT,\n    num_ratings INT,\n);"
+            "table_creation_query": "--places in San Francisco\nCREATE TABLE sf_places (\n    name TEXT,\n    place_type TEXT, --enum `PLACE_TYPE`\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT,\n    point TEXT, --longitude latitude of place\n    address TEXT,\n    rating FLOAT,\n    num_ratings INT,\n);"
         }
     ]
 }
