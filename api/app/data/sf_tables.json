@@ -50,15 +50,15 @@
         {
             "type": "PLACE_TYPE",
             "valid_values": [
-                "coffee_shop",
+                "coffee shop",
                 "bakery",
                 "restaurant",
-                "meal_takeaway",
+                "meal takeaway",
                 "bar",
-                "night_club",
+                "night club",
                 "museum",
                 "park",
-                "gas_station"
+                "gas station"
             ]
         },
         {
