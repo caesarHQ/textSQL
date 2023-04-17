@@ -48,6 +48,20 @@
             ]
         },
         {
+            "type": "PLACE_TYPE",
+            "valid_values": [
+                "coffee_shop",
+                "bakery",
+                "restaurant",
+                "meal_takeaway",
+                "bar",
+                "night_club",
+                "museum",
+                "park",
+                "gas_station"
+            ]
+        },
+        {
             "type": "311_STATUS",
             "valid_values": [
                 "Closed",
@@ -675,7 +689,7 @@
         },
         {
             "name": "sf_sex_by_census_tract",
-            "description": " Population data by sex in San Francisco",
+            "description": "Population data by sex in San Francisco",
             "columns": [
                 {
                     "name": "census_tract",
@@ -700,6 +714,48 @@
                 }
             ],
             "table_creation_query": "--sex population data in San Francisco by census tract\nCREATE TABLE sf_sex_by_census_tract (\n    census_tract TEXT PRIMARY KEY,\n    male_population FLOAT,\n    female_population FLOAT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT\n);"
+        },
+        {
+            "name": "sf_places",
+            "description": "Places in San Francisco",
+            "columns": [
+                {
+                    "name": "name",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "place_type",
+                    "type": "TEXT",
+                    "description": "enum `PLACE_TYPE`"
+                },
+                {
+                    "name": "neighborhood",
+                    "type": "TEXT",
+                    "description": "enum `NEIGHBORHOOD`"
+                },
+                {
+                    "name": "zip_code",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "point",
+                    "type": "TEXT",
+                    "description": "longitude latitude of place"
+                },
+                {
+                    "name": "address",
+                    "type": "TEXT"
+                },
+                {
+                    "name": "rating",
+                    "type": "FLOAT"
+                },
+                {
+                    "name": "num_ratings",
+                    "type": "INT"
+                }
+            ],
+            "table_creation_query": "--places in San Francisco\nCREATE TABLE sf_places (\n    name TEXT,\n    place_type TEXT,\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT,\n    point TEXT, --longitude latitude of place\n    address TEXT,\n    rating FLOAT,\n    num_ratings INT,\n);"
         }
     ]
 }
