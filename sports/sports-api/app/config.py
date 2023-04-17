@@ -15,11 +15,12 @@ ENV = getenv("ENV")
 
 
 CREDS_PATH = "./app/models/creds.json"
-with open(CREDS_PATH) as f:
-    try:
+try:
+    with open(CREDS_PATH) as f:
         CREDS = json.load(f)
-    except:
-        CREDS = {}
+except:
+    CREDS = {}
+
 OPENAI_KEY = CREDS.get("OPENAI_KEY")
 
 

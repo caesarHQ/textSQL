@@ -47,7 +47,6 @@ def set_db_auth():
     return make_response(jsonify({"status": "success", "message": "database connection established"}), 200)
 
 
-@bp.route('/test', methods=['POST'])
 @bp.route('/setup', methods=['POST'])
 def setup_db():
     """
