@@ -23,13 +23,17 @@ def parse_database_fields_connection(database_url):
         return None
 
 
+DB_DATA = requests.get(f"{API_BASE}/db_auth").json()
+print('DB_DATA', DB_DATA)
+
+
 def admin_management_display():
     st.title("Set up your Database")
 
     # closable container
     with st.expander("Database URL"):
         database_url = st.text_input(
-            label="Database URL", label_visibility="hidden", placeholder="Database URL")
+            label="Database URL", label_visibility="hidden", placeholder="Database URL", value=DB_DATA.get('DB_URL', ''))
         if database_url:
             values = parse_database_fields_connection(database_url)
             if values:
@@ -52,6 +56,11 @@ def admin_management_display():
                     st.success(response.get('message'))
                 else:
                     st.error(response.get('error'))
+
+    with st.expander("OpenAI Config"):
+        # input form with the openai api key, hidden
+        openai_api_key = st.text_input(
+            label="OpenAI API Key", label_visibility="hidden", placeholder="OpenAI API Key", type="password")
 
     with st.expander("Tables"):
         st.write("Tables")

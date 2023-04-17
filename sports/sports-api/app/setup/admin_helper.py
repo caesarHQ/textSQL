@@ -12,7 +12,7 @@ def localhost_only(f):
         if ENV == "localhost":
             return f(*args, **kwargs)
         else:
-            return None
+            return {"error": "not allowed"}
     return wrapper
 
 
@@ -22,7 +22,7 @@ def get_db_credentials():
     Get database credentials from request body
     """
     return {
-        "creds": CREDS, 'status': 'success'
+        'status': 'success', **CREDS
     }
 
 
