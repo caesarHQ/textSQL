@@ -149,13 +149,18 @@ def _get_table_selection_message_with_descriptions(natural_language_query):
         ---------------------
         {natural_language_query}
         ---------------------
-        Respond in JSON format with your answer in a field named \"tables\" which is a list of strings.
-        Respond with an empty list if you cannot identify any relevant tables.
-        Make sure to write your answer in markdown format. Provide the JSON and only the JSON.
         The following are descriptions of available tables and enums:
         ---------------------
         {get_table_schemas_str()}
         ---------------------
+        Respond in JSON format with your answer in a field named \"tables\" which is a list of strings.
+        Respond with an empty list if you cannot identify any relevant tables.
+        Make sure to write your answer in markdown format. Provide the JSON and only the JSON for the response.
+        Provide any comments before the JSON, include the JSON object in a markdown code block with nothing afterwards.
+        <any comments>
+        ```
+        {{JSON OBJECT HERE}}
+        ```
         """
 
 
