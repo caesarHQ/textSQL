@@ -13,7 +13,7 @@ def localhost_only(f):
         if ENV == "localhost":
             return f(*args, **kwargs)
         else:
-            return {"error": "not allowed"}
+            return {"error": "This requires a localhost connection for dev purposes"}
     return wrapper
 
 
@@ -81,6 +81,7 @@ def get_tables():
     """
     # check if the table exists
     try:
+        print('checking for existing table metadata')
         with open(CREDS_PATH + '/json/table_metadata.json', 'r') as f:
             tables = json.load(f)
             parsed_results = []
@@ -88,6 +89,7 @@ def get_tables():
                 parsed_results.append(tables[key])
             tables = parsed_results
     except:
+        print('no table metadata found, pulling from database')
         tables = []
         for table_name in utils.get_table_names():
             new_table = utils.generate_table_metadata(table_name)

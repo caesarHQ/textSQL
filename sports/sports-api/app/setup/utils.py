@@ -221,11 +221,13 @@ def get_table_names(username=get_current_user()) -> List[str]:
     IGNORE_TABLES = ["ai_sql_table_metadata",
                      "ai_sql_type_metadata", "ai_sql_in_context_examples"]
     try:
+        print('connecting engine')
         with ENGINE.connect() as connection:
             connection = connection.execution_options(
                 postgresql_readonly=True
             )
             with connection.begin():
+                print('engine connected')
                 # sql_text = text(f"""
                 #     SELECT tablename
                 #     FROM pg_catalog.pg_tables
@@ -236,7 +238,9 @@ def get_table_names(username=get_current_user()) -> List[str]:
                     FROM pg_catalog.pg_tables
                     WHERE schemaname = 'public';
                 """)
+                print('pulling tables')
                 result = connection.execute(sql_text)
+                print('tables pulled')
                 rows = [list(r) for r in result.all()]
 
                 table_names = []
@@ -247,7 +251,7 @@ def get_table_names(username=get_current_user()) -> List[str]:
                 return table_names
 
     except Exception as e:
-        print(e)
+        print('error pulling tables', e)
         return None
 
 
