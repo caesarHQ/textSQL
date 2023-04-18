@@ -111,20 +111,9 @@ def admin_management_display():
             st.checkbox(
                 'Table: ' + table.get('name'), value=is_checked, key=table.get('name'), on_change=functools.partial(update_table_checked, name=table.get('name')))
 
-        # add a save button
-        if st.button("Save", key="save_tables"):
-            print('table state: ', st.session_state["tables"])
-            response = requests.post(f"{ADMIN_BASE}/tables",
-                                     json={'tables': st.session_state["tables"]})
-            response = response.json()
-            if response.get('status') == 'success':
-                st.success(response.get('message'))
-            else:
-                st.error(response.get('error'))
-
     # for each of the tables, show the scheama. Later it should be table columns + schema but one thing at a time.
 
-    for table in st.session_state["tables"]:
+    for idx, table in enumerate(st.session_state["tables"]):
 
         if table.get('active', False):
             st.subheader(table.get('name'))
@@ -135,14 +124,31 @@ def admin_management_display():
                 st.checkbox(
                     '---Column: ' + column.get('name') + ', ' + column.get('type'), value=column_checked, key=table.get('name') + '_' + column.get('name'), on_change=functools.partial(update_column_checked, columnIdx=table.get('columns').index(column), table=table.get('name')))
 
-            st.text_area(
-                label="Schema", label_visibility="hidden", value=table.get('schema', ''), height=100, key="schema_" + table.get('name'))
             if st.button("Generate Schema", key="generate_schema_" + table.get('name')):
                 # send the values to the backend to set up the database
                 response = requests.post(f"{ADMIN_BASE}/generate_schema",
-                                         json={'table': table.get('name')})
+                                         json=table)
                 response = response.json()
                 if response.get('status') == 'success':
-                    st.success(response.get('message'))
+                    new_sql = response.get('message')
+                    if new_sql:
+                        table['schema'] = new_sql
+                        st.session_state["tables"][idx]['schema'] = new_sql
+                        st.session_state["tables"][idx]['update_count'] = table.get(
+                            'update_count', 0) + 1
+
                 else:
                     st.error(response.get('error'))
+            st.text_area(
+                label="Schema", label_visibility="hidden", value=table.get('schema', ''), height=100, key="schema_" + table.get('name'))
+
+    # add a save button
+    if st.button("Save", key="save_tables"):
+        print('table state: ', st.session_state["tables"])
+        response = requests.post(f"{ADMIN_BASE}/tables",
+                                 json={'tables': st.session_state["tables"]})
+        response = response.json()
+        if response.get('status') == 'success':
+            st.success(response.get('message'))
+        else:
+            st.error(response.get('error'))

@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, make_response, request
 
 from . import admin_helper
-from . import utils
+from ..utils import get_assistant_message
 
 admin_bp = Blueprint('admin_bp', __name__)
 
@@ -73,3 +73,78 @@ def save_tables():
     new_data = request.get_json()
     new_tables = new_data.get('tables')
     return make_response(jsonify(admin_helper.save_tables(new_tables)), 200)
+
+
+@admin_bp.route('/generate_schema', methods=['POST'])
+def generate_schema():
+    # given a table schema and a (later) head, make a query to create the table.
+    table_data = request.get_json()
+    print('table_data', table_data)
+
+    system_message = {
+        "role": "system",
+        "content": """You are an expert programmer. Your goal is to create SQL code. You provide only the SQL asked for.
+These should look like:
+CREATE TABLE table_name (-- wow this table is cool
+    col1 int, -- this is the first column
+    col2 varchar(255) -- this is the second column
+);
+or 
+CREATE TABLE cats  -- this table holds all my cats
+(  
+    cat_id int, -- this is the id of the cat
+    cat_name varchar(255) -- this is the name of the cat
+);
+""",
+    }
+
+    table_name = table_data.get("name")
+    table_columms = table_data.get("columns")
+    table_head = []  # worry about the head later
+
+    formatted_schema = []
+    for col in table_columms:
+        formatted_schema.append(f"{col['name']} {col['type']}")
+
+    formatted_schema = ", \n".join(formatted_schema)
+
+    formatted_head = []
+    for row in table_head:
+        head_row = []
+        for col in table_columms:
+            head_row.append(f"{row[col['name']]}")
+        formatted_head.append(f"({', '.join(head_row)})")
+
+    formatted_head = ""  # "\n".join(formatted_head)
+
+    table_str = f"""Table Name:
+    {table_name}
+    
+    Table Schema:
+    {formatted_schema}
+  """
+
+    user_string = f"""Please create the CREATE TABLE sql query for the information in this table:
+    {table_str}
+    
+    For formatting the SQL, please:
+        - include inline SQL comments (--) on each line based on the schema
+        - it should start with CREATE TABLE
+            - add a comment after the ( on the same line using -- for a brief description of the table content/purpose
+        - then each for each column
+            - the name
+            - the type
+            - a comment with the purpose/info on the data
+
+    Return the SQL and only the SQL. Make the best attempt you can with the information present."""
+
+    user_message = {
+        "role": "user",
+        "content": user_string,
+    }
+
+    res = get_assistant_message([system_message, user_message])
+    print('res', res)
+    res = res["message"]["content"]
+
+    return jsonify({"status": 'success', "message": res})

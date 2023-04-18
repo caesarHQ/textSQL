@@ -53,8 +53,7 @@ def get_few_shot_messages(mode: str = "text_to_sql") -> List[Dict]:
 def get_assistant_message(
         messages: List[Dict[str, str]],
         temperature: int = 0,
-        model: str = "gpt-3.5-0301",
-        # model: str = "gpt-3.5-turbo",
+        model: str = "gpt-3.5-turbo",
         # model: str = "gpt-4",
 ):
     res = openai.ChatCompletion.create(
