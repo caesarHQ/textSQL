@@ -33,6 +33,7 @@ def load_openai_key(new_openai_key=None):
             json.dump(CREDS, f)
     else:
         OPENAI_KEY = CREDS.get("OPENAI_API_KEY")
+    openai.api_key = OPENAI_KEY
 
 
 load_openai_key()
