@@ -1,7 +1,7 @@
 import requests
 
 import streamlit as st
-from config import API_BASE
+from config import ADMIN_BASE
 
 
 def parse_database_fields_connection(database_url):
@@ -23,8 +23,8 @@ def parse_database_fields_connection(database_url):
         return None
 
 
-DB_DATA = requests.get(f"{API_BASE}/db_auth").json()
-OPENAI_DATA = requests.get(f"{API_BASE}/openai_auth").json()
+DB_DATA = requests.get(f"{ADMIN_BASE}/db_auth").json()
+OPENAI_DATA = requests.get(f"{ADMIN_BASE}/openai_auth").json()
 
 
 def admin_management_display():
@@ -49,7 +49,7 @@ def admin_management_display():
 
             if st.button("Update", key="update_db"):
                 # send the values to the backend to set up the database
-                response = requests.post(f"{API_BASE}/db_auth",
+                response = requests.post(f"{ADMIN_BASE}/db_auth",
                                          json=parse_database_fields_connection(database_url))
                 response = response.json()
                 if response.get('status') == 'success':
@@ -64,7 +64,7 @@ def admin_management_display():
         if openai_api_key:
             if st.button("Update", key="update_openai"):
                 # send the values to the backend to set up the database
-                response = requests.post(f"{API_BASE}/openai_auth",
+                response = requests.post(f"{ADMIN_BASE}/openai_auth",
                                          json={'OPENAI_API_KEY': openai_api_key})
                 response = response.json()
                 if response.get('status') == 'success':
@@ -74,7 +74,7 @@ def admin_management_display():
 
     with st.expander("Tables"):
         if st.button("Refresh Tables"):
-            tables = requests.get(f"{API_BASE}/tables").json()
+            tables = requests.get(f"{ADMIN_BASE}/tables").json()
             # each table has a active checkbox + name
             for table in tables:
                 st.checkbox(table.get('name'), value=table.get('active'))

@@ -41,7 +41,7 @@ def create_app(config_object=FlaskAppConfig):
     app.register_blueprint(sql_gen_bp)
     app.register_blueprint(table_selection_bp)
     app.register_blueprint(visualization_bp)
-    app.register_blueprint(admin_bp)
+    app.register_blueprint(admin_bp, url_prefix='/admin')
 
     # from app.errors import bp as errors_bp
     # app.register_blueprint(errors_bp)
