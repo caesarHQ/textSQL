@@ -148,6 +148,42 @@ def generate_few_shot_queries():
     pass
 
 
+def list_all_enums() -> Dict[str, List[str]]:
+    """
+    Get all enums in the database
+    """
+    try:
+        with ENGINE.connect() as connection:
+            connection = connection.execution_options(
+                postgresql_readonly=True
+            )
+            with connection.begin():
+                sql_text = text(f"""
+                    SELECT t.typname AS enum_name, e.enumlabel AS enum_value
+                    FROM pg_type t
+                    JOIN pg_enum e ON t.oid = e.enumtypid
+                    ORDER BY t.typname, e.enumsortorder;
+                """)
+                result = connection.execute(sql_text)
+                rows = [list(r) for r in result.all()]
+
+                enums = {}
+                for row in rows:
+                    if row[0] not in enums:
+                        enums[row[0]] = {
+                            "type": row[0],
+                            "valid_values": [],
+                        }
+
+                    enums[row[0]]["valid_values"].append(row[1])
+
+            return enums
+
+    except Exception as e:
+        print(e)
+        return None
+
+
 def get_type_names() -> List[str]:
     """
     Get names of user-defined types in the database

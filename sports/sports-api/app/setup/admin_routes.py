@@ -152,6 +152,7 @@ CREATE TABLE cats  -- this table holds all my cats
 
 @admin_bp.route('/load_enums', methods=['GET'])
 def load_enums():
+    print('GETING ENUMS')
     res = admin_helper.load_enums()
-    print('res', res)
+
     return jsonify(res)

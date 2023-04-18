@@ -145,6 +145,19 @@ def admin_management_display():
                 st.text_area(
                     label="Schema", label_visibility="hidden", value=table.get('schema', ''), height=100, key="schema_" + table.get('name'))
 
+    # expandable for enums
+    with st.expander("Enums"):
+        st.subheader("Enums")
+
+        if st.button("Refresh Enums", key="refresh_enums"):
+            # send the values to the backend to set up the database
+            response = requests.get(f"{ADMIN_BASE}/load_enums")
+            response = response.json()
+            if response.get('status') == 'success':
+                st.success(response.get('enums'))
+            else:
+                st.error(response.get('error'))
+
     # add a save button
     if st.button("Save", key="save_tables"):
         print('table state: ', st.session_state["tables"])

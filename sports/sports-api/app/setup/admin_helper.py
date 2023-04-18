@@ -113,7 +113,10 @@ def load_enums():
     Load enums from local json file
     """
 
-    enums = utils.get_type_names()
+    enums = utils.list_all_enums()
+
+    with open(CREDS_PATH + '/json/enums.json', 'w') as f:
+        json.dump(enums, f, indent=4)
 
     return {
         'status': 'success', 'enums': enums
