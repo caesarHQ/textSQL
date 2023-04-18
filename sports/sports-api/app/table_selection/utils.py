@@ -84,6 +84,8 @@ def get_table_schemas_str(table_names: List[str] = []) -> str:
     else:
         tables_to_use = [t for t in TABLES_METADATA_DICT.values()]
 
+    print('tables to use: ', tables_to_use)
+
     enums_to_use = set()
     tables_str_list = []
     for table in tables_to_use:
@@ -141,7 +143,7 @@ def _get_table_selection_message_with_descriptions(natural_language_query):
         ---------------------
         Respond in JSON format with your answer in a field named \"tables\" which is a list of strings.
         Respond with an empty list if you cannot identify any relevant tables.
-        Make sure to write your answer in markdown format.
+        Make sure to write your answer in markdown format. Provide the JSON and only the JSON.
         The following are descriptions of available tables and enums:
         ---------------------
         {get_table_schemas_str()}
@@ -183,6 +185,8 @@ def get_relevant_tables_from_lm(natural_language_query):
     """
     content = _get_table_selection_message_with_descriptions(
         natural_language_query)
+
+    print('Table String: ', content)
     messages = _get_table_selection_messages().copy()
     messages.append({
         "role": "user",
@@ -195,5 +199,8 @@ def get_relevant_tables_from_lm(natural_language_query):
             model="gpt-3.5-turbo-0301",
         )["message"]["content"]
     )
+
+    print('Table JSON Response: ', tables_json_str)
+
     tables = json.loads(tables_json_str).get("tables")
     return tables
