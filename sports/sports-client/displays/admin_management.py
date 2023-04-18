@@ -42,6 +42,8 @@ def update_table(name, *args):
 
 def admin_management_display():
     st.title("Set up your Database")
+    if "tables" not in st.session_state:
+        st.session_state["tables"] = []
 
     # closable container
     with st.expander("Database URL"):
