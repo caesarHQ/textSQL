@@ -8,6 +8,8 @@ from app.extensions import db
 from app.models.in_context_examples import InContextExamples
 
 IN_CONTEXT_EXAMPLES_DICT = {}
+
+
 def load_in_context_examples():
     """
     Setup in context examples dict
@@ -15,8 +17,11 @@ def load_in_context_examples():
     global IN_CONTEXT_EXAMPLES_DICT
 
     if not DB_MANAGED_METADATA:
-        with open("app/models/json/in_context_examples.json", "r") as f:
-            IN_CONTEXT_EXAMPLES_DICT = json.load(f)
+        try:
+            with open("app/models/json/in_context_examples.json", "r") as f:
+                IN_CONTEXT_EXAMPLES_DICT = json.load(f)
+        except:
+            IN_CONTEXT_EXAMPLES_DICT = {}
         return
 
     try:
@@ -30,7 +35,7 @@ def load_in_context_examples():
 
 def get_few_shot_messages(mode: str = "text_to_sql") -> List[Dict]:
     global IN_CONTEXT_EXAMPLES_DICT
-    
+
     examples = IN_CONTEXT_EXAMPLES_DICT.get(mode, [])
     messages = []
     for example in examples:

@@ -13,6 +13,8 @@ from ..utils import get_assistant_message, get_few_shot_messages
 
 ENUMS_METADATA_DICT = {}
 TABLES_METADATA_DICT = {}
+
+
 def load_tables_and_types_metadata():
     """
     Setup metadata dicts for tables and enums
@@ -21,10 +23,16 @@ def load_tables_and_types_metadata():
     global TABLES_METADATA_DICT
 
     if not DB_MANAGED_METADATA:
-        with open("app/models/json/table_metadata.json", "r") as f:
-            TABLES_METADATA_DICT = json.load(f)
-        with open("app/models/json/type_metadata.json", "r") as f:
-            ENUMS_METADATA_DICT = json.load(f)
+        try:
+            with open("app/models/json/table_metadata.json", "r") as f:
+                TABLES_METADATA_DICT = json.load(f)
+        except:
+            TABLES_METADATA_DICT = {}
+        try:
+            with open("app/models/json/type_metadata.json", "r") as f:
+                ENUMS_METADATA_DICT = json.load(f)
+        except:
+            ENUMS_METADATA_DICT = {}
         return
 
     try:
@@ -44,7 +52,6 @@ def load_tables_and_types_metadata():
     for table_metadata in tables_metadata:
         # TABLES_METADATA_DICT[table_metadata.table_name] = table_metadata
         TABLES_METADATA_DICT[table_metadata.table_name] = table_metadata.table_metadata
-
 
 
 def save_tables_metadata_to_json():
@@ -72,7 +79,8 @@ def get_table_schemas_str(table_names: List[str] = []) -> str:
 
     tables_to_use = []
     if table_names:
-        tables_to_use = [TABLES_METADATA_DICT[t_name] for t_name in table_names]
+        tables_to_use = [TABLES_METADATA_DICT[t_name]
+                         for t_name in table_names]
     else:
         tables_to_use = [t for t in TABLES_METADATA_DICT.values()]
 
@@ -173,7 +181,8 @@ def get_relevant_tables_from_lm(natural_language_query):
     """
     Identify relevant tables for answering a natural language query via LM
     """
-    content = _get_table_selection_message_with_descriptions(natural_language_query)
+    content = _get_table_selection_message_with_descriptions(
+        natural_language_query)
     messages = _get_table_selection_messages().copy()
     messages.append({
         "role": "user",
