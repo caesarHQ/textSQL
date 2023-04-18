@@ -3,6 +3,7 @@ from app.extensions import db
 # import models to create tables if they don't exist
 from app.models import in_context_examples, table_metadata, type_metadata
 from app.setup.routes import bp as setup_bp
+from app.setup.admin_routes import admin_bp
 from app.sql_explanation.routes import bp as sql_explanation_bp
 from app.sql_generation.routes import bp as sql_gen_bp
 from app.table_selection.routes import bp as table_selection_bp
@@ -20,7 +21,6 @@ def create_app(config_object=FlaskAppConfig):
     app.config.from_object(config_object)
     CORS(app)
 
-
     # Initialize app with extensions
     db.init_app(app)
     migrate = Migrate(app, db)
@@ -32,7 +32,6 @@ def create_app(config_object=FlaskAppConfig):
     admin = Admin(None, name='admin', template_mode='bootstrap3')
     admin.init_app(app)
 
-
     @app.route("/ping")
     def ping():
         return 'pong'
@@ -42,6 +41,7 @@ def create_app(config_object=FlaskAppConfig):
     app.register_blueprint(sql_gen_bp)
     app.register_blueprint(table_selection_bp)
     app.register_blueprint(visualization_bp)
+    app.register_blueprint(admin_bp)
 
     # from app.errors import bp as errors_bp
     # app.register_blueprint(errors_bp)

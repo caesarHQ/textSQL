@@ -73,14 +73,8 @@ def admin_management_display():
                     st.error(response.get('error'))
 
     with st.expander("Tables"):
-        # display the tables in the database
-        tables = []
-        st.write('TABLES')
-        for table in tables:
-            st.write(table)
-
-        # button to load tables
-        # if st.button("Load Tables"):
-            # send a request to the backend to load the tables
-            # tables = requests.get(f"{API_BASE}/tables").json()
-            # st.write(tables)
+        if st.button("Refresh Tables"):
+            tables = requests.get(f"{API_BASE}/tables").json()
+            # each table has a active checkbox + name
+            for table in tables:
+                st.checkbox(table.get('name'), value=table.get('active'))
