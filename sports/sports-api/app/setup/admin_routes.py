@@ -85,22 +85,22 @@ def generate_schema():
         "role": "system",
         "content": """You are an expert programmer. Your goal is to create SQL code. You provide only the SQL asked for.
 These should look like:
-CREATE TABLE table_name (-- wow this table is cool
-    col1 int, -- this is the first column
-    col2 varchar(255) -- this is the second column
+CREATE TABLE best_trucks (-- wow this table is cool
+    col1 int, -- contains the number sold in 2022
+    col2 varchar(255) -- the name of the truck in model|vendor|year format
 );
 or 
 CREATE TABLE cats  -- this table holds all my cats
 (  
-    cat_id int, -- this is the id of the cat
-    cat_name varchar(255) -- this is the name of the cat
+    cat_id int, -- this is the id of the cat formatted owner|ssn
+    cat_name varchar(255) -- this is the name of the cat in wingdings
 );
 """,
     }
 
     table_name = table_data.get("name")
     table_columms = table_data.get("columns")
-    table_head = []  # worry about the head later
+    table_head = table_data.get("head")
 
     formatted_schema = []
     for col in table_columms:
@@ -108,20 +108,18 @@ CREATE TABLE cats  -- this table holds all my cats
 
     formatted_schema = ", \n".join(formatted_schema)
 
-    formatted_head = []
+    formatted_head = ""
     for row in table_head:
-        head_row = []
-        for col in table_columms:
-            head_row.append(f"{row[col['name']]}")
-        formatted_head.append(f"({', '.join(head_row)})")
-
-    formatted_head = ""  # "\n".join(formatted_head)
+        formatted_head += ", ".join([str(col) for col in row]) + "\n"
 
     table_str = f"""Table Name:
     {table_name}
     
     Table Schema:
     {formatted_schema}
+
+    Table Head:
+    {formatted_head}
   """
 
     user_string = f"""Please create the CREATE TABLE sql query for the information in this table:
