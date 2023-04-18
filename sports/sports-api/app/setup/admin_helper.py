@@ -32,6 +32,7 @@ def set_db_credentials(request_body):
     """
     Set database credentials in request body
     """
+
     db_credentials = {}
     db_credentials["address"] = request_body.get("host")
     db_credentials["database"] = request_body.get("database")
@@ -39,11 +40,20 @@ def set_db_credentials(request_body):
     db_credentials["password"] = request_body.get("password")
     db_credentials["port"] = request_body.get("port", 5432)
 
-    for key, value in db_credentials.items():
-        if not value:
-            error_msg = f"`{key}` is missing from request body"
-            raise Exception(error_msg)
-    db_connection_string = f"postgresql://{db_credentials['username']}:{db_credentials['password']}@{db_credentials['address']}:{db_credentials['port']}/{db_credentials['database']}"
+    if db_credentials["username"] == "":
+        db_credentials["username"] = None
+    if db_credentials["password"] == "":
+        db_credentials["password"] = None
+
+    # if it's localhost and no username/password is provided
+    if db_credentials["address"] == "localhost" and not db_credentials["username"] and not db_credentials["password"]:
+        db_connection_string = f"postgresql://{db_credentials['address']}:{db_credentials['port']}/{db_credentials['database']}"
+    else:
+        for key, value in db_credentials.items():
+            if not value:
+                error_msg = f"`{key}` is missing from request body"
+                raise Exception(error_msg)
+        db_connection_string = f"postgresql://{db_credentials['username']}:{db_credentials['password']}@{db_credentials['address']}:{db_credentials['port']}/{db_credentials['database']}"
 
     return update_engine(db_connection_string)
 
