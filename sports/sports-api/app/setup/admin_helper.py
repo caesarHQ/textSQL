@@ -81,7 +81,7 @@ def get_tables():
     """
     # check if the table exists
     try:
-        with open(CREDS_PATH + '/json/tables.json', 'r') as f:
+        with open(CREDS_PATH + '/json/table_metadata.json', 'r') as f:
             tables = json.load(f)
             parsed_results = []
             for key in tables:
@@ -103,7 +103,7 @@ def save_tables(new_tables):
     """
     Save tables to local json file
     """
-    with open(CREDS_PATH + '/json/tables.json', 'w') as f:
+    with open(CREDS_PATH + '/json/table_metadata.json', 'w') as f:
         reformatted_tables = {}
         for table in new_tables:
             reformatted_tables[table['name']] = table
@@ -122,7 +122,7 @@ def load_enums():
 
     enums = utils.list_all_enums()
 
-    with open(CREDS_PATH + '/json/enums.json', 'w') as f:
+    with open(CREDS_PATH + '/json/type_metadata.json', 'w') as f:
         json.dump(enums, f, indent=4)
 
     return {
