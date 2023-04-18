@@ -91,3 +91,16 @@ def get_tables():
     return {
         'status': 'success', 'tables': tables
     }
+
+
+@localhost_only
+def save_tables(new_tables):
+    """
+    Save tables to local json file
+    """
+    with open(CREDS_PATH + '/tables.json', 'w') as f:
+        json.dump(new_tables, f)
+
+    return {
+        'status': 'success', 'message': 'save worked'
+    }

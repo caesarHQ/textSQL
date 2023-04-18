@@ -106,11 +106,10 @@ def admin_management_display():
         # add a save button
         if st.button("Save"):
             print('table state: ', st.session_state["tables"])
-            # send the list of checked tables to the backend
-            # response = requests.post(f"{ADMIN_BASE}/tables",
-            #                          json={'tables': st.session_state["tables"], 'checked_tables': st.session_state["checked_tables"]})
-            # response = response.json()
-            # if response.get('status') == 'success':
-            #     st.success(response.get('message'))
-            # else:
-            #     st.error(response.get('error'))
+            response = requests.post(f"{ADMIN_BASE}/tables",
+                                     json={'tables': st.session_state["tables"]})
+            response = response.json()
+            if response.get('status') == 'success':
+                st.success(response.get('message'))
+            else:
+                st.error(response.get('error'))
