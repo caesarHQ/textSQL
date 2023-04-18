@@ -30,14 +30,20 @@ OPENAI_DATA = requests.get(f"{ADMIN_BASE}/openai_auth").json()
 if "tables" not in st.session_state:
     st.session_state["tables"] = []
 
-print('tables:', st.session_state["tables"])
 
-
-def update_table(name, *args):
+def update_table_checked(name, *args):
     isChecked = args[0] if args else False
     for table in st.session_state["tables"]:
         if table.get('name') == name:
             table['active'] = isChecked
+
+
+def update_column_checked(columnIdx, table, *args):
+    # it's {name: str, columns: str[], active: bool}
+    isChecked = args[0] if args else False
+    for table in st.session_state["tables"]:
+        if table.get('name') == table:
+            table['columns'][columnIdx]['active'] = isChecked
 
 
 def admin_management_display():
@@ -89,7 +95,7 @@ def admin_management_display():
 
     tables_expander = st.expander("Tables")
     with tables_expander:
-        if st.button("Refresh Tables"):
+        if st.button("Refresh Tables", key="refresh_tables"):
             response = requests.get(f"{ADMIN_BASE}/tables").json()
 
             if response.get('status') == 'success':
@@ -103,10 +109,17 @@ def admin_management_display():
             is_checked = table.get('active', False)
             # when checked, find the table and set the active value to false/true
             st.checkbox(
-                table.get('name'), value=is_checked, key=table.get('name'), on_change=functools.partial(update_table, name=table.get('name')))
+                'Table: ' + table.get('name'), value=is_checked, key=table.get('name'), on_change=functools.partial(update_table_checked, name=table.get('name')))
+
+            if is_checked:
+                for column in table.get('columns', []):
+                    print('column', column)
+                    column_checked = column.get('active', False)
+                    st.checkbox(
+                        '---Column: ' + column.get('name') + ', ' + column.get('type'), value=column_checked, key=table.get('name') + '_' + column.get('name'), on_change=functools.partial(update_column_checked, columnIdx=table.get('columns').index(column), table=table.get('name')))
 
         # add a save button
-        if st.button("Save"):
+        if st.button("Save", key="save_tables"):
             print('table state: ', st.session_state["tables"])
             response = requests.post(f"{ADMIN_BASE}/tables",
                                      json={'tables': st.session_state["tables"]})

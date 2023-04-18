@@ -79,14 +79,15 @@ def get_tables():
     """
     Get tables from database
     """
-
     # check if the table exists
     try:
         with open(CREDS_PATH + '/json/tables.json', 'r') as f:
             tables = json.load(f)
     except:
-        tables = utils.get_table_names()
-        tables = [{"name": t, "active": True} for t in tables]
+        tables = []
+        for table_name in utils.get_table_names():
+            new_table = utils.generate_table_metadata(table_name)
+            tables.append(new_table)
 
     return {
         'status': 'success', 'tables': tables

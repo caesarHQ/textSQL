@@ -70,7 +70,8 @@ def save_types_metadata_to_db():
     for type_name in get_type_names():
         metadata = generate_type_metadata(type_name)
         try:
-            tm = TypeMetadata.query.filter_by(type_name=type_name).one_or_none()
+            tm = TypeMetadata.query.filter_by(
+                type_name=type_name).one_or_none()
             if tm:
                 tm.type_metadata = metadata
             else:
@@ -99,7 +100,7 @@ def get_current_user():
                 result = connection.execute(sql_text)
                 rows = [list(r) for r in result.all()]
                 return rows[0][0]
-            
+
     except Exception as e:
         print(e)
         return None
@@ -112,7 +113,8 @@ def save_tables_metadata_to_db():
     for table_name in get_table_names():
         metadata = generate_table_metadata(table_name)
         try:
-            tm = TableMetadata.query.filter_by(table_name=table_name).one_or_none()
+            tm = TableMetadata.query.filter_by(
+                table_name=table_name).one_or_none()
             if tm:
                 tm.table_metadata = metadata
             else:
@@ -170,7 +172,7 @@ def get_type_names() -> List[str]:
                     type_names.append(row[0])
 
                 return type_names
-            
+
     except Exception as e:
         print(e)
         return None
@@ -180,7 +182,8 @@ def get_table_names(username=get_current_user()) -> List[str]:
     """
     Get names of tables in the database
     """
-    IGNORE_TABLES = ["ai_sql_table_metadata", "ai_sql_type_metadata", "ai_sql_in_context_examples"]
+    IGNORE_TABLES = ["ai_sql_table_metadata",
+                     "ai_sql_type_metadata", "ai_sql_in_context_examples"]
     try:
         with ENGINE.connect() as connection:
             connection = connection.execution_options(
@@ -206,7 +209,7 @@ def get_table_names(username=get_current_user()) -> List[str]:
                         table_names.append(row[0])
 
                 return table_names
-            
+
     except Exception as e:
         print(e)
         return None
@@ -239,7 +242,7 @@ def generate_type_metadata(type_name):
                     "type": type_name,
                     "valid_values": valid_values
                 }
-            
+
     except Exception as e:
         print(e)
         return None
@@ -271,19 +274,20 @@ def generate_table_metadata(table_name):
                     column_type = row[1]
                 columns_metadata.append({
                     "name": row[0],
-                    "type": column_type
+                    "type": column_type,
+                    "active": True
                 })
 
-            
             # TODO: generate table description
             # TODO: generate column description (FK, PK, etc.)
             table_description = ""
             return {
                 "name": table_name,
+                "active": True,
                 "description": table_description,
                 "columns": columns_metadata
             }
-    
+
     except Exception as e:
         print(e)
         return None
