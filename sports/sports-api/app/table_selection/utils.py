@@ -77,6 +77,9 @@ def get_table_schemas_str(table_names: List[str] = []) -> str:
     global ENUMS_METADATA_DICT
     global TABLES_METADATA_DICT
 
+    if len(TABLES_METADATA_DICT) == 0:
+        load_tables_and_types_metadata()
+
     tables_to_use = []
     if table_names:
         tables_to_use = [TABLES_METADATA_DICT[t_name]
@@ -84,16 +87,21 @@ def get_table_schemas_str(table_names: List[str] = []) -> str:
     else:
         tables_to_use = [t for t in TABLES_METADATA_DICT.values()]
 
-    print('tables to use: ', tables_to_use)
-
     enums_to_use = set()
     tables_str_list = []
     for table in tables_to_use:
+        if not table.get('active'):
+            continue
+        if len(table.get("schema", "")) > 0:
+            tables_str_list.append(table.get("schema"))
+            continue
         tables_str = f"table name: {table['name']}\n"
         if table.get("description"):
             tables_str += f"table description: {table.get('description')}\n"
         columns_str_list = []
         for column in table.get("columns", []):
+            if not column.get("active"):
+                continue
             columns_str_list.append(f"{column['name']} [{column['type']}]")
             if column.get("type") in ENUMS_METADATA_DICT.keys():
                 enums_to_use.add(column.get("type"))
@@ -186,19 +194,24 @@ def get_relevant_tables_from_lm(natural_language_query):
     content = _get_table_selection_message_with_descriptions(
         natural_language_query)
 
-    print('Table String: ', content)
+    print('got content')
+
     messages = _get_table_selection_messages().copy()
     messages.append({
         "role": "user",
         "content": content
     })
 
-    tables_json_str = _extract_text_from_markdown(
-        get_assistant_message(
-            messages=messages,
-            model="gpt-3.5-turbo-0301",
-        )["message"]["content"]
-    )
+    print('got messages')
+
+    asst_message = get_assistant_message(
+        messages=messages,
+        model="gpt-3.5-turbo-0301",
+    )["message"]["content"]
+
+    print('Table Assistant Message: ', asst_message)
+
+    tables_json_str = _extract_text_from_markdown(asst_message)
 
     print('Table JSON Response: ', tables_json_str)
 

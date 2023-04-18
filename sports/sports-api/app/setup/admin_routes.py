@@ -85,15 +85,15 @@ def generate_schema():
         "role": "system",
         "content": """You are an expert programmer. Your goal is to create SQL code. You provide only the SQL asked for.
 These should look like:
-CREATE TABLE best_trucks (-- wow this table is cool
-    col1 int, -- contains the number sold in 2022
-    col2 varchar(255) -- the name of the truck in model|vendor|year format
+CREATE TABLE best_trucks (-- data about the best trucks in Spain
+    col1 int, -- contains the number sold in 2022, e.g. 100
+    col2 varchar(255) -- the name of the truck in model|vendor|year format, e.g. f150|ford|2022
 );
 or 
 CREATE TABLE cats  -- this table holds all my cats
 (  
-    cat_id int, -- this is the id of the cat formatted owner|ssn
-    cat_name varchar(255) -- this is the name of the cat in wingdings
+    cat_id int, -- this is the id of the cat formatted owner|address, e.g fred|123 main st
+    cat_name varchar(255) -- this is the name of the cat in wingdings e.g. ㄒㄩㄥ
 );
 """,
     }

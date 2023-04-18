@@ -56,11 +56,16 @@ def get_assistant_message(
         model: str = "gpt-3.5-turbo",
         # model: str = "gpt-4",
 ):
-    res = openai.ChatCompletion.create(
-        model=model,
-        temperature=temperature,
-        messages=messages
-    )
+    try:
+        res = openai.ChatCompletion.create(
+            model=model,
+            temperature=temperature,
+            messages=messages
+        )
+    except Exception as e:
+        print('OpenAI Error: ', e)
+        print('INPUT: ', messages)
+        return None
     # completion = res['choices'][0]["message"]["content"]
     assistant_message = res['choices'][0]
     return assistant_message

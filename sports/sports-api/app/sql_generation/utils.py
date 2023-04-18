@@ -64,8 +64,9 @@ def make_msg_with_schema_and_warnings():
         ---------------------
         {schemas_str}
         ---------------------
+        Provide a plan and then markdown containing the SQL (inside of backticks).
         Make sure to write your answer in markdown format. Before the markdown provide a plan for what query to run.
-        Then include the markdown containing the SQL (inside of backticks).
+        Make sure to include the table name with each column (table.column).
         Include nothing after the markdown.
         """
         # TODO: place warnings here
@@ -147,15 +148,6 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     if not messages:
         # ask the assistant to rephrase before generating the query
         schemas_str = get_table_schemas_str(table_names)
-        # rephrase = [{
-        #     "role": "user",
-        #     "content": make_rephrase_msg_with_schema_and_warnings().format(
-        #         natural_language_query=natural_language_query,
-        #         schemas_str=schemas_str
-        #         )
-        # }]
-        # rephrased_query = get_assistant_message(rephrase)["message"]["content"]
-        # natural_language_query = rephrased_query
 
         content = make_msg_with_schema_and_warnings().format(
             natural_language_query=natural_language_query,
@@ -176,6 +168,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             # model = "gpt-3.5-turbo"
             model = "gpt-3.5-turbo-0301"
             assistant_message = get_assistant_message(messages, model=model)
+
             sql_query = extract_sql_query_from_message(
                 assistant_message["message"]["content"])
             print(f"""
