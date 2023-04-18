@@ -71,6 +71,5 @@ def get_tables():
 @admin_bp.route('/tables', methods=['POST'])
 def save_tables():
     new_data = request.get_json()
-    print('new_data', new_data)
     new_tables = new_data.get('tables')
     return make_response(jsonify(admin_helper.save_tables(new_tables)), 200)

@@ -82,7 +82,7 @@ def get_tables():
 
     # check if the table exists
     try:
-        with open(CREDS_PATH + '/tables.json', 'r') as f:
+        with open(CREDS_PATH + '/json/tables.json', 'r') as f:
             tables = json.load(f)
     except:
         tables = utils.get_table_names()
@@ -98,7 +98,7 @@ def save_tables(new_tables):
     """
     Save tables to local json file
     """
-    with open(CREDS_PATH + '/tables.json', 'w') as f:
+    with open(CREDS_PATH + '/json/tables.json', 'w') as f:
         json.dump(new_tables, f)
 
     return {
