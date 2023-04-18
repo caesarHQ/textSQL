@@ -116,31 +116,34 @@ def admin_management_display():
     for idx, table in enumerate(st.session_state["tables"]):
 
         if table.get('active', False):
-            st.subheader(table.get('name'))
+            # expandable table
+            with st.expander(table.get('name')):
 
-            # have a Table label, a text area with the value of the table.schema, and a button to generate the schema, and a button to save the schema
-            for column in table.get('columns', []):
-                column_checked = column.get('active', False)
-                st.checkbox(
-                    '---Column: ' + column.get('name') + ', ' + column.get('type'), value=column_checked, key=table.get('name') + '_' + column.get('name'), on_change=functools.partial(update_column_checked, columnIdx=table.get('columns').index(column), table=table.get('name')))
+                st.subheader(table.get('name'))
 
-            if st.button("Generate Schema", key="generate_schema_" + table.get('name')):
-                # send the values to the backend to set up the database
-                response = requests.post(f"{ADMIN_BASE}/generate_schema",
-                                         json=table)
-                response = response.json()
-                if response.get('status') == 'success':
-                    new_sql = response.get('message')
-                    if new_sql:
-                        table['schema'] = new_sql
-                        st.session_state["tables"][idx]['schema'] = new_sql
-                        st.session_state["tables"][idx]['update_count'] = table.get(
-                            'update_count', 0) + 1
+                # have a Table label, a text area with the value of the table.schema, and a button to generate the schema, and a button to save the schema
+                for column in table.get('columns', []):
+                    column_checked = column.get('active', False)
+                    st.checkbox(
+                        '---Column: ' + column.get('name') + ', ' + column.get('type'), value=column_checked, key=table.get('name') + '_' + column.get('name'), on_change=functools.partial(update_column_checked, columnIdx=table.get('columns').index(column), table=table.get('name')))
 
-                else:
-                    st.error(response.get('error'))
-            st.text_area(
-                label="Schema", label_visibility="hidden", value=table.get('schema', ''), height=100, key="schema_" + table.get('name'))
+                if st.button("Generate Schema", key="generate_schema_" + table.get('name')):
+                    # send the values to the backend to set up the database
+                    response = requests.post(f"{ADMIN_BASE}/generate_schema",
+                                             json=table)
+                    response = response.json()
+                    if response.get('status') == 'success':
+                        new_sql = response.get('message')
+                        if new_sql:
+                            table['schema'] = new_sql
+                            st.session_state["tables"][idx]['schema'] = new_sql
+                            st.session_state["tables"][idx]['update_count'] = table.get(
+                                'update_count', 0) + 1
+
+                    else:
+                        st.error(response.get('error'))
+                st.text_area(
+                    label="Schema", label_visibility="hidden", value=table.get('schema', ''), height=100, key="schema_" + table.get('name'))
 
     # add a save button
     if st.button("Save", key="save_tables"):

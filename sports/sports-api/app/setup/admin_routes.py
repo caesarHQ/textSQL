@@ -148,3 +148,10 @@ CREATE TABLE cats  -- this table holds all my cats
     res = res["message"]["content"]
 
     return jsonify({"status": 'success', "message": res})
+
+
+@admin_bp.route('/load_enums', methods=['GET'])
+def load_enums():
+    res = admin_helper.load_enums()
+    print('res', res)
+    return jsonify(res)

@@ -105,3 +105,16 @@ def save_tables(new_tables):
     return {
         'status': 'success', 'message': 'save worked'
     }
+
+
+@localhost_only
+def load_enums():
+    """
+    Load enums from local json file
+    """
+
+    enums = utils.get_type_names()
+
+    return {
+        'status': 'success', 'enums': enums
+    }
