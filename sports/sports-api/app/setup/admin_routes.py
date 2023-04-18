@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, make_response, request
 
 from . import admin_helper
+from . import utils
 
 admin_bp = Blueprint('admin_bp', __name__)
 
@@ -57,3 +58,11 @@ def set_openai_auth():
         return make_response(jsonify({"error": str(e)}), 400)
 
     return make_response(jsonify({"status": "success", "message": "openai key loaded"}), 200)
+
+
+@admin_bp.route('/tables', methods=['GET'])
+def get_tables():
+    """
+    Get the list of tables we're able to use
+    """
+    return make_response(jsonify(admin_helper.get_tables()), 200)

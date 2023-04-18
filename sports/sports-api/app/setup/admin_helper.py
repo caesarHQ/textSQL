@@ -1,7 +1,6 @@
 from functools import wraps
-import os
-import json
 from app.config import CREDS, update_engine, ENV, load_openai_key
+from . import utils
 
 # wrapper function; if ENV is localhost returns it, else returns None
 
@@ -71,3 +70,22 @@ def set_openai_credentials(request_body):
             raise Exception(error_msg)
 
     return load_openai_key(openai_credentials["OPENAI_API_KEY"])
+
+
+@localhost_only
+def get_tables():
+    """
+    Get tables from database
+    """
+
+    tables = utils.get_table_names()
+
+    print('raw tables', tables)
+
+    tables = [{"name": t, "active": True} for t in tables]
+
+    print('tables: ', tables)
+
+    return {
+        'status': 'success', 'tables': tables
+    }

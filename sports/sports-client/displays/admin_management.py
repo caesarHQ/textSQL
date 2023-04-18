@@ -26,6 +26,15 @@ def parse_database_fields_connection(database_url):
 DB_DATA = requests.get(f"{ADMIN_BASE}/db_auth").json()
 OPENAI_DATA = requests.get(f"{ADMIN_BASE}/openai_auth").json()
 
+if "tables" not in st.session_state:
+    st.session_state["tables"] = []
+
+if "checked_tables" not in st.session_state:
+    st.session_state["checked_tables"] = []
+
+print('tables:', st.session_state["tables"])
+print('checked_tables:', st.session_state["checked_tables"])
+
 
 def admin_management_display():
     st.title("Set up your Database")
@@ -72,9 +81,37 @@ def admin_management_display():
                 else:
                     st.error(response.get('error'))
 
-    with st.expander("Tables"):
+    tables_expander = st.expander("Tables")
+    with tables_expander:
         if st.button("Refresh Tables"):
-            tables = requests.get(f"{ADMIN_BASE}/tables").json()
-            # each table has a active checkbox + name
-            for table in tables:
-                st.checkbox(table.get('name'), value=table.get('active'))
+            response = requests.get(f"{ADMIN_BASE}/tables").json()
+            if response.get('status') == 'success':
+                st.session_state["tables"] = response.get('tables')
+            else:
+                st.error(response.get('error'))
+
+        for table in st.session_state["tables"]:
+            is_checked = table.get('name') in st.session_state.get(
+                "checked_tables", [])
+            checkbox_state = st.checkbox(
+                table.get('name'), value=is_checked, key=table.get('name'))
+
+            if checkbox_state:
+                if table.get('name') not in st.session_state["checked_tables"]:
+                    st.session_state["checked_tables"].append(
+                        table.get('name'))
+            else:
+                if table.get('name') in st.session_state["checked_tables"]:
+                    st.session_state["checked_tables"].remove(
+                        table.get('name'))
+
+        # add a save button
+        if st.button("Save"):
+            # send the list of checked tables to the backend
+            response = requests.post(f"{ADMIN_BASE}/tables",
+                                     json={'tables': st.session_state["checked_tables"]})
+            response = response.json()
+            if response.get('status') == 'success':
+                st.success(response.get('message'))
+            else:
+                st.error(response.get('error'))
