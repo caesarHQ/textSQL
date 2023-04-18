@@ -14,9 +14,9 @@ DB_MANAGED_METADATA = False if DB_MANAGED_METADATA is None else DB_MANAGED_METAD
 ENV = getenv("ENV")
 
 
-CREDS_PATH = "./app/models/creds.json"
+CREDS_PATH = "./app/models/"
 try:
-    with open(CREDS_PATH) as f:
+    with open(CREDS_PATH + 'creds.json') as f:
         CREDS = json.load(f)
 except:
     CREDS = {}
@@ -28,7 +28,7 @@ def load_openai_key(new_openai_key=None):
     global OPENAI_KEY
     if new_openai_key:
         OPENAI_KEY = new_openai_key
-        with open(CREDS_PATH, 'w') as f:
+        with open(CREDS_PATH + 'creds.json', 'w') as f:
             CREDS["OPENAI_API_KEY"] = OPENAI_KEY
             json.dump(CREDS, f)
     else:
@@ -62,7 +62,7 @@ def update_engine(new_db_url):
 
         # if we got here, the new engine is valid
         ENGINE = create_engine(DB_URL)
-        with open(CREDS_PATH, 'w') as f:
+        with open(CREDS_PATH + 'creds.json', 'w') as f:
             CREDS["DB_URL"] = DB_URL
             json.dump(CREDS, f)
 

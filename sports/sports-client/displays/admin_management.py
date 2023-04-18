@@ -1,4 +1,5 @@
 import requests
+import functools
 
 import streamlit as st
 from config import ADMIN_BASE
@@ -29,11 +30,14 @@ OPENAI_DATA = requests.get(f"{ADMIN_BASE}/openai_auth").json()
 if "tables" not in st.session_state:
     st.session_state["tables"] = []
 
-if "checked_tables" not in st.session_state:
-    st.session_state["checked_tables"] = []
-
 print('tables:', st.session_state["tables"])
-print('checked_tables:', st.session_state["checked_tables"])
+
+
+def update_table(name, *args):
+    isChecked = args[0] if args else False
+    for table in st.session_state["tables"]:
+        if table.get('name') == name:
+            table['active'] = isChecked
 
 
 def admin_management_display():
@@ -85,33 +89,28 @@ def admin_management_display():
     with tables_expander:
         if st.button("Refresh Tables"):
             response = requests.get(f"{ADMIN_BASE}/tables").json()
+
             if response.get('status') == 'success':
-                st.session_state["tables"] = response.get('tables')
+                all_tables = response.get('tables')
+                print('all_tables: ', all_tables)
+                st.session_state["tables"] = all_tables
             else:
                 st.error(response.get('error'))
 
         for table in st.session_state["tables"]:
-            is_checked = table.get('name') in st.session_state.get(
-                "checked_tables", [])
-            checkbox_state = st.checkbox(
-                table.get('name'), value=is_checked, key=table.get('name'))
-
-            if checkbox_state:
-                if table.get('name') not in st.session_state["checked_tables"]:
-                    st.session_state["checked_tables"].append(
-                        table.get('name'))
-            else:
-                if table.get('name') in st.session_state["checked_tables"]:
-                    st.session_state["checked_tables"].remove(
-                        table.get('name'))
+            is_checked = table.get('active', False)
+            # when checked, find the table and set the active value to false/true
+            st.checkbox(
+                table.get('name'), value=is_checked, key=table.get('name'), on_change=functools.partial(update_table, name=table.get('name')))
 
         # add a save button
         if st.button("Save"):
+            print('table state: ', st.session_state["tables"])
             # send the list of checked tables to the backend
-            response = requests.post(f"{ADMIN_BASE}/tables",
-                                     json={'tables': st.session_state["checked_tables"]})
-            response = response.json()
-            if response.get('status') == 'success':
-                st.success(response.get('message'))
-            else:
-                st.error(response.get('error'))
+            # response = requests.post(f"{ADMIN_BASE}/tables",
+            #                          json={'tables': st.session_state["tables"], 'checked_tables': st.session_state["checked_tables"]})
+            # response = response.json()
+            # if response.get('status') == 'success':
+            #     st.success(response.get('message'))
+            # else:
+            #     st.error(response.get('error'))

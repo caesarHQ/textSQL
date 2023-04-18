@@ -1,5 +1,7 @@
 from functools import wraps
-from app.config import CREDS, update_engine, ENV, load_openai_key
+import json
+
+from app.config import CREDS, update_engine, ENV, load_openai_key, CREDS_PATH
 from . import utils
 
 # wrapper function; if ENV is localhost returns it, else returns None
@@ -78,13 +80,13 @@ def get_tables():
     Get tables from database
     """
 
-    tables = utils.get_table_names()
-
-    print('raw tables', tables)
-
-    tables = [{"name": t, "active": True} for t in tables]
-
-    print('tables: ', tables)
+    # check if the table exists
+    try:
+        with open(CREDS_PATH + '/tables.json', 'r') as f:
+            tables = json.load(f)
+    except:
+        tables = utils.get_table_names()
+        tables = [{"name": t, "active": True} for t in tables]
 
     return {
         'status': 'success', 'tables': tables
