@@ -83,6 +83,10 @@ def get_tables():
     try:
         with open(CREDS_PATH + '/json/tables.json', 'r') as f:
             tables = json.load(f)
+            parsed_results = []
+            for key in tables:
+                parsed_results.append(tables[key])
+            tables = parsed_results
     except:
         tables = []
         for table_name in utils.get_table_names():
@@ -100,7 +104,10 @@ def save_tables(new_tables):
     Save tables to local json file
     """
     with open(CREDS_PATH + '/json/tables.json', 'w') as f:
-        json.dump(new_tables, f)
+        reformatted_tables = {}
+        for table in new_tables:
+            reformatted_tables[table['name']] = table
+        json.dump(reformatted_tables, f, indent=4)
 
     return {
         'status': 'success', 'message': 'save worked'
