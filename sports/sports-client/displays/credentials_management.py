@@ -19,9 +19,24 @@ def parse_database_fields_connection(database_url):
         values["database"] = database
         values['port'] = 5432
         return values
-    except Exception as e:
-        print('values so far:', values)
-        return None
+    except:
+        try:
+            # it might just be host:port/database
+            values = {}
+            split = database_url.split("/")
+            host_port = split[0]
+            database = split[1]
+            values["host"] = host_port.split(":")[0]
+            # if host has an @ in it then it's got a username and it's broken
+            if "@" in values["host"]:
+                return None
+            values["database"] = database
+            values['port'] = host_port.split(":")[1]
+            return values
+
+        except Exception as e:
+            print('values so far:', values)
+            return None
 
 
 if "tables" not in st.session_state:
