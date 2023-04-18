@@ -51,7 +51,7 @@ def update_engine(new_db_url):
     global ENGINE, DB_URL
     DB_URL = new_db_url
     try:
-        NEW_ENGINE = create_engine(DB_URL)
+        NEW_ENGINE = create_engine(new_db_url)
         # try to get the current user
         with NEW_ENGINE.connect() as connection:
             connection = connection.execution_options(
@@ -62,9 +62,9 @@ def update_engine(new_db_url):
                 connection.execute(sql_text)
 
         # if we got here, the new engine is valid
-        ENGINE = create_engine(DB_URL)
+        ENGINE = create_engine(new_db_url)
         with open(CREDS_PATH + 'creds.json', 'w') as f:
-            CREDS["DB_URL"] = DB_URL
+            CREDS["DB_URL"] = new_db_url
             json.dump(CREDS, f)
 
     except Exception as e:

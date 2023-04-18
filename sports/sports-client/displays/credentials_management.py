@@ -24,9 +24,6 @@ def parse_database_fields_connection(database_url):
         return None
 
 
-DB_DATA = requests.get(f"{ADMIN_BASE}/db_auth").json()
-OPENAI_DATA = requests.get(f"{ADMIN_BASE}/openai_auth").json()
-
 if "tables" not in st.session_state:
     st.session_state["tables"] = []
 
@@ -39,6 +36,16 @@ def update_table_checked(name, *args):
 
 
 def admin_management_display():
+    if not st.session_state.get('DB_DATA', False):
+        st.session_state["DB_DATA"] = requests.get(
+            f"{ADMIN_BASE}/db_auth").json()
+    if not st.session_state.get('OPENAI_DATA', False):
+        st.session_state["OPENAI_DATA"] = requests.get(
+            f"{ADMIN_BASE}/openai_auth").json()
+
+    DB_DATA = st.session_state["DB_DATA"]
+    OPENAI_DATA = st.session_state["OPENAI_DATA"]
+
     st.title("Set up your Database")
     if "tables" not in st.session_state:
         st.session_state["tables"] = []
@@ -66,6 +73,7 @@ def admin_management_display():
                                          json=parse_database_fields_connection(database_url))
                 response = response.json()
                 if response.get('status') == 'success':
+                    st.session_state["DB_DATA"] = {"DB_URL": database_url}
                     st.success(response.get('message'))
                 else:
                     st.error(response.get('error'))
