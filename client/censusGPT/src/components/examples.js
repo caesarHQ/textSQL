@@ -21,6 +21,8 @@ const Examples = (props) => {
 
     if (props.version === 'San Francisco') {
         basic_example_queries = [
+            'Show me the locations of the 10 highest rated coffee shops with at least 100 ratings.',
+            'Which neighborhood has the most parks?',
             'Show me all the needles in SF',
             'Show me all the muggings',
             'Which two neighborhoods have the most homeless activity?',
