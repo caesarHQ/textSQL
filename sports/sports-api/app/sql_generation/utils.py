@@ -59,18 +59,30 @@ def make_rephrase_msg_with_schema_and_warnings():
 def make_msg_with_schema_and_warnings():
     return (
         """
-        Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}
-        The following are schemas of tables you can query:
-        ---------------------
-        {schemas_str}
-        ---------------------
-        Provide a plan and then markdown containing the SQL (inside of backticks).
-        Make sure to write your answer in markdown format. Before the markdown provide a plan for what query to run.
-        Make sure to include the table name with each column (table.column).
-        Include nothing after the markdown.
-        """
-        # TODO: place warnings here
-        #  i.e. "Make sure each value in the result table is not null.""
+Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}
+The following are schemas of tables you can query:
+---------------------
+{schemas_str}
+---------------------
+
+Instructions:
+
+Walk through the following information in your response:
+    -- Paraphrase what the query is asking (1 line)
+    -- A quick list of the types of information that will be in the response (1 line)
+    -- A plan for how to get that information from the schema above (up to 3 lines). You can use any of the tables/columns above and only the tables/columns above.
+    ```
+    The SQL query in MARKDOWN format
+    ```
+
+Notes:
+> Make sure to write your answer in markdown format. Before the markdown provide a plan for what query to run.
+> Each column must include the table name (e.g. table.column) to avoid ambiguity.
+> Include nothing after the markdown.
+> Warning: Some values may be null so watch out for those. Also make sure to always sort with NULLS LAST.
+
+    
+"""
     )
 
 
@@ -153,6 +165,8 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             natural_language_query=natural_language_query,
             schemas_str=schemas_str
         )
+
+        print('CONTENT: ', content)
 
         messages = make_default_messages(schemas_str)
         messages.append({

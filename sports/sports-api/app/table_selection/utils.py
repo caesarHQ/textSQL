@@ -121,6 +121,15 @@ def get_table_schemas_str(table_names: List[str] = []) -> str:
     return enums_details + "\n\n" + tables_details
 
 
+def get_table_names():
+    global TABLES_METADATA_DICT
+
+    if len(TABLES_METADATA_DICT) == 0:
+        load_tables_and_types_metadata()
+
+    return list(TABLES_METADATA_DICT.keys())
+
+
 def get_relevant_tables_from_pinecone(natural_language_query, index_name="text_to_sql") -> List[str]:
     """
     Identify relevant tables for answering a natural language query via vector store
@@ -221,4 +230,8 @@ def get_relevant_tables_from_lm(natural_language_query):
     print('Table JSON Response: ', tables_json_str)
 
     tables = json.loads(tables_json_str).get("tables")
+
+    allowable_names = get_table_names()
+    tables = [t for t in tables if t in allowable_names]
+
     return tables
