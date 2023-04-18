@@ -318,6 +318,22 @@ def generate_table_metadata(table_name):
                     "active": True
                 })
 
+            column_idx_lookup = {}
+            for idx, column in enumerate(columns_metadata):
+                column_idx_lookup[column["name"]] = idx
+
+            table_head = []
+            with connection.begin():
+                sql_text = text(f"""
+                    SELECT * FROM {table_name} LIMIT 3;
+                """)
+                result = connection.execute(sql_text)
+                columns = [key for key in result.keys()]
+                for row in result:
+                    table_head.append([])
+                    for idx, column in enumerate(columns):
+                        table_head[-1].append(row[idx])
+
             # TODO: generate table description
             # TODO: generate column description (FK, PK, etc.)
             table_description = ""
@@ -325,7 +341,8 @@ def generate_table_metadata(table_name):
                 "name": table_name,
                 "active": True,
                 "description": table_description,
-                "columns": columns_metadata
+                "columns": columns_metadata,
+                "head": table_head,
             }
 
     except Exception as e:

@@ -65,7 +65,6 @@ def get_tables():
     """
     Get the list of tables we're able to use
     """
-    print('getting tables')
     return make_response(jsonify(admin_helper.get_tables()), 200)
 
 
