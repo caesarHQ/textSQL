@@ -73,8 +73,9 @@ Walk through the following information in your response:
     -- A list of the table.columns that will be relevant (1 line)
     -- Note any uniqueness/null/other things to account for in the plan based on any tables/columns being used (e.g. MAX or DISTINCT required)
     -- A plan for how to get that information from the schema above (up to 3 lines). You can use any of the tables/columns above and only the tables/columns above.
+
     ```
-    The SQL query in MARKDOWN format
+    The SQL query in MARKDOWN format, including readable names where possible.
     ```
 
 Notes:
