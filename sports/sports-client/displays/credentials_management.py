@@ -25,7 +25,7 @@ def parse_database_fields_connection(database_url):
             values = {}
             split = database_url.split("//")
             host_info = split[1].split("/")[0]
-            host_port = host_info.split(":")[0]
+            host_port = host_info.split(":")[1]
             host_name = host_port.split(":")[0]
             database = split[1].split("/")[1]
             # if host has an @ in it then it's got a username and it's broken
