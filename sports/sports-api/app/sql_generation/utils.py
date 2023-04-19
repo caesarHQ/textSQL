@@ -70,7 +70,7 @@ Instructions:
 Walk through the following information in your response:
     -- Paraphrase what the query should result in
     -- A quick list of the types of information that will be in the response (1 line)
-    -- A list of the table.columns that will be relevant (1 line)
+    -- A list of the table.columns that will be relevant to both the input and the output (1 line)
     -- Note any uniqueness/null/other things to account for in the plan based on any tables/columns being used (e.g. MAX or DISTINCT required)
     -- A plan for how to get that information from the schema above (up to 3 lines). You can use any of the tables/columns above and only the tables/columns above.
 
@@ -80,6 +80,7 @@ Walk through the following information in your response:
 
 Notes:
 > All tables and columns must be present in the above schema.
+> Include any tables needed to do the human-readable conversions relevant to the query.
 > Make sure to write your answer in markdown format. Before the markdown provide a plan for what query to run.
 > Each column must include the table name (e.g. table.column) to avoid ambiguity.
 > Include nothing after the markdown.
