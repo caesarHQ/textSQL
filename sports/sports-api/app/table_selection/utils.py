@@ -177,6 +177,7 @@ def _get_table_selection_message_with_descriptions(natural_language_query):
             "tables": string[]
         }}
         ```
+        Provide this JSON and only the JSON for the response.
         """
 
 
