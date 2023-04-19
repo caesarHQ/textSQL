@@ -162,13 +162,18 @@ def _get_table_selection_message_with_descriptions(natural_language_query):
         ---------------------
         {get_table_schemas_str()}
         ---------------------
-        Respond in JSON format with your answer in a field named \"tables\" which is a list of strings.
-        Respond with an empty list if you cannot identify any relevant tables.
+
         Make sure to write your answer in markdown format. Provide the JSON and only the JSON for the response.
         Provide any comments before the JSON, include the JSON object in a markdown code block with nothing afterwards.
-        <any comments>
+        
+        Use this format:
         ```
-        {{JSON OBJECT HERE}}
+        {{
+            "required answer": string[] (the final variables that will be needed)
+            "reasoning": string (Reverse walkthrough from end to start where the informatino will come from (what joins are needed). Column B.A gives Y, but B doesn't have Z we need to pull D.A to get Z.))
+            "double_check": string (Walking through the tables mentioned above, check that each column that will be used to find any missing columns)
+            "tables": string[]
+        }}
         ```
         """
 
@@ -203,12 +208,12 @@ def _extract_text_from_markdown(text):
 
 def get_relevant_tables_from_lm(natural_language_query):
     """
-    Identify relevant tables for answering a natural language query via LM
+    Identify relevant tables for answering a natural language query via LM. 
     """
     content = _get_table_selection_message_with_descriptions(
         natural_language_query)
 
-    print('got content')
+    print('PAYLOAD FOR GETTING TABLE', content)
 
     messages = _get_table_selection_messages().copy()
     messages.append({

@@ -76,6 +76,7 @@ Walk through the following information in your response:
     ```
 
 Notes:
+> All tables and columns must be present in the above schema.
 > Make sure to write your answer in markdown format. Before the markdown provide a plan for what query to run.
 > Each column must include the table name (e.g. table.column) to avoid ambiguity.
 > Include nothing after the markdown.

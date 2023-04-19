@@ -142,7 +142,7 @@ CREATE TABLE cats  -- this table holds all my cats
     }
 
     res = get_assistant_message([system_message, user_message])
-    print('res', res)
+
     res = res["message"]["content"]
 
     return jsonify({"status": 'success', "message": res})
