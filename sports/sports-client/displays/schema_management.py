@@ -6,10 +6,8 @@ from config import ADMIN_BASE
 
 
 def update_column_checked(columnIdx, table, *args, **kwargs):
-    print('args, kwargs', args, kwargs)
     # it's {name: str, columns: str[], active: bool}
     isChecked = kwargs.get('isChecked', False)
-    print('update_column_checked', columnIdx, table, isChecked)
     for table in st.session_state["tables"]:
         if table.get('name') == table:
             table['columns'][columnIdx]['active'] = isChecked
