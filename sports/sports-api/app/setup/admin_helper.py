@@ -118,10 +118,15 @@ def clear_table_data():
     """
     Clear local table data
     """
-    # kill CREDS_PATH + '/json/table_metadata.json, keep a backup at CREDS_PATH + '/json/table_metadata_backup.json'
-    with open(CREDS_PATH + '/json/table_metadata.json', 'r') as f:
-        with open(CREDS_PATH + '/json/table_metadata_backup.json', 'w') as f2:
-            f2.write(f.read())
+    print('clearing table')
+    try:
+        with open(CREDS_PATH + '/json/table_metadata.json', 'r') as f:
+            with open(CREDS_PATH + '/json/backups/table_metadata_backup.json', 'w') as f2:
+                f2.write(f.read())
+    except:
+        pass
+
+    print('wooo')
 
     with open(CREDS_PATH + '/json/table_metadata.json', 'w') as f:
         json.dump({}, f)

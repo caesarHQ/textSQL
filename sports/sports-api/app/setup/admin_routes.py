@@ -77,9 +77,8 @@ def save_tables():
 
 @admin_bp.route('/tables', methods=['DELETE'])
 def delete_tables():
-    new_data = request.get_json()
-    new_tables = new_data.get('tables')
-    return make_response(jsonify(admin_helper.clear_table_data(new_tables)), 200)
+
+    return make_response(jsonify(admin_helper.clear_table_data()), 200)
 
 
 @admin_bp.route('/generate_schema', methods=['POST'])

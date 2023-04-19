@@ -115,6 +115,10 @@ def admin_management_display():
 
     tables_expander = st.expander("Tables")
     with tables_expander:
+        if st.button("Clear Tables", key="clear_tables"):
+            st.session_state["tables"] = []
+            response = requests.delete(f"{ADMIN_BASE}/tables").json()
+
         if st.button("Refresh Tables", key="refresh_tables"):
             response = requests.get(f"{ADMIN_BASE}/tables").json()
 
