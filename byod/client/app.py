@@ -53,7 +53,7 @@ def main():
             """
             st.markdown(SQL)
 
-            RESULT = response.json().get("result")
+            RESULT = response.json().get("result", {})
             st.table(RESULT.get("results", []))
 
             with st.spinner(text="Generating visualization..."):
