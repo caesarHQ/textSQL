@@ -209,12 +209,19 @@ def _extract_text_from_markdown(text):
     return text
 
 
-def get_relevant_tables_from_lm(natural_language_query):
+def strip_sql_comments(text):
+    return re.sub(r"--.*?\n", "", text)
+
+
+def get_relevant_tables_from_lm(natural_language_query, ignore_comments=False):
     """
     Identify relevant tables for answering a natural language query via LM. 
     """
     content = _get_table_selection_message_with_descriptions(
         natural_language_query)
+
+    if ignore_comments:
+        content = strip_sql_comments(content)
 
     print('PAYLOAD FOR GETTING TABLE', content)
 
