@@ -43,8 +43,8 @@ if "tables" not in st.session_state:
     st.session_state["tables"] = []
 
 
-def update_table_checked(name, *args):
-    isChecked = args[0] if args else False
+def update_table_checked(name, *args, **kwargs):
+    isChecked = kwargs.get('isChecked', False)
     for table in st.session_state["tables"]:
         if table.get('name') == name:
             table['active'] = isChecked
@@ -115,20 +115,21 @@ def admin_management_display():
 
             if response.get('status') == 'success':
                 all_tables = response.get('tables')
-                print('all_tables: ', all_tables)
                 st.session_state["tables"] = all_tables
             else:
                 st.error(response.get('error'))
 
         for table in st.session_state["tables"]:
             is_checked = table.get('active', False)
+            original_value = is_checked
             # when checked, find the table and set the active value to false/true
-            st.checkbox(
-                'Table: ' + table.get('name'), value=is_checked, key=table.get('name'), on_change=functools.partial(update_table_checked, name=table.get('name')))
+            is_checked = st.checkbox(
+                'Table: ' + table.get('name'), value=is_checked, key=table.get('name'), on_change=functools.partial(update_table_checked, name=table.get('name'), isChecked=is_checked))
+            if is_checked != original_value:
+                update_table_checked(table.get('name'), isChecked=is_checked)
 
     # add a save button
     if st.button("Save", key="save_tables"):
-        print('table state: ', st.session_state["tables"])
         response = requests.post(f"{ADMIN_BASE}/tables",
                                  json={'tables': st.session_state["tables"]})
         response = response.json()

@@ -5,9 +5,11 @@ import streamlit as st
 from config import ADMIN_BASE
 
 
-def update_column_checked(columnIdx, table, *args):
+def update_column_checked(columnIdx, table, *args, **kwargs):
+    print('args, kwargs', args, kwargs)
     # it's {name: str, columns: str[], active: bool}
-    isChecked = args[0] if args else False
+    isChecked = kwargs.get('isChecked', False)
+    print('update_column_checked', columnIdx, table, isChecked)
     for table in st.session_state["tables"]:
         if table.get('name') == table:
             table['columns'][columnIdx]['active'] = isChecked
@@ -26,8 +28,13 @@ def schema_management_display():
                 # have a Table label, a text area with the value of the table.schema, and a button to generate the schema, and a button to save the schema
                 for column in table.get('columns', []):
                     column_checked = column.get('active', False)
-                    st.checkbox(
-                        '---Column: ' + column.get('name') + ', ' + column.get('type'), value=column_checked, key=table.get('name') + '_' + column.get('name'), on_change=functools.partial(update_column_checked, columnIdx=table.get('columns').index(column), table=table.get('name')))
+                    original_value = column_checked
+                    column_checked = st.checkbox(
+                        '---Column: ' + column.get('name') + ', ' + column.get('type'), value=column_checked, key=table.get('name') + '_' + column.get('name'), on_change=functools.partial(update_column_checked, columnIdx=table.get('columns').index(column), table=table.get('name'), isChecked=column_checked))
+
+                    if original_value != column_checked:
+                        update_column_checked(table.get('columns').index(
+                            column), table=table.get('name'), isChecked=column_checked)
 
                 if st.button("Generate Schema", key="generate_schema_" + table.get('name')):
                     # send the values to the backend to set up the database
@@ -62,7 +69,6 @@ def schema_management_display():
 
     # add a save button
     if st.button("Save", key="save_tables"):
-        print('table state: ', st.session_state["tables"])
         response = requests.post(f"{ADMIN_BASE}/tables",
                                  json={'tables': st.session_state["tables"]})
         response = response.json()
