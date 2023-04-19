@@ -85,7 +85,7 @@ Notes:
 > Each column must include the table name (e.g. table.column) to avoid ambiguity.
 > Include nothing after the markdown.
 > Warning: Some values may be null so watch out for those. Also make sure to always sort with NULLS LAST.
-> Use CTE
+> Use CTE.
 
     
 """
