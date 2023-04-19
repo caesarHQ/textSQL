@@ -9,16 +9,19 @@ from ..table_selection.utils import get_table_schemas_str
 from ..utils import (extract_sql_query_from_message, get_assistant_message,
                      get_few_shot_messages)
 
-MSG_WITH_ERROR_TRY_AGAIN = (
-    """
-    Try again.
-    Only respond with valid SQL. Make sure to write your answer in markdown format.
-    The SQL query you just generated resulted in the following error message:
-    ---------------------
-    {error_message}
-    ---------------------
-    """
-)
+MSG_WITH_ERROR_TRY_AGAIN = ("""
+The SQL query you just generated resulted in the following error message:
+---------------------
+{error_message}
+---------------------
+
+Provide an explanation of what went wrong, how to fix it, and the sql in the following format:
+```
+-- <explanation of what went wrong>
+<SQL>
+```
+"""
+                            )
 
 
 def make_default_messages(schemas_str: str) -> List[Dict[str, str]]:
