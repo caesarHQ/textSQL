@@ -5,7 +5,7 @@ from flask import Blueprint, jsonify, make_response, request
 
 from .utils.geo_data import zip_lat_lon
 from .utils.sql_explanation.sql_explanation import get_sql_explanation
-from .utils.sql_gen.text_to_sql import text_to_sql_with_retry
+from .utils.sql_gen.text_to_sql import text_to_sql_with_retry, use_cached_sql
 from .utils.sql_gen.sql_helper import execute_sql
 from .utils.sql_gen.text_to_sql_chat import text_to_sql_chat_with_retry
 
@@ -59,9 +59,9 @@ def get_tables():
         return make_response(jsonify({"error": error_msg}), 400)
     
     # if it's featured, just pull it from the db
-    cached_res = featured_queries.get_featured_table(natural_language_query)
-    if cached_res:
-        return make_response(jsonify({"table_names": cached_res}), 200)
+    cached_tables = featured_queries.get_featured_table(natural_language_query)
+    if cached_tables:
+        return make_response(jsonify({"table_names": cached_tables}), 200)
 
     scope = request_body.get('scope', "USA")
     natural_language_query = replace_unsupported_localities(natural_language_query, scope)
@@ -110,6 +110,14 @@ def text_to_sql():
         error_msg = '`natural_language_query` is missing from request body'
         return make_response(jsonify({"error": error_msg}), 400)
     
+    # if it's featured, just pull it from the db
+    cached_sql = featured_queries.get_featured_sql(natural_language_query)
+    if cached_sql:
+        result = execute_sql(cached_sql)
+        return make_response(jsonify({'result': result, 'sql_query': cached_sql}), 200)
+        
+
+
     natural_language_query = replace_unsupported_localities(natural_language_query, scope)
 
     try:
