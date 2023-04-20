@@ -14,15 +14,27 @@ import FeedProvider from './contexts/feedContext'
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <App />,
+        element: (
+            <FeedProvider app="USA">
+                <App />
+            </FeedProvider>
+        ),
     },
     {
         path: '/sf',
-        element: <SanFrancisco />,
+        element: (
+            <FeedProvider app="SF">
+                <SanFrancisco />
+            </FeedProvider>
+        ),
     },
     {
         path: '/sanfrancisco',
-        element: <SanFrancisco />,
+        element: (
+            <FeedProvider app="SF">
+                <SanFrancisco />
+            </FeedProvider>
+        ),
     },
     {
         path: '/tos',
@@ -36,9 +48,7 @@ const router = createBrowserRouter([
 
 ReactDOM.render(
     <React.StrictMode>
-        <FeedProvider>
-            <RouterProvider router={router} />
-        </FeedProvider>
+        <RouterProvider router={router} />
     </React.StrictMode>,
     document.getElementById('root')
 )
