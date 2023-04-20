@@ -126,6 +126,10 @@
             {
                 "user": "Which neighborhood has the highest female to male ratio?",
                 "assistant": "\n{\n    \"tables\": [\"sf_sex_by_census_tract\"]\n}\n"
+            },
+            {
+                "user": "Which four neighborhoods had the most crime incidents involving guns or knives in 2021?",
+                "assistant": "\n{\n    \"tables\": [\"sf_crime_incidents\"]\n}\n"
             }
         ]
     }
