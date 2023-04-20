@@ -4,6 +4,7 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 
 from app.api.routes import bp as api_bp
+from app.api.discoverability_routes import discoverability
 from app.config import FlaskAppConfig, ENV
 from app.extensions import db
 
@@ -30,6 +31,7 @@ def create_app(config_object=FlaskAppConfig):
 
     app.register_blueprint(api_bp, url_prefix='/api')
     app.register_blueprint(plugin, url_prefix='/plugin')
+    app.register_blueprint(discoverability, url_prefix='/examples')
     app.register_blueprint(plugin_config)
 
     # from app.errors import bp as errors_bp

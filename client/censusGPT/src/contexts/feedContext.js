@@ -21,7 +21,6 @@ const FeedProvider = ({ app, children }) => {
     }
 
     useEffect(() => {
-        console.log('fetching examples for ', app)
         fetchExamples()
     }, [])
 

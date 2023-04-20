@@ -5,7 +5,7 @@ from flask import Blueprint, jsonify, make_response, request
 
 from .utils.geo_data import zip_lat_lon
 from .utils.sql_explanation.sql_explanation import get_sql_explanation
-from .utils.sql_gen.text_to_sql import text_to_sql_with_retry, use_cached_sql
+from .utils.sql_gen.text_to_sql import text_to_sql_with_retry
 from .utils.sql_gen.sql_helper import execute_sql
 from .utils.sql_gen.text_to_sql_chat import text_to_sql_chat_with_retry
 

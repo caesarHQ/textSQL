@@ -221,3 +221,35 @@ def create_session(app_name, user_id):
         session_id = row[0]
 
     return str(session_id)
+
+@failsoft
+def get_feed_data(app):
+    if not EVENTS_ENGINE:
+        return None
+
+    params = {
+        "app": app,
+    }
+
+    query = text("""
+        select input_text, category, emoji
+        from featured_queries
+        where app = :app
+    """)
+
+    with EVENTS_ENGINE.connect() as conn:
+        result = conn.execute(query, params)
+        conn.commit()
+        rows = result.fetchall()
+        print('rows: ', rows)
+        # convert to dict
+        rows = [
+            {
+                "input_text": row[0],
+                "category": row[1],
+                "emoji": row[2],
+            }
+            for row in rows
+        ]
+
+    return rows
