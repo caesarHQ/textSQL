@@ -182,7 +182,24 @@
                 "Warrant",
                 "Weapons Offense"
             ]
-        }
+        },
+        {
+            "type":"HOME_TYPE",
+            "valid_values":[
+                "CONDO",
+                "MULTI_FAMILY",
+                "TOWNHOUSE",
+                "SINGLE_FAMILY",
+                "LOT",
+                "APARTMENT"
+            ]
+        },{
+        "type": "HOME_STATUS",
+        "valid_values":[
+            "FOR_SALE",
+            "FOR_RENT"
+        ]
+    }
     ],
     "tables": [
         {
@@ -756,6 +773,268 @@
                 }
             ],
             "table_creation_query": "--places in San Francisco\nCREATE TABLE sf_places (\n    name TEXT,\n    place_type TEXT, --enum `PLACE_TYPE`\n    neighborhood TEXT, --enum `NEIGHBORHOOD`\n    zip_code TEXT,\n    point TEXT, --longitude latitude of place\n    address TEXT,\n    rating FLOAT,\n    num_ratings INT,\n);"
+        },
+        {
+            "active": true,
+            "columns": [
+                {
+                    "active": true,
+                    "name": "is_foreclosure",
+                    "type": "boolean"
+                },
+                {
+                    "active": true,
+                    "name": "bedrooms",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "is_new_home",
+                    "type": "boolean"
+                },
+                {
+                    "active": true,
+                    "name": "zestimate",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "date_price_changed",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "is_open_house",
+                    "type": "boolean"
+                },
+                {
+                    "active": true,
+                    "name": "is_bank_owned",
+                    "type": "boolean"
+                },
+                {
+                    "active": true,
+                    "name": "is_rental_with_base_price",
+                    "type": "boolean"
+                },
+                {
+                    "active": true,
+                    "name": "is_for_auction",
+                    "type": "boolean"
+                },
+                {
+                    "active": true,
+                    "name": "zpid",
+                    "type": "bigint"
+                },
+                {
+                    "active": true,
+                    "name": "price",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "bathrooms",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "square_feet",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "days_on_zillow",
+                    "type": "bigint"
+                },
+                {
+                    "active": true,
+                    "name": "is_featured",
+                    "type": "boolean"
+                },
+                {
+                    "active": true,
+                    "name": "should_highlight",
+                    "type": "boolean"
+                },
+                {
+                    "active": true,
+                    "name": "rent_zestimate",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "is_fsba",
+                    "type": "boolean"
+                },
+                {
+                    "active": true,
+                    "name": "street_address",
+                    "type": "text"
+                },
+                {
+                    "active": true,
+                    "name": "zip_code",
+                    "type": "text"
+                },
+                {
+                    "active": true,
+                    "name": "city",
+                    "type": "text"
+                },
+                {
+                    "active": true,
+                    "name": "state",
+                    "type": "text"
+                },
+                {
+                    "active": true,
+                    "name": "point",
+                    "type": "text"
+                },
+                {
+                    "active": true,
+                    "name": "neighborhood",
+                    "type": "text"
+                },
+                {
+                    "active": true,
+                    "name": "group_type",
+                    "type": "text"
+                },
+                {
+                    "active": true,
+                    "name": "home_type",
+                    "type": "text",
+                    "description": "enum `HOME_TYPE`"
+                },
+                {
+                    "active": true,
+                    "name": "home_status",
+                    "type": "text",
+                    "description": "enum `HOME_STATUS`"
+                }
+            ],
+            "description": "",
+            "name": "sf_homes_for_sale",
+            "table_creation_query": "CREATE TABLE sf_homes_for_sale (-- data about homes for sale in San Francisco\n    is_foreclosure boolean, -- indicates if the property is a foreclosure\n    bedrooms double precision, -- number of bedrooms in the property\n    is_new_home boolean, -- indicates if the property is a new home\n    zestimate double precision, -- Zillow's estimated market value of the property\n    date_price_changed double precision, -- date when the price of the property was last changed\n    is_open_house boolean, -- indicates if the property is open for house viewing\n    is_bank_owned boolean, -- indicates if the property is owned by a bank\n    is_rental_with_base_price boolean, -- indicates if the property is a rental with a base price\n    is_for_auction boolean, -- indicates if the property is for auction\n    zpid bigint, -- Zillow property ID\n    price double precision, -- price of the property\n    bathrooms double precision, -- number of bathrooms in the property\n    square_feet double precision, -- total square footage of the property\n    days_on_zillow bigint, -- number of days the property has been listed on Zillow\n    is_featured boolean, -- indicates if the property is featured on Zillow\n    should_highlight boolean, -- indicates if the property should be highlighted on Zillow\n    rent_zestimate double precision, -- Zillow's estimated rent value of the property\n    is_fsba boolean, -- indicates if the property is a for sale by owner\n    street_address text, -- street address of the property\n    zip_code text, -- zip code of the property\n    city text, -- city of the property\n    state text, -- state of the property\n    point text, -- latitude and longitude coordinates of the property\n    neighborhood text,  --enum `NEIGHBORHOOD`\n    group_type text, -- type of group the property belongs to\n    home_type text,  --enum `HOME_TYPE`\n    home_status text --enum `HOME_STATUS`;",
+            "update_count": 1
+        },
+        {
+            "active": true,
+            "columns": [
+                {
+                    "active": true,
+                    "name": "zpid",
+                    "type": "bigint"
+                },
+                {
+                    "active": true,
+                    "name": "days_on_zillow",
+                    "type": "bigint"
+                },
+                {
+                    "active": true,
+                    "name": "is_featured",
+                    "type": "boolean"
+                },
+                {
+                    "active": true,
+                    "name": "should_highlight",
+                    "type": "boolean"
+                },
+                {
+                    "active": true,
+                    "name": "is_rental_with_base_price",
+                    "type": "boolean"
+                },
+                {
+                    "active": true,
+                    "name": "rent_zestimate",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "zestimate",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "date_price_changed",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "is_open_house",
+                    "type": "boolean"
+                },
+                {
+                    "active": true,
+                    "name": "price",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "bathrooms",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "bedrooms",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "square_feet",
+                    "type": "double precision"
+                },
+                {
+                    "active": true,
+                    "name": "street_address",
+                    "type": "text"
+                },
+                {
+                    "active": true,
+                    "name": "zip_code",
+                    "type": "text"
+                },
+                {
+                    "active": true,
+                    "name": "city",
+                    "type": "text"
+                },
+                {
+                    "active": true,
+                    "name": "state",
+                    "type": "text"
+                },
+                {
+                    "active": true,
+                    "name": "home_type",
+                    "type": "text",
+                    "description": "enum `HOME_TYPE`"
+                },
+                {
+                    "active": true,
+                    "name": "home_status",
+                    "type": "text",
+                    "description": "enum `HOME_STATUS`"
+                },
+                {
+                    "active": true,
+                    "name": "point",
+                    "type": "text"
+                },
+                {
+                    "active": true,
+                    "name": "neighborhood",
+                    "type": "text"
+                }
+            ],
+            "description": "",
+            "name": "sf_homes_for_rent",
+            "table_creation_query": "CREATE TABLE sf_homes_for_rent (-- data about homes for rent in San Francisco\n    zpid bigint, -- unique identifier for each property\n    days_on_zillow bigint, -- number of days the property has been listed on Zillow\n    is_featured boolean, -- whether the property is a featured listing\n    should_highlight boolean, -- whether the property should be highlighted\n    is_rental_with_base_price boolean, -- whether the rental has a base price\n    rent_zestimate double precision, -- estimated rental price\n    zestimate double precision, -- estimated property value\n    date_price_changed double precision, -- date when the price was last changed\n    is_open_house boolean, -- whether the property is open for house viewing\n    price double precision, -- rental price\n    bathrooms double precision, -- number of bathrooms\n    bedrooms double precision, -- number of bedrooms\n    square_feet double precision, -- square footage of the property\n    street_address text, -- street address of the property\n    zip_code text, -- zip code of the property\n    city text, -- city of the property\n    state text, -- state of the property\n    home_type text, --enum `HOME_TYPE`\n    home_status text, --enum `HOME_STATUS`\n    point text, -- coordinates of the property\n    neighborhood text --enum `NEIGHBORHOOD`);",
+            "update_count": 1
         }
     ]
 }
