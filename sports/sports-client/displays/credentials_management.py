@@ -23,18 +23,21 @@ def parse_database_fields_connection(database_url):
         try:
             # it might just be host:port/database
             values = {}
-            split = database_url.split("/")
-            host_port = split[0]
-            database = split[1]
-            values["host"] = host_port.split(":")[0]
+            split = database_url.split("//")
+            host_info = split[1].split("/")[0]
+            host_port = host_info.split(":")[1]
+            host_name = host_info.split(":")[0]
+            database = split[1].split("/")[1]
             # if host has an @ in it then it's got a username and it's broken
-            if "@" in values["host"]:
+            if "@" in host_name:
                 return None
             values["database"] = database
-            values['port'] = host_port.split(":")[1]
+            values['port'] = host_port
+            values['host'] = host_name
             return values
 
         except Exception as e:
+            print('error: ', e)
             print('values so far:', values)
             return None
 
@@ -83,9 +86,11 @@ def admin_management_display():
                             label=key, label_visibility="visible", value=value)
 
             if st.button("Update", key="update_db"):
+                fields = parse_database_fields_connection(database_url)
+                print('fields to upload: ', fields)
                 # send the values to the backend to set up the database
                 response = requests.post(f"{ADMIN_BASE}/db_auth",
-                                         json=parse_database_fields_connection(database_url))
+                                         json=fields)
                 response = response.json()
                 if response.get('status') == 'success':
                     st.session_state["DB_DATA"] = {"DB_URL": database_url}

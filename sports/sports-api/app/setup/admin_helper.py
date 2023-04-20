@@ -48,6 +48,7 @@ def set_db_credentials(request_body):
     # if it's localhost and no username/password is provided
     if db_credentials["address"] == "localhost" and not db_credentials["username"] and not db_credentials["password"]:
         db_connection_string = f"postgresql://{db_credentials['address']}:{db_credentials['port']}/{db_credentials['database']}"
+        print('db connection string: ', db_connection_string)
     else:
         for key, value in db_credentials.items():
             if not value:
