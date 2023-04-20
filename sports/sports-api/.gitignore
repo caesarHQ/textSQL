@@ -6,3 +6,6 @@ scratch/
 
 # ignore the credentials file
 creds.json
+
+# ignore the JSON backups
+app/models/json/backups

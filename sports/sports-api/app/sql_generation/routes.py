@@ -30,7 +30,7 @@ def text_to_sql():
             else:
                 print('looking for relevant tables')
                 table_names = get_relevant_tables_from_lm(
-                    natural_language_query)
+                    natural_language_query, ignore_comments=True)
         print('doing retry step')
         result, sql_query = text_to_sql_with_retry(
             natural_language_query, table_names)

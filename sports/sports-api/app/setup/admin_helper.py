@@ -95,6 +95,8 @@ def get_tables():
         print('checking for existing table metadata')
         with open(CREDS_PATH + '/json/table_metadata.json', 'r') as f:
             tables = json.load(f)
+            if len(tables) == 0:
+                raise Exception('no tables found')
             parsed_results = []
             for key in tables:
                 parsed_results.append(tables[key])
@@ -108,6 +110,29 @@ def get_tables():
 
     return {
         'status': 'success', 'tables': tables
+    }
+
+
+@localhost_only
+def clear_table_data():
+    """
+    Clear local table data
+    """
+    print('clearing table')
+    try:
+        with open(CREDS_PATH + '/json/table_metadata.json', 'r') as f:
+            with open(CREDS_PATH + '/json/backups/table_metadata_backup.json', 'w') as f2:
+                f2.write(f.read())
+    except:
+        pass
+
+    print('wooo')
+
+    with open(CREDS_PATH + '/json/table_metadata.json', 'w') as f:
+        json.dump({}, f)
+
+    return {
+        'status': 'success'
     }
 
 

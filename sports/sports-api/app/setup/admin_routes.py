@@ -75,6 +75,12 @@ def save_tables():
     return make_response(jsonify(admin_helper.save_tables(new_tables)), 200)
 
 
+@admin_bp.route('/tables', methods=['DELETE'])
+def delete_tables():
+
+    return make_response(jsonify(admin_helper.clear_table_data()), 200)
+
+
 @admin_bp.route('/generate_schema', methods=['POST'])
 def generate_schema():
     # given a table schema and a (later) head, make a query to create the table.
