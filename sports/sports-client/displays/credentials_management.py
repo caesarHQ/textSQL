@@ -137,6 +137,10 @@ def admin_management_display():
             if is_checked != original_value:
                 update_table_checked(table.get('name'), isChecked=is_checked)
 
+        if st.button("Unselect All", key="unselect_all"):
+            for table in st.session_state["tables"]:
+                update_table_checked(table.get('name'), isChecked=False)
+
     # add a save button
     if st.button("Save", key="save_tables"):
         response = requests.post(f"{ADMIN_BASE}/tables",
