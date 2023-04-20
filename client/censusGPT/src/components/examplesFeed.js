@@ -1,5 +1,9 @@
 // Examples
+import { useContext } from 'react'
+import { FeedContext } from '../contexts/feedContext'
+
 import { capturePosthog } from '../utils/loggers/posthog'
+
 /**
  * Examples component
  * @param {*} props – The props for the example component used to pass in callback functions
@@ -9,6 +13,9 @@ import { capturePosthog } from '../utils/loggers/posthog'
  * @returns {JSX.Element} – The examples component
  */
 const ExamplesFeed = (props) => {
+    const { examples } = useContext(FeedContext)
+    console.log('examples: ', examples)
+
     let basic_example_queries = [
         'Five cities in Florida with the highest crime',
         'Richest neighborhood in Houston, TX',

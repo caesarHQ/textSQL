@@ -1163,7 +1163,7 @@ function App(props) {
                         !isLoading &&
                         !isGetTablesLoading ? (
                             FEATURE_FLAGS?.exampleFeed ? (
-                                <ExampleFeed
+                                <ExamplesFeed
                                     setQuery={setQuery}
                                     handleClick={fetchBackend}
                                     version={props.version}
