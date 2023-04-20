@@ -6,13 +6,10 @@ import SanFrancisco from './SanFrancisco'
 import reportWebVitals from './reportWebVitals'
 import { sendToVercelAnalytics } from './vitals'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import {
-    createBrowserRouter,
-    RouterProvider,
-} from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import TermsOfService from './misc/tos'
 import PrivacyPolicy from './misc/privacy'
-
+import FeedProvider from './contexts/feedContext'
 
 const router = createBrowserRouter([
     {
@@ -39,7 +36,9 @@ const router = createBrowserRouter([
 
 ReactDOM.render(
     <React.StrictMode>
-        <RouterProvider router={router} />
+        <FeedProvider>
+            <RouterProvider router={router} />
+        </FeedProvider>
     </React.StrictMode>,
     document.getElementById('root')
 )
