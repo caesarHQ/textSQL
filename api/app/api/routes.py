@@ -59,11 +59,11 @@ def get_tables():
         return make_response(jsonify({"error": error_msg}), 400)
     
     # if it's featured, just pull it from the db
-    cached_tables = featured_queries.get_featured_table(natural_language_query)
+    scope = request_body.get('scope', "USA")
+    cached_tables = featured_queries.get_featured_table(natural_language_query, scope)
     if cached_tables:
         return make_response(jsonify({"table_names": cached_tables}), 200)
 
-    scope = request_body.get('scope', "USA")
     natural_language_query = replace_unsupported_localities(natural_language_query, scope)
 
     async def run_tasks():
@@ -111,7 +111,7 @@ def text_to_sql():
         return make_response(jsonify({"error": error_msg}), 400)
     
     # if it's featured, just pull it from the db
-    cached_sql = featured_queries.get_featured_sql(natural_language_query)
+    cached_sql = featured_queries.get_featured_sql(natural_language_query, scope)
     if cached_sql:
         result = execute_sql(cached_sql)
         return make_response(jsonify({'result': result, 'sql_query': cached_sql}), 200)
