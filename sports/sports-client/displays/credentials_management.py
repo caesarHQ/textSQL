@@ -115,6 +115,10 @@ def admin_management_display():
 
     tables_expander = st.expander("Tables")
     with tables_expander:
+        if st.button("Clear Tables", key="clear_tables"):
+            st.session_state["tables"] = []
+            response = requests.delete(f"{ADMIN_BASE}/tables").json()
+
         if st.button("Refresh Tables", key="refresh_tables"):
             response = requests.get(f"{ADMIN_BASE}/tables").json()
 
@@ -132,6 +136,10 @@ def admin_management_display():
                 'Table: ' + table.get('name'), value=is_checked, key=table.get('name'), on_change=functools.partial(update_table_checked, name=table.get('name'), isChecked=is_checked))
             if is_checked != original_value:
                 update_table_checked(table.get('name'), isChecked=is_checked)
+
+        if st.button("Unselect All", key="unselect_all"):
+            for table in st.session_state["tables"]:
+                update_table_checked(table.get('name'), isChecked=False)
 
     # add a save button
     if st.button("Save", key="save_tables"):

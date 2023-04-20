@@ -172,8 +172,8 @@ def _get_table_selection_message_with_descriptions(natural_language_query):
             "Rephrased Input": string (any assumptions about words in the input and what they refer to)
             "required answer": string[] (the final variables that will be needed)
             "input conversions": string[] (the variables/tables that will be needed to interpret the input)
-            "reasoning": string (Reverse walkthrough from end to start where the informatino will come from (what joins are needed). Column B.A gives Y, but B doesn't have Z we need to pull D.A to get Z.))
-            "double_check": string (Walking through the tables mentioned above, check that each column that will be used to find any missing columns)
+            "reasoning": string (Reverse walkthrough from end to start where the information will come from (what joins are needed). Column B.A gives Y, but B doesn't have Z we need to pull D.A to get Z.))
+            "double_check": string (Walking through the tables mentioned above, check that each column that will be used to find any missing columns, add any additional tables that could be useful)
             "tables": string[]
         }}
         ```
@@ -209,12 +209,19 @@ def _extract_text_from_markdown(text):
     return text
 
 
-def get_relevant_tables_from_lm(natural_language_query):
+def strip_sql_comments(text):
+    return re.sub(r"--.*?\n", "\n", text)
+
+
+def get_relevant_tables_from_lm(natural_language_query, ignore_comments=False):
     """
     Identify relevant tables for answering a natural language query via LM. 
     """
     content = _get_table_selection_message_with_descriptions(
         natural_language_query)
+
+    if ignore_comments:
+        content = strip_sql_comments(content)
 
     print('PAYLOAD FOR GETTING TABLE', content)
 

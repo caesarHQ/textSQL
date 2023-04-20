@@ -75,14 +75,17 @@ Use CTE format for computing subqueries.
 Provide a properly formatted JSON object with the following information. Ensure to escape any special characters so it can be parsed as JSON.
 
 {{
-    "Schema": "<1 to 2 sentences about the tables/columns/enums above to use>",
+
+    "Required Answer": str (the type of information the query is asking for),
+    "Input Conversion": str (the type of conversion that needs to be done to the input),
     "Applicability": "<1 to 2 sentences about which columns and enums are relevant, or which ones are missing>",
     "SQL": "<your query>"
 }}
 
 However, if the tables don't contain all the required data (e.g. the column isn't there or there aren't relevant enums), instead return a JSON object with just: 
 {{
-    "Schema": "<1 to 2 sentences about the tables/columns/enums above to use>",
+    "Required Answer": str (the type of information the query is asking for),
+    "Input Conversion": str (the type of conversion that needs to be done to the input),
     "Applicability": "<1 to 2 sentences about which columns and enums are relevant, or which ones are missing>",
     "MissingData": "<1 to 2 sentences about what data is missing>"
 }}

@@ -62,7 +62,7 @@ if 'SF' in scope:
     'Which four neighborhoods had the most crime incidents involving guns or knives in 2021?',
     '3 neighborhoods with the highest female to male ratio',
     'What are the top 5 neighborhoods with the most encampments per capita?',
-    'What hour of the day do most burglaries occur?',
+    'What hours of the day do most burglaries occur?',
     ]
     for q in queries:
         testQueryWorks(q, "SF")
