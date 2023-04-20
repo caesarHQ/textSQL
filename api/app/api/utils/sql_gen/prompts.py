@@ -78,8 +78,9 @@ Provide a properly formatted JSON object with the following information. Ensure 
 
     "Required Answer": str (the type of information the query is asking for),
     "Input Conversion": str (the type of conversion that needs to be done to the input),
-    "Applicability": "<1 to 2 sentences about which columns and enums are relevant, or which ones are missing>",
-    "SQL": "<your query>"
+    "Applicability": str (1 to 2 sentences about which columns and enums are relevant, or which ones are missing)
+    "Relevant Data": str (what to return in the final result, e.g. counts, sums, etc)
+    "SQL": str (your query)
 }}
 
 However, if the tables don't contain all the required data (e.g. the column isn't there or there aren't relevant enums), instead return a JSON object with just: 
