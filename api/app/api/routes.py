@@ -10,6 +10,7 @@ from .utils.sql_gen.sql_helper import execute_sql
 from .utils.sql_gen.text_to_sql_chat import text_to_sql_chat_with_retry
 
 from .utils.classification.input_classification import create_labels 
+from .utils.cached_queries import featured_queries
 from .utils.table_selection.table_details import get_all_table_names
 from .utils.table_selection.table_selection import get_relevant_tables_async
 from .utils.suggestions.suggestions import generate_suggestion_failed_query, generate_suggestion
@@ -56,7 +57,12 @@ def get_tables():
     if not natural_language_query:
         error_msg = 'natural_language_query is missing from request body'
         return make_response(jsonify({"error": error_msg}), 400)
-        
+    
+    # if it's featured, just pull it from the db
+    cached_res = featured_queries.get_featured_table(natural_language_query)
+    if cached_res:
+        return make_response(jsonify({"table_names": cached_res}), 200)
+
     scope = request_body.get('scope', "USA")
     natural_language_query = replace_unsupported_localities(natural_language_query, scope)
 
