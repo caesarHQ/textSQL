@@ -8,7 +8,7 @@ export const ExampleCard = ({ example, props }) => {
             </div>
             <div className="ml-4 flex-1">
                 <p
-                    className="text-sm font-medium focus:outline-none hover:cursor-pointer"
+                    className="text-sm sm:text-lg font-medium focus:outline-none hover:cursor-pointer"
                     onClick={() => {
                         capturePosthog('example_clicked', {
                             natural_language_query: example.input_text,
