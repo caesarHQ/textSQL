@@ -15,6 +15,7 @@ def get_assistant_message_from_openai(
         scope: str = "USA",
         purpose: str = "Generic",
         session_id: str = None,
+        test_failure: bool = False,
         # model: str = "gpt-4",
 ):
     # alright, it looks like gpt-3.5-turbo is ignoring the user messages in history
@@ -25,6 +26,8 @@ def get_assistant_message_from_openai(
 
     start = time.time()
     try:
+        if test_failure:
+            raise Exception("Test failure")
         res = openai.ChatCompletion.create(
             model=model,
             temperature=0,

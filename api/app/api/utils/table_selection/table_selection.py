@@ -115,16 +115,16 @@ def get_relevant_tables_from_lm(natural_language_query, scope="USA", model="gpt-
         "content": content
     })
 
-    response = get_assistant_message_from_openai(
-            messages=messages,
-            model=model,
-            scope=scope,
-            purpose="table_selection",
-            session_id=session_id,
-        )["message"]["content"]
-    tables_json_str = _extract_text_from_markdown(response)
-
     try:
+        response = get_assistant_message_from_openai(
+                messages=messages,
+                model=model,
+                scope=scope,
+                purpose="table_selection",
+                session_id=session_id,
+            )["message"]["content"]
+        tables_json_str = _extract_text_from_markdown(response)
+
         tables = json.loads(tables_json_str).get("tables")
     except:
         tables = []
