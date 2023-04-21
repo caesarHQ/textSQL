@@ -133,8 +133,9 @@ def text_to_sql():
         return make_response(jsonify({"error": error_msg}), 500)
     
     if generation_id:
+        is_successful = result is not None
         temp_result = result or {}
-        update_input_classification(generation_id, False, len(temp_result.get('results', [])), sql_query)
+        update_input_classification(generation_id, is_successful, len(temp_result.get('results', [])), sql_query)
 
     return make_response(jsonify({'result': result, 'sql_query': sql_query}), 200)
 
