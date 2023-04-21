@@ -630,6 +630,7 @@ function App(props) {
             table_names,
             scope: props.version === 'San Francisco' ? 'SF' : 'USA',
             session_id: sessionId,
+            generation_id: currentGenerationId,
         }
 
         // Set the options for the fetch request

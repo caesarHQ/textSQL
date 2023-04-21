@@ -10,7 +10,8 @@ def failsoft(func):
     def wrapper(*args, **kwargs):
         try:
             result = func(*args, **kwargs)
-        except Exception:
+        except Exception as e:
+            print('error logging with ', e)
             result = None
         return result
     return wrapper
@@ -122,6 +123,30 @@ def log_input_classification(app_name, input_text, metadata, parent_id, session_
         generation_id = row[0]
     
     return str(generation_id)
+
+@failsoft
+def update_input_classification(id: str, ran_sql: bool, rows_returned: int, generated_sql: str):
+    
+    if not EVENTS_ENGINE or not id:
+        return None
+
+    params = {
+        "id": id,
+        "ran_sql": ran_sql,
+        "rows_returned": rows_returned,
+        "generated_sql": generated_sql
+    }
+
+    update_query = text("""
+        UPDATE input_classifications SET ran_sql = :ran_sql, rows_returned = :rows_returned, generated_sql = :generated_sql
+        WHERE id = :id
+    """)
+
+    with EVENTS_ENGINE.connect() as conn:
+        conn.execute(update_query, params)
+        conn.commit()
+    
+    return {"status": "success"}
 
 @failsoft
 def log_sql_failure(input_text, sql_script, failure_message, attempt_number, app_name, session_id=None):

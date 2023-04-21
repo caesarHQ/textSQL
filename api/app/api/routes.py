@@ -14,7 +14,7 @@ from .utils.cached_queries import featured_queries
 from .utils.table_selection.table_details import get_all_table_names
 from .utils.table_selection.table_selection import get_relevant_tables_async
 from .utils.suggestions.suggestions import generate_suggestion_failed_query, generate_suggestion
-from .utils.caesar_logging import update_suggestion_as_used, create_session
+from .utils.caesar_logging import update_suggestion_as_used, create_session, update_input_classification
 from .utils.logging.sentry import capture_exception
 
 def replace_unsupported_localities(original_string, scope="USA"):
@@ -103,6 +103,7 @@ def text_to_sql():
     table_names = request_body.get("table_names")
     scope = request_body.get('scope', "USA")
     session_id = request_body.get("session_id")
+    generation_id = request_body.get("generation_id")
     if session_id in ["", "None", "null" ]:
         session_id = None
 
@@ -127,6 +128,9 @@ def text_to_sql():
         capture_exception(e)
         error_msg = f'Error processing request: {str(e)}'
         return make_response(jsonify({"error": error_msg}), 500)
+    
+    if generation_id:
+        update_input_classification(generation_id, True, len(result.get('results', [])), sql_query)
 
     return make_response(jsonify({'result': result, 'sql_query': sql_query}), 200)
 
