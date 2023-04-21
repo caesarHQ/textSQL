@@ -1136,6 +1136,27 @@ function App(props) {
                 </div>
 
                 <div className="flex flex-col lg:flex-row h-full w-full gap-6 p-6">
+                    {!isStartingState && (
+                        <ResultsContainer
+                            visualization={visualization}
+                            setVisualization={setVisualization}
+                            mobileTableRef={mobileTableRef}
+                            setMobileTableIsOpen={setMobileTableIsOpen}
+                            mobileSqlRef={mobileSqlRef}
+                            setMobileSqlIsOpen={setMobileSqlIsOpen}
+                            mapRef={mapRef}
+                            initialView={initialView}
+                            zipcodes={zipcodes}
+                            zipcodesFormatted={zipcodesFormatted}
+                            cities={cities}
+                            polygonsGeoJSON={polygonsGeoJSON}
+                            tableInfo={tableInfo}
+                            points={points}
+                            sql={sql}
+                            props={props}
+                        />
+                    )}
+
                     <div className="gap-3 flex flex-col h-full w-full lg:max-h-full overflow-y-auto items-center">
                         {/*spinner*/}
                         <LoadingSpinner
@@ -1176,26 +1197,6 @@ function App(props) {
                             {tableNames && <TableNamesDisplay />}
                         </div>
                     </div>
-                    {!isStartingState && (
-                        <ResultsContainer
-                            visualization={visualization}
-                            setVisualization={setVisualization}
-                            mobileTableRef={mobileTableRef}
-                            setMobileTableIsOpen={setMobileTableIsOpen}
-                            mobileSqlRef={mobileSqlRef}
-                            setMobileSqlIsOpen={setMobileSqlIsOpen}
-                            mapRef={mapRef}
-                            initialView={initialView}
-                            zipcodes={zipcodes}
-                            zipcodesFormatted={zipcodesFormatted}
-                            cities={cities}
-                            polygonsGeoJSON={polygonsGeoJSON}
-                            tableInfo={tableInfo}
-                            points={points}
-                            sql={sql}
-                            props={props}
-                        />
-                    )}
                 </div>
                 <div className="mb-5">
                     <Disclaimer version={props.version} />
