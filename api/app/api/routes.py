@@ -116,8 +116,6 @@ def text_to_sql():
         result = execute_sql(cached_sql)
         return make_response(jsonify({'result': result, 'sql_query': cached_sql}), 200)
         
-
-
     natural_language_query = replace_unsupported_localities(natural_language_query, scope)
 
     try:

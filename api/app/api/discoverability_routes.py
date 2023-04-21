@@ -16,7 +16,6 @@ def get_discoverability(app):
     """
     Get discoverability information for the app
     """
-    print('request to :', app, '\n')
 
     if not EVENTS_ENGINE:
         return make_response(jsonify({

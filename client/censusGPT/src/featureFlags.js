@@ -1,3 +1,3 @@
 export const FEATURE_FLAGS = {
-    exampleFeed: false,
+    exampleFeed: true,
 }

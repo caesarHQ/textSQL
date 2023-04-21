@@ -31,8 +31,6 @@ def get_featured_table(input_str, scope="USA"):
 
 def get_featured_sql(input_str, scope="USA"):
     
-        print('checking featured sql')
-    
         if not EVENTS_ENGINE:
             return False
         

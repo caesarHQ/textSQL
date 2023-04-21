@@ -241,8 +241,7 @@ def get_feed_data(app):
         result = conn.execute(query, params)
         conn.commit()
         rows = result.fetchall()
-        print('rows: ', rows)
-        # convert to dict
+
         rows = [
             {
                 "input_text": row[0],
