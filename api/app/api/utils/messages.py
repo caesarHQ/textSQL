@@ -22,8 +22,6 @@ def get_assistant_message_from_openai(
     # let's go and re-create the chat in the last message!
     final_payload = messages
 
-    final_payload = messages
-
     start = time.time()
     try:
         if test_failure:

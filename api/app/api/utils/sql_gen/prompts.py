@@ -77,16 +77,17 @@ Provide a properly formatted JSON object with the following information. Ensure 
 {{
 
     "Required Answer": str (the type of information the query is asking for),
-    "Input Conversion": str (the type of conversion that needs to be done to the input),
-    "Related Enums": str (which enums are relevant to the query),
+    "Input Types": str (a summary of the enums or other conversion that are related to the query),
+    "Backup Plan": str (provide a backup plan of additional data that could be used to answer the question/command),
+    "Additional Data to Get: str (brainstorm what information related to the original query should also be returned to answer the question/command.),
     "SQL": str (your query)
 }}
 
 However, if the tables don't contain all the required data (e.g. the column isn't there or there aren't relevant enums), instead return a JSON object with just: 
 {{
     "Required Answer": str (the type of information the query is asking for),
-    "Input Conversion": str (the type of conversion that needs to be done to the input),
-    "Applicability": "<1 to 2 sentences about which columns and enums are relevant, or which ones are missing>",
+    "Input Types": str (a summary of the enums or other conversion that are related to the query),
+    "Backup Plan": str (provide a backup plan of additional data that could be used to answer the question/command),
     "MissingData": "<1 to 2 sentences about what data is missing>"
 }}
 However, if a query can be close enough to the intent of the question/command, generate the SQL that gets it instead of returning MissingData.
