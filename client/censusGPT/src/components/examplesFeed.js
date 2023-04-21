@@ -14,10 +14,10 @@ const ExamplesFeed = (props) => {
     const { examples } = useContext(FeedContext)
 
     return (
-        <div className="px-10 text-gray-900 dark:text-white max-w-4xl">
+        <div className="px-10 text-gray-900 dark:text-white max-w-6xl">
             <p className={'my-2 font-medium'}>Try one of these examples: </p>
             <div>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     {examples.map((example, idx) => (
                         <ExampleCard
                             key={idx}
