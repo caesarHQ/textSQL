@@ -2,26 +2,32 @@ import { capturePosthog } from '../utils/loggers/posthog'
 
 export const ExampleCard = ({ example, props }) => {
     return (
-        <div className="relative flex items-center rounded-lg border border-gray-300 bg-white dark:bg-dark-800 px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400">
-            <div className="flex items-center justify-center w-10 h-10 bg-gray-200 dark:bg-dark-700 rounded-full">
+        <div
+            className="relative flex flex-col rounded-lg border border-gray-300 bg-white dark:bg-dark-800 px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400 hover:cursor-pointer"
+            onClick={() => {
+                capturePosthog('example_clicked', {
+                    natural_language_query: example.input_text,
+                })
+                props.setQuery(example.input_text)
+                props.handleClick(example.input_text)
+            }}
+        >
+            {example.img && (
+                <img
+                    src={example.img}
+                    className="h-full w-full object-cover rounded-t-lg"
+                />
+            )}
+            <div className="flex items-center justify-center w-10 h-10 bg-gray-200 dark:bg-dark-700 rounded-full -mt-5 mx-auto">
                 <span className="text-lg">{example.emoji}</span>
             </div>
-            <div className="ml-4 flex-1">
-                <p
-                    className="text-sm sm:text-lg font-medium focus:outline-none hover:cursor-pointer"
-                    onClick={() => {
-                        capturePosthog('example_clicked', {
-                            natural_language_query: example.input_text,
-                        })
-                        props.setQuery(example.input_text)
-                        props.handleClick(example.input_text)
-                    }}
-                >
+            <div className="ml-4 flex-1 pt-3">
+                <p className="text-sm sm:text-lg font-medium focus:outline-none">
                     {example.input_text}
                 </p>
             </div>
             <svg
-                className="h-5 w-5 hidden sm:block"
+                className="h-5 w-5 hidden sm:block self-end mt-3"
                 fill="currentColor"
                 viewBox="0 0 24 24"
             >
