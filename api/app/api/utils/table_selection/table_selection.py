@@ -48,7 +48,7 @@ def _get_table_selection_message_with_descriptions(scope="USA"):
         <json of the tables>
         ```
 
-        Thanks!
+        Provide only the list of related tables and nothing else after.
         """
     )
     
