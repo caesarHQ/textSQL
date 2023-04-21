@@ -2,10 +2,13 @@ import { capturePosthog } from '../utils/loggers/posthog'
 
 export const ExampleCard = ({ example, props }) => {
     return (
-        <div className="relative flex items-center space-x-3 rounded-lg border border-gray-300 bg-white dark:bg-dark-800 px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400">
-            <div className="min-w-0 flex-1">
+        <div className="relative flex items-center rounded-lg border border-gray-300 bg-white dark:bg-dark-800 px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400">
+            <div className="flex items-center justify-center w-10 h-10 bg-gray-200 dark:bg-dark-700 rounded-full">
+                <span className="text-lg">{example.emoji}</span>
+            </div>
+            <div className="ml-4 flex-1">
                 <p
-                    className="focus:outline-none hover:cursor-pointer"
+                    className="text-sm font-medium focus:outline-none hover:cursor-pointer"
                     onClick={() => {
                         capturePosthog('example_clicked', {
                             natural_language_query: example.input_text,
@@ -14,10 +17,7 @@ export const ExampleCard = ({ example, props }) => {
                         props.handleClick(example.input_text)
                     }}
                 >
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    <p className="text-sm font-medium">
-                        {example.emoji} {example.input_text}
-                    </p>
+                    {example.input_text}
                 </p>
             </div>
             <svg
