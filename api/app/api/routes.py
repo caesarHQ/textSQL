@@ -127,10 +127,14 @@ def text_to_sql():
     except Exception as e:
         capture_exception(e)
         error_msg = f'Error processing request: {str(e)}'
+        if generation_id:
+            update_input_classification(generation_id, False, 0, None)
+
         return make_response(jsonify({"error": error_msg}), 500)
     
     if generation_id:
-        update_input_classification(generation_id, True, len(result.get('results', [])), sql_query)
+        temp_result = result or {}
+        update_input_classification(generation_id, False, len(temp_result.get('results', [])), sql_query)
 
     return make_response(jsonify({'result': result, 'sql_query': sql_query}), 200)
 

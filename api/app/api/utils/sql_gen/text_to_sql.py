@@ -75,7 +75,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
         })
 
     assistant_message = None
-
+    sql_query = ""
     for attempt_number in range(k):
         sql_query_data = {}
         try:
@@ -113,7 +113,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             })
 
     print(f"Could not generate {DIALECT} query after {k} tries.")
-    return None, None
+    return None, sql_query
 
 
 def use_cached_sql(sql):
