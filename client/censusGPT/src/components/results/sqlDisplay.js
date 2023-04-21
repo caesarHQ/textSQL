@@ -136,7 +136,6 @@ export const SQLDisplay = ({
                 }`}
             >
                 <SyntaxHighlighter
-                    ref={sqlRef}
                     language="sql"
                     style={hybrid}
                     customStyle={{
