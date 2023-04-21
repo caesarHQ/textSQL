@@ -1155,8 +1155,8 @@ function App(props) {
                     </div>
                 </div>
 
-                <div className="flex flex-col lg:flex-row h-full w-full gap-6 p-6">
-                    <div className="gap-3 flex flex-col h-full w-full lg:max-h-full overflow-y-auto items-center">
+                <div className="flex flex-col lg:flex-row lg:h-full w-full gap-6 p-6">
+                    <div className="gap-3 flex flex-col w-full items-center">
                         {/*spinner*/}
                         <LoadingSpinner
                             isLoading={isLoading || isGetTablesLoading}

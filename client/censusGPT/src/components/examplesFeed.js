@@ -12,7 +12,6 @@ import { ExampleCard } from './exampleCard'
  */
 const ExamplesFeed = (props) => {
     const { examples } = useContext(FeedContext)
-    console.log('examples: ', examples)
 
     return (
         <div className="px-10 text-gray-900 dark:text-white max-w-4xl">
