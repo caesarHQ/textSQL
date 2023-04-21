@@ -257,7 +257,7 @@ def get_feed_data(app):
     }
 
     query = text("""
-        select input_text, category, emoji
+        select input_text, category, emoji, id
         from featured_queries
         where app = :app
     """)
@@ -272,6 +272,7 @@ def get_feed_data(app):
                 "input_text": row[0],
                 "category": row[1],
                 "emoji": row[2],
+                "img": "https://census-gpt-assets.s3.us-west-2.amazonaws.com/" + str(row[3]) + ".png",
             }
             for row in rows
         ]
