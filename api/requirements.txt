@@ -9,6 +9,7 @@ arrow==1.2.3
 asttokens==2.2.1
 async-timeout==4.0.2
 attrs==22.2.0
+autopep8==2.0.2
 backcall==0.2.0
 beautifulsoup4==4.12.2
 bleach==6.0.0
@@ -74,10 +75,11 @@ nbclient==0.7.3
 nbconvert==7.3.0
 nbformat==5.8.0
 nest-asyncio==1.5.6
+newrelic==8.7.0
 notebook==6.5.4
 notebook_shim==0.2.2
 numpy==1.24.2
-openai==0.27.2
+openai==0.27.4
 openpyxl==3.1.2
 packaging==23.0
 pandas==2.0.0
@@ -97,6 +99,7 @@ psutil==5.9.4
 psycopg2-binary==2.9.5
 ptyprocess==0.7.0
 pure-eval==0.2.2
+pycodestyle==2.10.0
 pycparser==2.21
 Pygments==2.14.0
 pyparsing==3.0.9
