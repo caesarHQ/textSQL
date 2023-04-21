@@ -15,7 +15,7 @@ const ExamplesFeed = (props) => {
 
     return (
         <div className="px-10 text-gray-900 dark:text-white max-w-4xl">
-            <p className={'my-2 font-medium'}> Try these: </p>
+            <p className={'my-2 font-medium'}>Try one of these examples: </p>
             <div>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {examples.map((example, idx) => (
