@@ -2,7 +2,7 @@ import { capturePosthog } from '../utils/loggers/posthog'
 export const ExampleCard = ({ example, props }) => {
     return (
         <div
-            className="relative flex flex-col items-center rounded-lg border border-gray-300 bg-white dark:bg-dark-800 px-6 py-5 shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:border-gray-400 hover:cursor-pointer hover:transform hover:scale-105 transition-all duration-200"
+            className="relative flex flex-col items-center rounded-lg shadow-md hover:shadow-lg bg-white dark:bg-dark-800 px-6 py-5 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:cursor-pointer hover:transform hover:scale-105 transition-all duration-200"
             onClick={() => {
                 capturePosthog('example_clicked', {
                     natural_language_query: example.input_text,
