@@ -4,6 +4,7 @@ import time
 from typing import List, Dict
 
 import openai
+import tiktoken
 
 from app.api.utils.caesar_logging import log_apicall
 

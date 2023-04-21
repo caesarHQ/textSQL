@@ -78,19 +78,48 @@ Provide a properly formatted JSON object with the following information. Ensure 
 
     "Required Answer": str (the type of information the query is asking for),
     "Input Types": str (a summary of the enums or other conversion that are related to the query),
-    "Backup Plan": str (provide a backup plan of additional data that could be used to answer the question/command),
+    "Plan": str (Explain the simplest way to answer the question/command with the schemas available),
     "Additional Data to Get: str (brainstorm what information related to the original query should also be returned to answer the question/command.),
     "SQL": str (your query)
 }}
+"""
+}
 
-However, if the tables don't contain all the required data (e.g. the column isn't there or there aren't relevant enums), instead return a JSON object with just: 
+RETRY_PROMPTS2 = {
+    "USA": """You are an expert and empathetic database engineer that is generating correct read-only {} query to answer the following question/command: {}
+
+- Use state abbreviations for states.
+- Table crime_by_city does not have columns 'zip_code' or 'county'.
+- Do not use ambiguous column names.
+- For example, city can be ambiguous because both tables location_data and crime_by_city have a column named city. Always specify the table where you are using the column.
+- If you include a city or county column in the result table, include a state column too.
+- Make sure each value in the result table is not null.
+- Use CTE format for computing subqueries.
+
+Provide a properly formatted JSON object with the following information. Ensure to escape any special characters (e.g. \n should be \\n, \m \\m and such) so it can be parsed as JSON.
 {{
+    
+    "Schema": "<1 to 2 sentences about the tables/columns/enums above to use>",
+    "SQL": "<your query>"
+}}
+
+Command: {}
+""",
+    "SF": """You are an expert and empathetic database engineer that is generating correct read-only {} query to answer the following question/command: {}
+
+Ensure to include which table each column is from (table.column)
+Use CTE format for computing subqueries.
+
+Provide a properly formatted JSON object with the following information. Ensure to escape any special characters so it can be parsed as JSON.
+
+{{
+
     "Required Answer": str (the type of information the query is asking for),
     "Input Types": str (a summary of the enums or other conversion that are related to the query),
-    "Backup Plan": str (provide a backup plan of additional data that could be used to answer the question/command),
-    "MissingData": "<1 to 2 sentences about what data is missing>"
+    "Plan": str (Explain the simplest way to answer the question/command with the schemas available),
+    "Additional Data to Get: str (brainstorm what information related to the original query should also be returned to answer the question/command.),
+    "SQL": str (your query)
 }}
-However, if a query can be close enough to the intent of the question/command, generate the SQL that gets it instead of returning MissingData.
 """
 }
 
@@ -112,7 +141,7 @@ def get_initial_prompt(dialect: str, schemas: str, scope: str="USA") -> str:
     prompt = prompt.format(dialect, schemas)
     return prompt
 
-def get_retry_prompt(dialect: str, natural_language_query:str, schemas: str, scope: str="USA") -> str:
+def get_retry_prompt(dialect: str, natural_language_query:str, scope: str="USA") -> str:
     """
     Crates the retry prompt for the given scope formatted to the given dialect and schemas.
 
@@ -126,8 +155,8 @@ def get_retry_prompt(dialect: str, natural_language_query:str, schemas: str, sco
         str: The formatted prompt
     """
 
-    if scope in RETRY_PROMPTS:
-        prompt = RETRY_PROMPTS[scope]
-    else: prompt = RETRY_PROMPTS["USA"]
-    prompt = prompt.format(dialect,natural_language_query, schemas, natural_language_query)
+    if scope in RETRY_PROMPTS2:
+        prompt = RETRY_PROMPTS2[scope]
+    else: prompt = RETRY_PROMPTS2["USA"]
+    prompt = prompt.format(dialect,natural_language_query, natural_language_query)
     return prompt
