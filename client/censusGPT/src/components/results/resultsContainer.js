@@ -36,7 +36,6 @@ export const ResultsContainer = ({
     tableNames,
     sqlExplanationIsOpen,
     setSqlExplanationIsOpen,
-    sqlExplanationRef,
     isExplainSqlLoading,
     sqlExplanation,
     explainSql,
@@ -96,7 +95,6 @@ export const ResultsContainer = ({
                                         setSqlExplanationIsOpen
                                     }
                                     sqlExplanationIsOpen={sqlExplanationIsOpen}
-                                    sqlExplanationRef={sqlExplanationRef}
                                     isExplainSqlLoading={isExplainSqlLoading}
                                     sqlExplanation={sqlExplanation}
                                     explainSql={explainSql}

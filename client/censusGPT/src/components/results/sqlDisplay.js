@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import SyntaxHighlighter from 'react-syntax-highlighter'
 import { ImSpinner } from 'react-icons/im'
@@ -14,7 +14,6 @@ export const SQLDisplay = ({
     sql,
     setSqlExplanationIsOpen,
     sqlExplanationIsOpen,
-    sqlExplanationRef,
     isExplainSqlLoading,
     sqlExplanation,
     explainSql,
@@ -26,6 +25,7 @@ export const SQLDisplay = ({
     const [editingSql, setEditingSql] = useState(false)
 
     const sqlRef = useRef(sql)
+    const sqlExplanationRef = useRef(null)
 
     const CopySqlToClipboardButton = ({ text }) => {
         const handleCopy = async () => {
@@ -100,6 +100,22 @@ export const SQLDisplay = ({
             </div>
         </>
     )
+    //when there's a click outside of the sql explanation, close it
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                sqlExplanationRef?.current &&
+                !sqlExplanationRef?.current?.contains(event.target)
+            ) {
+                setSqlExplanationIsOpen(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [sqlExplanationRef, setSqlExplanationIsOpen])
 
     return (
         <pre

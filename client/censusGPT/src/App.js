@@ -79,7 +79,6 @@ function App(props) {
     const mobileSqlRef = useRef()
     const mapRef = useRef()
     const expandedMobileSearchRef = useRef()
-    const sqlExplanationRef = useRef()
     const [touchStart, setTouchStart] = useState(null)
     const [touchEnd, setTouchEnd] = useState(null)
     const [polygons, setPolygons] = useState([])
@@ -508,7 +507,6 @@ function App(props) {
 
         capturePosthog('getTables_backend_response', response_1)
         setTableNames(response_1.table_names)
-        console.log('set tables to: ', response_1.table_names)
         return response_1.table_names
     }
 
@@ -850,18 +848,6 @@ function App(props) {
         !points?.length &&
         !tableInfo?.columns?.length
 
-    console.log('starting state vars: ', {
-        zipcodesFormatted,
-        zipcodes,
-        cities,
-        points,
-        tableInfo,
-    })
-
-    console.log('main starting state: ', isStartingState)
-    console.log('main tables:', tables)
-    console.log('main tableNames:', tableNames)
-
     return (
         <main
             className="h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen"
@@ -874,14 +860,7 @@ function App(props) {
                     version={props.version}
                 />
             )}
-            <div
-                className="App flex flex-col h-full"
-                onClick={(e) =>
-                    sqlExplanationRef.current &&
-                    !sqlExplanationRef.current.contains(e.target) &&
-                    setSqlExplanationIsOpen(false)
-                }
-            >
+            <div className="App flex flex-col h-full">
                 <link
                     href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
                     rel="stylesheet"
