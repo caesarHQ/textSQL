@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useReducer, useMemo } from 'react'
+import React, { useState, useRef, useEffect, useContext } from 'react'
 import Map, { Layer, Source } from 'react-map-gl'
 import mapboxgl from 'mapbox-gl'
 import bbox from '@turf/bbox'
@@ -16,7 +16,7 @@ import Disclaimer from './components/disclaimer'
 import { VizSelector } from './components/vizSelector'
 import { ExplanationModal } from './components/explanationModal'
 import DataPlot from './components/dataPlot'
-import { FEATURE_FLAGS } from './featureFlags'
+import { FeedContext } from './contexts/feedContext'
 
 import { logSentryError } from './utils/loggers/sentry'
 import { capturePosthog } from './utils/loggers/posthog'
@@ -128,6 +128,8 @@ function App(props) {
     const [isExplainSqlLoading, setIsExplainSqlLoading] = useState(false)
     const [minimizeTableNames, setMinimizeTableNames] = useState(false)
     const [suggestedQuery, setSuggestedQuery] = useState(null)
+
+    const { useServerFeed } = useContext(FeedContext)
 
     const tableColumns = tableInfo?.columns
     const tableRows = tableInfo?.rows
@@ -1162,7 +1164,7 @@ function App(props) {
                         {sql.length === 0 &&
                         !isLoading &&
                         !isGetTablesLoading ? (
-                            FEATURE_FLAGS?.exampleFeed ? (
+                            useServerFeed ? (
                                 <ExamplesFeed
                                     setQuery={setQuery}
                                     handleClick={fetchBackend}
