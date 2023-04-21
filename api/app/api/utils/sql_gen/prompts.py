@@ -79,7 +79,6 @@ Provide a properly formatted JSON object with the following information. Ensure 
     "Required Answer": str (the type of information the query is asking for),
     "Input Conversion": str (the type of conversion that needs to be done to the input),
     "Applicability": str (1 to 2 sentences about which columns and enums are relevant, or which ones are missing)
-    "Plan of Attack": str (Walk through how to solve the problem to provide the best answer with supporting data, max 3 sentences, keep it succinct)
     "SQL": str (your query)
 }}
 
