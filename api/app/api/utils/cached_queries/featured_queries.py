@@ -17,10 +17,14 @@ def get_featured_table(input_str, scope="USA"):
         WHERE input_text = :input_text
         AND app = :scope
     """)
-    with EVENTS_ENGINE.connect() as conn:
-        result = conn.execute(query, params)
-        conn.commit()
-        res = result.fetchall()
+    try:
+        with EVENTS_ENGINE.connect() as conn:
+            result = conn.execute(query, params)
+            conn.commit()
+            res = result.fetchall()
+
+    except Exception as e:
+        return False
 
     if len(res) == 0:
         return False
@@ -43,11 +47,15 @@ def get_featured_sql(input_str, scope="USA"):
             WHERE input_text = :input_text
             AND app = :scope
         """)
-        with EVENTS_ENGINE.connect() as conn:
-            result = conn.execute(query, params)
-            conn.commit()
-            res = result.fetchall()
-    
+
+        try:
+            with EVENTS_ENGINE.connect() as conn:
+                result = conn.execute(query, params)
+                conn.commit()
+                res = result.fetchall()
+        except Exception as e:
+            return False
+
         if len(res) == 0:
             return False
     
