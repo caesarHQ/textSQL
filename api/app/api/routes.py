@@ -61,7 +61,7 @@ def get_tables():
     # if it's featured, just pull it from the db
     scope = request_body.get('scope', "USA")
     cached_tables = featured_queries.get_featured_table(natural_language_query, scope)
-    if cached_tables:
+    if cached_tables and len(cached_tables) > 0:
         return make_response(jsonify({"table_names": cached_tables}), 200)
 
     natural_language_query = replace_unsupported_localities(natural_language_query, scope)
