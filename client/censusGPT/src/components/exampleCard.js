@@ -14,6 +14,7 @@ export const ExampleCard = ({ example, props }) => {
             {example.img && (
                 <img
                     src={example.img}
+                    loading="lazy"
                     className="h-full w-full object-cover rounded-t-lg"
                 />
             )}
