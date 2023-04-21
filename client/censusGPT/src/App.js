@@ -1,11 +1,8 @@
 import React, { useState, useRef, useEffect, useContext } from 'react'
-import Map, { Layer, Source } from 'react-map-gl'
-import mapboxgl from 'mapbox-gl'
 import bbox from '@turf/bbox'
 import * as turf from '@turf/turf'
 import { ImSpinner } from 'react-icons/im'
 
-// Components
 import Table from './components/table'
 import LoadingSpinner from './components/loadingSpinner'
 import Examples from './components/examples'
@@ -13,10 +10,10 @@ import ExamplesFeed from './components/examplesFeed'
 import ErrorMessage from './components/error'
 import toast, { Toaster } from 'react-hot-toast'
 import Disclaimer from './components/disclaimer'
-import { VizSelector } from './components/vizSelector'
 import { ExplanationModal } from './components/explanationModal'
-import DataPlot from './components/dataPlot'
 import { FeedContext } from './contexts/feedContext'
+
+import { ResultsContainer } from './components/results/visualization'
 
 import { logSentryError } from './utils/loggers/sentry'
 import { capturePosthog } from './utils/loggers/posthog'
@@ -29,17 +26,6 @@ import {
     getZipcodesMapboxFormatted,
 } from './utils/utils'
 
-// Mapbox UI configuration
-import {
-    zipcodeFeatures,
-    citiesFeatures,
-    zipcodeLayerHigh,
-    zipcodeLayerLow,
-    citiesLayer,
-    polygonsLayer,
-    pointsFeatures,
-    pointsLayer,
-} from './utils/mapbox-ui-config'
 import NeighborhoodGeoData from './utils/sf_analysis_neighborhoods.js'
 
 import './css/App.css'
@@ -72,13 +58,6 @@ localStorage.theme === 'dark' ||
     window.matchMedia('(prefers-color-scheme: dark)').matches)
     ? document.documentElement.classList.add('dark')
     : document.documentElement.classList.remove('dark')
-
-// The following is required to stop "npm build" from transpiling mapbox code.
-// notice the exclamation point in the import.
-// @ts-ignore
-// prettier-ignore
-// eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
-mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 
 let api_endpoint =
     process.env.REACT_APP_API_URL || 'https://dev-text-sql-be.onrender.com'
@@ -1198,98 +1177,24 @@ function App(props) {
                         </div>
                     </div>
                     {!isStartingState && (
-                        <div className="flex flex-grow h-full w-full relative rounded-lg shadow overflow-hidden">
-                            <div className="absolute top-0 right-0 z-10 p-1">
-                                <VizSelector
-                                    selected={visualization}
-                                    setSelected={setVisualization}
-                                    tableRef={mobileTableRef}
-                                    setTableIsOpen={setMobileTableIsOpen}
-                                    sqlRef={mobileSqlRef}
-                                    setSqlIsOpen={setMobileSqlIsOpen}
-                                    viewsCanOpen={sql.length}
-                                />
-                            </div>
-                            <div className="overflow-hidden rounded-lg shadow flex-grow-[2] min-h-[70vh] w-full h-full relative">
-                                {visualization == 'map' ? (
-                                    <Map
-                                        ref={mapRef}
-                                        mapboxAccessToken="pk.eyJ1IjoicmFodWwtY2Flc2FyaHEiLCJhIjoiY2xlb2w0OG85MDNoNzNzcG5kc2VqaGR3dCJ9.mhsdkiyqyI5jLgy8TKYavg"
-                                        style={{
-                                            width: '100%',
-                                            height: '100%',
-                                        }}
-                                        mapStyle="mapbox://styles/mapbox/dark-v11"
-                                        initialViewState={initialView}
-                                        minZoom={
-                                            props.version === 'San Francisco'
-                                                ? 11.5
-                                                : 0
-                                        }
-                                    >
-                                        <Source
-                                            id="zips-kml"
-                                            type="vector"
-                                            url="mapbox://darsh99137.4nf1q4ec"
-                                        >
-                                            <Layer
-                                                {...zipcodeLayerLow(
-                                                    zipcodesFormatted
-                                                )}
-                                            />
-                                        </Source>
-                                        <Source
-                                            id="zip-zoomed-out"
-                                            type="geojson"
-                                            data={{
-                                                type: 'FeatureCollection',
-                                                features:
-                                                    zipcodeFeatures(zipcodes),
-                                            }}
-                                        >
-                                            <Layer {...zipcodeLayerHigh} />
-                                        </Source>
-                                        <Source
-                                            id="cities"
-                                            type="geojson"
-                                            data={{
-                                                type: 'FeatureCollection',
-                                                features:
-                                                    citiesFeatures(cities),
-                                            }}
-                                        >
-                                            <Layer {...citiesLayer} />
-                                        </Source>
-                                        <Source
-                                            id="polygons"
-                                            type="geojson"
-                                            data={polygonsGeoJSON}
-                                        >
-                                            <Layer {...polygonsLayer} />
-                                        </Source>
-                                        <Source
-                                            id="points"
-                                            type="geojson"
-                                            data={{
-                                                type: 'FeatureCollection',
-                                                features:
-                                                    pointsFeatures(points),
-                                            }}
-                                        >
-                                            <Layer {...pointsLayer} />
-                                        </Source>
-                                    </Map>
-                                ) : (
-                                    // following <div> helps plot better scale bar widths for responsiveness
-                                    <div className="overflow-x-auto flex w-full overflow-hidden mb-32">
-                                        <DataPlot
-                                            cols={tableInfo.columns}
-                                            rows={tableInfo.rows}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                        <ResultsContainer
+                            visualization={visualization}
+                            setVisualization={setVisualization}
+                            mobileTableRef={mobileTableRef}
+                            setMobileTableIsOpen={setMobileTableIsOpen}
+                            mobileSqlRef={mobileSqlRef}
+                            setMobileSqlIsOpen={setMobileSqlIsOpen}
+                            mapRef={mapRef}
+                            initialView={initialView}
+                            zipcodes={zipcodes}
+                            zipcodesFormatted={zipcodesFormatted}
+                            cities={cities}
+                            polygonsGeoJSON={polygonsGeoJSON}
+                            tableInfo={tableInfo}
+                            points={points}
+                            sql={sql}
+                            props={props}
+                        />
                     )}
                 </div>
                 <div className="mb-5">
