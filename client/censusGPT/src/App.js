@@ -1,19 +1,14 @@
 import React, { useState, useRef, useEffect, useContext } from 'react'
 import bbox from '@turf/bbox'
 import * as turf from '@turf/turf'
-import { ImSpinner } from 'react-icons/im'
 
-import Table from './components/table'
-import LoadingSpinner from './components/loadingSpinner'
-import Examples from './components/examples'
-import ExamplesFeed from './components/examplesFeed'
 import ErrorMessage from './components/error'
 import toast, { Toaster } from 'react-hot-toast'
 import Disclaimer from './components/disclaimer'
 import { ExplanationModal } from './components/explanationModal'
 import { FeedContext } from './contexts/feedContext'
 
-import { ResultsContainer } from './components/results/visualization'
+import { ResultsContainer } from './components/results/resultsContainer'
 
 import { logSentryError } from './utils/loggers/sentry'
 import { capturePosthog } from './utils/loggers/posthog'
@@ -39,18 +34,7 @@ import SearchBar from './components/searchBar'
 import { notify } from './components/toast'
 import { useDebouncedCallback } from 'use-debounce'
 import { useSearchParams } from 'react-router-dom'
-import SyntaxHighlighter from 'react-syntax-highlighter'
-import { hybrid } from 'react-syntax-highlighter/dist/esm/styles/hljs'
-import {
-    BsChevronCompactDown,
-    BsClipboard2,
-    BsClipboard2Check,
-    BsDashLg,
-    BsPatchQuestion,
-    BsPencilSquare,
-    BsQuestionCircle,
-    BsTable,
-} from 'react-icons/bs'
+import { BsClipboard2 } from 'react-icons/bs'
 
 // Add system dark mode
 localStorage.theme === 'dark' ||
@@ -87,8 +71,6 @@ function App(props) {
     const [isLoading, setIsLoading] = useState(false)
     const [title, setTitle] = useState('')
     const [visualization, setVisualization] = useState('map')
-    const [editingSql, setEditingSql] = useState(false)
-    const [copied, setCopied] = useState(false)
     const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false)
     const [mobileHelpIsOpen, setMobileHelpIsOpen] = useState(true)
     const [mobileTableIsOpen, setMobileTableIsOpen] = useState(false)
@@ -105,7 +87,6 @@ function App(props) {
     const [sqlExplanationIsOpen, setSqlExplanationIsOpen] = useState(false)
     const [sqlExplanation, setSqlExplanation] = useState()
     const [isExplainSqlLoading, setIsExplainSqlLoading] = useState(false)
-    const [minimizeTableNames, setMinimizeTableNames] = useState(false)
     const [suggestedQuery, setSuggestedQuery] = useState(null)
 
     const { useServerFeed } = useContext(FeedContext)
@@ -143,15 +124,12 @@ function App(props) {
             props.version === 'Census' ? 'Census GPT' : 'San Francisco GPT'
         )
         setVisualization('map')
-        setEditingSql(false)
-        setCopied(false)
         setMobileMenuIsOpen(false)
         setMobileHelpIsOpen(true)
         setMobileTableIsOpen(false)
         setMobileSqlIsOpen(false)
         setSqlExplanationIsOpen(false)
         setSqlExplanation()
-        setMinimizeTableNames(false)
         setTableNames()
         setIsLoading(false)
         setSearchParams({})
@@ -168,15 +146,12 @@ function App(props) {
             props.version === 'Census' ? 'Census GPT' : 'San Francisco GPT'
         )
         setVisualization('map')
-        setEditingSql(false)
-        setCopied(false)
         setMobileMenuIsOpen(false)
         setMobileHelpIsOpen(true)
         setMobileTableIsOpen(false)
         setMobileSqlIsOpen(false)
         setSqlExplanationIsOpen(false)
         setSqlExplanation()
-        setMinimizeTableNames(false)
         setTableNames()
         setIsLoading(false)
         setSuggestedQuery(null)
@@ -533,50 +508,9 @@ function App(props) {
 
         capturePosthog('getTables_backend_response', response_1)
         setTableNames(response_1.table_names)
+        console.log('set tables to: ', response_1.table_names)
         return response_1.table_names
     }
-
-    const TableNamesDisplay = () => (
-        <div className="flex flex-col w-full rounded-lg shadow bg-gray-100 dark:bg-dark-800 ring-dark-300 ring-0">
-            <div className="flex w-full justify-between p-2 items-center rounded-t-lg bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm">
-                <div className="inline-flex items-center space-x-2">
-                    <BsTable className="dark:text-white/60" />
-                    <span className="font-medium text-sm">Tables Queried</span>
-                </div>
-
-                <button
-                    className="text-sm rounded-full p-1 bg-white/10 hover:bg-white/20"
-                    onClick={() => setMinimizeTableNames(!minimizeTableNames)}
-                >
-                    {minimizeTableNames ? (
-                        <BsChevronCompactDown />
-                    ) : (
-                        <BsDashLg />
-                    )}
-                </button>
-            </div>
-
-            {!minimizeTableNames && (
-                <ul className="font-medium text-left">
-                    {tableNames.map((tableName, index) => (
-                        <li
-                            className={`${
-                                index % 2 == 0
-                                    ? 'dark:bg-black/10 bg-gray-400/10'
-                                    : 'dark:bg-black/20 bg-gray-400/20'
-                            } py-1 pl-2 backdrop-blur-md border-b dark:border-white/10 border-black/10 ${
-                                index === tableNames.length - 1 &&
-                                'rounded-b-lg border-b-0'
-                            }`}
-                            key={'name_' + index}
-                        >
-                            <span className="text-sm">{tableName}</span>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
-    )
 
     const fetchBackend = async (natural_language_query) => {
         if (natural_language_query == null) {
@@ -882,154 +816,6 @@ function App(props) {
         fetchBackend(query)
     }
 
-    const SQL = ({ sql }) => {
-        const sqlRef = useRef(sql)
-
-        const CopySqlToClipboardButton = ({ text }) => {
-            const handleCopy = async () => {
-                if ('clipboard' in navigator) {
-                    setCopied(true)
-                    setTimeout(() => setCopied(false), 1000)
-                    return await navigator.clipboard.writeText(text)
-                } else {
-                    setCopied(true)
-                    setTimeout(() => setCopied(false), 1000)
-                    return document.execCommand('copy', true, text)
-                }
-            }
-
-            return (
-                <button
-                    onClick={handleCopy}
-                    className="text-xs rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 bg-white dark:bg-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-700"
-                >
-                    {copied ? <BsClipboard2Check /> : <BsClipboard2 />}
-                </button>
-            )
-        }
-
-        const EditSqlButton = () => (
-            <button
-                onClick={() => setEditingSql(!editingSql)}
-                className={`text-xs rounded-md px-2.5 py-2 font-semibold text-gray-900 dark:text-neutral-200 ring-1 ring-inset ring-gray-300 dark:ring-dark-300 hover:bg-gray-100 dark:hover:bg-neutral-700  ${
-                    editingSql
-                        ? 'bg-gray-100 dark:bg-neutral-700'
-                        : 'bg-white dark:bg-neutral-600'
-                }`}
-            >
-                <BsPencilSquare />
-            </button>
-        )
-
-        const ExplainSqlButton = () => (
-            <>
-                <div className="group relative flex">
-                    <button
-                        onClick={() => {
-                            setSqlExplanationIsOpen(!sqlExplanationIsOpen)
-                            !sqlExplanation && explainSql(sqlRef.current)
-                        }}
-                        className={`text-lg hover:text-blue-600 ${
-                            sqlExplanationIsOpen && 'text-blue-600'
-                        }`}
-                    >
-                        <BsPatchQuestion />
-                    </button>
-                    {sqlExplanationIsOpen ? (
-                        <div
-                            ref={sqlExplanationRef}
-                            className="h-[5.4rem] w-[28.5rem] flex overflow-auto top-7 text-xs absolute rounded-md p-2 bg-gray-300/95 dark:bg-dark-800/95 backdrop-blur-xl ring-blue-600 ring-1 ring-inset"
-                        >
-                            {isExplainSqlLoading ? (
-                                <div className="flex w-full items-center justify-center text-lg">
-                                    <ImSpinner className="animate-spin" />
-                                </div>
-                            ) : (
-                                <span className="whitespace-pre-wrap text-sm font-medium">
-                                    {sqlExplanation}
-                                </span>
-                            )}
-                        </div>
-                    ) : (
-                        <div className="font-semibold top-7 text-sm hidden group-hover:block absolute rounded-md p-1 bg-gray-300/75 dark:bg-dark-800/75 backdrop-blur ring-gray-900 dark:ring-gray-300 ring-1">
-                            Click to explain SQL
-                        </div>
-                    )}
-                </div>
-            </>
-        )
-
-        return (
-            <pre
-                align="left"
-                className="rounded-lg bg-gray-100 dark:bg-dark-800 dark:text-white ring-dark-300 ring-0"
-            >
-                <div className="flex items-center w-full min-h-full">
-                    <div className="rounded-t-lg flex w-full justify-end h-full items-center p-2 space-x-1.5 bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm font-sans">
-                        <ExplainSqlButton />
-                        <h2 className="font-bold tracking-wide h-6 overflow-hidden flex w-full">
-                            {title}
-                        </h2>
-                        <div className="flex right-1 space-x-1.5 relative items-center">
-                            {editingSql && (
-                                <button
-                                    onClick={() => {
-                                        setSQL(sqlRef.current)
-                                        setEditingSql(false)
-                                        executeSql(sqlRef.current)
-                                    }}
-                                    className="h-6 text-xs items-center flex rounded-full ring-1 ring-blue-600 bg-blue-600/50 hover:bg-blue-600/75 px-2 backdrop-blur-lg font-semibold text-white"
-                                >
-                                    Submit
-                                </button>
-                            )}
-                            {/* <EditSqlButton /> */}
-                            <CopySqlToClipboardButton text={sqlRef.current} />
-                        </div>
-                    </div>
-                </div>
-                <code
-                    className={`px-2 bg-transparent text-sm text-gray-800 dark:text-white flex ${
-                        editingSql && 'ring-2 ring-inset'
-                    }`}
-                >
-                    <SyntaxHighlighter
-                        ref={sqlRef}
-                        language="sql"
-                        style={hybrid}
-                        customStyle={{
-                            color: undefined,
-                            background: undefined,
-                            margin: undefined,
-                            padding: undefined,
-                        }}
-                        contentEditable={editingSql}
-                        spellCheck={false}
-                        suppressContentEditableWarning
-                        onInput={(e) =>
-                            (sqlRef.current = e.currentTarget.textContent)
-                        }
-                        className="outline-none"
-                        onKeyPress={(e) => {
-                            if (
-                                e.key === 'Enter' &&
-                                !e.shiftKey &&
-                                editingSql
-                            ) {
-                                setSQL(sqlRef.current)
-                                setEditingSql(false)
-                                executeSql(sqlRef.current)
-                            }
-                        }}
-                        // onDoubleClickCapture={() => !editingSql && setEditingSql(true)}
-                    >
-                        {editingSql ? sqlRef.current : sql}
-                    </SyntaxHighlighter>
-                </code>
-            </pre>
-        )
-    }
-
     const polygonsGeoJSON = {
         type: 'FeatureCollection',
         features: polygons.map((polygon) => {
@@ -1063,6 +849,18 @@ function App(props) {
         !cities?.length &&
         !points?.length &&
         !tableInfo?.columns?.length
+
+    console.log('starting state vars: ', {
+        zipcodesFormatted,
+        zipcodes,
+        cities,
+        points,
+        tableInfo,
+    })
+
+    console.log('main starting state: ', isStartingState)
+    console.log('main tables:', tables)
+    console.log('main tableNames:', tableNames)
 
     return (
         <main
@@ -1134,70 +932,43 @@ function App(props) {
                         </form>
                     </div>
                 </div>
+                <div>NamES: {JSON.stringify(tableNames)}</div>
+                <ResultsContainer
+                    visualization={visualization}
+                    setVisualization={setVisualization}
+                    mobileTableRef={mobileTableRef}
+                    setMobileTableIsOpen={setMobileTableIsOpen}
+                    mobileSqlRef={mobileSqlRef}
+                    setMobileSqlIsOpen={setMobileSqlIsOpen}
+                    mapRef={mapRef}
+                    initialView={initialView}
+                    zipcodes={zipcodes}
+                    zipcodesFormatted={zipcodesFormatted}
+                    cities={cities}
+                    polygonsGeoJSON={polygonsGeoJSON}
+                    tableInfo={tableInfo}
+                    points={points}
+                    sql={sql}
+                    props={props}
+                    isStartingState={isStartingState}
+                    isLoading={isLoading}
+                    isGetTablesLoading={isGetTablesLoading}
+                    setQuery={setQuery}
+                    fetchBackend={fetchBackend}
+                    useServerFeed={useServerFeed}
+                    tableColumns={tableColumns}
+                    tableRows={tableRows}
+                    tableNames={tableNames}
+                    sqlExplanationIsOpen={sqlExplanationIsOpen}
+                    setSqlExplanationIsOpen={setSqlExplanationIsOpen}
+                    isExplainSqlLoading={isExplainSqlLoading}
+                    sqlExplanation={sqlExplanation}
+                    explainSql={explainSql}
+                    executeSql={executeSql}
+                    setSQL={setSQL}
+                    title={title}
+                />
 
-                <div className="flex flex-col lg:flex-row h-full w-full gap-6 p-6">
-                    {!isStartingState && (
-                        <ResultsContainer
-                            visualization={visualization}
-                            setVisualization={setVisualization}
-                            mobileTableRef={mobileTableRef}
-                            setMobileTableIsOpen={setMobileTableIsOpen}
-                            mobileSqlRef={mobileSqlRef}
-                            setMobileSqlIsOpen={setMobileSqlIsOpen}
-                            mapRef={mapRef}
-                            initialView={initialView}
-                            zipcodes={zipcodes}
-                            zipcodesFormatted={zipcodesFormatted}
-                            cities={cities}
-                            polygonsGeoJSON={polygonsGeoJSON}
-                            tableInfo={tableInfo}
-                            points={points}
-                            sql={sql}
-                            props={props}
-                        />
-                    )}
-
-                    <div className="gap-3 flex flex-col h-full w-full lg:max-h-full overflow-y-auto items-center">
-                        {/*spinner*/}
-                        <LoadingSpinner
-                            isLoading={isLoading || isGetTablesLoading}
-                        />
-                        {sql.length === 0 &&
-                        !isLoading &&
-                        !isGetTablesLoading ? (
-                            useServerFeed ? (
-                                <ExamplesFeed
-                                    setQuery={setQuery}
-                                    handleClick={fetchBackend}
-                                    version={props.version}
-                                />
-                            ) : (
-                                <Examples
-                                    setQuery={setQuery}
-                                    handleClick={fetchBackend}
-                                    version={props.version}
-                                />
-                            )
-                        ) : (
-                            isLoading && <> </>
-                        )}
-                        <div className="flex flex-col space-y-4 w-full">
-                            {!isLoading && sql.length !== 0 && (
-                                <>
-                                    <div>
-                                        <SQL sql={sql} />
-                                    </div>
-
-                                    <Table
-                                        columns={tableColumns}
-                                        values={tableRows}
-                                    />
-                                </>
-                            )}
-                            {tableNames && <TableNamesDisplay />}
-                        </div>
-                    </div>
-                </div>
                 <div className="mb-5">
                     <Disclaimer version={props.version} />
                 </div>
