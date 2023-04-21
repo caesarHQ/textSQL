@@ -62,16 +62,16 @@
     "SF": {
         "text_to_sql": [
             {
+                "user": "where are the places with the most poop per capita?",
+                "assistant": "WITH total_population AS (\\nSELECT neighborhood, tract_population\\nFROM sf_total_pop_by_census_tract\\n),\\nincident_counts AS (\\nSELECT\\nsfi.neighborhood,\\nCOUNT(*) as poop_count\\nFROM\\nsf_311_incidents sfi\\nWHERE\\nsfi.incident_type = 'Feces/Urine'\\nGROUP BY\\nsfi.neighborhood\\n),\\nneighborhood_stats AS (\\nSELECT\\nic.neighborhood,\\nSUM(tp.tract_population) as total_population,\\nic.poop_count\\nFROM\\nincident_counts ic\\nJOIN total_population tp ON ic.neighborhood = tp.neighborhood\\nGROUP BY\\nic.neighborhood, ic.poop_count\\n)\\nSELECT\\nneighborhood,\\ntotal_population,\\npoop_count,\\npoop_count / NULLIF(total_population, 0) as poop_per_capita\\nFROM\\nneighborhood_stats\\nORDER BY\\npoop_per_capita DESC NULLS LAST;"
+            },
+            {
                 "user": "Which neighborhood had the most crime in 2021?",
                 "assistant": "SELECT neighborhood, COUNT(*) as num_crimes \\nFROM sf_crime_incidents\\nWHERE occurred >= '2021-01-01' AND occurred < '2022-01-01'\\nGROUP BY neighborhood\\nORDER BY num_crimes DESC NULLS LAST\\nLIMIT 1;"
             },
             {
                 "user": "What are the largest 3 neighborhoods?",
                 "assistant": "SELECT stp1.neighborhood, sum(tract_population) as total_population\\nFROM sf_total_pop_by_census_tract stp1\\nGROUP BY stp1.neighborhood\\nORDER BY total_population DESC NULLS LAST\\nLIMIT 3;"
-            },
-            {
-                "user": "where are the places with the most poop per capita?",
-                "assistant": "WITH total_population AS (\\nSELECT neighborhood, tract_population\\nFROM sf_total_pop_by_census_tract\\n),\\nincident_counts AS (\\nSELECT\\nsfi.neighborhood,\\nCOUNT(*) as poop_count\\nFROM\\nsf_311_incidents sfi\\nWHERE\\nsfi.incident_type = 'Feces/Urine'\\nGROUP BY\\nsfi.neighborhood\\n),\\nneighborhood_stats AS (\\nSELECT\\nic.neighborhood,\\nSUM(tp.tract_population) as total_population,\\nic.poop_count\\nFROM\\nincident_counts ic\\nJOIN total_population tp ON ic.neighborhood = tp.neighborhood\\nGROUP BY\\nic.neighborhood, ic.poop_count\\n)\\nSELECT\\nneighborhood,\\ntotal_population,\\npoop_count,\\npoop_count / NULLIF(total_population, 0) as poop_per_capita\\nFROM\\nneighborhood_stats\\nORDER BY\\npoop_per_capita DESC NULLS LAST;"
             },
             {
                 "user": "Where is the most violent crime by percentage of crime",
