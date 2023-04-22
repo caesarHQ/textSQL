@@ -1,14 +1,17 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import "@/styles/globals.css";
+import { AdminProvider } from "@/contexts/AdminContext";
 
 const AdminLayout = dynamic(() => import("../components/admin_layout"));
-import "@/styles/globals.css";
 
 export default function App({ Component, pageProps }) {
   return (
-    <AdminLayout>
-      <Component {...pageProps} />
-    </AdminLayout>
+    <AdminProvider>
+      <AdminLayout>
+        <Component {...pageProps} />
+      </AdminLayout>
+    </AdminProvider>
   );
 }
