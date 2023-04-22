@@ -3,6 +3,7 @@ import Map, { Layer, Source } from 'react-map-gl'
 
 import DataPlot from '../dataPlot'
 import { VizSelector } from '../vizSelector'
+import { FEATURE_FLAGS } from '../../featureFlags'
 
 // Mapbox UI configuration
 import {
@@ -162,15 +163,17 @@ export const DataVisualization = ({
                                 <Layer {...pointsLayer} />
                             </Source>
                         </Map>
-                        <div className="absolute bottom-0 right-0 p-2">
-                            <button
-                                id="downloadButton"
-                                className="px-3 py-2 text-white bg-blue-500 rounded-md shadow hover:bg-blue-600"
-                                onClick={handleDownloadMap}
-                            >
-                                Download Map as PNG
-                            </button>
-                        </div>
+                        {FEATURE_FLAGS.downloadButton && (
+                            <div className="absolute bottom-0 right-0 p-2">
+                                <button
+                                    id="downloadButton"
+                                    className="px-3 py-2 text-white bg-blue-500 rounded-md shadow hover:bg-blue-600"
+                                    onClick={handleDownloadMap}
+                                >
+                                    Download Map as PNG
+                                </button>
+                            </div>
+                        )}
                     </>
                 ) : (
                     // following <div> helps plot better scale bar widths for responsiveness
