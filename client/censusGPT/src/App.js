@@ -911,7 +911,6 @@ function App(props) {
                         </form>
                     </div>
                 </div>
-                <div>NamES: {JSON.stringify(tableNames)}</div>
                 <ResultsContainer
                     visualization={visualization}
                     setVisualization={setVisualization}
