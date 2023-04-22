@@ -1,17 +1,22 @@
 import { useState } from "react";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronUp,
+  faChevronDown,
+  faCheck,
+  faStop,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 library.add(faChevronUp, faChevronDown);
 
-export const ClosableRow = ({ title, children, className, ...props }) => {
+export const ClosableRow = ({ title, children, isGood, ...props }) => {
   const [open, setOpen] = useState(true);
 
   return (
-    <div className={className} {...props}>
+    <div className="border border-gray-300 p-4 rounded bg-white" {...props}>
       <div
-        className="flex items-center cursor-pointer"
+        className="flex items-center cursor-pointer border-b border-gray-300"
         onClick={() => setOpen(!open)}
       >
         <div className="flex items-center">
@@ -26,6 +31,16 @@ export const ClosableRow = ({ title, children, className, ...props }) => {
         </div>
 
         <h3 className="text-lg font-bold">{title}</h3>
+        {!!isGood && (
+          <div className="ml-2 text-green-500">
+            <FontAwesomeIcon icon={faCheck} />
+          </div>
+        )}
+        {!isGood && (
+          <div className="ml-2 text-red-500">
+            <FontAwesomeIcon icon={faStop} />
+          </div>
+        )}
       </div>
       {open && <div className="mt-4">{children}</div>}
     </div>
