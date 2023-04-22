@@ -36,7 +36,7 @@ export const ClosableRow = ({ title, children, isGood, ...props }) => {
             <FontAwesomeIcon icon={faCheck} />
           </div>
         )}
-        {!isGood && (
+        {!isGood && isGood !== undefined && (
           <div className="ml-2 text-red-500">
             <FontAwesomeIcon icon={faStop} />
           </div>
