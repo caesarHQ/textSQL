@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 library.add(faChevronUp, faChevronDown);
 
 export const ClosableRow = ({ title, children, className, ...props }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   return (
     <div className={className} {...props}>
