@@ -19,7 +19,7 @@ export const ExampleCard = ({ example, props }) => {
                     className="h-full w-full object-cover rounded-t-lg"
                 />
             )}
-            <div className="flex items-center justify-center w-10 h-10 bg-gray-200 dark:bg-dark-700 rounded-full -mt-5 mx-auto">
+            <div className="flex items-center justify-center absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/4 w-10 h-8 bg-gray-100 dark:bg-dark-600 rounded-full mt-3 mx-auto">
                 <span className="text-lg">{example.emoji}</span>
             </div>
             <p className="text-sm sm:text-lg font-medium text-black bg-gray-100 dark:bg-dark-600 p-2 rounded-lg focus:outline-none w-full px-4 py-2">
