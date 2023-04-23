@@ -7,8 +7,9 @@ import { DatabaseConfigComponent } from "./database_form";
 import { OpenaiKeyForm } from "./openai_form";
 
 const CredentialsScreen = () => {
-  const { dbInfo } = useContext(AdminContext);
+  const { dbInfo, openaiKey } = useContext(AdminContext);
   const isDBConnected = dbInfo?.connectionVerified;
+  const isOpenAIAdded = openaiKey?.added;
 
   return (
     <div>
@@ -19,7 +20,7 @@ const CredentialsScreen = () => {
         <ClosableRow title="Database Configuration" isGood={isDBConnected}>
           <DatabaseConfigComponent />
         </ClosableRow>
-        <ClosableRow title="OpenAI API Key">
+        <ClosableRow title="OpenAI API Key" isGood={isOpenAIAdded}>
           <OpenaiKeyForm />
         </ClosableRow>
       </div>

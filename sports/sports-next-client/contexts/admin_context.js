@@ -11,12 +11,12 @@ export const AdminProvider = ({ children }) => {
   const [tables, setTables] = useState([]);
   const [enums, setEnums] = useState([]);
   const [dbInfo, setDbInfo] = useState({});
-  const [openaiInfo, setOpenaiInfo] = useState({});
+  const [openaiKey, setOpenaiKey] = useState({});
 
   const loadOpenaiInfo = async () => {
     const data = await fetchCurrentOpenaiCredentials();
     if (data.status === "success") {
-      setOpenaiInfo(data.OPENAI_API_KEY);
+      setOpenaiKey({ key: data.OPENAI_API_KEY, added: true });
     }
   };
 
@@ -41,8 +41,8 @@ export const AdminProvider = ({ children }) => {
         setEnums,
         dbInfo,
         setDbInfo,
-        openaiInfo,
-        setOpenaiInfo,
+        openaiKey,
+        setOpenaiKey,
       }}
     >
       {children}

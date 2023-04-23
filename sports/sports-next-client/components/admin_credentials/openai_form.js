@@ -1,16 +1,24 @@
-import { useState } from "react";
+import { useContext } from "react";
+import { AdminContext } from "@/contexts/admin_context";
+import { verifyOpenaiCredentials } from "@/apis/admin_apis";
 
 export const OpenaiKeyForm = () => {
-  const [openaiKey, setOpenaiKey] = useState("");
+  const { openaiKey, setOpenaiKey } = useContext(AdminContext);
+
+  const isAdded = openaiKey.added;
 
   const handleOpenaiKeyChange = (event) => {
-    setOpenaiKey(event.target.value);
+    setOpenaiKey({ key: event.target.value, added: false });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Submit the form data, e.g. to a server.
-    console.log("Submitted OpenAI API Key: ", openaiKey);
+    const res = verifyOpenaiCredentials(openaiKey.key);
+    if (res.status === "success") {
+      setOpenaiKey({ key: openaiKey.key, added: true });
+    } else {
+      setOpenaiKey({ key: openaiKey.key, added: false });
+    }
   };
 
   return (
@@ -26,7 +34,7 @@ export const OpenaiKeyForm = () => {
           type="text"
           id="openai-key"
           className="border border-gray-400 p-2 rounded w-64"
-          value={openaiKey}
+          value={openaiKey.key || ""}
           onChange={handleOpenaiKeyChange}
         />
       </div>
@@ -36,6 +44,11 @@ export const OpenaiKeyForm = () => {
       >
         Submit
       </button>
+      {isAdded && (
+        <div className="mt-4">
+          <p className="text-green-500">Key Uploaded!</p>
+        </div>
+      )}
     </form>
   );
 };
