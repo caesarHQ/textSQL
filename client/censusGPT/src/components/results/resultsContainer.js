@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { DataVisualization } from './dataVisualization'
 import { SQLDisplay } from './sqlDisplay'
 import Table from '../table'
