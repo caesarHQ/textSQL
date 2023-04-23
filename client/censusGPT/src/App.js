@@ -6,6 +6,9 @@ import { Toaster } from 'react-hot-toast'
 import Disclaimer from './components/disclaimer'
 import { ExplanationModal } from './components/explanationModal'
 import { FeedContext } from './contexts/feedContext'
+import LoadingSpinner from './components/loadingSpinner'
+import ExamplesFeed from './components/examplesFeed'
+import Examples from './components/examples'
 
 import { ResultsContainer } from './components/results/resultsContainer'
 
@@ -890,7 +893,27 @@ function App(props) {
                         </form>
                     </div>
                 </div>
-                <div>NamES: {JSON.stringify(tableNames)}</div>
+                <LoadingSpinner isLoading={isLoading || isGetTablesLoading} />
+                {sql.length === 0 && !isLoading && !isGetTablesLoading ? (
+                    <div className="gap-3 flex flex-col w-full items-center">
+                        {useServerFeed ? (
+                            <ExamplesFeed
+                                setQuery={setQuery}
+                                handleClick={fetchBackend}
+                                version={props.version}
+                            />
+                        ) : (
+                            <Examples
+                                setQuery={setQuery}
+                                handleClick={fetchBackend}
+                                version={props.version}
+                            />
+                        )}
+                    </div>
+                ) : (
+                    isLoading && <> </>
+                )}
+
                 <ResultsContainer
                     visualization={visualization}
                     setVisualization={setVisualization}

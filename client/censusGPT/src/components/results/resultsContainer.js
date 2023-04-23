@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { DataVisualization } from './dataVisualization'
 import { SQLDisplay } from './sqlDisplay'
 import Table from '../table'
-import LoadingSpinner from '../loadingSpinner'
 import Examples from '../examples'
 import ExamplesFeed from '../examplesFeed'
 
@@ -63,24 +62,6 @@ export const ResultsContainer = ({
             )}
 
             <div className="gap-3 flex flex-col h-full w-full lg:max-h-full overflow-y-auto items-center">
-                <LoadingSpinner isLoading={isLoading || isGetTablesLoading} />
-                {sql.length === 0 && !isLoading && !isGetTablesLoading ? (
-                    useServerFeed ? (
-                        <ExamplesFeed
-                            setQuery={setQuery}
-                            handleClick={fetchBackend}
-                            version={props.version}
-                        />
-                    ) : (
-                        <Examples
-                            setQuery={setQuery}
-                            handleClick={fetchBackend}
-                            version={props.version}
-                        />
-                    )
-                ) : (
-                    isLoading && <> </>
-                )}
                 <div className="flex flex-col space-y-4 w-full">
                     {!isLoading && sql.length !== 0 && (
                         <>
