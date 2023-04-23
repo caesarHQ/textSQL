@@ -9,6 +9,7 @@ import {
 export const AdminContext = createContext();
 
 export const AdminProvider = ({ children }) => {
+  const [tableNames, setTableNames] = useState([]);
   const [tables, setTables] = useState([]);
   const [enums, setEnums] = useState([]);
   const [dbInfo, setDbInfo] = useState({});
@@ -53,6 +54,8 @@ export const AdminProvider = ({ children }) => {
         setDbInfo,
         openaiKey,
         setOpenaiKey,
+        tableNames,
+        setTableNames,
       }}
     >
       {children}
