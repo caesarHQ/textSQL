@@ -17,6 +17,14 @@ export const TableSelector = () => {
     });
   }, [tables, tableFilterTerm]);
 
+  const tableNameLookup = useMemo(() => {
+    const lookup = {};
+    tables.forEach((table, idx) => {
+      lookup[table.name] = idx;
+    });
+    return lookup;
+  }, [tables]);
+
   const massChangeSelection = (action) => {
     //action is either "select" or "deselect" and it should be over the tables in the filteredTables state
     const newTables = [...tables];
@@ -27,9 +35,9 @@ export const TableSelector = () => {
     setTables(newTables);
   };
 
-  const updateTable = (idx, newTable) => {
+  const updateTable = (tableName, newTable) => {
     const newTables = [...tables];
-    newTables[idx] = newTable;
+    newTables[tableNameLookup[tableName]] = newTable;
     setTables(newTables);
   };
 
@@ -85,12 +93,12 @@ export const TableSelector = () => {
         //this can be multiple columns/rows, max width is 100%, even columns of 230px
         className="flex flex-row flex-wrap"
       >
-        {filteredTables?.map((table, idx) => {
+        {filteredTables?.map((table) => {
           return (
-            <div className="pl-0" key={idx}>
+            <div className="pl-0" key={table.name}>
               <SingleTableSelection
                 table={table}
-                setTable={(newTable) => updateTable(idx, newTable)}
+                setTable={(newTable) => updateTable(table.name, newTable)}
               />
             </div>
           );
