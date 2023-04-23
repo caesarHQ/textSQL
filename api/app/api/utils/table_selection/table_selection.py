@@ -133,8 +133,8 @@ def get_relevant_tables_from_lm(natural_language_query, scope="USA", model="gpt-
 
     tables = [table for table in tables if table in possible_tables]
 
-    # only get the first 5 tables
-    tables = tables[:5]
+    # only get the first 7 tables
+    tables = tables[:7]
 
     return tables
 
