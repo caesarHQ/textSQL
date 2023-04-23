@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AdminContext } from "@/contexts/admin_context";
 
 export const DatabaseConfigComponent = () => {
   const [config, setConfig] = useState("url");
@@ -40,10 +41,10 @@ const DatabaseConfigPicker = ({ config, setConfig }) => {
 };
 
 const DatabaseURLForm = () => {
-  const [url, setUrl] = useState("");
+  const { dbInfo, setDbInfo } = useContext(AdminContext);
 
   const handleUrlChange = (event) => {
-    setUrl(event.target.value);
+    setDbInfo({ ...dbInfo, urlString: event.target.value });
   };
 
   const handleSubmit = (event) => {
@@ -62,7 +63,7 @@ const DatabaseURLForm = () => {
           id="url"
           className="w-3/4 border border-gray-400 p-2 rounded"
           placeholder="postgresql://username:password@host:port/database"
-          value={url}
+          value={dbInfo?.urlString || ""}
           onChange={handleUrlChange}
         />
       </div>
@@ -75,7 +76,10 @@ const DatabaseURLForm = () => {
     </form>
   );
 };
+
 const DatabaseFieldForm = () => {
+  const { dbInfo, setDbInfo } = useContext(AdminContext);
+
   const [host, setHost] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import "@/styles/globals.css";
-import { AdminProvider } from "@/contexts/AdminContext";
+import { AdminProvider } from "@/contexts/admin_context";
 
 const AdminLayout = dynamic(() => import("../components/admin_layout"));
 
