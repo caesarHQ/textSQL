@@ -1,5 +1,9 @@
 import { useState, useContext } from "react";
 import { AdminContext } from "@/contexts/admin_context";
+import {
+  convertConnectionFieldsToUrl,
+  convertConnectionUrlToFields,
+} from "./utils";
 
 export const DatabaseConfigComponent = () => {
   const [config, setConfig] = useState("url");
@@ -44,7 +48,11 @@ const DatabaseURLForm = () => {
   const { dbInfo, setDbInfo } = useContext(AdminContext);
 
   const handleUrlChange = (event) => {
-    setDbInfo({ ...dbInfo, urlString: event.target.value });
+    setDbInfo({
+      ...dbInfo,
+      urlString: event.target.value,
+      fields: convertConnectionUrlToFields(event.target.value),
+    });
   };
 
   const handleSubmit = (event) => {
@@ -80,30 +88,69 @@ const DatabaseURLForm = () => {
 const DatabaseFieldForm = () => {
   const { dbInfo, setDbInfo } = useContext(AdminContext);
 
-  const [host, setHost] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [port, setPort] = useState("");
-  const [database, setDatabase] = useState("");
-
   const handleHostChange = (event) => {
-    setHost(event.target.value);
+    const old_info = dbInfo.fields;
+    const new_info = {
+      ...old_info,
+      host: event.target.value,
+    };
+    setDbInfo({
+      ...dbInfo,
+      fields: new_info,
+      urlString: convertConnectionFieldsToUrl(new_info),
+    });
   };
 
   const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
+    const old_info = dbInfo.fields;
+    const new_info = {
+      ...old_info,
+      username: event.target.value,
+    };
+    setDbInfo({
+      ...dbInfo,
+      fields: new_info,
+      urlString: convertConnectionFieldsToUrl(new_info),
+    });
   };
 
   const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+    const old_info = dbInfo.fields;
+    const new_info = {
+      ...old_info,
+      password: event.target.value,
+    };
+    setDbInfo({
+      ...dbInfo,
+      fields: new_info,
+      urlString: convertConnectionFieldsToUrl(new_info),
+    });
   };
 
   const handlePortChange = (event) => {
-    setPort(event.target.value);
+    const old_info = dbInfo.fields;
+    const new_info = {
+      ...old_info,
+      port: event.target.value,
+    };
+    setDbInfo({
+      ...dbInfo,
+      fields: new_info,
+      urlString: convertConnectionFieldsToUrl(new_info),
+    });
   };
 
   const handleDatabaseChange = (event) => {
-    setDatabase(event.target.value);
+    const old_info = dbInfo.fields;
+    const new_info = {
+      ...old_info,
+      database: event.target.value,
+    };
+    setDbInfo({
+      ...dbInfo,
+      fields: new_info,
+      urlString: convertConnectionFieldsToUrl(new_info),
+    });
   };
 
   const handleSubmit = (event) => {
@@ -123,7 +170,7 @@ const DatabaseFieldForm = () => {
           type="text"
           id="username"
           className="border border-gray-400 p-2 rounded w-64"
-          value={username}
+          value={dbInfo?.fields?.username || ""}
           onChange={handleUsernameChange}
         />
       </div>
@@ -138,7 +185,7 @@ const DatabaseFieldForm = () => {
           type="password"
           id="password"
           className="border border-gray-400 p-2 rounded w-64"
-          value={password}
+          value={dbInfo?.fields?.password || ""}
           onChange={handlePasswordChange}
         />
       </div>
@@ -150,7 +197,7 @@ const DatabaseFieldForm = () => {
           type="text"
           id="host"
           className="border border-gray-400 p-2 rounded w-64"
-          value={host}
+          value={dbInfo?.fields?.host || ""}
           onChange={handleHostChange}
         />
       </div>
@@ -162,7 +209,7 @@ const DatabaseFieldForm = () => {
           type="text"
           id="port"
           className="border border-gray-400 p-2 rounded w-64"
-          value={port}
+          value={dbInfo?.fields?.port || ""}
           onChange={handlePortChange}
         />
       </div>
@@ -177,7 +224,7 @@ const DatabaseFieldForm = () => {
           type="text"
           id="database"
           className="border border-gray-400 p-2 rounded w-64"
-          value={database}
+          value={dbInfo?.fields?.database || ""}
           onChange={handleDatabaseChange}
         />
       </div>
