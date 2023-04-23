@@ -10,8 +10,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 library.add(faChevronUp, faChevronDown);
 
-export const ClosableRow = ({ title, children, isGood, ...props }) => {
-  const [open, setOpen] = useState(true);
+export const ClosableRow = ({
+  title,
+  children,
+  isGood,
+  startOpen = true,
+  ...props
+}) => {
+  const [open, setOpen] = useState(startOpen);
 
   return (
     <div className="border border-gray-300 p-4 rounded bg-white" {...props}>

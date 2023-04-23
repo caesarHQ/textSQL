@@ -1,6 +1,6 @@
 import { ClosableRow } from "../closable_row";
 import { TableSelector } from "./table_selector";
-import { ColumnSelector } from "./column_selector";
+import { TableColumnSelector } from "./column_selector";
 
 const DatabaseScreen = () => {
   return (
@@ -11,7 +11,7 @@ const DatabaseScreen = () => {
           <TableSelector />
         </ClosableRow>
         <ClosableRow title="Column Selection">
-          <ColumnSelector />
+          <TableColumnSelector />
         </ClosableRow>
       </div>
     </div>
