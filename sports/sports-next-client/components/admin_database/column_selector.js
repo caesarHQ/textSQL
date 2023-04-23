@@ -19,7 +19,7 @@ export const TableColumnSelector = () => {
       });
     }
     //return the tables in alphabetical order
-    return allowedTables.sort((a, b) => {
+    allowedTables = allowedTables.sort((a, b) => {
       if (a.name < b.name) {
         return -1;
       }
@@ -28,17 +28,25 @@ export const TableColumnSelector = () => {
       }
       return 0;
     });
+    return allowedTables;
   }, [tables, tableFilterTerm]);
 
-  const updateTable = (idx, newTable) => {
+  const tableNameLookup = useMemo(() => {
+    const lookup = {};
+    tables.forEach((table, idx) => {
+      lookup[table.name] = idx;
+    });
+    return lookup;
+  }, [tables]);
+
+  const updateTable = (tableName, newTable) => {
     const newTables = [...tables];
-    newTables[idx] = newTable;
+    newTables[tableNameLookup[tableName]] = newTable;
     setTables(newTables);
   };
 
   const handleSave = async () => {
-    const data = await handleSaveTables(tables);
-    console.log("data: ", data);
+    await handleSaveTables(tables);
   };
 
   return (
@@ -74,12 +82,12 @@ export const TableColumnSelector = () => {
       >
         {filteredTables
           ?.filter((t) => t.active)
-          ?.map((table, idx) => {
+          ?.map((table) => {
             return (
               <div className="pl-0" key={table.name}>
                 <ColumnSelector
                   table={table}
-                  setTable={(newTable) => updateTable(idx, newTable)}
+                  setTable={(newTable) => updateTable(table.name, newTable)}
                 />
               </div>
             );
@@ -103,6 +111,14 @@ const ColumnSelector = ({ table, setTable }) => {
     });
   }, [tableColumns, columnFilterTerm]);
 
+  const columnLookupDict = useMemo(() => {
+    const lookup = {};
+    tableColumns.forEach((column, idx) => {
+      lookup[column.name] = idx;
+    });
+    return lookup;
+  }, [tableColumns]);
+
   const massChangeSelection = (action) => {
     //action is either "select" or "deselect" and it should be over the tables in the filteredTables state
     const newColumns = [...tableColumns];
@@ -113,9 +129,9 @@ const ColumnSelector = ({ table, setTable }) => {
     setTable({ ...table, columns: newColumns });
   };
 
-  const updateColumn = (idx, newColumn) => {
+  const updateColumn = (columnName, newColumn) => {
     const newTable = [...tableColumns];
-    newTable[idx] = newColumn;
+    newTable[columnLookupDict[columnName]] = newColumn;
     setTable({ ...table, columns: newTable });
   };
 
@@ -159,12 +175,14 @@ const ColumnSelector = ({ table, setTable }) => {
           //this can be multiple columns/rows, max width is 100%, even columns of 230px
           className="flex flex-row flex-wrap"
         >
-          {filteredColumns?.map((column, idx) => {
+          {filteredColumns?.map((column) => {
             return (
-              <div className="pl-0" key={idx}>
+              <div className="pl-0" key={column.name}>
                 <SingleColumnSelector
                   column={column}
-                  setColumns={(newTable) => updateColumn(idx, newTable)}
+                  setColumns={(newColumn) =>
+                    updateColumn(column.name, newColumn)
+                  }
                 />
               </div>
             );
