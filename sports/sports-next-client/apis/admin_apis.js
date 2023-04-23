@@ -50,3 +50,9 @@ export const verifyOpenaiCredentials = async (openai_key) => {
   const data = await response.json();
   return data;
 };
+
+export const fetchAllTables = async () => {
+  const response = await fetch(`${API_BASE}/admin/tables`);
+  const data = await response.json();
+  return data;
+};

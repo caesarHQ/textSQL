@@ -3,6 +3,7 @@ import { createContext, useState, useEffect } from "react";
 import {
   fetchCurrentDatabaseCredentials,
   fetchCurrentOpenaiCredentials,
+  fetchAllTables,
 } from "@/apis/admin_apis";
 
 export const AdminContext = createContext();
@@ -27,9 +28,18 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
+  const loadTableInfo = async () => {
+    const data = await fetchAllTables();
+    console.log("tables: ", data);
+    if (data.status === "success") {
+      setTables(data.tables);
+    }
+  };
+
   useEffect(() => {
     loadOpenaiInfo();
     loadDbInfo();
+    loadTableInfo();
   }, []);
 
   return (
