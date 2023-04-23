@@ -1,4 +1,3 @@
-// components/AdminLayout.js
 import React, { useState } from "react";
 import Link from "next/link";
 
@@ -12,16 +11,9 @@ const AdminLayout = ({ children }) => {
   };
 
   return (
-    <div className="relative h-screen">
-      <button
-        onClick={toggleAdminPanel}
-        style={{ left: isOpen ? "12rem" : "1rem" }}
-        className="absolute top-4 bg-blue-500 hover:bg-blue-600 text-white rounded-full w-10 h-10 z-10"
-      >
-        {isOpen ? "<" : ">"}
-      </button>
+    <div className="relative h-screen flex">
       {isOpen && (
-        <div className="absolute top-0 left-0 h-full w-64 bg-gray-100 z-0">
+        <div className="h-full w-64 bg-gray-100">
           <nav className="flex flex-col p-4 space-y-2">
             <Link
               href="/credentials"
@@ -41,7 +33,14 @@ const AdminLayout = ({ children }) => {
           </nav>
         </div>
       )}
-      <div className="pt-16 pl-16">{children}</div>
+      <div className={"flex-1"}>{children}</div>
+      <button
+        onClick={toggleAdminPanel}
+        style={{ left: isOpen ? "12rem" : "1rem" }}
+        className="absolute top-4 bg-blue-500 hover:bg-blue-600 text-white rounded-full w-10 h-10 z-10"
+      >
+        {isOpen ? "<" : ">"}
+      </button>
     </div>
   );
 };
