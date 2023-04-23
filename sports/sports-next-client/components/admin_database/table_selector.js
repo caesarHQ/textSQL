@@ -1,10 +1,21 @@
-import { useContext } from "react";
+import { useContext, useState, useMemo } from "react";
 import { AdminContext } from "@/contexts/admin_context";
 
 import { handleSaveTables } from "@/apis/admin_apis";
 
 export const TableSelector = () => {
+  const [tableFilterTerm, setTableFilterTerm] = useState("");
+
   const { tables, setTables } = useContext(AdminContext);
+
+  const filteredTables = useMemo(() => {
+    if (tableFilterTerm === "") {
+      return tables;
+    }
+    return tables?.filter((table) => {
+      return table.name.toLowerCase().includes(tableFilterTerm.toLowerCase());
+    });
+  }, [tables, tableFilterTerm]);
 
   const updateTable = (idx, newTable) => {
     const newTables = [...tables];
@@ -19,19 +30,38 @@ export const TableSelector = () => {
 
   return (
     <div className="flex flex-col space-y-4">
-      <div className="flex flex-row justify-between">
-        <button
-          onClick={handleSave}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900"
-        >
-          Save
-        </button>
+      <div className="flex flex-row">
+        <div className="flex flex-row">
+          <button
+            onClick={handleSave}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900"
+          >
+            Save
+          </button>
+        </div>
+        <div className="flex flex-row ml-4">
+          <label
+            htmlFor="tableFilter"
+            className="mr-2 font-bold text-right self-center
+          "
+          >
+            Filter:
+          </label>
+          <input
+            type="text"
+            id="tableFilter"
+            className="border border-gray-400 p-2 rounded w-64"
+            value={tableFilterTerm}
+            onChange={(event) => setTableFilterTerm(event.target.value)}
+          />
+        </div>
       </div>
+
       <div
         //this can be multiple columns/rows, max width is 100%, even columns of 230px
         className="flex flex-row flex-wrap"
       >
-        {tables?.map((table, idx) => {
+        {filteredTables?.map((table, idx) => {
           return (
             <div className="pl-0" key={idx}>
               <SingleTableSelection
