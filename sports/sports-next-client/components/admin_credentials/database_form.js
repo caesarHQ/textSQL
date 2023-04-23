@@ -21,6 +21,8 @@ export const DatabaseConfigComponent = () => {
     );
     if (res.status === "success") {
       setDbInfo({ ...dbInfo, connectionVerified: true });
+    } else {
+      setDbInfo({ ...dbInfo, connectionVerified: false });
     }
   };
 
