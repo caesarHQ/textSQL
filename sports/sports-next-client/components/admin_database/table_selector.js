@@ -1,6 +1,8 @@
 import { useContext } from "react";
 import { AdminContext } from "@/contexts/admin_context";
 
+import { handleSaveTables } from "@/apis/admin_apis";
+
 export const TableSelector = () => {
   const { tables, setTables } = useContext(AdminContext);
 
@@ -10,21 +12,36 @@ export const TableSelector = () => {
     setTables(newTables);
   };
 
+  const handleSave = async () => {
+    const data = await handleSaveTables(tables);
+    console.log("data: ", data);
+  };
+
   return (
-    <div
-      //this can be multiple columns/rows, max width is 100%, even columns of 230px
-      className="flex flex-row flex-wrap"
-    >
-      {tables?.map((table, idx) => {
-        return (
-          <div className="pl-0" key={idx}>
-            <SingleTableSelection
-              table={table}
-              setTable={(newTable) => updateTable(idx, newTable)}
-            />
-          </div>
-        );
-      })}
+    <div className="flex flex-col space-y-4">
+      <div className="flex flex-row justify-between">
+        <button
+          onClick={handleSave}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900"
+        >
+          Save
+        </button>
+      </div>
+      <div
+        //this can be multiple columns/rows, max width is 100%, even columns of 230px
+        className="flex flex-row flex-wrap"
+      >
+        {tables?.map((table, idx) => {
+          return (
+            <div className="pl-0" key={idx}>
+              <SingleTableSelection
+                table={table}
+                setTable={(newTable) => updateTable(idx, newTable)}
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

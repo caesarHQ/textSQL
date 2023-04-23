@@ -56,3 +56,17 @@ export const fetchAllTables = async () => {
   const data = await response.json();
   return data;
 };
+
+export const handleSaveTables = async (tables) => {
+  const response = await fetch(`${API_BASE}/admin/tables`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      tables,
+    }),
+  });
+  const data = await response.json();
+  return data;
+};
