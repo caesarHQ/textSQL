@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { DataVisualization } from './dataVisualization'
 import { SQLDisplay } from './sqlDisplay'
 import Table from '../table'
@@ -12,9 +12,7 @@ export const ResultsContainer = ({
     visualization,
     setVisualization,
     mobileTableRef,
-    setMobileTableIsOpen,
     mobileSqlRef,
-    setMobileSqlIsOpen,
     mapRef,
     initialView,
     zipcodes,
@@ -50,9 +48,7 @@ export const ResultsContainer = ({
                     visualization={visualization}
                     setVisualization={setVisualization}
                     mobileTableRef={mobileTableRef}
-                    setMobileTableIsOpen={setMobileTableIsOpen}
                     mobileSqlRef={mobileSqlRef}
-                    setMobileSqlIsOpen={setMobileSqlIsOpen}
                     mapRef={mapRef}
                     initialView={initialView}
                     zipcodes={zipcodes}

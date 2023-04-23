@@ -1,26 +1,31 @@
 {
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
-  },
   "env": {
     "browser": true,
-    "es2021": true,
+    "es6": true
   },
   "extends": [
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:react/recommended"
   ],
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true
     },
-    "ecmaVersion": 12,
+    "ecmaVersion": 2020,
     "sourceType": "module"
   },
-  "plugins": ["only-warn"],
+  "plugins": [
+    "react",
+    "import"
+  ],
   "rules": {
-    "react/react-in-jsx-scope": "off",
-    "react/prop-types": "off"
+    "react/prop-types": 0,
+    "no-undef": "error",
+    "no-unused-vars": "warn"
+  },
+  "globals": {
+    "process": "readonly",
+    "React": "writable",
+    "require": "readonly"
   }
 }

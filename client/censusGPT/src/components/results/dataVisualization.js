@@ -56,9 +56,7 @@ export const DataVisualization = ({
     visualization,
     setVisualization,
     mobileTableRef,
-    setMobileTableIsOpen,
     mobileSqlRef,
-    setMobileSqlIsOpen,
     mapRef,
     initialView,
     zipcodes,
@@ -93,9 +91,7 @@ export const DataVisualization = ({
                     selected={visualization}
                     setSelected={setVisualization}
                     tableRef={mobileTableRef}
-                    setTableIsOpen={setMobileTableIsOpen}
                     sqlRef={mobileSqlRef}
-                    setSqlIsOpen={setMobileSqlIsOpen}
                     viewsCanOpen={sql.length}
                 />
             </div>

@@ -2,8 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react'
 import bbox from '@turf/bbox'
 import * as turf from '@turf/turf'
 
-import ErrorMessage from './components/error'
-import toast, { Toaster } from 'react-hot-toast'
+import { Toaster } from 'react-hot-toast'
 import Disclaimer from './components/disclaimer'
 import { ExplanationModal } from './components/explanationModal'
 import { FeedContext } from './contexts/feedContext'
@@ -25,7 +24,6 @@ import NeighborhoodGeoData from './utils/sf_analysis_neighborhoods.js'
 
 import './css/App.css'
 import {
-    ContributeButton,
     DarkModeButton,
     DiscordButton,
     GithubButton,
@@ -34,7 +32,6 @@ import SearchBar from './components/searchBar'
 import { notify } from './components/toast'
 import { useDebouncedCallback } from 'use-debounce'
 import { useSearchParams } from 'react-router-dom'
-import { BsClipboard2 } from 'react-icons/bs'
 
 // Add system dark mode
 localStorage.theme === 'dark' ||
@@ -59,7 +56,6 @@ function App(props) {
     const [searchParams, setSearchParams] = useSearchParams()
     const [query, setQuery] = useState('')
     const [sql, setSQL] = useState('')
-    const [tables, setTables] = useState([])
     const [zipcodesFormatted, setZipcodesFormatted] = useState([])
     const [zipcodes, setZipcodes] = useState([])
     const [tableInfo, setTableInfo] = useState({ rows: [], columns: [] })
@@ -71,16 +67,9 @@ function App(props) {
     const [isLoading, setIsLoading] = useState(false)
     const [title, setTitle] = useState('')
     const [visualization, setVisualization] = useState('map')
-    const [mobileMenuIsOpen, setMobileMenuIsOpen] = useState(false)
-    const [mobileHelpIsOpen, setMobileHelpIsOpen] = useState(true)
-    const [mobileTableIsOpen, setMobileTableIsOpen] = useState(false)
-    const [mobileSqlIsOpen, setMobileSqlIsOpen] = useState(false)
     const mobileTableRef = useRef()
     const mobileSqlRef = useRef()
     const mapRef = useRef()
-    const expandedMobileSearchRef = useRef()
-    const [touchStart, setTouchStart] = useState(null)
-    const [touchEnd, setTouchEnd] = useState(null)
     const [polygons, setPolygons] = useState([])
     const [points, setPoints] = useState([])
     const [sqlExplanationIsOpen, setSqlExplanationIsOpen] = useState(false)
@@ -123,10 +112,6 @@ function App(props) {
             props.version === 'Census' ? 'Census GPT' : 'San Francisco GPT'
         )
         setVisualization('map')
-        setMobileMenuIsOpen(false)
-        setMobileHelpIsOpen(true)
-        setMobileTableIsOpen(false)
-        setMobileSqlIsOpen(false)
         setSqlExplanationIsOpen(false)
         setSqlExplanation()
         setTableNames()
@@ -145,10 +130,6 @@ function App(props) {
             props.version === 'Census' ? 'Census GPT' : 'San Francisco GPT'
         )
         setVisualization('map')
-        setMobileMenuIsOpen(false)
-        setMobileHelpIsOpen(true)
-        setMobileTableIsOpen(false)
-        setMobileSqlIsOpen(false)
         setSqlExplanationIsOpen(false)
         setSqlExplanation()
         setTableNames()
@@ -283,7 +264,6 @@ function App(props) {
     const executeSql = (sql) => {
         setIsLoading(true)
         setSqlExplanation()
-        setMobileHelpIsOpen(false)
         clearMapLayers()
 
         const options = {
@@ -518,7 +498,6 @@ function App(props) {
         natural_language_query = natural_language_query.trim()
         if (!natural_language_query.length) return
 
-        setMobileHelpIsOpen(false)
         setTableNames()
         setSqlExplanation()
         setShowExplanationModal(false)
@@ -803,7 +782,7 @@ function App(props) {
         getSession()
     }, [])
 
-    const handleSearchClick = (event) => {
+    const handleSearchClick = () => {
         currentGenerationId = null
         setSearchParams(`?${new URLSearchParams({ s: query })}`)
         setTitle(query)
@@ -916,9 +895,7 @@ function App(props) {
                     visualization={visualization}
                     setVisualization={setVisualization}
                     mobileTableRef={mobileTableRef}
-                    setMobileTableIsOpen={setMobileTableIsOpen}
                     mobileSqlRef={mobileSqlRef}
-                    setMobileSqlIsOpen={setMobileSqlIsOpen}
                     mapRef={mapRef}
                     initialView={initialView}
                     zipcodes={zipcodes}
