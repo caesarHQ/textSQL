@@ -21,7 +21,10 @@
   "rules": {
     "react/prop-types": 0,
     "no-undef": "error",
-    "no-unused-vars": "warn"
+    "no-unused-vars": "warn",
+    "react/no-unescaped-entities": "off",
+    "no-irregular-whitespace": "off",
+    "react/no-unknown-property": "off"
   },
   "globals": {
     "process": "readonly",
