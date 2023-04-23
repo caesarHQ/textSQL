@@ -5,8 +5,24 @@ import {
   convertConnectionUrlToFields,
 } from "./utils";
 
+import { verifyDatabaseCredentials } from "@/apis/admin_apis";
+
 export const DatabaseConfigComponent = () => {
+  const { dbInfo, setDbInfo } = useContext(AdminContext);
+
+  const isConnected = dbInfo?.connectionVerified;
+
   const [config, setConfig] = useState("url");
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const res = await verifyDatabaseCredentials(
+      convertConnectionUrlToFields(dbInfo.urlString)
+    );
+    if (res.status === "success") {
+      setDbInfo({ ...dbInfo, connectionVerified: true });
+    }
+  };
 
   return (
     <div className="border border-gray-300 p-4 rounded">
@@ -14,9 +30,16 @@ export const DatabaseConfigComponent = () => {
         <DatabaseConfigPicker config={config} setConfig={setConfig} />
       </div>
       <div className="border-t border-gray-300 pt-4">
-        {config === "url" && <DatabaseURLForm />}
-        {config === "fields" && <DatabaseFieldForm />}
+        {config === "url" && <DatabaseURLForm handleSubmit={handleSubmit} />}
+        {config === "fields" && (
+          <DatabaseFieldForm handleSubmit={handleSubmit} />
+        )}
       </div>
+      {isConnected && (
+        <div className="mt-4">
+          <p className="text-green-500">Connection verified!</p>
+        </div>
+      )}
     </div>
   );
 };
@@ -44,7 +67,7 @@ const DatabaseConfigPicker = ({ config, setConfig }) => {
   );
 };
 
-const DatabaseURLForm = () => {
+const DatabaseURLForm = ({ handleSubmit }) => {
   const { dbInfo, setDbInfo } = useContext(AdminContext);
 
   const handleUrlChange = (event) => {
@@ -53,11 +76,6 @@ const DatabaseURLForm = () => {
       urlString: event.target.value,
       fields: convertConnectionUrlToFields(event.target.value),
     });
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // TODO: Handle form submission
   };
 
   return (
@@ -85,7 +103,7 @@ const DatabaseURLForm = () => {
   );
 };
 
-const DatabaseFieldForm = () => {
+const DatabaseFieldForm = ({ handleSubmit }) => {
   const { dbInfo, setDbInfo } = useContext(AdminContext);
 
   const handleHostChange = (event) => {
@@ -153,10 +171,6 @@ const DatabaseFieldForm = () => {
     });
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // TODO: Handle form submission
-  };
   return (
     <form onSubmit={handleSubmit} className="justify-start">
       <div className="flex items-center mb-4">

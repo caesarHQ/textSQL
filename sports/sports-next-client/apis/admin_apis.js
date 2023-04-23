@@ -12,3 +12,27 @@ export const fetchCurrentOpenaiCredentials = async () => {
   const data = await response.json();
   return data;
 };
+
+export const verifyDatabaseCredentials = async ({
+  host,
+  database,
+  username,
+  password,
+  port,
+}) => {
+  const response = await fetch(`${API_BASE}/db_auth`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      host,
+      database,
+      username,
+      password,
+      port,
+    }),
+  });
+  const data = await response.json();
+  return data;
+};
