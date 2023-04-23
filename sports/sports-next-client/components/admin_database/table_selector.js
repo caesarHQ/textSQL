@@ -17,6 +17,16 @@ export const TableSelector = () => {
     });
   }, [tables, tableFilterTerm]);
 
+  const massChangeSelection = (action) => {
+    //action is either "select" or "deselect" and it should be over the tables in the filteredTables state
+    const newTables = [...tables];
+    filteredTables.forEach((table) => {
+      const idx = newTables.findIndex((t) => t.name === table.name);
+      newTables[idx].active = action === "select";
+    });
+    setTables(newTables);
+  };
+
   const updateTable = (idx, newTable) => {
     const newTables = [...tables];
     newTables[idx] = newTable;
@@ -54,6 +64,20 @@ export const TableSelector = () => {
             value={tableFilterTerm}
             onChange={(event) => setTableFilterTerm(event.target.value)}
           />
+        </div>
+        <div className="flex flex-row ml-4">
+          <button
+            onClick={() => massChangeSelection("select")}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900"
+          >
+            Select All
+          </button>
+          <button
+            onClick={() => massChangeSelection("deselect")}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900 ml-2"
+          >
+            Deselect All
+          </button>
         </div>
       </div>
 
