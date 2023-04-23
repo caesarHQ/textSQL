@@ -108,6 +108,8 @@ def get_tables():
             new_table = utils.generate_table_metadata(table_name)
             tables.append(new_table)
 
+    tables = sorted(tables, key=lambda k: k['name'])
+
     return {
         'status': 'success', 'tables': tables
     }
