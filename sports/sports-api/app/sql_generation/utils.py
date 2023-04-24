@@ -126,6 +126,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
         sql_query_data = {}
 
         try:
+            print("TRYING TO QUERY=====================")
             # model = "gpt-4"
             # model = "gpt-3.5-turbo"
             try:
@@ -156,15 +157,18 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             return response, sql_query
 
         except Exception as e:
-            print('error executing sql: ', e)
-            messages.append({
-                "role": "assistant",
-                "content": assistant_message["message"]["content"]
-            })
-            messages.append({
-                "role": "user",
-                "content": MSG_WITH_ERROR_TRY_AGAIN.format(error_message=str(e))
-            })
+            try:
+                print('error executing sql: ', e)
+                message_history.append({
+                    "role": "assistant",
+                    "content": assistant_message["message"]["content"]
+                })
+                message_history.append({
+                    "role": "user",
+                    "content": MSG_WITH_ERROR_TRY_AGAIN.format(error_message=str(e))
+                })
+            except Exception as exc:
+                print('oops, error: ', exc)
 
     print("Could not generate SQL query after {k} tries.".format(k=k))
     return None, None

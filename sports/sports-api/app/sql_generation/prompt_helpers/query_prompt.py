@@ -30,9 +30,13 @@ score_per_season as(
 	GROUP BY
 		season
 )
-select avg(total_points)
+select avg(score_per_season.total_points)
 from score_per_season
 ```
+
+team_id can change over time, so might need to worry about that.
+
+DO NOT USE THE MINUTES COLUMNS
 
 {{
 
@@ -40,7 +44,7 @@ from score_per_season
     "Input Types": str, required (a summary of the enums or other conversion that are related to the query),
     "Plan": str, required (a step by step walk thru of the joins/filters to be done and how to ensure uniqueness/deduplication),
     "Funky Types": str[], required (types which are funky so can't use avg etc on them - avoid using these if possible),
-    "Likely subquery titles": str[], required (tables to make in the CTE)
+    "Likely subquery titles": str[], required (tables to make in the CTE, where certain data (e.g. game time) is only in another table)
     "SQL": str, required (formatted '''line1\\nnext line\\netc''')
 }}
 
