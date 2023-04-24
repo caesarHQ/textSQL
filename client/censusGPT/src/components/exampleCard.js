@@ -6,6 +6,8 @@ export const ExampleCard = ({ example, props }) => {
             className="relative flex flex-col items-center rounded-lg shadow-md hover:shadow-lg bg-white dark:bg-dark-800 px-6 py-5 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:cursor-pointer hover:transform hover:scale-105 transition-all duration-200"
             style={{
                 height: '350px',
+                width: '300px',
+                margin: '10px',
             }}
             onClick={() => {
                 capturePosthog('example_clicked', {

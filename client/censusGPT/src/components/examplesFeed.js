@@ -17,7 +17,13 @@ const ExamplesFeed = (props) => {
         <div className="px-10 text-gray-900 dark:text-white max-w-6xl">
             <p className={'my-2 font-medium'}>Try one of these examples: </p>
             <div>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div
+                    style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        justifyContent: 'center',
+                    }}
+                >
                     {examples.map((example, idx) => (
                         <ExampleCard
                             key={idx}
