@@ -59,7 +59,7 @@ export const ColumnSelector = ({ table, setTable }) => {
 
   return (
     <div className="bg-gray-200 p-4 rounded">
-      <ClosableRow title={table.name} startOpen={false}>
+      <ClosableRow title={table.name} startOpen={false} isGood={!!table.schema}>
         <div className="flex flex-col space-y-4">
           <div className="flex flex-row">
             <div className="flex flex-row ml-4">
