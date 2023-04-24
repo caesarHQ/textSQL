@@ -16,11 +16,11 @@ The SQL query you just generated resulted in the following error message:
 {error_message}
 ---------------------
 
-Provide an explanation of what went wrong, how to fix it, and the sql in the following format:
-```
--- <explanation of what went wrong>
-<SQL>
-```
+Provide an explanation of what went wrong, how to fix it, and the SQL in a JSON object
+{{
+    "Explanation": str (required),
+    "SQL": str (required, in ''' ''' so we can parse it in Python with everything escaped etc),
+}}
 """
                             )
 
@@ -122,11 +122,8 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     assistant_message = None
     sql_query = ""
 
-    for attempt_number in range(k):
-        sql_query_data = {}
-
+    for _ in range(k):
         try:
-            print("TRYING TO QUERY=====================")
             # model = "gpt-4"
             # model = "gpt-3.5-turbo"
             try:
