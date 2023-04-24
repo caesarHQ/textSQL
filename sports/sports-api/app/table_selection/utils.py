@@ -172,6 +172,7 @@ def _get_table_selection_message_with_descriptions(natural_language_query):
             "Rephrased Input": string (any assumptions about words in the input and what they refer to)
             "required answer": string[] (the final variables that will be needed)
             "input conversions": string[] (the variables/tables that will be needed to interpret the input)
+            "internal relations": string (describe how the required tables relate to one another and how to make sure relevant information is not lost)
             "reasoning": string (Reverse walkthrough from end to start where the information will come from (what joins are needed). Column B.A gives Y, but B doesn't have Z we need to pull D.A to get Z.))
             "double_check": string (Walking through the tables mentioned above, check that each column that will be used to find any missing columns, add any additional tables that could be useful)
             "tables": string[]
