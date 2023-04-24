@@ -3,6 +3,7 @@ import { AdminContext } from "@/contexts/admin_context";
 
 import { handleSaveTables } from "@/apis/admin_apis";
 import { ColumnSelector } from "./column_selector";
+import { generateSchema } from "@/apis/admin_apis";
 
 export const TableEditor = () => {
   const [tableFilterTerm, setTableFilterTerm] = useState("");
@@ -49,6 +50,30 @@ export const TableEditor = () => {
     await handleSaveTables(tables);
   };
 
+  const missingSchemaCount = useMemo(() => {
+    return tables.filter((t) => t.active && !t.schema).length;
+  }, [tables]);
+
+  const generateRemainingSchemas = async () => {
+    const newTables = [...tables];
+    for (let i = 0; i < newTables.length; i++) {
+      const table = newTables[i];
+      console.log("checking table: ", table.name);
+      if (table.active) {
+        console.log("table is active");
+        if (!table.schema) {
+          console.log("table has no schema, generating!");
+          const newSchemaData = await generateSchema({ table });
+          console.log("newSchemaData: ", newSchemaData);
+          if (newSchemaData.status === "success") {
+            newTables[i].schema = newSchemaData.message;
+            setTables([...newTables]);
+          }
+        }
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col space-y-4">
       <div className="flex flex-row">
@@ -76,6 +101,16 @@ export const TableEditor = () => {
             onChange={(event) => setTableFilterTerm(event.target.value)}
           />
         </div>
+        {missingSchemaCount > 0 && (
+          <div className="flex flex-row ml-4">
+            <button
+              onClick={generateRemainingSchemas}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900"
+            >
+              Generate Remaining {missingSchemaCount} Schemas:
+            </button>
+          </div>
+        )}
       </div>
       <div //each table is a row, should be 100% width
         className="flex flex-col space-y-4"
