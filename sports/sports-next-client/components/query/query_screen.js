@@ -1,11 +1,13 @@
 /* global Promise */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import dynamic from "next/dynamic";
 
 import LoadingSpinner from "./components/loading_spinner";
 
 import { logSentryError } from "../utils/sentry";
 import { capturePosthog } from "../utils/posthog";
+
+import { SearchContext } from "./contexts/search_context";
 
 import {
   DarkModeButton,
@@ -14,15 +16,12 @@ import {
 } from "../widgets/buttons";
 import SearchBar from "./search_bar";
 import { notify } from "../widgets/toast";
-import { useRouter } from "next/router";
-import { useSearchParams } from "next/navigation";
 
 import { textToSql } from "@/apis/query_apis";
 
 let api_endpoint = "http://localhost:9000";
 
 let userId = null;
-let sessionId = null;
 
 const ResultsContainer = dynamic(
   () => import("./components/results_container"),
@@ -32,7 +31,6 @@ const ResultsContainer = dynamic(
 );
 
 const QueryScreen = (props) => {
-  const [query, setQuery] = useState("");
   const [sql, setSQL] = useState("");
   const [tableInfo, setTableInfo] = useState({ rows: [], columns: [] });
   const [errorMessage, setErrorMessage] = useState("");
@@ -40,10 +38,11 @@ const QueryScreen = (props) => {
   const [isGetTablesLoading, setIsGetTablesLoading] = useState(false);
   const [tableNames, setTableNames] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [title, setTitle] = useState("");
   const [sqlExplanationIsOpen, setSqlExplanationIsOpen] = useState(false);
   const [sqlExplanation, setSqlExplanation] = useState();
   const [isExplainSqlLoading, setIsExplainSqlLoading] = useState(false);
+
+  const { setQuery, setTitle, setSearchParams } = useContext(SearchContext);
 
   const tableColumns = tableInfo?.columns;
   const tableRows = tableInfo?.rows;
@@ -58,33 +57,11 @@ const QueryScreen = (props) => {
   }, []);
 
   useEffect(() => {
-    document.title = query || "Yolo let's see if this can do some work";
-  }, [query]);
-
-  useEffect(() => {
     if (errorMessage !== "") {
       console.log(errorMessage);
       notify(errorMessage);
     }
   }, [errorMessage]);
-  const router = useRouter();
-
-  const setSearchParams = (searchValue) => {
-    if (searchValue === "") {
-      router.replace({
-        pathname: router.pathname,
-        search: "",
-      });
-      return;
-    }
-    const params = new URLSearchParams();
-    params.set("s", searchValue);
-
-    router.replace({
-      pathname: router.pathname,
-      search: params.toString(),
-    });
-  };
 
   const clearAll = () => {
     setQuery("");
@@ -109,17 +86,6 @@ const QueryScreen = (props) => {
     setIsLoading(false);
   };
 
-  const handleSearchChange = (event) => {
-    const { value } = event.target;
-    setSearchParams(value);
-    setQuery(value);
-    setTitle("");
-  };
-
-  const handleClearSearch = () => {
-    setQuery("");
-  };
-
   const getSession = async () => {
     const options = {
       method: "POST",
@@ -132,9 +98,7 @@ const QueryScreen = (props) => {
 
     fetch(api_endpoint + "/api/session", options)
       .then((response) => response.json())
-      .then((response) => {
-        sessionId = response.session_id;
-      })
+      .then((response) => {})
       .catch((error) => {
         console.log("error", error);
         capturePosthog("backend_error", error);
@@ -221,16 +185,6 @@ const QueryScreen = (props) => {
     setTableInfo({ rows, columns: filteredColumns });
   };
 
-  const handleSearchClick = () => {
-    setSearchParams(query);
-    setTitle(query);
-    capturePosthog("search_clicked", {
-      natural_language_query: query,
-      trigger: "button",
-    });
-    fetchBackend(query);
-  };
-
   return (
     <main
       className="h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen"
@@ -263,24 +217,7 @@ const QueryScreen = (props) => {
           </h1>
 
           <div className="block px-6 pb-2">
-            <form
-              autoComplete={"off"}
-              className="flex justify-center"
-              onSubmit={(event) => {
-                event.preventDefault();
-                handleSearchClick(event);
-              }}
-            >
-              <SearchBar
-                value={query}
-                onSearchChange={handleSearchChange}
-                onClear={handleClearSearch}
-                version={props.version}
-                setTitle={setTitle}
-                setQuery={setQuery}
-                fetchBackend={fetchBackend}
-              />
-            </form>
+            <SearchBar version={props.version} fetchBackend={fetchBackend} />
           </div>
         </div>
         <LoadingSpinner isLoading={isLoading || isGetTablesLoading} />
@@ -308,7 +245,6 @@ const QueryScreen = (props) => {
             isExplainSqlLoading={isExplainSqlLoading}
             sqlExplanation={sqlExplanation}
             setSQL={setSQL}
-            title={title}
             isStartingState={false}
           />
         )}

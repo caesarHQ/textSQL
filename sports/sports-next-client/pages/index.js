@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { SearchProvider } from "@/components/query/contexts/search_context";
 
 import QueryScreen from "@/components/query/query_screen";
 
@@ -11,7 +12,11 @@ const Query = () => {
   if (!isBrowser) {
     return <main>Loading...</main>;
   } else {
-    return <QueryScreen />;
+    return (
+      <SearchProvider>
+        <QueryScreen />
+      </SearchProvider>
+    );
   }
 };
 

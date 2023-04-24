@@ -27,7 +27,6 @@ const ResultsContainer = ({
   explainSql,
   executeSql,
   setSQL,
-  title,
 }) => {
   return (
     <div className="flex flex-col lg:flex-row h-full w-full gap-6 p-6">
@@ -59,7 +58,6 @@ const ResultsContainer = ({
                   explainSql={explainSql}
                   executeSql={executeSql}
                   setSQL={setSQL}
-                  title={title}
                 />
               </div>
 

@@ -19,7 +19,6 @@ export const SQLDisplay = ({
   explainSql,
   executeSql,
   setSQL,
-  title,
 }) => {
   const [copied, setCopied] = useState(false);
   const [editingSql, setEditingSql] = useState(false);
@@ -125,9 +124,6 @@ export const SQLDisplay = ({
       <div className="flex items-center w-full min-h-full">
         <div className="rounded-t-lg flex w-full justify-end h-full items-center p-2 space-x-1.5 bg-gradient-to-b dark:from-black/50 from-neutral-300/75 to-neutral-300/50 dark:to-black/20 backdrop-blur-sm font-sans">
           <ExplainSqlButton />
-          <h2 className="font-bold tracking-wide h-6 overflow-hidden flex w-full">
-            {title}
-          </h2>
           <div className="flex right-1 space-x-1.5 relative items-center">
             {editingSql && (
               <button
