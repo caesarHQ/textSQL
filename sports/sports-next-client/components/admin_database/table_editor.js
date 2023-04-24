@@ -4,9 +4,11 @@ import { AdminContext } from "@/contexts/admin_context";
 import { handleSaveTables } from "@/apis/admin_apis";
 import { ColumnSelector } from "./column_selector";
 import { generateSchema } from "@/apis/admin_apis";
+import { Spinner } from "../utils/spinner";
 
 export const TableEditor = () => {
   const [tableFilterTerm, setTableFilterTerm] = useState("");
+  const [generating, setGenerating] = useState(false);
 
   const { tables, setTables } = useContext(AdminContext);
 
@@ -55,22 +57,31 @@ export const TableEditor = () => {
   }, [tables]);
 
   const generateRemainingSchemas = async () => {
-    const newTables = [...tables];
-    for (let i = 0; i < newTables.length; i++) {
-      const table = newTables[i];
-      console.log("checking table: ", table.name);
-      if (table.active) {
-        console.log("table is active");
-        if (!table.schema) {
-          console.log("table has no schema, generating!");
-          const newSchemaData = await generateSchema({ table });
-          console.log("newSchemaData: ", newSchemaData);
-          if (newSchemaData.status === "success") {
-            newTables[i].schema = newSchemaData.message;
-            setTables([...newTables]);
+    if (generating) {
+      return;
+    }
+    try {
+      setGenerating(true);
+      const newTables = [...tables];
+      for (let i = 0; i < newTables.length; i++) {
+        const table = newTables[i];
+        console.log("checking table: ", table.name);
+        if (table.active) {
+          console.log("table is active");
+          if (!table.schema) {
+            console.log("table has no schema, generating!");
+            const newSchemaData = await generateSchema({ table });
+            console.log("newSchemaData: ", newSchemaData);
+            if (newSchemaData.status === "success") {
+              newTables[i].schema = newSchemaData.message;
+              setTables([...newTables]);
+            }
           }
         }
       }
+      setGenerating(false);
+    } catch (err) {
+      setGenerating(false);
     }
   };
 
@@ -88,8 +99,7 @@ export const TableEditor = () => {
         <div className="flex flex-row ml-4">
           <label
             htmlFor="tableFilter"
-            className="mr-2 font-bold text-right self-center
-            "
+            className="mr-2 font-bold text-right self-center"
           >
             Filter:
           </label>
@@ -101,7 +111,7 @@ export const TableEditor = () => {
             onChange={(event) => setTableFilterTerm(event.target.value)}
           />
         </div>
-        {missingSchemaCount > 0 && (
+        {missingSchemaCount > 0 && !generating && (
           <div className="flex flex-row ml-4">
             <button
               onClick={generateRemainingSchemas}
@@ -109,6 +119,12 @@ export const TableEditor = () => {
             >
               Generate Remaining {missingSchemaCount} Schemas:
             </button>
+          </div>
+        )}
+        {missingSchemaCount > 0 && generating && (
+          <div className="mr-2 font-bold text-right self-center ml-4">
+            {missingSchemaCount} Schemas Missing
+            <Spinner />
           </div>
         )}
       </div>
@@ -123,6 +139,8 @@ export const TableEditor = () => {
                 <ColumnSelector
                   table={table}
                   setTable={(newTable) => updateTable(table.name, newTable)}
+                  generating={generating}
+                  setGenerating={setGenerating}
                 />
               </div>
             );
