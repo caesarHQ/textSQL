@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sports GPT
+
+We're developing this as a means of testing BYOD. This is the client.
 
 ## Getting Started
 
