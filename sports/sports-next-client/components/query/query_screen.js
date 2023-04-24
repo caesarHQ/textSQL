@@ -1,9 +1,8 @@
 /* global Promise */
 import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 
 import LoadingSpinner from "./components/loading_spinner";
-
-import { ResultsContainer } from "./components/results_container";
 
 import { logSentryError } from "../utils/sentry";
 import { capturePosthog } from "../utils/posthog";
@@ -20,19 +19,19 @@ import { useSearchParams } from "next/navigation";
 
 import { textToSql } from "@/apis/query_apis";
 
-// Add system dark mode
-localStorage.theme === "dark" ||
-(!("theme" in localStorage) &&
-  window.matchMedia("(prefers-color-scheme: dark)").matches)
-  ? document.documentElement.classList.add("dark")
-  : document.documentElement.classList.remove("dark");
-
 let api_endpoint = "http://localhost:9000";
 
 let userId = null;
 let sessionId = null;
 
-function App(props) {
+const ResultsContainer = dynamic(
+  () => import("./components/results_container"),
+  {
+    ssr: false,
+  }
+);
+
+const QueryScreen = (props) => {
   const [query, setQuery] = useState("");
   const [sql, setSQL] = useState("");
   const [tableInfo, setTableInfo] = useState({ rows: [], columns: [] });
@@ -48,6 +47,15 @@ function App(props) {
 
   const tableColumns = tableInfo?.columns;
   const tableRows = tableInfo?.rows;
+  // Add system dark mode
+
+  useEffect(() => {
+    localStorage.theme === "dark" ||
+    (!("theme" in localStorage) &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ? document.documentElement.classList.add("dark")
+      : document.documentElement.classList.remove("dark");
+  }, []);
 
   useEffect(() => {
     document.title = query || "Yolo let's see if this can do some work";
@@ -283,33 +291,30 @@ function App(props) {
         ) : (
           isLoading && <> </>
         )}
-
-        <ResultsContainer
-          tableInfo={tableInfo}
-          sql={sql}
-          props={props}
-          isLoading={isLoading}
-          isGetTablesLoading={isGetTablesLoading}
-          setQuery={setQuery}
-          fetchBackend={fetchBackend}
-          tableColumns={tableColumns}
-          tableRows={tableRows}
-          tableNames={tableNames}
-          sqlExplanationIsOpen={sqlExplanationIsOpen}
-          setSqlExplanationIsOpen={setSqlExplanationIsOpen}
-          isExplainSqlLoading={isExplainSqlLoading}
-          sqlExplanation={sqlExplanation}
-          setSQL={setSQL}
-          title={title}
-          isStartingState={false}
-        />
+        {!!tableRows?.length && (
+          <ResultsContainer
+            tableInfo={tableInfo}
+            sql={sql}
+            props={props}
+            isLoading={isLoading}
+            isGetTablesLoading={isGetTablesLoading}
+            setQuery={setQuery}
+            fetchBackend={fetchBackend}
+            tableColumns={tableColumns}
+            tableRows={tableRows}
+            tableNames={tableNames}
+            sqlExplanationIsOpen={sqlExplanationIsOpen}
+            setSqlExplanationIsOpen={setSqlExplanationIsOpen}
+            isExplainSqlLoading={isExplainSqlLoading}
+            sqlExplanation={sqlExplanation}
+            setSQL={setSQL}
+            title={title}
+            isStartingState={false}
+          />
+        )}
       </div>
     </main>
   );
-}
-
-App.defaultProps = {
-  version: "Census",
 };
 
-export default App;
+export default QueryScreen;

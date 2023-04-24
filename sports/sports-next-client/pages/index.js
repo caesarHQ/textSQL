@@ -1,13 +1,18 @@
-import { Inter } from "next/font/google";
+import { useEffect, useState } from "react";
 
-const inter = Inter({ subsets: ["latin"] });
+import QueryScreen from "@/components/query/query_screen";
 
-export default function Home() {
-  return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      Hello World
-    </main>
-  );
-}
+const Query = () => {
+  const [isBrowser, setIsBrowser] = useState(false);
+  useEffect(() => {
+    setIsBrowser(true);
+  }, []);
+
+  if (!isBrowser) {
+    return <main>Loading...</main>;
+  } else {
+    return <QueryScreen />;
+  }
+};
+
+export default Query;

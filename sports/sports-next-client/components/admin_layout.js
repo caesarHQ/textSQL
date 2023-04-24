@@ -4,8 +4,6 @@ import Link from "next/link";
 const AdminLayout = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log("i loaded");
-
   const toggleAdminPanel = () => {
     setIsOpen(!isOpen);
   };
@@ -36,7 +34,7 @@ const AdminLayout = ({ children }) => {
       <div className={"flex-1"}>{children}</div>
       <button
         onClick={toggleAdminPanel}
-        style={{ left: isOpen ? "12rem" : "1rem" }}
+        style={{ left: isOpen ? "12rem" : "1rem", zIndex: 100 }}
         className="absolute top-4 bg-blue-500 hover:bg-blue-600 text-white rounded-full w-10 h-10 z-10"
       >
         {isOpen ? "<" : ">"}

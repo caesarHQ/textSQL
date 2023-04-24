@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import QueryScreen from "@/components/query/query_screen";
 
 const Query = () => {

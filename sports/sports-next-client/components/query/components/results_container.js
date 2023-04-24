@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { DataVisualization } from "./data_visualization";
+import DataVisualization from "./data_visualization";
 import { SQLDisplay } from "./sql_display";
 import Table from "./table";
 
 import { BsChevronCompactDown, BsDashLg, BsTable } from "react-icons/bs";
 
-export const ResultsContainer = ({
+const ResultsContainer = ({
   visualization,
   setVisualization,
   mobileTableRef,
@@ -72,6 +72,8 @@ export const ResultsContainer = ({
     </div>
   );
 };
+
+export default ResultsContainer;
 
 const TableNamesDisplay = ({ tableNames }) => {
   const [minimizeTableNames, setMinimizeTableNames] = useState(false);
