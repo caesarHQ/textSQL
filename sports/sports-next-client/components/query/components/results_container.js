@@ -11,11 +11,6 @@ export const ResultsContainer = ({
   mobileTableRef,
   mobileSqlRef,
   mapRef,
-  initialView,
-  zipcodes,
-  zipcodesFormatted,
-  cities,
-  polygonsGeoJSON,
   tableInfo,
   points,
   sql,
@@ -43,11 +38,6 @@ export const ResultsContainer = ({
           mobileTableRef={mobileTableRef}
           mobileSqlRef={mobileSqlRef}
           mapRef={mapRef}
-          initialView={initialView}
-          zipcodes={zipcodes}
-          zipcodesFormatted={zipcodesFormatted}
-          cities={cities}
-          polygonsGeoJSON={polygonsGeoJSON}
           tableInfo={tableInfo}
           points={points}
           sql={sql}

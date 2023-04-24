@@ -18,6 +18,8 @@ import { notify } from "../widgets/toast";
 import { useRouter } from "next/router";
 import { useSearchParams } from "next/navigation";
 
+import { textToSql } from "@/apis/query_apis";
+
 // Add system dark mode
 localStorage.theme === "dark" ||
 (!("theme" in localStorage) &&
@@ -131,43 +133,6 @@ function App(props) {
       });
   };
 
-  const getTables = async (natural_language_query) => {
-    setIsGetTablesLoading(true);
-
-    let requestBody = {
-      natural_language_query,
-      scope: props.version === "San Francisco" ? "SF" : "USA",
-      session_id: sessionId,
-    };
-
-    const options = {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(requestBody),
-    };
-
-    const response = await fetch(api_endpoint + "/api/get_tables", options);
-    const response_1 = await response.json();
-    setIsGetTablesLoading(false);
-
-    if (!response_1 || !response_1.table_names) {
-      setTableNames();
-      capturePosthog("getTables_backend_error", response_1);
-      setErrorMessage(
-        "Something went wrong. Please try again or try a different query"
-      );
-      return false;
-    }
-    if (response_1.table_names.length === 0) {
-      setShowExplanationModal("no_tables");
-      return false;
-    }
-
-    capturePosthog("getTables_backend_response", response_1);
-    setTableNames(response_1.table_names);
-    return response_1.table_names;
-  };
-
   const fetchBackend = async (natural_language_query) => {
     if (natural_language_query == null) {
       return;
@@ -182,107 +147,70 @@ function App(props) {
 
     // clear previous layers
     clearAllButQuery();
-    const table_names = await getTables(natural_language_query);
 
     // Set the loading state
     setIsLoading(true);
 
-    let requestBody = {
-      natural_language_query,
-      table_names,
-      scope: "sports",
-    };
-
-    // Set the options for the fetch request
-    const options = {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(requestBody),
-    };
-
     let responseOuter = null;
     // Send the request
+
     const startTime = new Date().getTime();
-    const apiCall = fetch(api_endpoint + "/api/text_to_sql", options);
-    const TIMEOUT_DURATION = 45000;
-    const timeout = new Promise((_, reject) => {
-      setTimeout(() => {
-        reject(new Error("Server failed to respond in time"));
-      }, TIMEOUT_DURATION); // timeout after 45 seconds
+
+    const response = await textToSql(natural_language_query);
+
+    console.log("response: ", response);
+
+    setIsLoading(false);
+
+    // Handle errors
+    if (!response.status === "success") {
+      capturePosthog("backend_error", response);
+      setErrorMessage(
+        "Something went wrong. Please try again or try a different query"
+      );
+      setTableNames();
+      return;
+    }
+
+    if (!("sql_query" in response) || !response.result) {
+      capturePosthog("backend_error", response);
+      setShowExplanationModal("attempted");
+      setTableNames();
+      return;
+    }
+
+    // Capture the response in posthog
+    const duration = new Date().getTime() - startTime;
+
+    capturePosthog("backend_response", {
+      origin: "fetchBackend",
+      duration,
     });
-    Promise.race([apiCall, timeout])
-      .then((response) => response.json())
-      .then(async (response) => {
-        // Set the loading state to false
-        setIsLoading(false);
 
-        // Handle errors
-        if (!response) {
-          capturePosthog("backend_error", response);
-          setErrorMessage(
-            "Something went wrong. Please try again or try a different query"
-          );
-          setTableNames();
-          return;
-        }
+    // Set the state for SQL and Status Code
+    responseOuter = response;
+    setSQL(response.sql_query);
 
-        if (!("sql_query" in response) || !response.result) {
-          capturePosthog("backend_error", response);
-          setShowExplanationModal("attempted");
-          setTableNames();
-          return;
-        }
+    // Filter out geolocation columns (lat, long, shape)
+    let filteredColumns = [];
+    if (props.version === "Census") {
+      filteredColumns = response.result.column_names.filter(
+        (c) => c !== "lat" && c !== "long"
+      );
+    } else {
+      filteredColumns = response.result.column_names.filter(
+        (c) => c !== "lat" && c !== "long" && c !== "shape"
+      );
+    }
 
-        // Capture the response in posthog
-        const duration = new Date().getTime() - startTime;
-
-        capturePosthog("backend_response", {
-          origin: "fetchBackend",
-          duration,
-        });
-
-        // Set the state for SQL and Status Code
-        responseOuter = response;
-        setSQL(response.sql_query);
-
-        // Filter out geolocation columns (lat, long, shape)
-        let filteredColumns = [];
-        if (props.version === "Census") {
-          filteredColumns = response.result.column_names.filter(
-            (c) => c !== "lat" && c !== "long"
-          );
-        } else {
-          filteredColumns = response.result.column_names.filter(
-            (c) => c !== "lat" && c !== "long" && c !== "shape"
-          );
-        }
-
-        // Fit the order of columns and filter out lat and long row values
-        let rows = response.result.results.map((value) => {
-          let row = [];
-          // Find each of the filtered column value in the object and push it into the row
-          filteredColumns.map((c) => row.push(value[c]));
-          return row;
-        });
-        setTableInfo({ rows, columns: filteredColumns });
-      })
-      .catch((err) => {
-        logSentryError(
-          {
-            query: query,
-            ...responseOuter,
-          },
-          err
-        );
-        setIsLoading(false);
-        setTableNames();
-        capturePosthog("backend_error", {
-          error: err,
-          timeout: TIMEOUT_DURATION,
-        });
-        setErrorMessage(err.message || err);
-        console.error(err);
-      });
+    // Fit the order of columns and filter out lat and long row values
+    let rows = response.result.results.map((value) => {
+      let row = [];
+      // Find each of the filtered column value in the object and push it into the row
+      filteredColumns.map((c) => row.push(value[c]));
+      return row;
+    });
+    setTableInfo({ rows, columns: filteredColumns });
   };
 
   const handleSearchClick = () => {
@@ -294,20 +222,6 @@ function App(props) {
     });
     fetchBackend(query);
   };
-
-  let initialView = {
-    longitude: -100,
-    latitude: 40,
-    zoom: 3.5,
-  };
-
-  if (props.version === "San Francisco") {
-    initialView = {
-      longitude: -122.431297,
-      latitude: 37.773972,
-      zoom: 11.5,
-    };
-  }
 
   return (
     <main
@@ -371,7 +285,6 @@ function App(props) {
         )}
 
         <ResultsContainer
-          initialView={initialView}
           tableInfo={tableInfo}
           sql={sql}
           props={props}
