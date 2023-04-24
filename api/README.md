@@ -5,9 +5,9 @@
 
 ## Required configuration for development:
 - OpenAI Key
-- URL to the postgres DB (Read-only URL provided in `config.py`)
+- URL to the postgres DB (Read-only URL provided in `.env.example`)
 
-Configure the above in `app/config.py`
+Make a copy of `.env.example`, rename it to `.env`, and configure the above variables.
 
 ## Local development
 
