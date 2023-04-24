@@ -93,6 +93,21 @@ def extract_sql_query_from_message(assistant_message_content):
     return clean_message_content(content)
 
 
+def extract_sql_query_from_json(assistant_message_content):
+    try:
+        data = json.loads(assistant_message_content)
+    except Exception as e:
+        print('e: ', e)
+        raise e
+
+    if data.get('MissingData'):
+        return data
+
+    sql = data['SQL']
+
+    return {"SQL": sql}
+
+
 def extract_code_from_markdown(assistant_message_content):
     matches = re.findall(r"```([\s\S]+?)```", assistant_message_content)
 

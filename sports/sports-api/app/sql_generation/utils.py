@@ -5,8 +5,9 @@ from typing import Dict, List
 from app.config import ENGINE
 from sqlalchemy import text
 
-from ..table_selection.utils import get_table_schemas_str
-from ..utils import (extract_sql_query_from_message, get_assistant_message,
+from app.sql_generation.prompt_helpers import schema_prompt, query_prompt
+
+from ..utils import (extract_sql_query_from_json, get_assistant_message,
                      get_few_shot_messages)
 
 MSG_WITH_ERROR_TRY_AGAIN = ("""
@@ -25,74 +26,9 @@ Provide an explanation of what went wrong, how to fix it, and the sql in the fol
 
 
 def make_default_messages(schemas_str: str) -> List[Dict[str, str]]:
-    # default_messages = [{
-    #     "role": "system",
-    #     "content": (
-    #         f"""
-    #         You are a helpful assistant for generating syntactically correct read-only SQL to answer a given question or command.
-    #         The following are tables you can query:
-    #         ---------------------
-    #         {schemas_str}
-    #         ---------------------
-    #         Make sure to write your answer in markdown format.
-    #         """
-    #         # TODO: place warnings here
-    #         # i.e. "Make sure each value in the result table is not null."
-    #     )
-    # }]
     default_messages = []
     default_messages.extend(get_few_shot_messages(mode="text_to_sql"))
     return default_messages
-
-
-def make_rephrase_msg_with_schema_and_warnings():
-    return (
-        """
-        Let's start by fixing and rephrasing the query to be more analytical. Use the schema context to rephrase the user question in a way that leads to optimal query results: {natural_language_query}
-        The following are schemas of tables you can query:
-        ---------------------
-        {schemas_str}
-        ---------------------
-        Do not include any of the table names in the query.
-        Ask the natural language query the way a data analyst, with knowledge of these tables, would.
-        """
-    )
-
-
-def make_msg_with_schema_and_warnings():
-    return (
-        """
-Generate syntactically correct read-only SQL to answer the following question/command: {natural_language_query}
-The following are schemas of tables you can query:
----------------------
-{schemas_str}
----------------------
-
-Instructions:
-
-Walk through the following information in your response:
-    -- Paraphrase what the query should result in
-    -- A quick list of the types of information that will be in the response (1 line)
-    -- A list of the table.columns that will be relevant to both the input and the output (1 line)
-    -- Note any uniqueness/null/other things to account for in the plan based on any tables/columns being used (e.g. MAX or DISTINCT required)
-    -- A plan for how to get that information from the schema above (up to 3 lines). You can use any of the tables/columns above and only the tables/columns above.
-
-    ```
-    The SQL query in MARKDOWN format, including readable names where possible.
-    ```
-
-Notes:
-> All tables and columns must be present in the above schema.
-> Include any tables needed to do the human-readable conversions relevant to the query.
-> Make sure to write your answer in markdown format. Before the markdown provide a plan for what query to run.
-> Each column must include the table name (e.g. table.column) to avoid ambiguity.
-> Include nothing after the markdown.
-> Warning: Some values may be null so watch out for those. Also make sure to always sort with NULLS LAST.
-> Use CTE if joins are needed, but keep it simple if possible.
-
-    
-"""
-    )
 
 
 def is_read_only_query(sql_query: str) -> bool:
@@ -166,34 +102,46 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     """
     Tries to take a natural language query and generate valid SQL to answer it K times
     """
+    schema_message = [{'role': 'user', 'content': ''}]
+    message_history = []
+    model = "gpt-3.5-turbo-0301"
+
     if not messages:
         # ask the assistant to rephrase before generating the query
-        schemas_str = get_table_schemas_str(table_names)
+        _, table_content = schema_prompt.get_enums_and_tables(
+            table_names)
 
-        content = make_msg_with_schema_and_warnings().format(
-            natural_language_query=natural_language_query,
-            schemas_str=schemas_str
-        )
+        schema_message[0]['content'] = table_content
 
-        print('CONTENT: ', content)
-
-        messages = make_default_messages(schemas_str)
-        messages.append({
+        print('table_content: ', table_content)
+        content = query_prompt.command_prompt_cte(natural_language_query)
+        message_history.append({
             "role": "user",
             "content": content
         })
-
     assistant_message = None
+    sql_query = ""
 
-    for _ in range(k):
+    for attempt_number in range(k):
+        sql_query_data = {}
+
         try:
             # model = "gpt-4"
             # model = "gpt-3.5-turbo"
-            model = "gpt-3.5-turbo-0301"
-            assistant_message = get_assistant_message(messages, model=model)
+            try:
+                payload = schema_message + message_history
+                assistant_message = get_assistant_message(
+                    payload, model=model)
+            except:
+                continue
 
-            sql_query = extract_sql_query_from_message(
+            print('START OF RES:\n ',
+                  assistant_message['message']['content'], '\nEND OF RES')
+
+            sql_data = extract_sql_query_from_json(
                 assistant_message["message"]["content"])
+            sql_query = sql_data["SQL"]
+
             print(f"""
             QUERY:
             ---------------------

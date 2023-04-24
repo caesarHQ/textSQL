@@ -4203,7 +4203,7 @@
         "name": "nba2_team_info_common"
     },
     "nba_arena": {
-        "active": false,
+        "active": true,
         "columns": [
             {
                 "active": true,
@@ -4249,49 +4249,45 @@
         "description": "",
         "head": [
             [
-                1000011,
-                "San Francisco",
+                30,
+                "New York",
                 "US",
-                "Chase Center",
-                "CA",
-                "America/Los_Angeles",
-                null,
-                null
+                "Madison Square Garden",
+                "NY",
+                "Eastern",
+                "4 Pennsylvania Plaza",
+                "10001"
+            ],
+            [
+                11,
+                "New Jersey",
+                "US",
+                "IZOD Center",
+                "NJ",
+                "Eastern",
+                "",
+                ""
+            ],
+            [
+                43,
+                "Orlando",
+                "US",
+                "Amway Arena",
+                "FL",
+                "Eastern",
+                "",
+                ""
             ]
         ],
-        "name": "nba_arena"
+        "name": "nba_arena",
+        "schema": "CREATE TABLE nba_arena (-- table containing information about NBA arenas\n    arena_id bigint, -- unique identifier for each arena\n    arena_city text, -- city where the arena is located\n    arena_country text, -- country where the arena is located\n    arena_name text, -- name of the arena\n    arena_state text, -- state where the arena is located\n    arena_timezone text, -- timezone where the arena is located\n    arena_street_address text, -- street address of the arena\n    arena_postal_code text -- postal code of the arena\n);"
     },
     "nba_game": {
-        "active": false,
+        "active": true,
         "columns": [
             {
                 "active": true,
-                "name": "game_time_utc",
-                "type": "timestamp with time zone"
-            },
-            {
-                "active": true,
-                "name": "regulation_periods",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "period",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "duration",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "game_clock",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "arena_id",
+                "name": "home_team_id",
                 "type": "bigint"
             },
             {
@@ -4306,27 +4302,37 @@
             },
             {
                 "active": true,
-                "name": "game_time_away",
-                "type": "timestamp with time zone"
-            },
-            {
-                "active": true,
-                "name": "game_time_home",
-                "type": "timestamp with time zone"
-            },
-            {
-                "active": true,
-                "name": "game_time_local",
-                "type": "timestamp with time zone"
-            },
-            {
-                "active": true,
                 "name": "sellout",
-                "type": "text"
+                "type": "bigint"
             },
             {
                 "active": true,
-                "name": "game_id",
+                "name": "period",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "game_clock",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "game_time_utc",
+                "type": "timestamp with time zone"
+            },
+            {
+                "active": true,
+                "name": "game_et",
+                "type": "timestamp with time zone"
+            },
+            {
+                "active": true,
+                "name": "away_team_id",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "series_text",
                 "type": "text"
             },
             {
@@ -4338,101 +4344,96 @@
                 "active": true,
                 "name": "game_status_text",
                 "type": "text"
-            }
-        ],
-        "description": "",
-        "head": [
-            [
-                163,
-                "0052000211",
-                1000011,
-                7505,
-                0,
-                "20210521/MEMGSW",
-                3,
-                "Final",
-                "Sat, 22 May 2021 01:00:00 GMT",
-                "Sat, 22 May 2021 01:00:00 GMT",
-                "Sat, 22 May 2021 01:00:00 GMT",
-                "Sat, 22 May 2021 01:00:00 GMT",
-                4,
-                5,
-                "0"
-            ]
-        ],
-        "name": "nba_game"
-    },
-    "nba_game_periods": {
-        "active": false,
-        "columns": [
-            {
-                "active": true,
-                "name": "team_id",
-                "type": "bigint"
             },
             {
                 "active": true,
-                "name": "period",
-                "type": "bigint"
+                "name": "duration",
+                "type": "text"
             },
             {
                 "active": true,
-                "name": "score",
-                "type": "bigint"
+                "name": "series_game_number",
+                "type": "text"
             },
             {
                 "active": true,
                 "name": "game_id",
                 "type": "text"
-            },
-            {
-                "active": true,
-                "name": "period_type",
-                "type": "text"
             }
         ],
         "description": "",
         "head": [
             [
-                "0052000211",
-                1610612763,
-                1,
-                "REGULAR",
-                30
-            ],
-            [
-                "0052000211",
-                1610612763,
-                2,
-                "REGULAR",
-                32
-            ],
-            [
-                "0052000211",
-                1610612763,
+                "0020000001",
+                "20001031/PHINYK",
                 3,
-                "REGULAR",
-                16
+                "Final",
+                4,
+                0,
+                "Wed, 01 Nov 2000 01:00:00 GMT",
+                "Tue, 31 Oct 2000 20:00:00 GMT",
+                1610612755,
+                1610612752,
+                "2:22",
+                19763,
+                0,
+                "",
+                ""
+            ],
+            [
+                "0020000002",
+                "20001031/CLENJN",
+                3,
+                "Final",
+                4,
+                0,
+                "Wed, 01 Nov 2000 00:30:00 GMT",
+                "Tue, 31 Oct 2000 19:30:00 GMT",
+                1610612739,
+                1610612751,
+                "2:21",
+                14505,
+                0,
+                "",
+                ""
+            ],
+            [
+                "0020000003",
+                "20001031/WASORL",
+                3,
+                "Final",
+                4,
+                0,
+                "Wed, 01 Nov 2000 00:30:00 GMT",
+                "Tue, 31 Oct 2000 19:30:00 GMT",
+                1610612764,
+                1610612753,
+                "2:18",
+                13349,
+                0,
+                "",
+                ""
             ]
         ],
-        "name": "nba_game_periods"
+        "name": "nba_game",
+        "schema": "CREATE TABLE nba_game (-- table for NBA game information\n    home_team_id bigint, -- ID of the home team\n    game_status bigint, -- status of the game\n    attendance bigint, -- number of people in attendance\n    sellout bigint, -- whether the game was a sellout or not\n    period bigint, -- current period of the game\n    game_clock bigint, -- current game clock time\n    game_time_utc timestamp with time zone, -- game time in UTC\n    game_et timestamp with time zone, -- game time in ET\n    away_team_id bigint, -- ID of the away team\n    series_text text, -- text description of the series\n    game_code text, -- code for the game\n    game_status_text text, -- text description of the game status\n    duration text, -- duration of the game\n    series_game_number text, -- number of the game in the series\n    game_id text -- ID of the game\n);"
     },
     "nba_play_by_play": {
         "active": true,
         "columns": [
             {
                 "active": true,
-                "name": "score_home",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "person_id",
+                "name": "score_away",
                 "type": "bigint"
             },
             {
                 "active": true,
                 "name": "points_total",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "person_id",
                 "type": "bigint"
             },
             {
@@ -4452,11 +4453,6 @@
             },
             {
                 "active": true,
-                "name": "y_legacy",
-                "type": "bigint"
-            },
-            {
-                "active": true,
                 "name": "video_available",
                 "type": "bigint"
             },
@@ -4472,6 +4468,11 @@
             },
             {
                 "active": true,
+                "name": "y_legacy",
+                "type": "bigint"
+            },
+            {
+                "active": true,
                 "name": "shot_distance",
                 "type": "bigint"
             },
@@ -4483,6 +4484,11 @@
             {
                 "active": true,
                 "name": "is_field_goal",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "score_home",
                 "type": "bigint"
             },
             {
@@ -4508,11 +4514,6 @@
             {
                 "active": true,
                 "name": "shot_result",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "score_away",
                 "type": "text"
             },
             {
@@ -4553,72 +4554,72 @@
                 "",
                 0,
                 0,
-                "0",
+                0,
                 0,
                 "",
-                "Start of 1st Period (7:08 PM EST)",
+                "Start of 1st Period (12:13 PM EST)",
                 "period",
                 "start",
                 0,
                 1,
-                "0020100110"
+                "0020000001"
             ],
             [
                 1,
                 720000000000,
                 1,
-                1610612764,
-                "WAS",
-                2198,
-                "Brown",
-                "K. Brown",
+                1610612752,
+                "NYK",
+                948,
+                "Camby",
+                "M. Camby",
                 0,
                 0,
                 0,
                 "",
                 0,
                 0,
-                "0",
+                0,
                 0,
                 "h",
-                "Jump Ball Brown vs. Pope: Tip to Mason",
+                "Jump Ball Camby vs. Ratliff: Tip to Houston",
                 "Jump Ball",
                 "",
                 0,
                 2,
-                "0020100110"
+                "0020000001"
             ],
             [
                 2,
-                708000000000,
+                701000000000,
                 1,
-                1610612749,
-                "MIL",
-                299,
-                "Robinson",
-                "G. Robinson",
-                113,
-                4,
-                11,
-                "Made",
+                1610612752,
+                "NYK",
+                84,
+                "Sprewell",
+                "L. Sprewell",
+                -58,
+                28,
+                6,
+                "Missed",
                 1,
                 0,
-                "2",
-                2,
-                "v",
-                "Robinson 11' Jump Shot (2 PTS) (Allen 1 AST)",
-                "Made Shot",
+                0,
+                0,
+                "h",
+                "MISS Sprewell 6' Jump Shot",
+                "Missed Shot",
                 "Jump Shot",
                 0,
                 3,
-                "0020100110"
+                "0020000001"
             ]
         ],
         "name": "nba_play_by_play",
-        "schema": "CREATE TABLE nba_play_by_play (-- play by play data for NBA games\n    score_home bigint, -- home team score at the time of the play\n    person_id bigint, -- unique identifier for the person involved in the play\n    points_total bigint, -- total points scored at the time of the play\n    period bigint, -- period of the game (1-4)\n    team_id bigint, -- unique identifier for the team involved in the play\n    x_legacy bigint, -- legacy x-coordinate of the play\n    y_legacy bigint, -- legacy y-coordinate of the play\n    video_available bigint, -- indicates if video is available for the play\n    action_id bigint, -- unique identifier for the action involved in the play\n    action_number bigint, -- number of the action involved in the play\n    shot_distance bigint, -- distance of the shot involved in the play\n    clock bigint, -- time on the game clock at the time of the play\n    is_field_goal bigint, -- indicates if the play is a field goal\n    game_id text, -- unique identifier for the game\n    team_tricode text, -- three-letter code for the team involved in the play\n    player_name text, -- name of the player involved in the play\n    player_name_i text, -- name of the player involved in the play (alternate version)\n    shot_result text, -- result of the shot involved in the play\n    score_away text, -- away team score at the time of the play\n    location text, -- location of the play\n    description text, -- description of the play\n    action_type text, -- type of action involved in the play\n    sub_type text -- sub-type of action involved in the play\n);"
+        "schema": "CREATE TABLE nba_play_by_play (-- play by play data for NBA games\n    score_away bigint, -- score of the away team at the time of the play\n    points_total bigint, -- total points scored at the time of the play\n    person_id bigint, -- unique identifier for the person involved in the play\n    period bigint, -- period of the game (e.g. 1st quarter)\n    team_id bigint, -- unique identifier for the team involved in the play\n    x_legacy bigint, -- legacy x-coordinate of the play\n    video_available bigint, -- indicates if video is available for the play\n    action_id bigint, -- unique identifier for the action of the play\n    action_number bigint, -- number of the action of the play\n    y_legacy bigint, -- legacy y-coordinate of the play\n    shot_distance bigint, -- distance of the shot in feet\n    clock bigint, -- time on the game clock at the time of the play\n    is_field_goal bigint, -- indicates if the play is a field goal\n    score_home bigint, -- score of the home team at the time of the play\n    game_id text, -- unique identifier for the game\n    team_tricode text, -- three-letter code for the team involved in the play\n    player_name text, -- name of the player involved in the play\n    player_name_i text, -- international name of the player involved in the play\n    shot_result text, -- result of the shot (e.g. made or missed)\n    location text, -- location of the play on the court\n    description text, -- description of the play\n    action_type text, -- type of the action of the play\n    sub_type text -- sub-type of the action of the play\n);"
     },
     "nba_player": {
-        "active": false,
+        "active": true,
         "columns": [
             {
                 "active": true,
@@ -4652,11 +4653,6 @@
             },
             {
                 "active": true,
-                "name": "name",
-                "type": "text"
-            },
-            {
-                "active": true,
                 "name": "name_i",
                 "type": "text"
             },
@@ -4664,53 +4660,59 @@
                 "active": true,
                 "name": "position",
                 "type": "text"
+            },
+            {
+                "active": true,
+                "name": "name",
+                "type": "text"
             }
         ],
         "description": "",
         "head": [
             [
-                1610612763,
-                203937,
-                "ACTIVE",
-                "Anderson",
-                "Kyle",
-                "1",
-                "Kyle Anderson",
-                "K. Anderson",
-                "SF"
+                1610612755,
+                238,
+                null,
+                "Hill",
+                "Tyrone",
+                "40",
+                "T. Hill",
+                "F",
+                "Tyrone Hill"
             ],
             [
-                1610612763,
-                1628991,
-                "ACTIVE",
-                "Jackson Jr.",
-                "Jaren",
-                "13",
-                "Jaren Jackson Jr.",
-                "J. Jackson Jr.",
-                "PF"
+                1610612755,
+                248,
+                null,
+                "Lynch",
+                "George",
+                "9",
+                "G. Lynch",
+                "F",
+                "George Lynch"
             ],
             [
-                1610612763,
-                202685,
-                "ACTIVE",
-                "Valanciunas",
-                "Jonas",
-                "17",
-                "Jonas Valanciunas",
-                "J. Valanciunas",
-                "C"
+                1610612755,
+                689,
+                null,
+                "Ratliff",
+                "Theo",
+                "42",
+                "T. Ratliff",
+                "C",
+                "Theo Ratliff"
             ]
         ],
-        "name": "nba_player"
+        "name": "nba_player",
+        "schema": "CREATE TABLE nba_player (-- table for NBA players\n    team_id bigint, -- ID of the team the player belongs to\n    person_id bigint, -- ID of the player\n    status text, -- player's status\n    family_name text, -- player's last name\n    first_name text, -- player's first name\n    jersey_num text, -- player's jersey number\n    name_i text, -- player's name abbreviation\n    position text, -- player's position\n    name text -- player's full name\n);"
     },
-    "nba_player_stats_by_game": {
-        "active": false,
+    "nba_player_game_stats": {
+        "active": true,
         "columns": [
             {
                 "active": true,
-                "name": "two_pointers_percentage",
-                "type": "double precision"
+                "name": "plus_minus_points",
+                "type": "bigint"
             },
             {
                 "active": true,
@@ -4724,22 +4726,12 @@
             },
             {
                 "active": true,
-                "name": "assists",
+                "name": "fouls_personal",
                 "type": "bigint"
             },
             {
                 "active": true,
-                "name": "blocks",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "blocks_received",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "field_goals_attempted",
+                "name": "points",
                 "type": "bigint"
             },
             {
@@ -4749,107 +4741,17 @@
             },
             {
                 "active": true,
+                "name": "field_goals_attempted",
+                "type": "bigint"
+            },
+            {
+                "active": true,
                 "name": "field_goals_percentage",
                 "type": "double precision"
             },
             {
                 "active": true,
-                "name": "fouls_offensive",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "fouls_drawn",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "fouls_personal",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "fouls_technical",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "free_throws_attempted",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "free_throws_made",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "free_throws_percentage",
-                "type": "double precision"
-            },
-            {
-                "active": true,
-                "name": "minus",
-                "type": "double precision"
-            },
-            {
-                "active": true,
-                "name": "minutes",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "minutes_calculated",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "plus",
-                "type": "double precision"
-            },
-            {
-                "active": true,
-                "name": "plus_minus_points",
-                "type": "double precision"
-            },
-            {
-                "active": true,
-                "name": "points",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "points_fast_break",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "points_in_the_paint",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "points_second_chance",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "rebounds_defensive",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "rebounds_offensive",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "rebounds_total",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "steals",
+                "name": "three_pointers_made",
                 "type": "bigint"
             },
             {
@@ -4859,13 +4761,53 @@
             },
             {
                 "active": true,
-                "name": "three_pointers_made",
+                "name": "three_pointers_percentage",
+                "type": "double precision"
+            },
+            {
+                "active": true,
+                "name": "free_throws_made",
                 "type": "bigint"
             },
             {
                 "active": true,
-                "name": "three_pointers_percentage",
+                "name": "free_throws_attempted",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "free_throws_percentage",
                 "type": "double precision"
+            },
+            {
+                "active": true,
+                "name": "rebounds_offensive",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "rebounds_defensive",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "rebounds_total",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "assists",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "steals",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "blocks",
+                "type": "bigint"
             },
             {
                 "active": true,
@@ -4874,13 +4816,8 @@
             },
             {
                 "active": true,
-                "name": "two_pointers_attempted",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "two_pointers_made",
-                "type": "bigint"
+                "name": "minutes",
+                "type": "text"
             },
             {
                 "active": true,
@@ -4891,124 +4828,86 @@
         "description": "",
         "head": [
             [
-                "0052000211",
-                1610612763,
-                203937,
-                6,
-                2,
+                "0020000001",
+                1610612755,
+                238,
+                "22:07",
+                3,
+                5,
+                0.6,
                 0,
-                7,
-                2,
-                0.28571428571428603,
                 0,
+                0,
+                0,
+                0,
+                0,
+                2,
+                2,
                 4,
-                1,
                 0,
-                5,
-                5,
+                0,
+                2,
+                4,
+                3,
+                6,
+                17
+            ],
+            [
+                "0020000001",
+                1610612755,
+                248,
+                "28:53",
+                3,
+                4,
+                0.75,
+                0,
+                0,
+                0,
+                3,
+                3,
                 1,
-                78,
-                2341000000000,
-                2340000000000,
-                89,
+                3,
+                8,
                 11,
+                3,
+                2,
+                0,
+                0,
+                3,
                 9,
-                2,
-                4,
-                2,
-                8,
-                2,
-                10,
-                1,
-                1,
-                0,
-                0,
-                0,
-                6,
-                2,
-                0.333333333333333
+                19
             ],
             [
-                "0052000211",
-                1610612763,
-                1628991,
-                0,
-                2,
-                1,
-                6,
-                1,
-                0.166666666666667,
-                0,
+                "0020000001",
+                1610612755,
+                689,
+                "35:11",
                 5,
-                4,
-                0,
-                8,
                 7,
-                0.875,
-                34,
-                896000000000,
-                900000000000,
-                35,
-                1,
-                10,
+                0.714,
+                0,
                 0,
                 0,
                 2,
-                0,
-                2,
-                2,
-                0,
                 4,
-                1,
-                0.25,
-                1,
-                2,
-                0,
-                0
-            ],
-            [
-                "0052000211",
-                1610612763,
-                202685,
-                3,
-                0,
-                0,
-                6,
-                3,
                 0.5,
+                0,
+                4,
+                4,
+                1,
                 2,
                 3,
-                6,
-                0,
-                4,
+                3,
                 2,
-                0.5,
-                53,
-                1533000000000,
-                1560000000000,
-                60,
-                7,
-                9,
-                0,
-                4,
-                4,
-                6,
-                6,
                 12,
-                0,
-                1,
-                1,
-                1,
-                3,
-                5,
-                2,
-                0.4
+                31
             ]
         ],
-        "name": "nba_player_stats_by_game"
+        "name": "nba_player_game_stats",
+        "schema": "CREATE TABLE nba_player_game_stats (-- table for storing game stats of NBA players\n    plus_minus_points bigint, -- plus/minus points of the player in the game\n    team_id bigint, -- id of the team the player belongs to\n    person_id bigint, -- id of the player\n    fouls_personal bigint, -- number of personal fouls committed by the player\n    points bigint, -- total points scored by the player in the game\n    field_goals_made bigint, -- number of field goals made by the player\n    field_goals_attempted bigint, -- number of field goals attempted by the player\n    field_goals_percentage double precision, -- percentage of field goals made by the player\n    three_pointers_made bigint, -- number of three pointers made by the player\n    three_pointers_attempted bigint, -- number of three pointers attempted by the player\n    three_pointers_percentage double precision, -- percentage of three pointers made by the player\n    free_throws_made bigint, -- number of free throws made by the player\n    free_throws_attempted bigint, -- number of free throws attempted by the player\n    free_throws_percentage double precision, -- percentage of free throws made by the player\n    rebounds_offensive bigint, -- number of offensive rebounds by the player\n    rebounds_defensive bigint, -- number of defensive rebounds by the player\n    rebounds_total bigint, -- total number of rebounds by the player\n    assists bigint, -- number of assists made by the player\n    steals bigint, -- number of steals made by the player\n    blocks bigint, -- number of blocks made by the player\n    turnovers bigint, -- number of turnovers committed by the player\n    minutes text, -- total minutes played by the player in the game\n    game_id text -- id of the game\n);"
     },
     "nba_team": {
-        "active": false,
+        "active": true,
         "columns": [
             {
                 "active": true,
@@ -5034,27 +4933,90 @@
         "description": "",
         "head": [
             [
-                "Golden State",
-                1610612744,
-                "Warriors",
-                "GSW"
+                "New York",
+                1610612752,
+                "Knicks",
+                "NYK"
             ],
             [
-                "Memphis",
-                1610612763,
-                "Grizzlies",
-                "MEM"
+                "Philadelphia",
+                1610612755,
+                "76ers",
+                "PHI"
+            ],
+            [
+                "New Jersey",
+                1610612751,
+                "Nets",
+                "NJN"
             ]
         ],
-        "name": "nba_team"
+        "name": "nba_team",
+        "schema": "CREATE TABLE nba_team (-- table for NBA teams\n    team_id bigint, -- unique identifier for each team\n    team_city text, -- city where the team is located\n    team_name text, -- name of the team\n    team_tricode text -- three-letter code for the team\n);"
     },
-    "nba_team_stats_by_game": {
-        "active": false,
+    "nba_team_game_period_scores": {
+        "active": true,
         "columns": [
             {
                 "active": true,
-                "name": "two_pointers_percentage",
-                "type": "double precision"
+                "name": "team_id",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "period",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "score",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "game_id",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "period_type",
+                "type": "text"
+            }
+        ],
+        "description": "",
+        "head": [
+            [
+                "0020000001",
+                1610612755,
+                1,
+                "REGULAR",
+                26
+            ],
+            [
+                "0020000001",
+                1610612755,
+                2,
+                "REGULAR",
+                25
+            ],
+            [
+                "0020000001",
+                1610612755,
+                3,
+                "REGULAR",
+                29
+            ]
+        ],
+        "name": "nba_team_game_period_scores",
+        "schema": "CREATE TABLE nba_team_game_period_scores (-- table for storing scores of NBA teams in different periods of a game\n    team_id bigint, -- unique identifier for the team\n    period bigint, -- period number of the game\n    score bigint, -- score of the team in the period\n    game_id text, -- unique identifier for the game\n    period_type text -- type of the period (e.g. REGULAR, OVERTIME)\n);"
+    },
+    "nba_team_game_stats": {
+        "active": true,
+        "columns": [
+            {
+                "active": true,
+                "name": "player_pts_leader_pts",
+                "type": "bigint"
             },
             {
                 "active": true,
@@ -5068,207 +5030,7 @@
             },
             {
                 "active": true,
-                "name": "assists",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "assists_turnover_ratio",
-                "type": "double precision"
-            },
-            {
-                "active": true,
-                "name": "bench_points",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "biggest_lead",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "turnovers_total",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "two_pointers_attempted",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "two_pointers_made",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "biggest_scoring_run",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "blocks",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "blocks_received",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "fast_break_points_attempted",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "fast_break_points_made",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "fast_break_points_percentage",
-                "type": "double precision"
-            },
-            {
-                "active": true,
-                "name": "field_goals_attempted",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "field_goals_effective_adjusted",
-                "type": "double precision"
-            },
-            {
-                "active": true,
-                "name": "field_goals_made",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "field_goals_percentage",
-                "type": "double precision"
-            },
-            {
-                "active": true,
-                "name": "fouls_offensive",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "fouls_drawn",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "fouls_personal",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "fouls_team",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "fouls_technical",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "fouls_team_technical",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "free_throws_attempted",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "free_throws_made",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "free_throws_percentage",
-                "type": "double precision"
-            },
-            {
-                "active": true,
-                "name": "lead_changes",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "minutes",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "minutes_calculated",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "points",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "points_against",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "points_fast_break",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "points_from_turnovers",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "points_in_the_paint",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "points_in_the_paint_attempted",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "points_in_the_paint_made",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "points_in_the_paint_percentage",
-                "type": "double precision"
-            },
-            {
-                "active": true,
-                "name": "points_second_chance",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "rebounds_defensive",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "rebounds_offensive",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "rebounds_personal",
+                "name": "timeouts_remaining",
                 "type": "bigint"
             },
             {
@@ -5278,37 +5040,67 @@
             },
             {
                 "active": true,
-                "name": "rebounds_team_defensive",
+                "name": "points_from_turnovers",
                 "type": "bigint"
             },
             {
                 "active": true,
-                "name": "rebounds_team_offensive",
+                "name": "bench_points",
                 "type": "bigint"
             },
             {
                 "active": true,
-                "name": "rebounds_total",
+                "name": "player_pts_leader_id",
                 "type": "bigint"
             },
             {
                 "active": true,
-                "name": "second_chance_points_attempted",
+                "name": "player_reb_leader_id",
                 "type": "bigint"
             },
             {
                 "active": true,
-                "name": "second_chance_points_made",
+                "name": "player_reb_leader_reb",
                 "type": "bigint"
             },
             {
                 "active": true,
-                "name": "second_chance_points_percentage",
+                "name": "player_ast_leader_id",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "player_ast_leader_ast",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "player_blk_leader_id",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "player_blk_leader_blk",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "field_goals_made",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "field_goals_attempted",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "field_goals_percentage",
                 "type": "double precision"
             },
             {
                 "active": true,
-                "name": "steals",
+                "name": "three_pointers_made",
                 "type": "bigint"
             },
             {
@@ -5318,17 +5110,97 @@
             },
             {
                 "active": true,
-                "name": "three_pointers_made",
-                "type": "bigint"
-            },
-            {
-                "active": true,
                 "name": "three_pointers_percentage",
                 "type": "double precision"
             },
             {
                 "active": true,
-                "name": "time_leading",
+                "name": "free_throws_made",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "free_throws_attempted",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "free_throws_percentage",
+                "type": "double precision"
+            },
+            {
+                "active": true,
+                "name": "rebounds_offensive",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "rebounds_defensive",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "rebounds_total",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "assists",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "steals",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "blocks",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "turnovers",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "fouls_personal",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "points",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "plus_minus_points",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "points_in_the_paint",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "points_second_chance",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "points_fast_break",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "biggest_lead",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "lead_changes",
                 "type": "bigint"
             },
             {
@@ -5338,17 +5210,7 @@
             },
             {
                 "active": true,
-                "name": "true_shooting_attempts",
-                "type": "double precision"
-            },
-            {
-                "active": true,
-                "name": "true_shooting_percentage",
-                "type": "double precision"
-            },
-            {
-                "active": true,
-                "name": "turnovers",
+                "name": "biggest_scoring_run",
                 "type": "bigint"
             },
             {
@@ -5358,7 +5220,47 @@
             },
             {
                 "active": true,
-                "name": "biggest_lead_score",
+                "name": "turnovers_total",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "minutes",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "player_reb_leader_family_name",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "player_blk_leader_first_name",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "player_blk_leader_family_name",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "player_ast_leader_first_name",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "player_pts_leader_first_name",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "player_pts_leader_family_name",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "player_ast_leader_family_name",
                 "type": "text"
             },
             {
@@ -5368,146 +5270,177 @@
             },
             {
                 "active": true,
-                "name": "biggest_scoring_run_score",
+                "name": "player_reb_leader_first_name",
                 "type": "text"
             }
         ],
         "description": "",
         "head": [
             [
-                "0052000211",
-                1610612763,
-                117,
-                22,
-                1.46666666666667,
-                40,
-                17,
-                "59-42",
-                12,
-                "18-6",
-                6,
-                7,
-                7,
-                4,
-                0.5714285714285711,
-                98,
-                0.48469387755102,
-                40,
-                0.408163265306122,
-                3,
-                23,
-                23,
-                20,
+                "0020000001",
+                1610612755,
+                101,
                 0,
-                0,
-                26,
-                22,
-                0.846153846153846,
-                9,
-                15900000000000,
-                15900000000000,
-                117,
-                112,
-                14,
-                22,
-                48,
-                51,
-                24,
-                0.470588235294118,
-                21,
-                31,
-                16,
-                47,
-                10,
+                "240:00",
+                38,
+                66,
+                0.576,
                 3,
-                7,
-                57,
-                14,
                 8,
-                0.5714285714285711,
-                14,
-                35,
-                15,
-                0.428571428571429,
-                2916160000000,
+                0.375,
+                22,
+                30,
+                0.733,
+                8,
+                29,
+                37,
+                27,
+                10,
                 5,
-                109.44,
-                0.53453947368421,
                 13,
-                2,
-                15,
-                63,
+                24,
+                101,
+                29,
+                36,
+                9,
+                10,
+                32,
+                6,
+                5,
+                9,
+                1,
+                14,
+                7,
+                12,
+                101,
+                "Allen",
+                "Iverson",
+                947,
                 25,
-                0.39682539682539697
+                "George",
+                "Lynch",
+                248,
+                11,
+                "Allen",
+                "Iverson",
+                947,
+                9,
+                "Tyrone",
+                "Hill",
+                238,
+                2
             ],
             [
-                "0052000211",
-                1610612744,
-                112,
-                30,
-                1.42857142857143,
-                27,
-                2,
-                "0-2",
-                12,
-                "18-6",
-                7,
-                6,
-                10,
-                7,
-                0.7,
-                94,
-                0.51063829787234,
-                42,
-                0.44680851063829796,
-                2,
-                23,
-                23,
-                21,
+                "0020000001",
+                1610612752,
+                72,
                 0,
-                0,
-                20,
-                16,
-                0.8,
-                9,
-                15900000000000,
-                15900000000000,
-                112,
-                117,
-                16,
-                12,
-                48,
-                45,
+                "240:00",
+                25,
+                70,
+                0.357,
+                3,
+                11,
+                0.273,
+                19,
                 24,
-                0.533333333333333,
-                13,
+                0.792,
+                14,
+                23,
                 37,
-                11,
-                48,
-                13,
-                2,
-                11,
-                61,
-                15,
-                5,
-                0.333333333333333,
-                7,
-                34,
-                12,
-                0.352941176470588,
-                105910000000,
-                5,
-                102.8,
-                0.544747081712062,
-                21,
-                0,
-                21,
-                60,
+                14,
+                6,
+                4,
+                22,
                 30,
-                0.5
+                72,
+                -29,
+                22,
+                15,
+                4,
+                2,
+                6,
+                5,
+                9,
+                0,
+                22,
+                5,
+                26,
+                72,
+                "Allan",
+                "Houston",
+                275,
+                21,
+                "Larry",
+                "Johnson",
+                913,
+                7,
+                "Larry",
+                "Johnson",
+                913,
+                3,
+                "Marcus",
+                "Camby",
+                948,
+                2
+            ],
+            [
+                "0020000002",
+                1610612739,
+                86,
+                0,
+                "240:00",
+                32,
+                78,
+                0.41,
+                2,
+                7,
+                0.286,
+                20,
+                32,
+                0.625,
+                11,
+                41,
+                52,
+                16,
+                5,
+                8,
+                19,
+                27,
+                86,
+                4,
+                36,
+                12,
+                14,
+                10,
+                8,
+                7,
+                8,
+                0,
+                19,
+                11,
+                21,
+                86,
+                "Lamond",
+                "Murray",
+                441,
+                17,
+                "Clar.",
+                "Weatherspoon",
+                221,
+                14,
+                "Andre",
+                "Miller",
+                1889,
+                6,
+                "Matt",
+                "Harpring",
+                1723,
+                3
             ]
         ],
-        "name": "nba_team_stats_by_game"
+        "name": "nba_team_game_stats",
+        "schema": "CREATE TABLE nba_team_game_stats (-- NBA team game statistics\n    player_pts_leader_pts bigint, -- points scored by the player who led the team in points\n    team_id bigint, -- unique identifier for the team\n    score bigint, -- final score of the game\n    timeouts_remaining bigint, -- number of timeouts remaining for the team\n    rebounds_team bigint, -- total number of rebounds by the team\n    points_from_turnovers bigint, -- points scored by the team from turnovers\n    bench_points bigint, -- points scored by the team's bench players\n    player_pts_leader_id bigint, -- unique identifier for the player who led the team in points\n    player_reb_leader_id bigint, -- unique identifier for the player who led the team in rebounds\n    player_reb_leader_reb bigint, -- number of rebounds by the player who led the team in rebounds\n    player_ast_leader_id bigint, -- unique identifier for the player who led the team in assists\n    player_ast_leader_ast bigint, -- number of assists by the player who led the team in assists\n    player_blk_leader_id bigint, -- unique identifier for the player who led the team in blocks\n    player_blk_leader_blk bigint, -- number of blocks by the player who led the team in blocks\n    field_goals_made bigint, -- number of field goals made by the team\n    field_goals_attempted bigint, -- number of field goals attempted by the team\n    field_goals_percentage double precision, -- percentage of field goals made by the team\n    three_pointers_made bigint, -- number of three pointers made by the team\n    three_pointers_attempted bigint, -- number of three pointers attempted by the team\n    three_pointers_percentage double precision, -- percentage of three pointers made by the team\n    free_throws_made bigint, -- number of free throws made by the team\n    free_throws_attempted bigint, -- number of free throws attempted by the team\n    free_throws_percentage double precision, -- percentage of free throws made by the team\n    rebounds_offensive bigint, -- number of offensive rebounds by the team\n    rebounds_defensive bigint, -- number of defensive rebounds by the team\n    rebounds_total bigint, -- total number of rebounds by the team\n    assists bigint, -- total number of assists by the team\n    steals bigint, -- total number of steals by the team\n    blocks bigint, -- total number of blocks by the team\n    turnovers bigint, -- total number of turnovers by the team\n    fouls_personal bigint, -- total number of personal fouls by the team\n    points bigint, -- total number of points scored by the team\n    plus_minus_points bigint, -- plus/minus points for the team\n    points_in_the_paint bigint, -- total number of points scored by the team in the paint\n    points_second_chance bigint, -- total number of points scored by the team on second chance opportunities\n    points_fast_break bigint, -- total number of points scored by the team on fast breaks\n    biggest_lead bigint, -- biggest lead by the team during the game\n    lead_changes bigint, -- total number of lead changes during the game\n    times_tied bigint, -- total number of times the game was tied\n    biggest_scoring_run bigint, -- biggest scoring run by the team during the game\n    turnovers_team bigint, -- total number of turnovers by the team\n    turnovers_total bigint, -- total number of turnovers in the game\n    minutes text, -- total minutes played by the team\n    player_reb_leader_family_name text, -- family name of the player who led the team in rebounds\n    player_blk_leader_first_name text, -- first name of the player who led the team in blocks\n    player_blk_leader_family_name text, -- family name of the player who led the team in blocks\n    player_ast_leader_first_name text, -- first name of the player who led the team in assists\n    player_pts_leader_first_name text, -- first name of the player who led the team in points\n    player_pts_leader_family_name text, -- family name of the player who led the team in points\n    player_ast_leader_family_name text, -- family name of the player who led the team in assists\n    game_id text, -- unique identifier for the game\n    player_reb_leader_first_name text -- first name of the player who led the team in rebounds\n);"
     },
     "population_by_age": {
         "active": false,
