@@ -1251,7 +1251,7 @@
         "name": "national_housing_market_data"
     },
     "nba2_common_player_info": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -1530,7 +1530,7 @@
         "name": "nba2_common_player_info"
     },
     "nba2_draft_combine_stats": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -1921,7 +1921,7 @@
         "name": "nba2_draft_combine_stats"
     },
     "nba2_draft_history": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -2048,7 +2048,7 @@
         "name": "nba2_draft_history"
     },
     "nba2_game": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -2495,7 +2495,7 @@
         "name": "nba2_game"
     },
     "nba2_game_info": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -2542,7 +2542,7 @@
         "name": "nba2_game_info"
     },
     "nba2_game_summary": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -2669,7 +2669,7 @@
         "name": "nba2_game_summary"
     },
     "nba2_inactive_players": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -2756,7 +2756,7 @@
         "name": "nba2_inactive_players"
     },
     "nba2_line_score": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -3115,7 +3115,7 @@
         "name": "nba2_line_score"
     },
     "nba2_officials": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -3170,7 +3170,7 @@
         "name": "nba2_officials"
     },
     "nba2_other_stats": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -3385,7 +3385,7 @@
         "name": "nba2_other_stats"
     },
     "nba2_play_by_play": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -3672,7 +3672,7 @@
         "name": "nba2_play_by_play"
     },
     "nba2_player": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -3727,7 +3727,7 @@
         "name": "nba2_player"
     },
     "nba2_team": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -3798,7 +3798,7 @@
         "name": "nba2_team"
     },
     "nba2_team_details": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -3925,7 +3925,7 @@
         "name": "nba2_team_details"
     },
     "nba2_team_history": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -3980,7 +3980,7 @@
         "name": "nba2_team_history"
     },
     "nba2_team_info_common": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -4203,7 +4203,7 @@
         "name": "nba2_team_info_common"
     },
     "nba_arena": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -4234,6 +4234,16 @@
                 "active": true,
                 "name": "arena_timezone",
                 "type": "text"
+            },
+            {
+                "active": true,
+                "name": "arena_street_address",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "arena_postal_code",
+                "type": "text"
             }
         ],
         "description": "",
@@ -4244,13 +4254,15 @@
                 "US",
                 "Chase Center",
                 "CA",
-                "America/Los_Angeles"
+                "America/Los_Angeles",
+                null,
+                null
             ]
         ],
         "name": "nba_arena"
     },
     "nba_game": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -4351,7 +4363,7 @@
         "name": "nba_game"
     },
     "nba_game_periods": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -4602,10 +4614,11 @@
                 "0020100110"
             ]
         ],
-        "name": "nba_play_by_play"
+        "name": "nba_play_by_play",
+        "schema": "CREATE TABLE nba_play_by_play (-- play by play data for NBA games\n    score_home bigint, -- home team score at the time of the play\n    person_id bigint, -- unique identifier for the person involved in the play\n    points_total bigint, -- total points scored at the time of the play\n    period bigint, -- period of the game (1-4)\n    team_id bigint, -- unique identifier for the team involved in the play\n    x_legacy bigint, -- legacy x-coordinate of the play\n    y_legacy bigint, -- legacy y-coordinate of the play\n    video_available bigint, -- indicates if video is available for the play\n    action_id bigint, -- unique identifier for the action involved in the play\n    action_number bigint, -- number of the action involved in the play\n    shot_distance bigint, -- distance of the shot involved in the play\n    clock bigint, -- time on the game clock at the time of the play\n    is_field_goal bigint, -- indicates if the play is a field goal\n    game_id text, -- unique identifier for the game\n    team_tricode text, -- three-letter code for the team involved in the play\n    player_name text, -- name of the player involved in the play\n    player_name_i text, -- name of the player involved in the play (alternate version)\n    shot_result text, -- result of the shot involved in the play\n    score_away text, -- away team score at the time of the play\n    location text, -- location of the play\n    description text, -- description of the play\n    action_type text, -- type of action involved in the play\n    sub_type text -- sub-type of action involved in the play\n);"
     },
     "nba_player": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -4692,7 +4705,7 @@
         "name": "nba_player"
     },
     "nba_player_stats_by_game": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -4995,7 +5008,7 @@
         "name": "nba_player_stats_by_game"
     },
     "nba_team": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -5036,7 +5049,7 @@
         "name": "nba_team"
     },
     "nba_team_stats_by_game": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
