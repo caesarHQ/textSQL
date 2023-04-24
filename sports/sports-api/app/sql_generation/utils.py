@@ -130,7 +130,8 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
                 payload = schema_message + message_history
                 assistant_message = get_assistant_message(
                     payload, model=model)
-            except:
+            except Exception as assistant_error:
+                print('error getting assistant message', assistant_error)
                 continue
 
             print('START OF RES:\n ',
@@ -158,7 +159,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
                 print('error executing sql: ', e)
                 message_history.append({
                     "role": "assistant",
-                    "content": assistant_message["message"]["content"]
+                    "content": sql_query
                 })
                 message_history.append({
                     "role": "user",
