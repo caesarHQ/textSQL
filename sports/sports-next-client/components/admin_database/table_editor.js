@@ -4,7 +4,7 @@ import { AdminContext } from "@/contexts/admin_context";
 import { handleSaveTables } from "@/apis/admin_apis";
 import { ColumnSelector } from "./column_selector";
 import { generateSchema } from "@/apis/admin_apis";
-import { Spinner } from "../utils/spinner";
+import { Spinner } from "../widgets/spinner";
 
 export const TableEditor = () => {
   const [tableFilterTerm, setTableFilterTerm] = useState("");
