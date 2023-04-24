@@ -1,103 +1,8 @@
-import { useContext, useState, useMemo } from "react";
-import { AdminContext } from "@/contexts/admin_context";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { ClosableRow } from "../closable_row";
+import { generateSchema } from "@/apis/admin_apis";
 
-import { handleSaveTables } from "@/apis/admin_apis";
-
-export const TableColumnSelector = () => {
-  const [tableFilterTerm, setTableFilterTerm] = useState("");
-
-  const { tables, setTables } = useContext(AdminContext);
-
-  const filteredTables = useMemo(() => {
-    let allowedTables = [];
-    if (tableFilterTerm === "") {
-      allowedTables = tables;
-    } else {
-      allowedTables = tables?.filter((table) => {
-        return table.name.toLowerCase().includes(tableFilterTerm.toLowerCase());
-      });
-    }
-    //return the tables in alphabetical order
-    allowedTables = allowedTables.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1;
-      }
-      if (a.name > b.name) {
-        return 1;
-      }
-      return 0;
-    });
-    return allowedTables;
-  }, [tables, tableFilterTerm]);
-
-  const tableNameLookup = useMemo(() => {
-    const lookup = {};
-    tables.forEach((table, idx) => {
-      lookup[table.name] = idx;
-    });
-    return lookup;
-  }, [tables]);
-
-  const updateTable = (tableName, newTable) => {
-    const newTables = [...tables];
-    newTables[tableNameLookup[tableName]] = newTable;
-    setTables(newTables);
-  };
-
-  const handleSave = async () => {
-    await handleSaveTables(tables);
-  };
-
-  return (
-    <div className="flex flex-col space-y-4">
-      <div className="flex flex-row">
-        <div className="flex flex-row">
-          <button
-            onClick={handleSave}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900"
-          >
-            Save
-          </button>
-        </div>
-        <div className="flex flex-row ml-4">
-          <label
-            htmlFor="tableFilter"
-            className="mr-2 font-bold text-right self-center
-            "
-          >
-            Filter:
-          </label>
-          <input
-            type="text"
-            id="tableFilter"
-            className="border border-gray-400 p-2 rounded w-64"
-            value={tableFilterTerm}
-            onChange={(event) => setTableFilterTerm(event.target.value)}
-          />
-        </div>
-      </div>
-      <div //each table is a row, should be 100% width
-        className="flex flex-col space-y-4"
-      >
-        {filteredTables
-          ?.filter((t) => t.active)
-          ?.map((table) => {
-            return (
-              <div className="pl-0" key={table.name}>
-                <ColumnSelector
-                  table={table}
-                  setTable={(newTable) => updateTable(table.name, newTable)}
-                />
-              </div>
-            );
-          })}
-      </div>
-    </div>
-  );
-};
-
-const ColumnSelector = ({ table, setTable }) => {
+export const ColumnSelector = ({ table, setTable }) => {
   const [columnFilterTerm, setColumnFilterTerm] = useState("");
 
   const tableColumns = table?.columns || [];
@@ -135,61 +40,108 @@ const ColumnSelector = ({ table, setTable }) => {
     setTable({ ...table, columns: newTable });
   };
 
-  return (
-    <ClosableRow title={table.name} startOpen={false}>
-      <div className="flex flex-col space-y-4">
-        <div className="flex flex-row">
-          <div className="flex flex-row ml-4">
-            <label
-              htmlFor="tableFilter"
-              className="mr-2 font-bold text-right self-center
-          "
-            >
-              Filter:
-            </label>
-            <input
-              type="text"
-              id="tableFilter"
-              className="border border-gray-400 p-2 rounded w-64"
-              value={columnFilterTerm}
-              onChange={(event) => setColumnFilterTerm(event.target.value)}
-            />
-          </div>
-          <div className="flex flex-row ml-4">
-            <button
-              onClick={() => massChangeSelection("select")}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900"
-            >
-              Select All
-            </button>
-            <button
-              onClick={() => massChangeSelection("deselect")}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900 ml-2"
-            >
-              Deselect All
-            </button>
-          </div>
-        </div>
+  const handleGenerateSchema = async () => {
+    const data = await generateSchema({ table });
+    if (data.status == "success") {
+      setTable({ ...table, schema: data.message });
+    }
+  };
 
-        <div
-          //this can be multiple columns/rows, max width is 100%, even columns of 230px
-          className="flex flex-row flex-wrap"
-        >
-          {filteredColumns?.map((column) => {
-            return (
-              <div className="pl-0" key={column.name}>
-                <SingleColumnSelector
-                  column={column}
-                  setColumns={(newColumn) =>
-                    updateColumn(column.name, newColumn)
-                  }
-                />
-              </div>
-            );
-          })}
+  const schemaRef = useRef(null);
+  const schemaText = table?.schema || "";
+  useEffect(() => {
+    if (schemaRef.current) {
+      schemaRef.current.style.height = "auto";
+      schemaRef.current.style.height = schemaRef.current.scrollHeight + "px";
+      schemaRef.current.style.width = "100%";
+    }
+  }, [schemaText]);
+
+  return (
+    <div className="bg-gray-200 p-4 rounded">
+      <ClosableRow title={table.name} startOpen={false}>
+        <div className="flex flex-col space-y-4">
+          <div className="flex flex-row">
+            <div className="flex flex-row ml-4">
+              <label
+                htmlFor="tableFilter"
+                className="mr-2 font-bold text-right self-center
+            "
+              >
+                Filter:
+              </label>
+              <input
+                type="text"
+                id="tableFilter"
+                className="border border-gray-400 p-2 rounded w-64"
+                value={columnFilterTerm}
+                onChange={(event) => setColumnFilterTerm(event.target.value)}
+              />
+            </div>
+            <div className="flex flex-row ml-4">
+              <button
+                onClick={() => massChangeSelection("select")}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900"
+              >
+                Select All
+              </button>
+              <button
+                onClick={() => massChangeSelection("deselect")}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900 ml-2"
+              >
+                Deselect All
+              </button>
+            </div>
+          </div>
+
+          <div
+            //this can be multiple columns/rows, max width is 100%, even columns of 230px
+            className="flex flex-row flex-wrap"
+          >
+            {filteredColumns?.map((column) => {
+              return (
+                <div className="pl-0" key={column.name}>
+                  <SingleColumnSelector
+                    column={column}
+                    setColumns={(newColumn) =>
+                      updateColumn(column.name, newColumn)
+                    }
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="flex flex-row">
+            <label
+              htmlFor="schema"
+              className="mr-2 font-bold text-right self-center"
+            >
+              Table Creation Query
+            </label>
+            <textarea
+              id="schema"
+              className="border border-gray-400 p-2 rounded w-64"
+              value={table.schema}
+              ref={schemaRef}
+              onChange={(event) =>
+                setTable({ ...table, schema: event.target.value })
+              }
+              style={{ width: "100%" }}
+            />
+
+            {!table.schema && (
+              <button
+                onClick={() => handleGenerateSchema()}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900 ml-2"
+              >
+                Generate Schema
+              </button>
+            )}
+          </div>
         </div>
-      </div>
-    </ClosableRow>
+      </ClosableRow>
+    </div>
   );
 };
 

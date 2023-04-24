@@ -70,3 +70,15 @@ export const handleSaveTables = async (tables) => {
   const data = await response.json();
   return data;
 };
+
+export const generateSchema = async ({ table }) => {
+  const response = await fetch(`${API_BASE}/admin/generate_schema`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(table),
+  });
+  const data = await response.json();
+  return data;
+};
