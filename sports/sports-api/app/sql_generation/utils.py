@@ -7,7 +7,7 @@ from sqlalchemy import text
 
 from app.sql_generation.prompt_helpers import schema_prompt, query_prompt
 
-from ..utils import (extract_sql_query_from_json, get_assistant_message,
+from ..utils import (extract_sql_query_from_yaml, get_assistant_message,
                      get_few_shot_messages)
 
 MSG_WITH_ERROR_TRY_AGAIN = ("""
@@ -16,13 +16,12 @@ The SQL query you just generated resulted in the following error message:
 {error_message}
 ---------------------
 
-Provide an explanation of what went wrong, how to fix it, and the SQL in a JSON object
-{{
-    "Explanation": str (required),
-    "SQL": str (required, in ''' ''' so we can parse it in Python with everything escaped etc),
-}}
-"""
-                            )
+- Provide an explanation of what went wrong, how to fix it, and the SQL in a YAML object. Provide only the YAML. Each key:value should be on the same line.
+- The values need to be included inside of quotes (' or ").
+- DO NOT INCLUDE NEWLINES BETWEEN THE KEYS AND VALUES
+- The YAML object should look like this:
+Explanation: str (required),
+SQL: str (required)""")
 
 
 def make_default_messages(schemas_str: str) -> List[Dict[str, str]]:
@@ -137,7 +136,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             print('START OF RES:\n ',
                   assistant_message['message']['content'], '\nEND OF RES')
 
-            sql_data = extract_sql_query_from_json(
+            sql_data = extract_sql_query_from_yaml(
                 assistant_message["message"]["content"])
             sql_query = sql_data["SQL"]
 

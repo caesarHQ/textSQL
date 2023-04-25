@@ -4,7 +4,7 @@ def command_prompt_cte(command):
 Ensure to include which table each column is from (table.column)
 Use CTE format for computing subqueries.
 
-Provide a properly formatted JSON object with the following information. Ensure to escape any special characters so it can be parsed as JSON.
+Provide a properly formatted YAML object with the following information. Ensure to escape any special characters so it can be parsed as YAML.
 
 
 Note: The NBA's Game ID, 0021400001, is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year (e.g. 14 for 2014-15), and GGGGG refers to the game number (1-1230 for a full 30-team regular season).
@@ -16,19 +16,18 @@ WITH lebron_james AS (\\n    SELECT np.person_id\\n    FROM nba_player np\\n    
 ```
 
 team_id can change over time, so might need to worry about that.
-
+Do not include any variables/wildcards.
 DO NOT USE THE MINUTES COLUMNS
 
-{{
+---
+Funky Types: required (types which are funky so can't use avg etc on them -
+  avoid using these if possible)
+Input Types: required (a summary of the enums or other conversion that are related
+  to the query)
+Likely subquery titles: required (tables to make in the CTE, where certain data (e.g. game time) is only in another table)
+Plan: required (walk thru each sub-part of the problem to build the final answer)
+SQL: required (the final query)
+---
 
-    "Required Answer": str, required (the type of information the query is asking for),
-    "Input Types": str, required (a summary of the enums or other conversion that are related to the query),
-    "Plan": str, required (walk thru each sub-part of the problem to build the final answer),
-    "Likely subquery titles": str[], required (tables to make in the CTE, where certain data (e.g. game time) is only in another table)
-    "Funky Types": str[], required (types which are funky so can't use avg etc on them - avoid using these if possible),
-    "SQL": str, required (formatted '''line1\\nnext line\\netc''')
-}}
-
-Provide the JSON and only the JSON. It should be formatted for parsing in Python. Ensure everything inside the SQL statement is properly escaped for parsing and executing (ensure \n is \\n, \m is \\m etc).
-Do not include any variables/wildcards.
+Provide the YAML and only the YAML. It should be formatted for parsing in Python YAML files. The keys and values should be on the same lines - DO NOT ADD NEWLINES AFTER KEYS.
 """.format(command)
