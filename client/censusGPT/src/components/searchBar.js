@@ -29,8 +29,8 @@ const SearchBar = (props) => {
 
     return (
         <div className="flex flex-col w-full max-w-full md:max-w-3xl">
-            <div className="flex rounded-md shadow-sm bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
-                <div className="relative flex flex-grow items-stretch focus-within:z-10">
+            <div className="flex rounded-md">
+                <div className="relative flex flex-grow items-stretch focus-within:z-10 shadow-sm bg-white dark:bg-dark-800 text-gray-900 dark:text-white">
                     <input
                         type="text"
                         name="search"
@@ -45,14 +45,14 @@ const SearchBar = (props) => {
                         value={value}
                         onChange={onSearchChange}
                     />
+                    <button
+                        type="button"
+                        className="focus:text-blue-600 hover:text-blue-600 dark:text-white/50 dark:hover:text-blue-600 relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md p-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none hover:bg-gray-50 hover:dark:bg-dark-900"
+                        onClick={onClear}
+                    >
+                        <FaTimes />
+                    </button>
                 </div>
-                <button
-                    type="button"
-                    className="focus:text-blue-600 hover:text-blue-600 dark:text-white/50 dark:hover:text-blue-600 relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md p-2 text-sm font-semibold ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:focus:ring-blue-600 focus:outline-none hover:bg-gray-50 hover:dark:bg-dark-900"
-                    onClick={onClear}
-                >
-                    <FaTimes />
-                </button>
                 <SearchButton />
             </div>
             <div className="text-left">
