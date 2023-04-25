@@ -3,6 +3,7 @@ import { getGames } from "@/apis/sports_apis";
 import { NbaContext } from "./nba_context";
 import { NBAGameRowDisplay } from "./cards/nba_game_row_display";
 import DatePicker from "react-datepicker";
+import Link from "next/link";
 import "react-datepicker/dist/react-datepicker.css";
 
 export const NbaDisplay = () => {
@@ -64,7 +65,13 @@ export const NbaDisplay = () => {
       </div>
       <div className="flex flex-col items-center justify-center">
         {todaysGames?.map((game) => {
-          return <NBAGameRowDisplay game={game} key={game.game_id} />;
+          return (
+            <Link href={`/nba/game?id=${game.game_id}`} key={game.game_id}>
+              <div className="flex flex-row items-center justify-center cursor-pointer h-32 w-full">
+                <NBAGameRowDisplay game={game} />
+              </div>
+            </Link>
+          );
         })}
       </div>
     </div>

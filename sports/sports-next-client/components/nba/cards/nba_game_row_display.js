@@ -76,57 +76,53 @@ const BoxScoreDisplay = ({ game }) => {
       currentPeriod += 1;
     }
 
-    console.log("gameScores", gameScores);
-
     return gameScores;
   }, [boxScores, game.game_id]);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full m-1">
-      <div className="flex flex-row items-center justify-center w-full">
-        <table className="table-auto border border-collapse">
-          <thead>
-            <tr>
-              <th className="w-1/3 border-b border-r">Team</th>
-              {myBoxScores?.away_team_score?.map((_, index) => {
-                return (
-                  <th key={index} className="border-b border-r">
-                    Q{index + 1}
-                  </th>
-                );
-              })}
+    <div className="w-[400px] p-1 flex justify-center">
+      <table className="table-auto border border-collapse">
+        <thead>
+          <tr>
+            <th className="w-1/3 border-b border-r">Team</th>
+            {myBoxScores?.away_team_score?.map((_, index) => {
+              return (
+                <th key={index} className="border-b border-r">
+                  Q{index + 1}
+                </th>
+              );
+            })}
 
-              <th className="border-b">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="w-1/3 border-b border-r">{away_team_name}</td>
-              {myBoxScores?.away_team_score?.map((score, index) => {
-                return (
-                  <td key={index} className="border-b border-r">
-                    {score}
-                  </td>
-                );
-              })}
-              <td className="border-b">
-                {myBoxScores.away_team_score?.reduce((a, b) => a + b, 0)}
-              </td>
-            </tr>
-            <tr>
-              <td className="w-64 border-r">(H) {home_team_name}</td>
-              {myBoxScores?.home_team_score?.map((score, index) => {
-                return (
-                  <td key={index} className="border-r">
-                    {score}
-                  </td>
-                );
-              })}
-              <td>{myBoxScores.home_team_score?.reduce((a, b) => a + b, 0)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            <th className="border-b">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className="w-1/3 border-b border-r">{away_team_name}</td>
+            {myBoxScores?.away_team_score?.map((score, index) => {
+              return (
+                <td key={index} className="border-b border-r">
+                  {score}
+                </td>
+              );
+            })}
+            <td className="border-b">
+              {myBoxScores.away_team_score?.reduce((a, b) => a + b, 0)}
+            </td>
+          </tr>
+          <tr>
+            <td className="w-2/3 border-r">(H) {home_team_name}</td>
+            {myBoxScores?.home_team_score?.map((score, index) => {
+              return (
+                <td key={index} className="border-r">
+                  {score}
+                </td>
+              );
+            })}
+            <td>{myBoxScores.home_team_score?.reduce((a, b) => a + b, 0)}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 };
