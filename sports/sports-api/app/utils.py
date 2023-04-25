@@ -110,9 +110,9 @@ def extract_sql_query_from_json(assistant_message_content):
 
 
 def extract_sql_query_from_yaml(assistant_message_content):
-    cleaned_message = assistant_message_content.replace(':\n', ' ')
+
     try:
-        data = yaml.safe_load(cleaned_message)
+        data = yaml.safe_load(assistant_message_content)
     except Exception as e:
         print('e: ', e)
         raise e

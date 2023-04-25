@@ -16,12 +16,15 @@ The SQL query you just generated resulted in the following error message:
 {error_message}
 ---------------------
 
-- Provide an explanation of what went wrong, how to fix it, and the SQL in a YAML object. Provide only the YAML. Each key:value should be on the same line.
-- The values need to be included inside of quotes (' or ").
-- DO NOT INCLUDE NEWLINES BETWEEN THE KEYS AND VALUES
-- The YAML object should look like this:
-Explanation: str (required),
-SQL: str (required)""")
+- Provide an explanation of what went wrong and provide the fixed SQL query.
+
+Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
+Explanation: |
+ why the error happened
+SQL: | 
+    the SQL query
+    
+ENSURE TO PROVIDE A | AFTER EACH YAML KEY SO THE YAML GETS PARSED CORRECTLY""")
 
 
 def make_default_messages(schemas_str: str) -> List[Dict[str, str]]:

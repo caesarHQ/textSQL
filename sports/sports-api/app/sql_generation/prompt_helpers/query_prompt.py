@@ -11,23 +11,48 @@ Note: The NBA's Game ID, 0021400001, is a 10-digit code: XXXYYGGGGG, where XXX r
 You do not need to use the game_id in all queries but this is helpful for understanding the data.
 
 For instance, to get Lebron's avg score per season, you can run
-```
-WITH lebron_james AS (\\n    SELECT np.person_id\\n    FROM nba_player np\\n    WHERE np.first_name = 'LeBron' AND np.family_name = 'James'\\n    limit 1\\n),\\nscore_per_season as(\\n    SELECT\\n        SUBSTRING(ngs.game_id, 1, 3) || '-' || SUBSTRING(ngs.game_id, 4, 2) AS season,\\n        sum(ngs.points) AS total_points\\n    FROM\\n        nba_player_game_stats ngs\\n        JOIN lebron_james lj ON ngs.person_id = lj.person_id\\n    WHERE\\n        ngs.person_id = lj.person_id\\n    GROUP BY\\n        season\\n)\\nselect avg(score_per_season.total_points)\\nfrom score_per_season
-```
+SQL | 
+    WITH lebron_james AS (
+        SELECT np.person_id
+        FROM nba_player np
+        WHERE np.first_name = 'LeBron' AND np.family_name = 'James'
+        limit 1
+    ),
+    score_per_season as(
+        SELECT
+            SUBSTRING(ngs.game_id, 1, 3) || '-' || SUBSTRING(ngs.game_id, 4, 2) AS season,
+            sum(ngs.points) AS total_points
+        FROM
+            nba_player_game_stats ngs
+            JOIN lebron_james lj ON ngs.person_id = lj.person_id
+        WHERE
+            ngs.person_id = lj.person_id
+        GROUP BY
+            season
+    )
+    select avg(score_per_season.total_points)
+    from score_per_season
+
+
 
 team_id can change over time, so might need to worry about that.
 Do not include any variables/wildcards.
 DO NOT USE THE MINUTES COLUMNS
 
----
-Funky Types: required (types which are funky so can't use avg etc on them -
-  avoid using these if possible)
-Input Types: required (a summary of the enums or other conversion that are related
-  to the query)
-Likely subquery titles: required (tables to make in the CTE, where certain data (e.g. game time) is only in another table)
-Plan: required (walk thru each sub-part of the problem to build the final answer)
-SQL: required (the final query)
----
+Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 
-Provide the YAML and only the YAML. It should be formatted for parsing in Python YAML files. The keys and values should be on the same lines - DO NOT ADD NEWLINES AFTER KEYS.
+Funky Types: |
+  describe any types which are funky so can't use avg etc on them, or write "none"
+Input Types: |
+  a summary of the enums or other conversion that are related to the query
+Likely subquery titles | 
+  tables to make in the CTE, where certain data (e.g. game time) is only in another table
+Plan |
+  walk thru each sub-part of the problem to build the final answer
+SQL |
+  the final query to run
+  each line should be a single clause and indented an extra 4 spaces
+
+ENSURE TO PROVIDE A | AFTER EACH YAML KEY SO THE YAML IS NOT INTERPRETED AS A COMMENT
+
 """.format(command)
