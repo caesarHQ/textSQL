@@ -38,6 +38,7 @@ SQL |
 team_id can change over time, so might need to worry about that.
 Do not include any variables/wildcards.
 DO NOT USE THE MINUTES COLUMNS
+USE ilike instead of = when comparing strings
 
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 
@@ -48,7 +49,7 @@ Input Types: |
 Likely subquery titles | 
   tables to make in the CTE, where certain data (e.g. game time) is only in another table
 Plan |
-  walk thru each sub-part of the problem to build the final answer
+  walk thru each sub-part of the problem to build the final answer, noting any constraints (or lack thereof) and any assumptions made
 SQL |
   the final query to run
   each line should be a single clause and indented an extra 4 spaces
