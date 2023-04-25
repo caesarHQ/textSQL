@@ -1,9 +1,9 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useMemo } from "react";
 import { getGames } from "@/apis/sports_apis";
 import { NbaContext } from "./nba_context";
 
 export const NbaDisplay = () => {
-  const { currentGames, setCurrentGames } = useContext(NbaContext);
+  const { currentGames, setCurrentGames, teamLookup } = useContext(NbaContext);
   const [currentDate, setCurrentDate] = useState({
     month: 3,
     year: 2021,
@@ -37,19 +37,40 @@ export const NbaDisplay = () => {
       <h1>Sports</h1>
       <div className="flex flex-col items-center justify-center">
         {currentGames?.map((game) => {
-          return <GameRowDisplay game={game} key={game.game_id} />;
+          return (
+            <GameRowDisplay
+              game={game}
+              key={game.game_id}
+              teamLookup={teamLookup}
+            />
+          );
         })}
       </div>
     </div>
   );
 };
 
-const GameRowDisplay = ({ game }) => {
+const GameRowDisplay = ({ game, teamLookup }) => {
+  const homeTeamId = game.home_team_id;
+  const awayTeamId = game.away_team_id;
+  const homeTeamName = useMemo(() => {
+    return teamLookup[homeTeamId].city + " " + teamLookup[homeTeamId].name;
+  }, [homeTeamId, teamLookup]);
+
+  const awayTeamName = useMemo(() => {
+    return teamLookup[awayTeamId].city + " " + teamLookup[awayTeamId].name;
+  }, [awayTeamId, teamLookup]);
+
   return (
     <div className="flex flex-row items-center justify-center w-full border-2 border-black m-1">
       <div className="flex flex-row items-center justify-center p-1">
-        <p>{game.game_et}</p>
-        <p>{game.game_code}</p>
+        <div className="flex flex-col items-center justify-center w-64 h-32 m-1">
+          <div>{game.game_et}</div>
+        </div>
+        <div className="flex flex-col items-center justify-center w-64 h-32 m-1">
+          <div>Home Team: {homeTeamName}</div>
+          <div>Away Team: {awayTeamName}</div>
+        </div>
       </div>
     </div>
   );
