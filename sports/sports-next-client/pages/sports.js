@@ -4,8 +4,8 @@ import { getGames } from "@/apis/sports_apis";
 const Sports = () => {
   const [currentGames, setCurrentGames] = useState([]);
   const [currentDate, setCurrentDate] = useState({
-    month: 1,
-    year: 2020,
+    month: 3,
+    year: 2021,
   });
 
   const updateCurrentGames = async () => {
