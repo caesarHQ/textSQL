@@ -23,3 +23,20 @@ export const getTeamDict = async () => {
     });
   return resp;
 };
+
+export const getBoxScore = async ({ game_ids }) => {
+  const resp = await fetch(api_endpoint + "/games/boxscores", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      game_ids: game_ids,
+    }),
+  })
+    .then((response) => response.json())
+    .catch((error) => {
+      return { error: error };
+    });
+  return resp;
+};

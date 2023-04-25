@@ -94,3 +94,41 @@ def get_all_teams():
             'city': team['team_city'], 'name': team['team_name']}
 
     return teams_dict
+
+
+def get_boxscores(game_ids):
+    with ENGINE.connect() as con:
+        con = con.execution_options(
+            postgresql_readonly=True
+        )
+
+        params = {
+            "game_ids": game_ids
+        }
+
+        query = text(
+            """
+            select * from nba_team_game_period_scores
+            WHERE game_id = ANY(:game_ids)
+            """)
+        result = con.execute(query, params)
+        rows = result.fetchall()
+
+    box_scores = {}
+
+    for row in rows:
+        row_as_dict = row._mapping
+
+        game_id = row_as_dict['game_id']
+        if game_id not in box_scores:
+            box_scores[game_id] = {}
+        team_id = row_as_dict['team_id']
+        if team_id not in box_scores[game_id]:
+            box_scores[game_id][team_id] = {}
+        period = row_as_dict['period']
+        box_scores[game_id][team_id][period] = {
+            'score': row_as_dict['score'],
+            'period_type': row_as_dict['period_type'],
+        }
+
+    return box_scores

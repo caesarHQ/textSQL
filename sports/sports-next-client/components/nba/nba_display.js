@@ -6,7 +6,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 export const NbaDisplay = () => {
-  const { currentGames, setCurrentGames, teamLookup } = useContext(NbaContext);
+  const { currentGames, setCurrentGames } = useContext(NbaContext);
   //start on March 1st, 2021
   const [currentDate, setCurrentDate] = useState(new Date(2021, 2, 1));
 
@@ -54,7 +54,7 @@ export const NbaDisplay = () => {
   }, [currentYear, currentMonth]);
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center w-full">
       <h1>Sports</h1>
       <div className="flex flex-row items-center justify-center">
         <DatePicker
@@ -64,13 +64,7 @@ export const NbaDisplay = () => {
       </div>
       <div className="flex flex-col items-center justify-center">
         {todaysGames?.map((game) => {
-          return (
-            <NBAGameRowDisplay
-              game={game}
-              key={game.game_id}
-              teamLookup={teamLookup}
-            />
-          );
+          return <NBAGameRowDisplay game={game} key={game.game_id} />;
         })}
       </div>
     </div>
