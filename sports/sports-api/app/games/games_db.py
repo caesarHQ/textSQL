@@ -73,12 +73,24 @@ def get_all_teams():
         con = con.execution_options(
             postgresql_readonly=True
         )
-        result = con.execute(
-            'select team_id, team_city, team_name from nba_team')
+
+        query = text(
+            """
+            select team_id, team_city, team_name from nba_team
+            """)
+
+        result = con.execute(query)
         rows = result.fetchall()
 
     teams = []
     for row in rows:
         row_as_dict = row._mapping
         teams.append(row2dict(row_as_dict))
-    return teams
+
+    # convert to a dict of team_dif: {city: city, name: name}
+    teams_dict = {}
+    for team in teams:
+        teams_dict[team['team_id']] = {
+            'city': team['team_city'], 'name': team['team_name']}
+
+    return teams_dict

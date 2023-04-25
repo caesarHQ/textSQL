@@ -14,3 +14,12 @@ export const getGames = async ({ month, year }) => {
   console.log("resp: ", resp);
   return resp;
 };
+
+export const getTeamDict = async () => {
+  const resp = await fetch(api_endpoint + "/games/teams")
+    .then((response) => response.json())
+    .catch((error) => {
+      return { error: error };
+    });
+  return resp;
+};
