@@ -66,3 +66,19 @@ def get_games_by_month(month=None):
         row_as_dict = row._mapping
         games.append(row2dict(row_as_dict))
     return games
+
+
+def get_all_teams():
+    with ENGINE.connect() as con:
+        con = con.execution_options(
+            postgresql_readonly=True
+        )
+        result = con.execute(
+            'select team_id, team_city, team_name from nba_team')
+        rows = result.fetchall()
+
+    teams = []
+    for row in rows:
+        row_as_dict = row._mapping
+        teams.append(row2dict(row_as_dict))
+    return teams
