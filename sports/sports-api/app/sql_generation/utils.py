@@ -20,9 +20,11 @@ The SQL query you just generated resulted in the following error message:
 
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 Explanation: |
- why the error happened
+    (tabbed in) why the error happened
 SQL: | 
-    the SQL query
+    (tabbbed in) the SQL query line 1
+    (tabbed in) the SQL query line 2
+    ...
     
 ENSURE TO PROVIDE A | AFTER EACH YAML KEY SO THE YAML GETS PARSED CORRECTLY""")
 
