@@ -2,10 +2,35 @@ import { useMemo, useContext } from "react";
 import { NbaContext } from "../nba_context";
 
 export const NBAGameRowDisplay = ({ game }) => {
+  const originalTime = game.game_time_utc;
+  //convert to local time, using PM format
+  const localTime = useMemo(() => {
+    const date = new Date(originalTime);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const localHours = hours % 12;
+    const localMinutes = minutes < 10 ? "0" + minutes : minutes;
+    //get if it's pst or est or whatever the 3 letter abr is
+    const local_tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: local_tz,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZoneName: "short",
+    });
+    let local_time = formatter.format(date);
+    //replace leading 0s and trailing seconds
+    local_time = local_time.replace(/^0+/, "").replace(/:\d\d /, " ");
+
+    return local_time;
+  }, [originalTime]);
+
   return (
     <div className="flex flex-row items-center justify-center w-full border-2 border-black m-1">
-      <div className="flex flex-col items-center justify-center p-1">
-        <div>{game.game_et}</div>
+      <div className="flex flex-col">
+        <div className="text-sm font-bold">{localTime}</div>
         <BoxScoreDisplay game={game} />
       </div>
     </div>
