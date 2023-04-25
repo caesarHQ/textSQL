@@ -6,12 +6,6 @@ export const NBAGameRowDisplay = ({ game }) => {
   //convert to local time, using PM format
   const localTime = useMemo(() => {
     const date = new Date(originalTime);
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? "PM" : "AM";
-    const localHours = hours % 12;
-    const localMinutes = minutes < 10 ? "0" + minutes : minutes;
-    //get if it's pst or est or whatever the 3 letter abr is
     const local_tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const formatter = new Intl.DateTimeFormat("en-US", {
       timeZone: local_tz,
