@@ -28,6 +28,9 @@ const AdminLayout = ({ children }) => {
             <Link href="/" className="text-gray-700 hover:text-blue-500">
               Query
             </Link>
+            <Link href="/sports" className="text-gray-700 hover:text-blue-500">
+              Sports
+            </Link>
           </nav>
         </div>
       )}
