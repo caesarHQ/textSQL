@@ -22,7 +22,7 @@ export const NBAGameRowDisplay = ({ game }) => {
   }, [originalTime]);
 
   return (
-    <div className="flex flex-row items-center justify-center w-full border-2 border-black m-1">
+    <div className="flex flex-row items-center justify-center w-full border-2 border-black m-1 rounded-lg p-4 bg-white">
       <div className="flex flex-col">
         <div className="text-sm font-bold">{localTime}</div>
         <BoxScoreDisplay game={game} />
@@ -61,9 +61,7 @@ const BoxScoreDisplay = ({ game }) => {
     const away_team_periods = boxScores[game.game_id][away_team_id];
 
     let currentPeriod = 1;
-    console.log("entering while loop for ", home_team_periods);
     while (home_team_periods?.[currentPeriod] !== undefined) {
-      console.log("current period: ", currentPeriod);
       if (
         home_team_periods?.[currentPeriod]?.score &&
         away_team_periods?.[currentPeriod]?.score
@@ -80,11 +78,11 @@ const BoxScoreDisplay = ({ game }) => {
   }, [boxScores, game.game_id]);
 
   return (
-    <div className="w-[400px] p-1 flex justify-center">
-      <table className="table-auto border border-collapse">
+    <div className="w-[500px] p-1 flex justify-center">
+      <table className="w-[500px] table-auto border border-collapse">
         <thead>
           <tr>
-            <th className="w-1/3 border-b border-r">Team</th>
+            <th className="border-b border-r p-2">Team</th>
             {myBoxScores?.away_team_score?.map((_, index) => {
               return (
                 <th key={index} className="border-b border-r">
@@ -93,33 +91,36 @@ const BoxScoreDisplay = ({ game }) => {
               );
             })}
 
-            <th className="border-b">Total</th>
+            <th className="border-b text-center">Total</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td className="w-1/3 border-b border-r">{away_team_name}</td>
+            <td className="border-b text-center">{away_team_name}</td>
             {myBoxScores?.away_team_score?.map((score, index) => {
               return (
-                <td key={index} className="border-b border-r">
+                <td key={index} className="border-b border-r text-center">
                   {score}
                 </td>
               );
             })}
-            <td className="border-b">
+
+            <td className="border-b text-center">
               {myBoxScores.away_team_score?.reduce((a, b) => a + b, 0)}
             </td>
           </tr>
           <tr>
-            <td className="w-2/3 border-r">(H) {home_team_name}</td>
+            <td className="border-r text-center">(H) {home_team_name}</td>
             {myBoxScores?.home_team_score?.map((score, index) => {
               return (
-                <td key={index} className="border-r">
+                <td key={index} className="border-r text-center">
                   {score}
                 </td>
               );
             })}
-            <td>{myBoxScores.home_team_score?.reduce((a, b) => a + b, 0)}</td>
+            <td className="text-center">
+              {myBoxScores.home_team_score?.reduce((a, b) => a + b, 0)}
+            </td>
           </tr>
         </tbody>
       </table>

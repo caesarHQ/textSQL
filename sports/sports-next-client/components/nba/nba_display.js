@@ -56,18 +56,18 @@ export const NbaDisplay = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
-      <h1>Sports</h1>
+      <h1 className="text-2xl">NBA Scoreboards</h1>
       <div className="flex flex-row items-center justify-center">
         <DatePicker
           selected={currentDate}
           onChange={(date) => setCurrentDate(date)}
         />
       </div>
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center gap-2">
         {todaysGames?.map((game) => {
           return (
             <Link href={`/nba/game?id=${game.game_id}`} key={game.game_id}>
-              <div className="flex flex-row items-center justify-center cursor-pointer h-32 w-full">
+              <div className="flex flex-row items-center justify-center cursor-pointer">
                 <NBAGameRowDisplay game={game} />
               </div>
             </Link>
