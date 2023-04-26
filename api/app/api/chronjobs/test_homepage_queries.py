@@ -61,14 +61,14 @@ def testQueryWorks(query, scope):
 # test the SF homepage queries
 if 'SF' in scope:
     queries = [
-    'Show me all the needles in SF',
-    'Show me all the muggings',
-    'Which two neighborhoods have the most homeless activity?',
-    'Which five neighborhoods have the most poop on the street?',
-    'Which four neighborhoods had the most crime incidents involving guns or knives in 2021?',
-    '3 neighborhoods with the highest female to male ratio',
-    'What are the top 5 neighborhoods with the most encampments per capita?',
-    'What hours of the day do most burglaries occur?',
+    'plz Show me all the needles in SF',
+    'plz Show me all the muggings',
+    'plz Which two neighborhoods have the most homeless activity?',
+    'plz Which five neighborhoods have the most poop on the street?',
+    'plz Which four neighborhoods had the most crime incidents involving guns or knives in 2021?',
+    'plz 3 neighborhoods with the highest female to male ratio',
+    'plz What are the top 5 neighborhoods with the most encampments per capita?',
+    'plz What hours of the day do most burglaries occur?',
     ]
     for q in queries:
         testQueryWorks(q, "SF")
