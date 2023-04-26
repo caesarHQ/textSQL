@@ -55,7 +55,10 @@ export const NbaDisplay = () => {
   }, [currentYear, currentMonth]);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full">
+    <div
+      className="flex flex-col items-center w-full p-2"
+      style={{ height: "100vh", overflowY: "scroll" }}
+    >
       <h1 className="text-2xl">NBA Scoreboards</h1>
       <div className="flex flex-row items-center justify-center">
         <DatePicker
