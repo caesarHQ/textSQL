@@ -117,7 +117,7 @@ Provide a properly formatted JSON object with the following information. Ensure 
     "Required Answer": str (the type of information the query is asking for),
     "Input Types": str (a summary of the enums or other conversion that are related to the query),
     "Plan": str (Explain the simplest way to answer the question/command with the schemas available),
-    "Additional Data to Get: str (brainstorm what information related to the original query should also be returned to answer the question/command.),
+    "Relevant Enums": {{str: str[]}} the enums that will be useful and others in the dataset based on the above values.
     "SQL": str (your query)
 }}
 """
