@@ -22,6 +22,18 @@ export const getGameById = async ({ game_id }) => {
   return resp;
 };
 
+export const getGameStatsById = async ({ game_id }) => {
+  console.log("getting stas!");
+  const resp = await fetch(api_endpoint + `/games/stats/${game_id}`)
+    .then((response) => response.json())
+    .catch((error) => {
+      console.log("error getting stats");
+      return { error: error };
+    });
+  console.log("woo stats", resp);
+  return resp;
+};
+
 export const getTeamDict = async () => {
   const resp = await fetch(api_endpoint + "/games/teams")
     .then((response) => response.json())

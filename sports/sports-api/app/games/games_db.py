@@ -75,6 +75,32 @@ def get_games_by_id(game_id):
     query = text(
         """
         SELECT *
+        from nba_game
+        WHERE game_id = :game_id
+        """)
+    with ENGINE.connect() as con:
+        con = con.execution_options(
+            postgresql_readonly=True
+        )
+        result = con.execute(query, params)
+        rows = result.fetchall()
+    games = []
+    for row in rows:
+        row_as_dict = row._mapping
+        games.append(row2dict(row_as_dict))
+    try:
+        return games[0]
+    except:
+        return {}
+
+
+def get_games_stats_by_id(game_id):
+    params = {
+        "game_id": game_id
+    }
+    query = text(
+        """
+        SELECT *
         from nba_team_game_stats
         WHERE game_id = :game_id
         """)
