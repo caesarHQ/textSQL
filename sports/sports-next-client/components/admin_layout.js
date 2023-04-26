@@ -9,7 +9,7 @@ const AdminLayout = ({ children }) => {
   };
 
   return (
-    <div className="relative flex">
+    <div className="relative flex flex-row h-full">
       {isOpen && (
         <div className="h-full w-64 bg-gray-100">
           <nav className="flex flex-col p-4 space-y-2">
@@ -38,7 +38,7 @@ const AdminLayout = ({ children }) => {
       <button
         onClick={toggleAdminPanel}
         style={{ left: isOpen ? "12rem" : "1rem", zIndex: 100 }}
-        className="absolute bottom-4 bg-blue-500 hover:bg-blue-600 text-white rounded-full w-10 h-10 z-10"
+        className="fixed bottom-4 bg-blue-500 hover:bg-blue-600 text-white rounded-full w-10 h-10 z-10"
       >
         {isOpen ? "<" : ">"}
       </button>
