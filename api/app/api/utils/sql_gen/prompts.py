@@ -1,3 +1,5 @@
+import uuid
+
 INITIAL_PROMPTS = {
     "USA": """You are an expert database engineer who writes well thought out and syntactically correct read-only {} to answer a given question or command, generally about crime, demographics, and population.
 
@@ -158,4 +160,5 @@ def get_retry_prompt(dialect: str, natural_language_query:str, scope: str="USA")
         prompt = RETRY_PROMPTS2[scope]
     else: prompt = RETRY_PROMPTS2["USA"]
     prompt = prompt.format(dialect,natural_language_query, natural_language_query)
+    prompt = 'generation_id: ' + uuid.uuid4().hex + '\n' + prompt
     return prompt
