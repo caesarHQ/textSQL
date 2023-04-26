@@ -15,6 +15,8 @@ export const AdminProvider = ({ children }) => {
   const [dbInfo, setDbInfo] = useState({});
   const [openaiKey, setOpenaiKey] = useState({});
 
+  const adminEnabled = process.env.NEXT_PUBLIC_ADMIN === "enabled";
+
   const loadOpenaiInfo = async () => {
     const data = await fetchCurrentOpenaiCredentials();
     if (data.status === "success") {
@@ -46,6 +48,7 @@ export const AdminProvider = ({ children }) => {
   return (
     <AdminContext.Provider
       value={{
+        adminEnabled,
         tables,
         setTables,
         enums,
