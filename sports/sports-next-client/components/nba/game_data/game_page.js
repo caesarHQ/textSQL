@@ -1,11 +1,16 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useMemo } from "react";
 import { NbaContext } from "../nba_context";
-import { getGameById, getGameStatsById } from "@/apis/sports_apis";
+import {
+  getGameById,
+  getGameStatsById,
+  getPlayerGameStatsById,
+} from "@/apis/sports_apis";
 import Link from "next/link";
 
 const GamePage = ({ id }) => {
   const [myGame, setMyGame] = useState({});
   const [myGameStats, setMyGameStats] = useState({});
+  const [myPlayerStats, setMyPlayerStats] = useState([]);
 
   const { teamLookup } = useContext(NbaContext);
 
@@ -23,11 +28,21 @@ const GamePage = ({ id }) => {
       }
     };
 
+    const upgradePlayerStats = async () => {
+      const newPlayerStats = await getPlayerGameStatsById({ game_id: id });
+      if (newPlayerStats.status === "success") {
+        setMyPlayerStats(newPlayerStats.stats);
+      }
+    };
+
     if (id) {
       updateGame();
       updateGameStats();
+      upgradePlayerStats();
     }
   }, [id]);
+
+  console.log("player:", myPlayerStats);
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
@@ -39,7 +54,11 @@ const GamePage = ({ id }) => {
         </Link>
       </div>
       {!!myGameStats && (
-        <BasicGameDisplay stats={myGameStats} teamLookup={teamLookup} />
+        <BasicGameDisplay
+          stats={myGameStats}
+          teamLookup={teamLookup}
+          playerStats={myPlayerStats || []}
+        />
       )}
     </div>
   );
@@ -47,43 +66,100 @@ const GamePage = ({ id }) => {
 
 export default GamePage;
 
-const BasicGameDisplay = ({ stats, teamLookup, team }) => {
+const BasicGameDisplay = ({ stats, teamLookup, playerStats }) => {
   return (
     <div className="flex flex-col items-center justify-center w-full">
-      <ScoreBox stats={stats} teamLookup={teamLookup} />
+      <ScoreBox
+        stats={stats}
+        teamLookup={teamLookup}
+        playerStats={playerStats}
+      />
     </div>
   );
 };
 
-const ScoreBox = ({ stats, teamLookup }) => {
+const ScoreBox = ({ stats, teamLookup, playerStats }) => {
+  const [activeTeam, setActiveTeam] = useState(null);
   const teams = Object.keys(stats || {});
-  console.log("stats: ", stats);
-  console.log("teams: ", teams);
+
+  const filteredPlayers = useMemo(() => {
+    if (!playerStats) {
+      return {};
+    }
+    const playersByTeam = {};
+    for (const player of playerStats) {
+      if (!playersByTeam[player.team_id]) {
+        playersByTeam[player.team_id] = [];
+      }
+      playersByTeam[player.team_id].push(player);
+    }
+    return playersByTeam;
+  }, [playerStats]);
 
   return (
-    <table className="w-full bg-white rounded-lg">
-      <thead className="bg-gray-100">
-        <tr>
-          <ScoreBoxHead label="Team" />
-          <ScoreBoxHead label="Points" />
-          <ScoreBoxHead label="Assists" />
-          <ScoreBoxHead label="Rebounds" />
-          <ScoreBoxHead label="Steals" />
-          <ScoreBoxHead label="3-Pointers Made" />
-          <ScoreBoxHead label="FG%" />
-          <ScoreBoxHead label="FT%" />
-        </tr>
-      </thead>
-      <tbody>
-        {teams
-          ?.map((t) => stats[t])
-          .map((t) => {
-            return (
-              <ScoreBoxRow teamLookup={teamLookup} t={t} key={t.team_id} />
-            );
-          })}
-      </tbody>
-    </table>
+    <>
+      <table className="w-full bg-white rounded-lg">
+        <thead className="bg-gray-100">
+          <tr>
+            <ScoreBoxHead label="Team" />
+            <ScoreBoxHead label="Points" />
+            <ScoreBoxHead label="Assists" />
+            <ScoreBoxHead label="Rebounds" />
+            <ScoreBoxHead label="Steals" />
+            <ScoreBoxHead label="3-Pointers Made" />
+            <ScoreBoxHead label="FG%" />
+            <ScoreBoxHead label="FT%" />
+          </tr>
+        </thead>
+        <tbody>
+          {teams
+            ?.map((t) => stats[t])
+            .map((t) => {
+              return (
+                <ScoreBoxRow
+                  teamLookup={teamLookup}
+                  t={t}
+                  key={t.team_id}
+                  players={filteredPlayers[t.team_id] || []}
+                  setActive={setActiveTeam}
+                />
+              );
+            })}
+        </tbody>
+      </table>
+      {activeTeam && (
+        <div>
+          <div className="flex flex-col items-center justify-center w-full">
+            <div className="flex w-full">{teamLookup[activeTeam].name}</div>
+          </div>
+          <table className="w-full bg-white rounded-lg">
+            <thead className="bg-gray-100">
+              <tr>
+                <ScoreBoxHead label="Player" />
+                <ScoreBoxHead label="Points" />
+                <ScoreBoxHead label="Assists" />
+                <ScoreBoxHead label="Rebounds" />
+                <ScoreBoxHead label="Steals" />
+                <ScoreBoxHead label="3-Pointers Made" />
+                <ScoreBoxHead label="FG%" />
+                <ScoreBoxHead label="FT%" />
+              </tr>
+            </thead>
+            <tbody>
+              {filteredPlayers[activeTeam]?.map((player) => {
+                return (
+                  <PlayerBoxRow
+                    teamLookup={teamLookup}
+                    key={player.person_id}
+                    player={player}
+                  />
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </>
   );
 };
 
@@ -101,13 +177,17 @@ const ScoreBoxData = ({ data }) => {
   );
 };
 
-const ScoreBoxRow = ({ teamLookup, t }) => {
+const ScoreBoxRow = ({ teamLookup, t, players, setActive }) => {
   const [isHovered, setIsHovered] = useState(false);
+  if (isHovered) {
+    console.log(players);
+  }
   return (
     <tr
       className={`${isHovered ? "bg-gray-300" : ""} hover:bg-gray-300`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() => setActive(t.team_id)}
     >
       <ScoreBoxData data={teamLookup[t.team_id]?.name} width={"1/3"} />
       <ScoreBoxData data={t.points} />
@@ -117,6 +197,27 @@ const ScoreBoxRow = ({ teamLookup, t }) => {
       <ScoreBoxData data={t.three_pointers_made} />
       <ScoreBoxData data={t.field_goals_percentage} />
       <ScoreBoxData data={t.free_throws_percentage} />
+    </tr>
+  );
+};
+
+const PlayerBoxRow = ({ player }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <tr
+      className={`${isHovered ? "bg-gray-300" : ""} hover:bg-gray-300`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <ScoreBoxData data={player.player_name} width={"1/3"} />
+      <ScoreBoxData data={player.points} />
+      <ScoreBoxData data={player.assists} />
+      <ScoreBoxData data={player.rebounds_total} />
+      <ScoreBoxData data={player.steals} />
+      <ScoreBoxData data={player.three_pointers_made} />
+      <ScoreBoxData data={player.field_goals_percentage} />
+      <ScoreBoxData data={player.free_throws_percentage} />
     </tr>
   );
 };
