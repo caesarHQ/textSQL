@@ -117,6 +117,38 @@ def get_games_stats_by_id(game_id):
     return teams
 
 
+def get_player_games_stats_by_id(game_id):
+    params = {
+        "game_id": game_id
+    }
+    query = text(
+        """
+        SELECT *
+FROM nba_player_game_stats AS stats
+
+JOIN (
+  SELECT person_id, name as player_name
+  FROM nba_player
+  GROUP BY person_id, player_name
+) AS player
+ON stats.person_id = player.person_id
+
+WHERE stats.game_id = :game_id
+        """)
+    with ENGINE.connect() as con:
+        con = con.execution_options(
+            postgresql_readonly=True
+        )
+        result = con.execute(query, params)
+        rows = result.fetchall()
+    players = []
+    for row in rows:
+        row_as_dict = row._mapping
+        players.append(row2dict(row_as_dict))
+
+    return players
+
+
 def get_all_teams():
     with ENGINE.connect() as con:
         con = con.execution_options(
