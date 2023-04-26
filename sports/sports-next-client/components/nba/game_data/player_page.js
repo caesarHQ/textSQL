@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
-import { fetchPlayerData } from "@/apis/admin_apis";
+import { fetchPlayerData } from "@/apis/sports_apis";
 
 export const PlayerPage = ({ id }) => {
   const [player, setPlayer] = useState({});
 
   useEffect(() => {
+    if (!id) {
+      return;
+    }
     const getPlayerData = async () => {
       const playerData = await fetchPlayerData({ id });
       if (playerData.status === "success") {
@@ -12,7 +15,7 @@ export const PlayerPage = ({ id }) => {
       }
     };
     getPlayerData();
-  }, []);
+  }, [id]);
 
   return (
     <div

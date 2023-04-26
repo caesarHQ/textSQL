@@ -213,3 +213,63 @@ def get_boxscores(game_ids):
         }
 
     return box_scores
+
+
+def get_player_data_by_id(person_id):
+    """
+    - get the info on the player by person_id
+    - get the last 10 games played by the player
+      - for each game, get the performance of the player along
+    """
+
+    params = {
+        "person_id": person_id
+    }
+
+    query = text(
+        """
+SELECT
+sum(ngs.points) AS total_points,
+sum(ngs.field_goals_made) AS total_field_goals_made,
+sum(ngs.field_goals_attempted) AS total_field_goals_attempted,
+CASE
+  WHEN sum(ngs.field_goals_attempted) = 0 THEN 0
+  ELSE round(sum(ngs.field_goals_made) * 100.0 / sum(ngs.field_goals_attempted), 2)
+END AS field_goal_percentage,
+sum(ngs.three_pointers_made) AS total_three_pointers_made,
+sum(ngs.three_pointers_attempted) AS total_three_pointers_attempted,
+CASE
+  WHEN sum(ngs.three_pointers_attempted) = 0 THEN 0
+  ELSE round(sum(ngs.three_pointers_made) * 100.0 / sum(ngs.three_pointers_attempted), 2)
+END AS three_point_percentage,
+sum(ngs.free_throws_made) AS total_free_throws_made,
+sum(ngs.free_throws_attempted) AS total_free_throws_attempted,
+CASE
+  WHEN sum(ngs.free_throws_attempted) = 0 THEN 0
+  ELSE round(sum(ngs.free_throws_made) * 100.0 / sum(ngs.free_throws_attempted), 2)
+END AS free_throw_percentage,
+sum(ngs.fouls_personal) AS total_personal_fouls,
+sum(ngs.rebounds_offensive) AS total_offensive_rebounds,
+sum(ngs.rebounds_defensive) AS total_defensive_rebounds,
+sum(ngs.rebounds_total) AS total_rebounds,
+sum(ngs.assists) AS total_assists,
+sum(ngs.steals) AS total_steals,
+sum(ngs.blocks) AS total_blocks,
+sum(ngs.turnovers) AS total_turnovers
+FROM
+nba_player_game_stats ngs
+where person_id=:person_id
+  """)
+
+    with ENGINE.connect() as con:
+        con = con.execution_options(
+            postgresql_readonly=True
+        )
+        result = con.execute(query, params)
+        rows = result.fetchone()
+    player_stats = {}
+    if rows:
+        row_as_dict = rows._mapping
+        player_stats = row2dict(row_as_dict)
+
+    return player_stats

@@ -231,7 +231,9 @@ const PlayerBoxRow = ({ player }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <ScoreBoxData data={player.player_name} width={"1/3"} />
+      <Link href={`/nba/player?id=${player.person_id}`}>
+        <ScoreBoxData data={player.player_name} width={"1/3"} />
+      </Link>
       <ScoreBoxData data={player.points} />
       <ScoreBoxData data={player.assists} />
       <ScoreBoxData data={player.rebounds_total} />

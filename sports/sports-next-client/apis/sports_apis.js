@@ -67,3 +67,10 @@ export const getBoxScore = async ({ game_ids }) => {
     });
   return resp;
 };
+
+export const fetchPlayerData = async ({ id }) => {
+  const response = await fetch(api_endpoint + `/games/player_data/${id}`);
+  const data = await response.json();
+  console.log("dat: ", data);
+  return data;
+};

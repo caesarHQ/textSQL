@@ -82,9 +82,3 @@ export const generateSchema = async ({ table }) => {
   const data = await response.json();
   return data;
 };
-
-export const fetchPlayerData = async ({ id }) => {
-  const response = await fetch(`${API_BASE}/admin/player_data/${id}`);
-  const data = await response.json();
-  return data;
-};

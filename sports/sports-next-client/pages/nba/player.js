@@ -7,7 +7,7 @@ const Player = () => {
 
   console.log("id: ", id);
 
-  return <PlayerPage />;
+  return <PlayerPage id={id} />;
 };
 
 export default Player;
