@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { NbaContext } from "../nba_context";
 import { getGameById, getGameStatsById } from "@/apis/sports_apis";
+import Link from "next/link";
 
 const GamePage = ({ id }) => {
   const [myGame, setMyGame] = useState({});
@@ -28,12 +29,15 @@ const GamePage = ({ id }) => {
     }
   }, [id]);
 
-  console.log("my game:", myGame);
-  console.log("my game stats:", myGameStats);
-
   return (
     <div className="flex flex-col items-center justify-center w-full">
-      <div>Game: {id}</div>
+      <div className="flex w-full">
+        <Link href={"/nba"}>
+          <div className="flex flex-col items-center justify-center w-[100px] h-9 text-white bg-blue-500 rounded-lg">
+            Back
+          </div>
+        </Link>
+      </div>
       {!!myGameStats && (
         <BasicGameDisplay stats={myGameStats} teamLookup={teamLookup} />
       )}
