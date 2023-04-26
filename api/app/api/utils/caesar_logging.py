@@ -260,6 +260,7 @@ def get_feed_data(app):
         select input_text, category, emoji, id
         from featured_queries
         where app = :app
+        and featured = true
     """)
 
     with EVENTS_ENGINE.connect() as conn:
