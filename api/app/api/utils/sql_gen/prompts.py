@@ -116,7 +116,7 @@ Provide a properly formatted JSON object with the following information. Ensure 
 
     "Required Answer": str (the type of information the query is asking for),
     "Input Types": str (a summary of the enums or other conversion that are related to the query),
-    "Plan": str (Given the constraints of the schema, walk thru a plan to get the answer),
+    "Plan": str (Given the constraints of the schema, walk thru a plan to get the answer - for each string comparison, check the available enums (if any) for what to check against),
     "SQL": str (your query)
 }}
 """
