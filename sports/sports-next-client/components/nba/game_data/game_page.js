@@ -79,19 +79,7 @@ const ScoreBox = ({ stats, teamLookup }) => {
           ?.map((t) => stats[t])
           .map((t) => {
             return (
-              <tr key={t.team_id}>
-                <ScoreBoxData
-                  data={teamLookup[t.team_id]?.name}
-                  width={"1/3"}
-                />
-                <ScoreBoxData data={t.points} />
-                <ScoreBoxData data={t.assists} />
-                <ScoreBoxData data={t.rebounds_total} />
-                <ScoreBoxData data={t.steals} />
-                <ScoreBoxData data={t.three_pointers_made} />
-                <ScoreBoxData data={t.field_goals_percentage} />
-                <ScoreBoxData data={t.free_throws_percentage} />
-              </tr>
+              <ScoreBoxRow teamLookup={teamLookup} t={t} key={t.team_id} />
             );
           })}
       </tbody>
@@ -110,5 +98,25 @@ const ScoreBoxHead = ({ label, width = "1/6" }) => {
 const ScoreBoxData = ({ data }) => {
   return (
     <td className="w-1/6 p-4 text-center font-medium text-gray-700">{data}</td>
+  );
+};
+
+const ScoreBoxRow = ({ teamLookup, t }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  return (
+    <tr
+      className={`${isHovered ? "bg-gray-300" : ""} hover:bg-gray-300`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <ScoreBoxData data={teamLookup[t.team_id]?.name} width={"1/3"} />
+      <ScoreBoxData data={t.points} />
+      <ScoreBoxData data={t.assists} />
+      <ScoreBoxData data={t.rebounds_total} />
+      <ScoreBoxData data={t.steals} />
+      <ScoreBoxData data={t.three_pointers_made} />
+      <ScoreBoxData data={t.field_goals_percentage} />
+      <ScoreBoxData data={t.free_throws_percentage} />
+    </tr>
   );
 };
