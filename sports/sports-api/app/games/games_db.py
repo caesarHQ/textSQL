@@ -75,7 +75,7 @@ def get_games_by_id(game_id):
     query = text(
         """
         SELECT *
-        from nba_game
+        from nba_team_game_stats
         WHERE game_id = :game_id
         """)
     with ENGINE.connect() as con:
@@ -84,14 +84,11 @@ def get_games_by_id(game_id):
         )
         result = con.execute(query, params)
         rows = result.fetchall()
-    games = []
+    teams = {}
     for row in rows:
         row_as_dict = row._mapping
-        games.append(row2dict(row_as_dict))
-    try:
-        return games[0]
-    except:
-        return {}
+        teams[row_as_dict['team_id']] = row2dict(row_as_dict)
+    return teams
 
 
 def get_all_teams():

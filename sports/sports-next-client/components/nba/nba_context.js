@@ -3,7 +3,7 @@ import { getTeamDict, getBoxScore } from "@/apis/sports_apis";
 
 export const NbaContext = createContext();
 
-export const NbaProvider = ({ children }) => {
+export const NBAProvider = ({ children }) => {
   const [teamLookup, setTeamLookup] = useState({});
   const [currentGames, setCurrentGames] = useState([]);
   const [boxScores, setBoxScores] = useState({});

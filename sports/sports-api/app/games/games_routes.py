@@ -18,7 +18,7 @@ def list_games():
     return make_response(jsonify({"games": games, "status": "success"}), 200)
 
 
-@ games_bp.route('/<game_id>', methods=['GET'])
+@games_bp.route('/<game_id>', methods=['GET'])
 def get_game(game_id):
     """
     Get game names from database
