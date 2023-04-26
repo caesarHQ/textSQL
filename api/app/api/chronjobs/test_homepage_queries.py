@@ -53,7 +53,8 @@ def testQueryWorks(query, scope):
         good.append(query)
         results.append({'q': query, 
                         'columns': len(res2['result']['column_names']), 
-                        'rows': len(res2['result']['results'])
+                        'rows': len(res2['result']['results']),
+                        'sql': res2['sql_query']
         })
         
     
