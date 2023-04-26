@@ -186,9 +186,13 @@ const ScoreBoxHead = ({ label, width = "1/6" }) => {
   );
 };
 
-const ScoreBoxData = ({ data }) => {
+const ScoreBoxData = ({ data, extraProps }) => {
   return (
-    <td className="w-1/6 p-4 text-center font-medium text-gray-700">{data}</td>
+    <td
+      className={`w-1/6 p-4 text-center font-medium text-gray-700 ${extraProps}`}
+    >
+      {data}
+    </td>
   );
 };
 
@@ -204,7 +208,11 @@ const ScoreBoxRow = ({ teamLookup, t, players, setActive }) => {
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => setActive(t.team_id)}
     >
-      <ScoreBoxData data={teamLookup[t.team_id]?.name} width={"1/3"} />
+      <ScoreBoxData
+        data={teamLookup[t.team_id]?.name}
+        width={"1/3"}
+        extraProps={"cursor-pointer"}
+      />
       <ScoreBoxData data={t.points} />
       <ScoreBoxData data={t.assists} />
       <ScoreBoxData data={t.rebounds_total} />
