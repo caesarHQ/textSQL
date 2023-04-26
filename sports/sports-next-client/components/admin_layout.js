@@ -9,7 +9,7 @@ const AdminLayout = ({ children }) => {
   };
 
   return (
-    <div className="relative h-screen flex">
+    <div className="relative flex">
       {isOpen && (
         <div className="h-full w-64 bg-gray-100">
           <nav className="flex flex-col p-4 space-y-2">
