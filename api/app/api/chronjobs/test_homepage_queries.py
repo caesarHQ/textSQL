@@ -1,3 +1,4 @@
+import json
 from os import getenv
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
@@ -8,7 +9,7 @@ load_dotenv()
 
 EVENTS_URL = getenv("EVENTS_URL")
 
-endpoint = 'https://text-sql-be.onrender.com' 
+endpoint = 'https://text-sql-be2.onrender.com' 
 
 def queryTextToTables(payload):
     headers = {'Content-Type': 'application/json'}
@@ -25,10 +26,11 @@ scope = ['SF']
 good = []
 bad = []
 attempted = []
+results = []
 
 # go thru and test that each of the generate tables -> generate SQL works
 def testQueryWorks(query, scope):
-    global good, bad, attempted
+    global good, bad, attempted, results
     print('trying ', query)
     attempted.append(query)
     try:
@@ -46,6 +48,10 @@ def testQueryWorks(query, scope):
         res2 = queryTextToSQL(payload)
         print(len(res2['result']['column_names']), ' columns')
         good.append(query)
+        results.append({'q': query, 
+                        'columns': len(res2['result']['column_names']), 
+                        'rows': len(res2['result']['results'])
+        })
         
     
     except Exception as e:
@@ -70,6 +76,7 @@ if 'SF' in scope:
 print('good: ', len(good))
 print('bad: ', len(bad))
 print('attempted: ', len(attempted))
+print('results: ', results)
 
 EVENTS_ENGINE = create_engine(EVENTS_URL)
 
@@ -78,12 +85,13 @@ params = {
     'passed': len(good),
     'failed': len(bad),
     'attempted': len(attempted),
-    'percent_passing': 0 if len(attempted) == 0 else len(good)/len(attempted)
+    'percent_passing': 0 if len(attempted) == 0 else len(good)/len(attempted),
+    'result_stats': json.dumps(results)
 }
 
 insert_query = text("""
-    INSERT INTO health_checks (app_name, passed, failed, attempted, percent_passing)
-    VALUES (:app_name, :passed, :failed, :attempted, :percent_passing)""")
+    INSERT INTO health_checks (app_name, passed, failed, attempted, percent_passing, result_stats)
+    VALUES (:app_name, :passed, :failed, :attempted, :percent_passing, :result_stats)""")
 
 with EVENTS_ENGINE.connect() as conn:
     conn.execute(insert_query, params)
