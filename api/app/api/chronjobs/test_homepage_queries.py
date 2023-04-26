@@ -47,6 +47,9 @@ def testQueryWorks(query, scope):
         }
         res2 = queryTextToSQL(payload)
         print(len(res2['result']['column_names']), ' columns')
+        print(len(res2['result']['results']), 'rows')
+        print('SQL query: \n', res2['sql_query'])
+        print('\n \n---- \n \n')
         good.append(query)
         results.append({'q': query, 
                         'columns': len(res2['result']['column_names']), 
