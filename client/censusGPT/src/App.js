@@ -493,6 +493,13 @@ function App(props) {
         return response_1.table_names
     }
 
+    const handleClickExample = async (natural_language_query) => {
+        setSearchParams(
+            `?${new URLSearchParams({ s: natural_language_query })}`
+        )
+        await fetchBackend(natural_language_query)
+    }
+
     const fetchBackend = async (natural_language_query) => {
         if (natural_language_query == null) {
             return
@@ -899,7 +906,7 @@ function App(props) {
                         {useServerFeed ? (
                             <ExamplesFeed
                                 setQuery={setQuery}
-                                handleClick={fetchBackend}
+                                handleClick={handleClickExample}
                                 version={props.version}
                             />
                         ) : (
