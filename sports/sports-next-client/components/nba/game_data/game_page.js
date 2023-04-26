@@ -42,8 +42,6 @@ const GamePage = ({ id }) => {
     }
   }, [id]);
 
-  console.log("player:", myPlayerStats);
-
   return (
     <div
       className="flex flex-col"
