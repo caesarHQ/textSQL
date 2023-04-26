@@ -87,6 +87,13 @@ const BasicGameDisplay = ({ stats, teamLookup, playerStats }) => {
 const ScoreBox = ({ stats, teamLookup, playerStats }) => {
   const [activeTeam, setActiveTeam] = useState(null);
   const teams = Object.keys(stats || {});
+  const teamCount = teams.length;
+
+  useEffect(() => {
+    if (teams && teams.length > 0) {
+      setActiveTeam(teams[0]);
+    }
+  }, [teamCount]);
 
   const filteredPlayers = useMemo(() => {
     if (!playerStats) {
