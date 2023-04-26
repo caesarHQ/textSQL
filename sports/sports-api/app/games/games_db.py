@@ -216,12 +216,6 @@ def get_boxscores(game_ids):
 
 
 def get_player_data_by_id(person_id):
-    """
-    - get the info on the player by person_id
-    - get the last 10 games played by the player
-      - for each game, get the performance of the player along
-    """
-
     params = {
         "person_id": person_id
     }

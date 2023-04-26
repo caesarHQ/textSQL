@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { fetchPlayerData } from "@/apis/sports_apis";
+import { PlayerStats } from "./player_stats";
 
 export const PlayerPage = ({ id }) => {
-  const [player, setPlayer] = useState({});
+  const [player, setPlayer] = useState(null);
 
   useEffect(() => {
     if (!id) {
@@ -11,7 +12,7 @@ export const PlayerPage = ({ id }) => {
     const getPlayerData = async () => {
       const playerData = await fetchPlayerData({ id });
       if (playerData.status === "success") {
-        setPlayer(playerData.player);
+        setPlayer(playerData.stats);
       }
     };
     getPlayerData();
@@ -27,7 +28,7 @@ export const PlayerPage = ({ id }) => {
     >
       <h1>Player Page</h1>
       <p>Player ID: {id}</p>
-      {JSON.stringify(player)}
+      {player && <PlayerStats playerData={player} />}
     </div>
   );
 };
