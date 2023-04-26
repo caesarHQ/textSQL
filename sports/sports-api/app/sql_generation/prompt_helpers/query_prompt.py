@@ -11,6 +11,7 @@ Note: The NBA's Game ID, 0021400001, is a 10-digit code: XXXYYGGGGG, where XXX r
 You do not need to use the game_id in all queries but this is helpful for understanding the data.
 
 For instance, to get Lebron's avg score per season, you can run
+```
 SQL | 
     WITH lebron_james AS (
         SELECT np.person_id
@@ -32,8 +33,18 @@ SQL |
     )
     select avg(score_per_season.total_points)
     from score_per_season
+```
 
-
+or to get the last 5 games played by person_id '202329'
+```
+SQL |
+  select * from nba_player_game_stats
+  JOIN nba_game
+  on nba_player_game_stats.game_id=nba_game.game_id
+  where person_id='202329'
+  order by nba_game.game_time_utc desc
+  limit 5
+```
 
 team_id can change over time, so might need to worry about that.
 Do not include any variables/wildcards.
@@ -54,6 +65,6 @@ SQL |
   the final query to run
   each line should be a single clause and indented an extra 4 spaces
 
-ENSURE TO PROVIDE A | AFTER EACH YAML KEY SO THE YAML IS NOT INTERPRETED AS A COMMENT
+ENSURE TO PROVIDE A | AFTER EACH YAML KEY SO THE YAML IS NOT INTERPRETED AS A COMMENT. You must provide all values, you cannot provide templates.
 
 """.format(command)
