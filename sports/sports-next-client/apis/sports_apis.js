@@ -1,7 +1,6 @@
 let api_endpoint = "http://localhost:9000";
 
 export const getGames = async ({ month, year }) => {
-  //get request that takes optional YYYY-MM date arg for a 1 month range
   let url = api_endpoint + "/games/list";
   if (month && year) {
     url += `?date=${year}-${month}`;
@@ -11,7 +10,15 @@ export const getGames = async ({ month, year }) => {
     .catch((error) => {
       return { error: error };
     });
-  console.log("resp: ", resp);
+  return resp;
+};
+
+export const getGameById = async ({ game_id }) => {
+  const resp = await fetch(api_endpoint + `/games/${game_id}`)
+    .then((response) => response.json())
+    .catch((error) => {
+      return { error: error };
+    });
   return resp;
 };
 

@@ -88,7 +88,10 @@ def get_games_by_id(game_id):
     for row in rows:
         row_as_dict = row._mapping
         games.append(row2dict(row_as_dict))
-    return games
+    try:
+        return games[0]
+    except:
+        return {}
 
 
 def get_all_teams():

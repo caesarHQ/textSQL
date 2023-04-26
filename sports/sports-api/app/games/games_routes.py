@@ -23,9 +23,9 @@ def get_game(game_id):
     """
     Get game names from database
     """
-    games = get_games_by_month(game_id)
+    game = get_games_by_id(game_id)
 
-    return make_response(jsonify({"games": games, "status": "success"}), 200)
+    return make_response(jsonify({"game": game, "status": "success"}), 200)
 
 
 @games_bp.route('/teams', methods=['GET'])
