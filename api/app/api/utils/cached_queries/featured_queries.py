@@ -44,7 +44,7 @@ def get_featured_sql(input_str, scope="USA"):
         }
         query = text("""
             SELECT * FROM featured_queries
-            WHERE input_text = :input_text
+            WHERE input_text ilike :input_text
             AND app = :scope
         """)
 
