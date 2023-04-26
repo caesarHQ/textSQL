@@ -45,7 +45,13 @@ const GamePage = ({ id }) => {
   console.log("player:", myPlayerStats);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full">
+    <div
+      className="flex flex-col"
+      style={{
+        height: "100vh",
+        justifyContent: "flex-start",
+      }}
+    >
       <div className="flex w-full">
         <Link href={"/nba"}>
           <div className="flex flex-col items-center justify-center w-[100px] h-9 text-white bg-blue-500 rounded-lg">
@@ -68,7 +74,7 @@ export default GamePage;
 
 const BasicGameDisplay = ({ stats, teamLookup, playerStats }) => {
   return (
-    <div className="flex flex-col items-center justify-center w-full">
+    <div className="flex flex-col items-center w-full h-full">
       <ScoreBox
         stats={stats}
         teamLookup={teamLookup}
@@ -128,12 +134,14 @@ const ScoreBox = ({ stats, teamLookup, playerStats }) => {
         </tbody>
       </table>
       {activeTeam && (
-        <div>
+        <div className="flex flex-col items-center justify-center w-full">
           <div className="flex flex-col items-center justify-center w-full">
-            <div className="flex w-full">{teamLookup[activeTeam].name}</div>
+            <div className="flex flex-col items-center justify-center w-full text-white bg-blue-600 text-2xl p-2">
+              {teamLookup[activeTeam].name}
+            </div>
           </div>
           <table className="w-full bg-white rounded-lg">
-            <thead className="bg-gray-100">
+            <thead className="bg-gray-100 w-full">
               <tr>
                 <ScoreBoxHead label="Player" />
                 <ScoreBoxHead label="Points" />
