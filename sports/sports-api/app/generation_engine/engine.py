@@ -38,6 +38,14 @@ class Engine:
         except Exception as e:
             yield {"status": "error", "error": str(e), 'step': 'tables'}
 
+    def get_enums(self):
+        # todo
+        pass
+
+    def get_examples(self):
+        # todo
+        pass
+
     def get_sql(self):
         for res in text_to_sql_with_retry(self.query, self.tables):
             yield res
