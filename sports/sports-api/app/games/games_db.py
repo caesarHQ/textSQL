@@ -269,3 +269,32 @@ SELECT * FROM stats, name
         player_stats = row2dict(row_as_dict)
 
     return player_stats
+
+
+def get_player_recent_game_performance(player_id):
+    params = {
+        "person_id": player_id
+    }
+
+    query = text(
+        """
+        select * from nba_player_game_stats
+        JOIN nba_game
+        on nba_player_game_stats.game_id=nba_game.game_id
+        where person_id=:person_id
+        order by nba_game.game_time_utc desc
+        limit 10
+        """)
+
+    with ENGINE.connect() as con:
+        con = con.execution_options(
+            postgresql_readonly=True
+        )
+        result = con.execute(query, params)
+        rows = result.fetchall()
+    games = []
+    for row in rows:
+        row_as_dict = row._mapping
+        games.append(row2dict(row_as_dict))
+
+    return games

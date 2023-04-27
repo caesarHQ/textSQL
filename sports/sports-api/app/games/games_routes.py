@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, make_response, request
-from app.games.games_db import get_games_by_month, get_all_teams, get_boxscores, get_games_by_id, get_games_stats_by_id, get_player_games_stats_by_id, get_player_data_by_id
+from app.games.games_db import get_games_by_month, get_all_teams, get_boxscores, get_games_by_id, get_games_stats_by_id, get_player_games_stats_by_id, get_player_data_by_id, get_player_recent_game_performance
 
 games_bp = Blueprint('games_bp', __name__, url_prefix='/games')
 
@@ -54,7 +54,8 @@ def get_player_data(player_id):
     Get game names from database
     """
     player = get_player_data_by_id(player_id)
-    return make_response(jsonify({"stats": player, "status": "success"}), 200)
+    recent_games = get_player_recent_game_performance(player_id)
+    return make_response(jsonify({"stats": player, "status": "success", "recent_games": recent_games}), 200)
 
 
 @games_bp.route('/teams', methods=['GET'])
