@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { fetchPlayerData } from "@/apis/sports_apis";
 import { PlayerStats } from "./player_stats";
+import { PlayerGameTable } from "./player_game_table";
 
 export const PlayerPage = ({ id }) => {
   const [player, setPlayer] = useState(null);
+  const [games, setGames] = useState(null);
 
   useEffect(() => {
     if (!id) {
@@ -12,7 +14,9 @@ export const PlayerPage = ({ id }) => {
     const getPlayerData = async () => {
       const playerData = await fetchPlayerData({ id });
       if (playerData.status === "success") {
+        console.log("player data: ", playerData);
         setPlayer(playerData.stats);
+        setGames(playerData.recent_games);
       }
     };
     getPlayerData();
@@ -31,8 +35,8 @@ export const PlayerPage = ({ id }) => {
           {player && player.name}
         </div>
       </div>
-
       {player && <PlayerStats playerData={player} />}
+      {games && <PlayerGameTable games={games} />}
     </div>
   );
 };
