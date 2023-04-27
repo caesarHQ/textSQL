@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 
 import LoadingSpinner from "./components/loading_spinner";
 
-import { logSentryError } from "../utils/sentry";
 import { capturePosthog } from "../utils/posthog";
 
 import { SearchContext } from "./contexts/search_context";
@@ -17,7 +16,7 @@ import {
 import SearchBar from "./search_bar";
 import { notify } from "../widgets/toast";
 
-import { textToSql } from "@/apis/query_apis";
+import { textToSql } from "@/apis/streaming_query_apis";
 
 let api_endpoint = "http://localhost:9000";
 
@@ -123,57 +122,65 @@ const QueryScreen = (props) => {
     // Set the loading state
     setIsLoading(true);
 
-    let responseOuter = null;
-    // Send the request
-
     const startTime = new Date().getTime();
 
     const response = await textToSql(natural_language_query);
 
-    console.log("response: ", response);
-
     setIsLoading(false);
 
-    // Handle errors
-    if (!response.status === "success") {
-      capturePosthog("backend_error", response);
-      setErrorMessage(
-        "Something went wrong. Please try again or try a different query"
-      );
-      setTableNames();
+    if (response) {
+      console.log("response: ", response);
+      if (response.status === "success") {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+
+        let results = [];
+        let done = false;
+        let buffer = "";
+
+        while (!done) {
+          const { value, done: streamDone } = await reader.read();
+          if (streamDone) {
+            done = true;
+            break;
+          }
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+
+          for (let i = 0; i < lines.length - 1; i++) {
+            const jsonStr = lines[i];
+            const json = JSON.parse(jsonStr);
+            console.log("json: ", json);
+            results.push(json);
+          }
+
+          buffer = lines[lines.length - 1];
+        }
+        buffer += decoder.decode();
+        if (buffer) {
+          const json = JSON.parse(buffer);
+          results.push(json);
+        }
+        console.log("results: ", results);
+      }
+      // Handle errors
+      if (!response.status === "success") {
+        capturePosthog("backend_error", response);
+        setErrorMessage(
+          "Something went wrong. Please try again or try a different query"
+        );
+        setTableNames();
+        return;
+      }
       return;
     }
 
-    if (!("sql_query" in response) || !response.result) {
-      capturePosthog("backend_error", response);
-      setShowExplanationModal("attempted");
-      setTableNames();
-      return;
-    }
-
-    // Capture the response in posthog
-    const duration = new Date().getTime() - startTime;
-
-    capturePosthog("backend_response", {
-      origin: "fetchBackend",
-      duration,
-    });
-
-    // Set the state for SQL and Status Code
-    responseOuter = response;
     setSQL(response.sql_query);
 
-    // Filter out geolocation columns (lat, long, shape)
+    //can flter columns but for now it's just everythjing
     let filteredColumns = [];
-    if (props.version === "Census") {
-      filteredColumns = response.result.column_names.filter(
-        (c) => c !== "lat" && c !== "long"
-      );
-    } else {
-      filteredColumns = response.result.column_names.filter(
-        (c) => c !== "lat" && c !== "long" && c !== "shape"
-      );
-    }
+    filteredColumns = response.result.column_names;
 
     // Fit the order of columns and filter out lat and long row values
     let rows = response.result.results.map((value) => {

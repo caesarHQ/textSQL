@@ -13,10 +13,14 @@ export const textToSql = async (natural_language_query) => {
     body: JSON.stringify(requestBody),
   };
 
-  const resp = await fetch(api_endpoint + "/text_to_sql", options)
-    .then((response) => response.json())
+  const resp = await fetch(api_endpoint + "/text_to_sql_streaming", options)
+    .then((response) => {
+      if (response.ok) {
+        return { body: response.body, status: "success" };
+      }
+    })
     .catch((error) => {
-      return { error: error };
+      return { error: error, status: "failure" };
     });
 
   return resp;
