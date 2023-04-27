@@ -1,29 +1,42 @@
 import json
-import time
 
-from ..table_selection.utils import get_relevant_tables_from_lm
+from app.generation_engine.engine import Engine
+
+from decimal import Decimal
+
+
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        # Handle Decimal objects
+        if isinstance(obj, Decimal):
+            return float(obj)
+
+        elif hasattr(obj, 'isoformat'):
+            return obj.isoformat()
+
+        # Attempt to call the custom serialization method, if it exists
+        elif hasattr(obj, 'to_json'):
+            return obj.to_json()
+
+        # If all else fails, use the default serialization method
+        return super(CustomJSONEncoder, self).default(obj)
 
 
 def stream_sql_response(request_body):
 
     natural_language_query = request_body.get("natural_language_query")
-    table_names = request_body.get("table_names")
 
-    yield json.dumps({"result": "success", "state": "Processing Tables"}, separators=(",", ":")) + '\n'
+    engine = Engine()
 
-    try:
-        table_names = get_relevant_tables_from_lm(
-            natural_language_query, ignore_comments=True)
-    except Exception as e:
-        yield json.dumps({"result": "error", "error": str(e), 'step': 'tables'}, separators=(",", ":")) + '\n'
-        return None
+    engine.set_query(natural_language_query)
 
-    yield json.dumps({"result": "success", "state": "Tables Acquired", "tables": table_names, "step": "tables"}, separators=(",", ":")) + '\n'
-
-    print('doing stuff')
-
-    yield json.dumps({"result": "success", "sql_query": "SELECT * FROM table\nwheee"}, separators=(",", ":")) + '\n'
-
-    print('done doing stuff')
-
-    return None
+    for res in engine.run():
+        try:
+            new_response = json.dumps(res, separators=(
+                ",", ":"), cls=CustomJSONEncoder) + '\n'
+        except Exception as e:
+            print('error: ', e)
+            print('res: ', res)
+        yield new_response
+        if res['status'] == 'error':
+            return None

@@ -30,10 +30,10 @@ def text_to_sql():
                 table_names = get_relevant_tables_from_pinecone(
                     natural_language_query)
             else:
-                print('looking for relevant tables')
+
                 table_names = get_relevant_tables_from_lm(
                     natural_language_query, ignore_comments=True)
-        print('doing retry step')
+
         result, sql_query = text_to_sql_with_retry(
             natural_language_query, table_names)
     except Exception as e:
@@ -50,7 +50,5 @@ def text_to_sql_streaming():
     """
 
     request_body = request.get_json()
-
-    print('calling streaming helper')
 
     return Response(stream_with_context(streaming_helper.stream_sql_response(request_body)), content_type="application/json")

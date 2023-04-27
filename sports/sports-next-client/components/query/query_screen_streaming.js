@@ -153,9 +153,23 @@ const QueryScreen = (props) => {
             const jsonStr = lines[i];
             const json = JSON.parse(jsonStr);
             results.push(json);
-            console.log("json: ", json);
             if (json.state) {
               setDisplayMessage((oldMessage) => oldMessage + "\n" + json.state);
+            }
+            if (json.final_answer) {
+              console.log("final answer: ", json);
+              setSQL(json.sql_query);
+              let filteredColumns = [];
+              filteredColumns = json.response.column_names;
+
+              // Fit the order of columns and filter out lat and long row values
+              let rows = json.response.results.map((value) => {
+                let row = [];
+                // Find each of the filtered column value in the object and push it into the row
+                filteredColumns.map((c) => row.push(value[c]));
+                return row;
+              });
+              setTableInfo({ rows, columns: filteredColumns });
             }
           }
 
@@ -168,7 +182,7 @@ const QueryScreen = (props) => {
         }
       }
       // Handle errors
-      if (!response.status === "success") {
+      if (!["success", "working"].includes(response.status)) {
         capturePosthog("backend_error", response);
         setErrorMessage(
           "Something went wrong. Please try again or try a different query"
@@ -179,23 +193,9 @@ const QueryScreen = (props) => {
       }
 
       setIsLoading(false);
+      setDisplayMessage("");
       return;
     }
-
-    setSQL(response.sql_query);
-
-    //can flter columns but for now it's just everythjing
-    let filteredColumns = [];
-    filteredColumns = response.result.column_names;
-
-    // Fit the order of columns and filter out lat and long row values
-    let rows = response.result.results.map((value) => {
-      let row = [];
-      // Find each of the filtered column value in the object and push it into the row
-      filteredColumns.map((c) => row.push(value[c]));
-      return row;
-    });
-    setTableInfo({ rows, columns: filteredColumns });
   };
 
   return (
@@ -233,6 +233,12 @@ const QueryScreen = (props) => {
             <SearchBar version={props.version} fetchBackend={fetchBackend} />
           </div>
         </div>
+        {displayMessage && (
+          <div className="text-center" style={{ whiteSpace: "pre" }}>
+            {displayMessage}
+          </div>
+        )}
+
         <LoadingSpinner
           isLoading={isLoading || isGetTablesLoading}
           message={displayMessage}
