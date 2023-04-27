@@ -21,7 +21,7 @@ try:
 except:
     CREDS = {}
 
-OPENAI_KEY = CREDS.get("OPENAI_API_KEY")
+OPENAI_KEY = CREDS.get("OPENAI_API_KEY") or getenv("OPENAI_API_KEY")
 
 
 def load_openai_key(new_openai_key=None):
