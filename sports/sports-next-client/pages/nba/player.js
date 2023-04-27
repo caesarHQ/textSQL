@@ -5,8 +5,6 @@ const Player = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  console.log("id: ", id);
-
   return <PlayerPage id={id} />;
 };
 

@@ -222,7 +222,7 @@ def get_player_data_by_id(person_id):
 
     query = text(
         """
-SELECT
+with stats as (SELECT
 sum(ngs.points) AS total_points,
 sum(ngs.field_goals_made) AS total_field_goals_made,
 sum(ngs.field_goals_attempted) AS total_field_goals_attempted,
@@ -252,8 +252,10 @@ sum(ngs.blocks) AS total_blocks,
 sum(ngs.turnovers) AS total_turnovers
 FROM
 nba_player_game_stats ngs
-where person_id=:person_id
-  """)
+where person_id=:person_id),
+name as (SELECT name FROM nba_player WHERE person_id=:person_id)
+SELECT * FROM stats, name
+""")
 
     with ENGINE.connect() as con:
         con = con.execution_options(

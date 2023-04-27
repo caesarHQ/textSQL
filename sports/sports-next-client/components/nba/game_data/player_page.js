@@ -26,8 +26,12 @@ export const PlayerPage = ({ id }) => {
         justifyContent: "flex-start",
       }}
     >
-      <h1>Player Page</h1>
-      <p>Player ID: {id}</p>
+      <div className="flex w-full">
+        <div className="flex flex-col items-center justify-center w-full h-9 text-white bg-blue-500">
+          {player && player.name}
+        </div>
+      </div>
+
       {player && <PlayerStats playerData={player} />}
     </div>
   );
