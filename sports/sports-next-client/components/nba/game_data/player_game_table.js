@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { NbaContext } from "../nba_context";
 import {
   Table,
   TableHead,
@@ -8,6 +10,7 @@ import {
 } from "./table";
 
 export const PlayerGameTable = ({ games }) => {
+  const { teamLookup } = useContext(NbaContext);
   return (
     <Table>
       <TableHead>
@@ -26,8 +29,8 @@ export const PlayerGameTable = ({ games }) => {
             <TableRow key={game.game_id}>
               <TableCell>{game.game_id}</TableCell>
               <TableCell>{game.game_et}</TableCell>
-              <TableCell>{game.home_team_id}</TableCell>
-              <TableCell>{game.away_team_id}</TableCell>
+              <TableCell>{teamLookup[game.home_team_id].name}</TableCell>
+              <TableCell>{teamLookup[game.away_team_id].name}</TableCell>
               <TableCell>{game.attendance}</TableCell>
               <TableCell>{game.duration}</TableCell>
               <TableCell>{game.game_status_text}</TableCell>
