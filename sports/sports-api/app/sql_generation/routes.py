@@ -51,4 +51,6 @@ def text_to_sql_streaming():
 
     request_body = request.get_json()
 
+    print('calling streaming helper')
+
     return Response(stream_with_context(streaming_helper.stream_sql_response(request_body)), content_type="application/json")
