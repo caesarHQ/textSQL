@@ -39,7 +39,7 @@ def load_openai_key(new_openai_key=None):
 load_openai_key()
 
 
-DB_URL = CREDS.get("DB_URL")
+DB_URL = CREDS.get("DB_URL") or getenv("DB_URL")
 
 if DB_URL:
     ENGINE = create_engine(DB_URL)
