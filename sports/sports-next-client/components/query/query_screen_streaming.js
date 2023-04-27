@@ -40,6 +40,7 @@ const QueryScreen = (props) => {
   const [sqlExplanationIsOpen, setSqlExplanationIsOpen] = useState(false);
   const [sqlExplanation, setSqlExplanation] = useState();
   const [isExplainSqlLoading, setIsExplainSqlLoading] = useState(false);
+  const [displayMessage, setDisplayMessage] = useState("Enter Something");
 
   const { setQuery, setTitle, setSearchParams } = useContext(SearchContext);
 
@@ -126,7 +127,7 @@ const QueryScreen = (props) => {
 
     const response = await textToSql(natural_language_query);
 
-    setIsLoading(false);
+    setDisplayMessage("");
 
     if (response) {
       console.log("response: ", response);
@@ -151,8 +152,11 @@ const QueryScreen = (props) => {
           for (let i = 0; i < lines.length - 1; i++) {
             const jsonStr = lines[i];
             const json = JSON.parse(jsonStr);
-            console.log("json: ", json);
             results.push(json);
+            console.log("json: ", json);
+            if (json.state) {
+              setDisplayMessage((oldMessage) => oldMessage + "\n" + json.state);
+            }
           }
 
           buffer = lines[lines.length - 1];
@@ -162,7 +166,6 @@ const QueryScreen = (props) => {
           const json = JSON.parse(buffer);
           results.push(json);
         }
-        console.log("results: ", results);
       }
       // Handle errors
       if (!response.status === "success") {
@@ -171,8 +174,11 @@ const QueryScreen = (props) => {
           "Something went wrong. Please try again or try a different query"
         );
         setTableNames();
+        setIsLoading(false);
         return;
       }
+
+      setIsLoading(false);
       return;
     }
 
@@ -227,7 +233,10 @@ const QueryScreen = (props) => {
             <SearchBar version={props.version} fetchBackend={fetchBackend} />
           </div>
         </div>
-        <LoadingSpinner isLoading={isLoading || isGetTablesLoading} />
+        <LoadingSpinner
+          isLoading={isLoading || isGetTablesLoading}
+          message={displayMessage}
+        />
         {sql.length === 0 && !isLoading && !isGetTablesLoading ? (
           <div className="gap-3 flex flex-col w-full items-center">
             <div>enter something</div>
