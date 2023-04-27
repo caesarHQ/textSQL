@@ -34,9 +34,10 @@ def stream_sql_response(request_body):
         try:
             new_response = json.dumps(res, separators=(
                 ",", ":"), cls=CustomJSONEncoder) + '\n'
+            yield new_response
+            if res['status'] == 'error':
+                return None
         except Exception as e:
             print('error: ', e)
             print('res: ', res)
-        yield new_response
-        if res['status'] == 'error':
-            return None
+            yield json.dumps({"status": "error", "error": str(e)}) + '\n'
