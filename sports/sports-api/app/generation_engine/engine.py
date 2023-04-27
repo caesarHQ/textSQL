@@ -5,11 +5,12 @@ from app.generation_engine.streaming_sql_generation import text_to_sql_with_retr
 
 class Engine:
 
+    query = ''
     table_selection_method = 'llm'
     tables = []
 
-    def __init__(self):
-        self.query = ""
+    def __init__(self, table_selection_method='llm'):
+        self.table_selection_method = table_selection_method
 
     def set_query(self, query):
         self.query = query
