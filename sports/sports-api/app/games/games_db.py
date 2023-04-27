@@ -253,7 +253,7 @@ sum(ngs.turnovers) AS total_turnovers
 FROM
 nba_player_game_stats ngs
 where person_id=:person_id),
-name as (SELECT name FROM nba_player WHERE person_id=:person_id)
+name as (SELECT name FROM nba_player WHERE person_id=:person_id limit 1)
 SELECT * FROM stats, name
 """)
 
