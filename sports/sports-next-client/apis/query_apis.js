@@ -1,4 +1,4 @@
-let api_endpoint = "http://localhost:9000";
+let api_endpoint = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:9000";
 
 export const textToSql = async (natural_language_query) => {
   let requestBody = {
