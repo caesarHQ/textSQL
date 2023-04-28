@@ -1,7 +1,7 @@
-import json
 from app.generation_engine.streaming_table_selection import get_tables
 from app.generation_engine.streaming_sql_generation import text_to_sql_with_retry
 from app.generation_engine.example_picker import similar_examples_from_pinecone
+from app.generation_engine.utils import cleaner
 
 
 class Engine:
@@ -15,7 +15,7 @@ class Engine:
         self.table_selection_method = table_selection_method
 
     def set_query(self, query):
-        self.query = query
+        self.query = cleaner.clean_input(query)
 
     def run(self):
         yield {"status": "working", "state": "Query Received", "step": "query"}
