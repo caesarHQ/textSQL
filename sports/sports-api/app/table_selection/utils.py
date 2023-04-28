@@ -224,8 +224,6 @@ def get_relevant_tables_from_lm(natural_language_query, ignore_comments=False):
     if ignore_comments:
         content = strip_sql_comments(content)
 
-    print('PAYLOAD FOR GETTING TABLE', content)
-
     messages = _get_table_selection_messages().copy()
     messages.append({
         "role": "user",
@@ -239,11 +237,7 @@ def get_relevant_tables_from_lm(natural_language_query, ignore_comments=False):
         model="gpt-3.5-turbo-0301",
     )["message"]["content"]
 
-    print('Table Assistant Message: ', asst_message)
-
     tables_json_str = _extract_text_from_markdown(asst_message)
-
-    print('Table JSON Response: ', tables_json_str)
 
     tables = json.loads(tables_json_str).get("tables")
 

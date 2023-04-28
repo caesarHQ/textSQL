@@ -4,6 +4,7 @@ export const textToSql = async (natural_language_query) => {
   let requestBody = {
     natural_language_query,
     scope: "sports",
+    stream: true,
   };
 
   // Set the options for the fetch request
@@ -13,7 +14,7 @@ export const textToSql = async (natural_language_query) => {
     body: JSON.stringify(requestBody),
   };
 
-  const resp = await fetch(api_endpoint + "/text_to_sql_streaming", options)
+  const resp = await fetch(api_endpoint + "/text_to_sql", options)
     .then((response) => {
       if (response.ok) {
         return { body: response.body, status: "success" };

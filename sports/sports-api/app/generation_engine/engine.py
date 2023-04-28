@@ -29,6 +29,7 @@ class Engine:
 
         for res in self.get_sql():
             if res['status'] == 'error':
+                print('hit error')
                 return res
             yield res
 
@@ -48,9 +49,16 @@ class Engine:
         pass
 
     def get_examples(self):
+        print('getting examples')
         self.selected_examples = similar_examples_from_pinecone(self.query)
+        print('got examples')
         pass
 
     def get_sql(self):
-        for res in text_to_sql_with_retry(self.query, self.tables, examples=self.selected_examples):
-            yield res
+        try:
+            for res in text_to_sql_with_retry(self.query, self.tables, examples=self.selected_examples):
+                yield res
+            print('done with get_sql')
+        except Exception as exc:
+            print('error in get_sql: ', exc)
+            return
