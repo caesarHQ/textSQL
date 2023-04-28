@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { SearchProvider } from "@/components/query/contexts/search_context";
 
+import { SearchProvider } from "@/components/query/contexts/search_context";
 import QueryScreen from "@/components/query/query_screen_streaming";
 
 const Query = () => {
@@ -14,7 +14,7 @@ const Query = () => {
   } else {
     return (
       <SearchProvider>
-        <QueryScreen />
+        <QueryScreen />;
       </SearchProvider>
     );
   }

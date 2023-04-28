@@ -1,7 +1,8 @@
 from functools import wraps
 import json
+import pinecone
 
-from app.config import CREDS, update_engine, ENV, load_openai_key, CREDS_PATH
+from app.config import CREDS, update_engine, ENV, load_openai_key, CREDS_PATH, start_pinecone
 from . import utils
 
 # wrapper function; if ENV is localhost returns it, else returns None
@@ -83,6 +84,37 @@ def set_openai_credentials(request_body):
             raise Exception(error_msg)
 
     return load_openai_key(openai_credentials["OPENAI_API_KEY"])
+
+
+@localhost_only
+def set_pinecone_credentials(request_body):
+    """
+    Set pinecone credentials in request body
+    """
+
+    pc_index = request_body.get("index")
+    pc_key = request_body.get("key")
+    pc_env = request_body.get("env")
+
+    if not pc_index or not pc_key:
+        error_msg = f"`index` or `key` is missing from request body"
+        raise Exception(error_msg)
+
+    return start_pinecone(
+        pinecone_key=pc_key,
+        pinecone_index=pc_index,
+        pinecone_environment=pc_env
+    )
+
+
+@localhost_only
+def get_pinecone_credentials():
+    """
+    Get pinecone credentials from request body
+    """
+    return {
+        'status': 'success', 'PINECONE_INDEX': CREDS.get("PINECONE_INDEX"), 'PINECONE_KEY': CREDS.get("PINECONE_KEY"), 'PINECONE_ENV': CREDS.get("PINECONE_ENV")
+    }
 
 
 @localhost_only
@@ -168,3 +200,24 @@ def load_enums():
     return {
         'status': 'success', 'enums': enums
     }
+
+
+@localhost_only
+def get_examples():
+    """
+    load the examples from pinecone
+    """
+
+    # check if we have the pinecone credentials (if not, we can't load examples)
+    if not CREDS.get("PINECONE_INDEX") or not CREDS.get("PINECONE_KEY") or not CREDS.get("PINECONE_ENV"):
+        return {
+            'status': 'failure', 'message': 'pinecone is not loaded yet'
+        }
+    index = pinecone.Index(CREDS.get('PINECONE_INDEX'))
+    res = index.query([0]*1536, top_k=10000,
+                      include_metadata=True, filter={'purpose': 'example'})
+
+    formatted_results = [
+        {'text': x['id'], 'sql':x['metadata'].get('sql', '')} for x in res['matches']]
+
+    return {'status': 'success', 'examples': formatted_results}

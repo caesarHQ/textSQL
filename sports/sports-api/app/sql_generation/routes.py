@@ -1,9 +1,11 @@
-from flask import Blueprint, jsonify, make_response, request
+from flask import Blueprint, jsonify, make_response, request, stream_with_context, Response
 
 from ..config import PINECONE_ENV, PINECONE_KEY
 from ..table_selection.utils import (get_relevant_tables_from_lm,
                                      get_relevant_tables_from_pinecone)
 from .utils import text_to_sql_with_retry
+
+from app.generation_engine import streaming_helper
 
 bp = Blueprint('sql_generation_bp', __name__)
 
@@ -28,10 +30,10 @@ def text_to_sql():
                 table_names = get_relevant_tables_from_pinecone(
                     natural_language_query)
             else:
-                print('looking for relevant tables')
+
                 table_names = get_relevant_tables_from_lm(
                     natural_language_query, ignore_comments=True)
-        print('doing retry step')
+
         result, sql_query = text_to_sql_with_retry(
             natural_language_query, table_names)
     except Exception as e:
@@ -39,3 +41,14 @@ def text_to_sql():
         return make_response(jsonify({"error": error_msg}), 500)
 
     return make_response(jsonify({"result": result, "sql_query": sql_query}), 200)
+
+
+@bp.route('/text_to_sql_streaming', methods=['POST'])
+def text_to_sql_streaming():
+    """
+    Convert natural language query to SQL
+    """
+
+    request_body = request.get_json()
+
+    return Response(stream_with_context(streaming_helper.stream_sql_response(request_body)), content_type="application/json")
