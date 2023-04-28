@@ -1,7 +1,9 @@
 import discord
+from tabulate import tabulate
 from discord.ext import commands
 from dotenv import load_dotenv
 from os import getenv
+import requests
 
 load_dotenv()
 
@@ -25,7 +27,24 @@ async def on_message(message):
         return
 
     if message.content.startswith('/ask'):
-        response = f"Hello, {message.author.mention}! You asked: {message.content[4:].strip()}"
-        await message.channel.send(response)
+       # response_msg = f"{message.author.mention} asked: {message.content[4:].strip()}"
+        user_message = str(message.content).lower()
+        await message.channel.send(f"Working on: {message.content[4:].strip()}")
+
+        natural_language_query = user_message.split('/ask ')[-1]
+        url = "https://nba-gpt-prod.onrender.com/text_to_sql"
+
+        payload = {"natural_language_query": natural_language_query, "scope": "sports"}
+        headers = {"Content-Type": "application/json"}
+
+        response = requests.post(url, json=payload, headers=headers)
+        if response.json()["result"] is None:
+            return "Sorry, I couldn't find any results for that query"
+        data = response.json()["result"]["results"]
+        headers = response.json()["result"]["column_names"]
+        table_data = [[d.get(header, "") for header in headers] for d in data]
+        table = tabulate(table_data, headers=headers)
+
+        await message.channel.send("``` \n" + message.author.mention + "``` \n"+ table + "\n```")
 
 bot.run(BOT_TOKEN)
