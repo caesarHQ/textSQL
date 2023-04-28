@@ -23,20 +23,30 @@ export const PineconeKeyForm = () => {
     });
   };
 
+  const handlePineconeEnvChange = (event) => {
+    setPineconeKey({
+      ...pineconeKey,
+      added: false,
+      env: event.target.value,
+    });
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const res = verifyPineconeCredentials(pineconeKey.key);
+    const res = verifyPineconeCredentials(pineconeKey);
     if (res.status === "success") {
       setPineconeKey({
         key: pineconeKey.key,
         added: true,
         index: pineconeKey.index,
+        env: pineconeKey.env,
       });
     } else {
       setPineconeKey({
         key: pineconeKey.key,
         added: false,
         index: pineconeKey.index,
+        env: pineconeKey.env,
       });
     }
   };
@@ -71,6 +81,21 @@ export const PineconeKeyForm = () => {
           className="border border-gray-400 p-2 rounded w-64"
           value={pineconeKey.index || ""}
           onChange={handlePineconeIndexChange}
+        />
+      </div>
+      <div className="flex items-center mb-4">
+        <label
+          htmlFor="pinecone-env"
+          className="block mr-2 font-bold w-24 text-right"
+        >
+          Pinecone Env:
+        </label>
+        <input
+          type="text"
+          id="pinecone-env"
+          className="border border-gray-400 p-2 rounded w-64"
+          value={pineconeKey.env || ""}
+          onChange={handlePineconeEnvChange}
         />
       </div>
 
