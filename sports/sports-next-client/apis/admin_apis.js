@@ -116,3 +116,9 @@ export const saveExample = async ({ example }) => {
   const data = await response.json();
   return data;
 };
+
+export const listExamples = async () => {
+  const response = await fetch(`${API_BASE}/admin/examples`);
+  const data = await response.json();
+  return data;
+};
