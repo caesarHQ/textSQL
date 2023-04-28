@@ -3,7 +3,7 @@ import json
 import pinecone
 
 from app.config import CREDS, update_engine, ENV, load_openai_key, CREDS_PATH, start_pinecone
-from . import utils
+from app import utils
 
 # wrapper function; if ENV is localhost returns it, else returns None
 
@@ -218,6 +218,26 @@ def get_examples():
                       include_metadata=True, filter={'purpose': 'example'})
 
     formatted_results = [
-        {'text': x['id'], 'sql':x['metadata'].get('sql', '')} for x in res['matches']]
+        {'query': x['id'], 'sql':x['metadata'].get('sql', '')} for x in res['matches']]
 
     return {'status': 'success', 'examples': formatted_results}
+
+
+@localhost_only
+def save_example(example):
+    """
+    save example ({query, sql}) to pinecone
+    """
+
+    query = example['query']
+    sql = example['sql']
+
+    # check if we have the pinecone credentials (if not, we can't load examples)
+    if not CREDS.get("PINECONE_INDEX") or not CREDS.get("PINECONE_KEY") or not CREDS.get("PINECONE_ENV"):
+        return {
+            'status': 'failure', 'message': 'pinecone is not loaded yet'
+        }
+    # get the embeddings for the query
+    res = utils.save_example_to_pinecone(query, sql)
+
+    return {'status': 'success'}

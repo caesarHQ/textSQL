@@ -104,3 +104,15 @@ export const generateSchema = async ({ table }) => {
   const data = await response.json();
   return data;
 };
+
+export const saveExample = async ({ example }) => {
+  const response = await fetch(`${API_BASE}/admin/examples`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ example }),
+  });
+  const data = await response.json();
+  return data;
+};

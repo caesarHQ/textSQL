@@ -90,6 +90,15 @@ def get_examples():
     return make_response(jsonify(admin_helper.get_examples()), 200)
 
 
+@admin_bp.route('/examples', methods=['POST'])
+def save_example_for_search():
+
+    new_data = request.get_json()
+    new_example = new_data.get('example')
+
+    return make_response(jsonify(admin_helper.save_example(new_example)), 200)
+
+
 @admin_bp.route('/tables', methods=['GET'])
 def get_tables():
     """

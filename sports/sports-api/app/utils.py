@@ -2,9 +2,10 @@ import json
 import re
 import yaml
 from typing import Dict, List
+import pinecone
 
 import openai
-from app.config import DB_MANAGED_METADATA
+from app.config import DB_MANAGED_METADATA, PINECONE_INDEX
 from app.extensions import db
 from app.models.in_context_examples import InContextExamples
 
@@ -137,3 +138,24 @@ def extract_code_from_markdown(assistant_message_content):
         code_str = assistant_message_content
 
     return code_str
+
+
+def save_example_to_pinecone(query, sql):
+    """
+    Get embedding for a query
+    """
+    MODEL = "text-embedding-ada-002"
+
+    res = openai.Embedding.create(input=[query], engine=MODEL)
+    embedding = res['data'][0]['embedding']
+
+    index = pinecone.Index(PINECONE_INDEX)
+
+    # NOTE: WE NEED TO GO BACK AND DELETE THE INDEX AND RE-CREATE IT SO IT IGNORE THE ORIGINAL QUERY
+    # NOTE: unless it turns out we can weight pinecone in which case math
+    status = index.upsert(
+        [(sql, embedding, {"purpose": "example", 'app': 'nbai', 'query': query})])
+
+    print('status of upsert: ', status)
+
+    return True

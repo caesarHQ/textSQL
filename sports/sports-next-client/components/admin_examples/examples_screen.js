@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+import { saveExample } from "@/apis/admin_apis";
+
 export const ExamplesScreen = () => {
   const [examples, setExamples] = useState([]);
 
@@ -35,6 +37,7 @@ export const ExamplesScreen = () => {
             example={example}
             setExample={(newExample) => updateExample(newExample, idx)}
             key={idx}
+            onSave={saveExample}
           />
         );
       })}
@@ -72,7 +75,7 @@ const ExampleEditor = ({ example, setExample, onSave }) => {
           <div
             className="bg-blue-500 text-white py-2 px-4 rounded w-24 text-center hover:bg-blue-900 cursor-pointer"
             onClick={() => {
-              onSave(example);
+              onSave({ example });
             }}
           >
             Save
