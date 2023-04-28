@@ -52,7 +52,7 @@ export const verifyOpenaiCredentials = async (openai_key) => {
 };
 
 export const verifyPineconeCredentials = async ({ key, index, env }) => {
-  const response = await fetch(`${API_BASE}/pinecone_auth`, {
+  const response = await fetch(`${API_BASE}/admin/pinecone_auth`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
