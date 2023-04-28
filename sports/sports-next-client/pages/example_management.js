@@ -1,9 +1,7 @@
+import { ExamplesScreen } from "@/components/admin_examples/examples_screen";
+
 const ExampleManagement = () => {
-  return (
-    <div>
-      <h1>Example Management</h1>
-    </div>
-  );
+  return <ExamplesScreen />;
 };
 
 export default ExampleManagement;
