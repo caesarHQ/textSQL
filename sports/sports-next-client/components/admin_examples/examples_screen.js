@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { saveExample } from "@/apis/admin_apis";
+import { saveExample, listExamples } from "@/apis/admin_apis";
 
 export const ExamplesScreen = () => {
   const [examples, setExamples] = useState([]);
@@ -12,7 +12,11 @@ export const ExamplesScreen = () => {
   };
 
   useEffect(() => {
-    console.log("loaded");
+    const fetchData = async () => {
+      const data = await listExamples();
+      setExamples(data.examples);
+    };
+    fetchData();
   }, []);
 
   return (
