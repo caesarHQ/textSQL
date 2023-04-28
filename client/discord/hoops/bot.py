@@ -1,4 +1,5 @@
 import discord
+import time
 from tabulate import tabulate
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -27,17 +28,21 @@ async def on_message(message):
         return
 
     if message.content.startswith('/ask'):
+        start_time = time.time()
         user_message = str(message.content).lower()
-        await message.channel.send(f"Working on: {message.content[4:].strip()}")
+        await message.channel.send(f"Working on: ** {message.content[4:].strip()} **")
 
         natural_language_query = user_message.split('/ask ')[-1]
         response_data = await fetch_data(natural_language_query=natural_language_query)
-        
+
+        end_time = time.time()
+        time_taken =  "\nTime: "+ str(round(end_time - start_time, 2)) + " seconds"
+
         if (response_data.startswith("Sorry")):
-            await message.channel.send(response_data)
+            await message.channel.send(response_data + time_taken)
             return
 
-        await message.channel.send("\n " + message.author.mention +  "``` \n"+ response_data + "\n```")
+        await message.channel.send("\n " + message.author.mention +  "``` \n"+ response_data + "\n```" + time_taken)
 
 async def fetch_data(natural_language_query): 
     url = "https://nba-gpt-prod.onrender.com/text_to_sql"
