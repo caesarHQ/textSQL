@@ -1,6 +1,7 @@
 import json
 from app.generation_engine.streaming_table_selection import get_tables
 from app.generation_engine.streaming_sql_generation import text_to_sql_with_retry
+from app.generation_engine.example_picker import similar_examples_from_pinecone
 
 
 class Engine:
@@ -8,6 +9,7 @@ class Engine:
     query = ''
     table_selection_method = 'llm'
     tables = []
+    selected_examples = []
 
     def __init__(self, table_selection_method='llm'):
         self.table_selection_method = table_selection_method
@@ -22,6 +24,8 @@ class Engine:
             if res['status'] == 'error':
                 return res
             yield res
+
+        self.get_examples()
 
         for res in self.get_sql():
             if res['status'] == 'error':
@@ -44,9 +48,9 @@ class Engine:
         pass
 
     def get_examples(self):
-        # todo
+        self.selected_examples = similar_examples_from_pinecone(self.query)
         pass
 
     def get_sql(self):
-        for res in text_to_sql_with_retry(self.query, self.tables):
+        for res in text_to_sql_with_retry(self.query, self.tables, examples=self.selected_examples):
             yield res
