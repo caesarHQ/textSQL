@@ -93,6 +93,8 @@ def start_pinecone(pinecone_key=None, pinecone_environment=None, pinecone_index=
     try:
 
         r = pinecone.list_indexes()
+        if PINECONE_INDEX not in r:
+            return {"status": "error", "message": "index not found"}
 
     except:
         print('error')
