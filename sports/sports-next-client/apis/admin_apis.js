@@ -51,6 +51,20 @@ export const verifyOpenaiCredentials = async (openai_key) => {
   return data;
 };
 
+export const verifyPineconeCredentials = async (pineconeKey) => {
+  const response = await fetch(`${API_BASE}/pinecone_auth`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      PINECONE_KEY: pineconeKey,
+    }),
+  });
+  const data = await response.json();
+  return data;
+};
+
 export const fetchAllTables = async () => {
   const response = await fetch(`${API_BASE}/admin/tables`);
   const data = await response.json();

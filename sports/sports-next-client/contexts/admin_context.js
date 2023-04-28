@@ -14,6 +14,7 @@ export const AdminProvider = ({ children }) => {
   const [enums, setEnums] = useState([]);
   const [dbInfo, setDbInfo] = useState({});
   const [openaiKey, setOpenaiKey] = useState({});
+  const [pineconeKey, setPineconeKey] = useState({});
 
   const adminEnabled = process.env.NEXT_PUBLIC_ADMIN === "enabled";
 
@@ -59,6 +60,8 @@ export const AdminProvider = ({ children }) => {
         setOpenaiKey,
         tableNames,
         setTableNames,
+        pineconeKey,
+        setPineconeKey,
       }}
     >
       {children}

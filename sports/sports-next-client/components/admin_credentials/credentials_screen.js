@@ -5,6 +5,7 @@ import { AdminContext } from "@/contexts/admin_context";
 import { ClosableRow } from "../closable_row";
 import { DatabaseConfigComponent } from "./database_form";
 import { OpenaiKeyForm } from "./openai_form";
+import { PineconeKeyForm } from "./pinecone_form";
 
 const CredentialsScreen = () => {
   const { dbInfo, openaiKey } = useContext(AdminContext);
@@ -20,6 +21,9 @@ const CredentialsScreen = () => {
         </ClosableRow>
         <ClosableRow title="OpenAI API Key" isGood={isOpenAIAdded}>
           <OpenaiKeyForm />
+        </ClosableRow>
+        <ClosableRow title="Pinecone API Key" isGood={false}>
+          <PineconeKeyForm />
         </ClosableRow>
       </div>
     </div>
