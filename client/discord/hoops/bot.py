@@ -27,24 +27,35 @@ async def on_message(message):
         return
 
     if message.content.startswith('/ask'):
-       # response_msg = f"{message.author.mention} asked: {message.content[4:].strip()}"
         user_message = str(message.content).lower()
         await message.channel.send(f"Working on: {message.content[4:].strip()}")
 
         natural_language_query = user_message.split('/ask ')[-1]
-        url = "https://nba-gpt-prod.onrender.com/text_to_sql"
+        response_data = await fetch_data(natural_language_query=natural_language_query)
+        
+        if (response_data.startswith("Sorry")):
+            await message.channel.send(response_data)
+            return
 
-        payload = {"natural_language_query": natural_language_query, "scope": "sports"}
-        headers = {"Content-Type": "application/json"}
+        await message.channel.send("\n " + message.author.mention +  "``` \n"+ response_data + "\n```")
 
-        response = requests.post(url, json=payload, headers=headers)
-        if response.json()["result"] is None:
-            return "Sorry, I couldn't find any results for that query"
-        data = response.json()["result"]["results"]
-        headers = response.json()["result"]["column_names"]
-        table_data = [[d.get(header, "") for header in headers] for d in data]
-        table = tabulate(table_data, headers=headers)
+async def fetch_data(natural_language_query): 
+    url = "https://nba-gpt-prod.onrender.com/text_to_sql"
 
-        await message.channel.send("``` \n" + message.author.mention + "``` \n"+ table + "\n```")
+    payload = {"natural_language_query": natural_language_query, "scope": "sports"}
+    headers = {"Content-Type": "application/json"}
+
+    response = requests.post(url, json=payload, headers=headers)
+
+    if response.json()["result"] is None: 
+        return "Sorry, I couldn't find any results for that query"
+        
+    data = response.json()["result"]["results"]
+    column_names = response.json()["result"]["column_names"]
+
+    table_data = [[d.get(col, "") for col in column_names] for d in data]
+    table = tabulate(table_data, headers=column_names)
+
+    return table
 
 bot.run(BOT_TOKEN)
