@@ -6,7 +6,7 @@ MODEL = "text-embedding-ada-002"
 index = pinecone.Index("nb-ai")
 
 
-def query_pinecone(question, enum_type):
+def relevant_enums_from_pinecone(question, enum_type):
     """
     Query pinecone to get he relevant enums and examples
     """
