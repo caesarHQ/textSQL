@@ -33,5 +33,9 @@ def text_to_sql():
             responses.append(response)
             if "error" in response:
                 return make_response(jsonify(response), 500)
-        print('last response: ', responses[-1])
-        return make_response(responses[-1], 200)
+
+        res = responses[-1]
+        if "response" in res:
+            res['result'] = res['response']
+            del res['response']
+        return make_response(res, 200)
