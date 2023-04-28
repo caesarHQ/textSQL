@@ -49,10 +49,11 @@ class Engine:
         pass
 
     def get_examples(self):
-        print('getting examples')
-        self.selected_examples = similar_examples_from_pinecone(self.query)
-        print('got examples')
-        pass
+
+        try:
+            self.selected_examples = similar_examples_from_pinecone(self.query)
+        except:
+            pass
 
     def get_sql(self):
         try:
