@@ -4,13 +4,15 @@ from app.config import PINECONE_INDEX
 
 MODEL = "text-embedding-ada-002"
 
-index = pinecone.Index(PINECONE_INDEX)
-
 
 def similar_examples_from_pinecone(question):
     """
     Query pinecone to get he relevant enums and examples
     """
+    if not PINECONE_INDEX:
+        return []
+
+    index = pinecone.Index(PINECONE_INDEX)
 
     res = index.query([0]*1536, top_k=10000,
                       include_metadata=True, filter={'purpose': 'example'})
