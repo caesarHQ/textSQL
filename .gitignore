@@ -1,3 +1,4 @@
 /client/censusGPT/node_modules
 .idea
 .DS_Store
+client/discord/hoops/.env
