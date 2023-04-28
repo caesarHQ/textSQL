@@ -52,3 +52,24 @@ def text_to_sql_streaming():
     request_body = request.get_json()
 
     return Response(stream_with_context(streaming_helper.stream_sql_response(request_body)), content_type="application/json")
+
+
+@bp.route('/text_to_sql_unified', methods=['POST'])
+def text_to_sql_streaming():
+    """
+    Convert natural language query to SQL
+    """
+
+    request_body = request.get_json()
+
+    if "stream" in request_body:
+        return Response(stream_with_context(streaming_helper.stream_sql_response(request_body)), content_type="application/json")
+
+    else:
+        # get all the responses from the generator until there's an error (and return that) or until it's done (and return the last response)
+        responses = []
+        for response in streaming_helper.stream_sql_response(request_body):
+            responses.append(response)
+            if "error" in response:
+                return make_response(jsonify(response), 500)
+        return make_response(jsonify(responses[-1]), 200)

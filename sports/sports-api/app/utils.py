@@ -54,14 +54,15 @@ def get_few_shot_messages(mode: str = "text_to_sql") -> List[Dict]:
 
 def get_assistant_message(
         messages: List[Dict[str, str]],
-        temperature: int = 0,
         model: str = "gpt-3.5-turbo",
         # model: str = "gpt-4",
 ):
     try:
         res = openai.ChatCompletion.create(
             model=model,
-            temperature=temperature,
+            temperature=0,
+            presence_penalty=0,
+            frequency_penalty=0,
             messages=messages
         )
     except Exception as e:
@@ -117,6 +118,8 @@ def extract_sql_query_from_yaml(assistant_message_content):
     except Exception as e:
         print('e: ', e)
         raise e
+
+    print('data: ', data)
 
     if data.get('MissingData'):
         return data

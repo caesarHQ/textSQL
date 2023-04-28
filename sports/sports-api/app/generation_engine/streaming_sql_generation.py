@@ -11,23 +11,29 @@ from app.sql_generation.prompt_helpers import schema_prompt, query_prompt
 from app.utils import (extract_sql_query_from_yaml, get_assistant_message,
                        get_few_shot_messages)
 
-MSG_WITH_ERROR_TRY_AGAIN = ("""
-The SQL query you just generated resulted in the following error message:
----------------------
-{error_message}
----------------------
 
-- Provide an explanation of what went wrong and provide the fixed SQL query.
+def get_retry_message(raw_message):
+    error_message = raw_message.split("\n")[0]
+    print('parsed error: ', error_message)
+    model_message = f"""
+        The SQL query you just generated resulted in the following error message:
+        ---------------------
+        {error_message}
+        ---------------------
 
-Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
-Explanation: |
-    (tabbed in) why the error happened
-SQL: | 
-    (tabbbed in) the SQL query line 1
-    (tabbed in) the SQL query line 2
-    ...
-    
-ENSURE TO PROVIDE A | AFTER EACH YAML KEY SO THE YAML GETS PARSED CORRECTLY""")
+        - Provide an explanation of what went wrong and provide the fixed SQL query using the error message above.
+
+
+        Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
+        Explanation: |
+            (tabbed in) why the error happened
+            (tabbed in) how to fix it
+        SQL: | 
+            (tabbbed in) the revised SQL query
+            (tabbed in) the rest of the ...
+            
+        PROVIDE A | AFTER EACH YAML KEY SO THE YAML GETS PARSED CORRECTLY"""
+    return model_message
 
 
 def make_default_messages(schemas_str: str) -> List[Dict[str, str]]:
@@ -105,8 +111,10 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     message_history = []
     model = "gpt-3.5-turbo-0301"
 
-    example_messages = [{'role': 'user', 'content': example.get(
-        'query', '')} for example in examples]
+    example_messages = [{'role': 'user', 'content': 'Question:\n' + example.get(
+        'query', '') + '\nAnswer:\n' + example.get('sql', '')} for example in examples if len(example.get('sql', '')) > 10]
+
+    print('example messages: ', example_messages)
 
     if not messages:
         # ask the assistant to rephrase before generating the query
@@ -123,18 +131,29 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     assistant_message = None
     sql_query = ""
 
-    for _ in range(k):
-        yield {'status': 'working', 'step': 'sql', 'state': 'Starting SQL Generation Attempt ' + str(_ + 1) + ' of ' + str(k) + '...'}
+    for attempt_number in range(k):
+        print('trying to generate sql')
+        yield {'status': 'working', 'step': 'sql', 'state': 'Starting SQL Generation Attempt ' + str(attempt_number + 1) + ' of ' + str(k) + '...'}
         try:
             try:
-                payload = example_messages[:3] + \
-                    schema_message + message_history
+
+                payload = schema_message + message_history
+
+                if attempt_number == 0:
+                    print('adding example messages')
+                    payload = example_messages[:3] + payload
+
+                print('>>>>>>>>>>')
+                [print(m.get('content')) for m in payload]
+                print('<<<<<<<<<<')
+
                 assistant_message = get_assistant_message(
                     payload, model=model)
             except Exception as assistant_error:
                 print('error getting assistant message', assistant_error)
                 continue
 
+            print('extracting sql query')
             sql_data = extract_sql_query_from_yaml(
                 assistant_message["message"]["content"])
             sql_query = sql_data["SQL"]
@@ -147,6 +166,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
             return
 
         except Exception as e:
+            print('error executing sql')
             yield {'status': 'working', 'step': 'sql', 'state': 'Error: ' + str(e)}
             try:
                 print('error executing sql: ', e)
@@ -156,7 +176,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
                 })
                 message_history.append({
                     "role": "user",
-                    "content": MSG_WITH_ERROR_TRY_AGAIN.format(error_message=str(e))
+                    "content": get_retry_message(str(e))
                 })
             except Exception as exc:
                 print('oops, error: ', exc)
