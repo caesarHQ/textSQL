@@ -55,7 +55,7 @@ def text_to_sql_streaming():
 
 
 @bp.route('/text_to_sql_unified', methods=['POST'])
-def text_to_sql_streaming():
+def text_to_sql_unified():
     """
     Convert natural language query to SQL
     """
