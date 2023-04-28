@@ -33,7 +33,8 @@ export const PineconeKeyForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const res = verifyPineconeCredentials(pineconeKey);
+    const res = await verifyPineconeCredentials(pineconeKey);
+
     if (res.status === "success") {
       setPineconeKey({
         key: pineconeKey.key,
@@ -53,17 +54,19 @@ export const PineconeKeyForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="justify-start">
-      <p className="text-red-500">
-        Please make sure you have created an index in Pinecone before, see{" "}
-        <a
-          href="https://app.pinecone.io/organizations"
-          target="_blank"
-          className="underline"
-        >
-          https://app.pinecone.io/organizations
-        </a>{" "}
-        for more details.
-      </p>
+      {!pineconeKey?.added && (
+        <p className="text-red-500">
+          Please make sure you have created an index in Pinecone before, see{" "}
+          <a
+            href="https://app.pinecone.io/organizations"
+            target="_blank"
+            className="underline"
+          >
+            https://app.pinecone.io/organizations
+          </a>{" "}
+          for more details.
+        </p>
+      )}
 
       <div className="flex items-center mb-4">
         <label

@@ -8,9 +8,10 @@ import { OpenaiKeyForm } from "./openai_form";
 import { PineconeKeyForm } from "./pinecone_form";
 
 const CredentialsScreen = () => {
-  const { dbInfo, openaiKey } = useContext(AdminContext);
+  const { dbInfo, openaiKey, pineconeKey } = useContext(AdminContext);
   const isDBConnected = dbInfo?.connectionVerified;
   const isOpenAIAdded = openaiKey?.added;
+  const isPineconeAdded = pineconeKey?.added;
 
   return (
     <div>
@@ -22,7 +23,7 @@ const CredentialsScreen = () => {
         <ClosableRow title="OpenAI API Key" isGood={isOpenAIAdded}>
           <OpenaiKeyForm />
         </ClosableRow>
-        <ClosableRow title="Pinecone Credentials" isGood={false}>
+        <ClosableRow title="Pinecone Credentials" isGood={isPineconeAdded}>
           <PineconeKeyForm />
         </ClosableRow>
       </div>
