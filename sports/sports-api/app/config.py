@@ -7,9 +7,6 @@ from sqlalchemy import create_engine, text
 
 load_dotenv()
 
-PINECONE_KEY = getenv("PINECONE_KEY")
-PINECONE_ENV = getenv("PINECONE_ENV")
-PINECONE_INDEX = getenv("PINECONE_INDEX")
 DB_MANAGED_METADATA = getenv("DB_MANAGED_METADATA")
 DB_MANAGED_METADATA = False if DB_MANAGED_METADATA is None else DB_MANAGED_METADATA.lower() == 'true'
 ENV = getenv("ENV")
@@ -23,6 +20,10 @@ except:
     CREDS = {}
 
 OPENAI_KEY = CREDS.get("OPENAI_API_KEY")
+
+PINECONE_KEY = CREDS.get("PINECONE_KEY", getenv("PINECONE_KEY"))
+PINECONE_ENV = CREDS.get("PINECONE_ENV", getenv("PINECONE_ENV"))
+PINECONE_INDEX = CREDS.get("PINECONE_INDEX", getenv("PINECONE_INDEX"))
 
 
 def load_openai_key(new_openai_key=None):
@@ -110,7 +111,6 @@ def start_pinecone(pinecone_key=None, pinecone_environment=None, pinecone_index=
 
 
 if PINECONE_KEY and PINECONE_ENV:
-
     pinecone.init(
         api_key=PINECONE_KEY,
         environment=PINECONE_ENV
