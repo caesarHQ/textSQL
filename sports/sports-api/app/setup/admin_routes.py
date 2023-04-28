@@ -65,7 +65,7 @@ def get_pinecone_auth():
     """
     Get openai credentials from storage
     """
-    return make_response(jsonify({'test': 'route'}), 200)
+    return make_response(jsonify(admin_helper.get_pinecone_credentials()), 200)
 
 
 @admin_bp.route('/pinecone_auth', methods=['POST'])

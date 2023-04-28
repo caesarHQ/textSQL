@@ -107,6 +107,16 @@ def set_pinecone_credentials(request_body):
 
 
 @localhost_only
+def get_pinecone_credentials():
+    """
+    Get pinecone credentials from request body
+    """
+    return {
+        'status': 'success', 'PINECONE_INDEX': CREDS.get("PINECONE_INDEX"), 'PINECONE_KEY': CREDS.get("PINECONE_KEY"), 'PINECONE_ENV': CREDS.get("PINECONE_ENV")
+    }
+
+
+@localhost_only
 def get_tables():
     """
     Get tables from database

@@ -4,6 +4,7 @@ import {
   fetchCurrentDatabaseCredentials,
   fetchCurrentOpenaiCredentials,
   fetchAllTables,
+  fetchCurrentPineconeCredentials,
 } from "@/apis/admin_apis";
 
 export const AdminContext = createContext();
@@ -22,6 +23,19 @@ export const AdminProvider = ({ children }) => {
     const data = await fetchCurrentOpenaiCredentials();
     if (data.status === "success") {
       setOpenaiKey({ key: data.OPENAI_API_KEY, added: true });
+    }
+  };
+
+  const loadPineconeInfo = async () => {
+    const data = await fetchCurrentPineconeCredentials();
+    console.log("pinecone: ", data);
+    if (data.status === "success") {
+      setPineconeKey({
+        key: data.PINECONE_KEY,
+        index: data.PINECONE_INDEX,
+        env: data.PINECONE_ENV,
+        added: true,
+      });
     }
   };
 
@@ -44,6 +58,7 @@ export const AdminProvider = ({ children }) => {
     loadOpenaiInfo();
     loadDbInfo();
     loadTableInfo();
+    loadPineconeInfo();
   }, []);
 
   return (
