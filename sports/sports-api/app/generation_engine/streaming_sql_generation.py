@@ -29,7 +29,7 @@ def get_retry_message(raw_message):
             (tabbed in) why the error happened
             (tabbed in) how to fix it
         SQL: | 
-            (tabbbed in) the revised SQL query
+            (tabbbed in) the revised SQL query (only the SQL, no comments)
             (tabbed in) the rest of the ...
             
         PROVIDE A | AFTER EACH YAML KEY SO THE YAML GETS PARSED CORRECTLY"""

@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, make_response, request, stream_with_context, Response
-
+import json
 from ..config import PINECONE_ENV, PINECONE_KEY
 from ..table_selection.utils import (get_relevant_tables_from_lm,
                                      get_relevant_tables_from_pinecone)
@@ -29,7 +29,9 @@ def text_to_sql():
         # get all the responses from the generator until there's an error (and return that) or until it's done (and return the last response)
         responses = []
         for response in streaming_helper.stream_sql_response(request_body):
+            response = json.loads(response)
             responses.append(response)
             if "error" in response:
                 return make_response(jsonify(response), 500)
-        return make_response(jsonify(responses[-1]), 200)
+        print('last response: ', responses[-1])
+        return make_response(responses[-1], 200)
