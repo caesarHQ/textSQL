@@ -20,7 +20,6 @@ except:
     CREDS = {}
 
 OPENAI_KEY = CREDS.get("OPENAI_API_KEY") or getenv("OPENAI_API_KEY")
-
 PINECONE_KEY = CREDS.get("PINECONE_KEY", getenv("PINECONE_KEY"))
 PINECONE_ENV = CREDS.get("PINECONE_ENV", getenv("PINECONE_ENV"))
 PINECONE_INDEX = CREDS.get("PINECONE_INDEX", getenv("PINECONE_INDEX"))
@@ -42,11 +41,16 @@ load_openai_key()
 
 
 DB_URL = CREDS.get("DB_URL") or getenv("DB_URL")
-
 if DB_URL:
     ENGINE = create_engine(DB_URL)
 else:
     ENGINE = None
+
+EVENTS_DB_URL = CREDS.get("EVENTS_DB_URL", getenv("EVENTS_DB_URL"))
+if EVENTS_DB_URL:
+    EVENTS_ENGINE = create_engine(EVENTS_DB_URL)
+else:
+    EVENTS_ENGINE = None
 
 
 def update_engine(new_db_url):
