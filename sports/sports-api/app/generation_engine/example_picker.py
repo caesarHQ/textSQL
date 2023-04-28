@@ -24,6 +24,6 @@ def similar_examples_from_pinecone(question):
                       include_metadata=True, filter={'purpose': 'example'})
 
     formatted_results = [
-        {'sql': x['id'], 'query':x['metadata'].get('query', '')} for x in res['matches']]
+        {'query': x['metadata'].get('query', ''), 'sql':x['metadata'].get('sql', '')} for x in res['matches']]
 
     return formatted_results

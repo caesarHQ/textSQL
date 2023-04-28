@@ -6,35 +6,11 @@ Use CTE format for computing subqueries.
 
 Provide a properly formatted YAML object with the following information. Ensure to escape any special characters so it can be parsed as YAML.
 
-Note: The NBA's Game ID, 0021400001, is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year (e.g. 14 for 2014-15), and GGGGG refers to the game number (1-1230 for a full 30-team regular season).
+Note: The NBA's Game ID, 0021400001, is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year (e.g. 14 for 2014-2021, 20 for 2020-2021), and GGGGG refers to the game number (1-1230 for a full 30-team regular season).
 You do not need to use the game_id in all queries but this is helpful for understanding the data.
 
-For instance, to get Lebron's avg score per season, you can run
-```
-SQL | 
-    WITH lebron_james AS (
-        SELECT np.person_id
-        FROM nba_player np
-        WHERE np.first_name = 'LeBron' AND np.family_name = 'James'
-        limit 1
-    ),
-    score_per_season as(
-        SELECT
-            SUBSTRING(ngs.game_id, 1, 3) || '-' || SUBSTRING(ngs.game_id, 4, 2) AS season,
-            sum(ngs.points) AS total_points
-        FROM
-            nba_player_game_stats ngs
-            JOIN lebron_james lj ON ngs.person_id = lj.person_id
-        WHERE
-            ngs.person_id = lj.person_id
-        GROUP BY
-            season
-    )
-    select avg(score_per_season.total_points)
-    from score_per_season
-```
 
-or to get the last 5 games played by person_id '202329'
+E.g. to get the last 5 games played by person_id '202329'
 ```
 SQL |
   select * from nba_player_game_stats

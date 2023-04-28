@@ -3,11 +3,13 @@ import re
 import yaml
 from typing import Dict, List
 import pinecone
+import uuid
 
 import openai
 from app.config import DB_MANAGED_METADATA, PINECONE_INDEX
 from app.extensions import db
 from app.models.in_context_examples import InContextExamples
+from app.databases import events_db
 
 IN_CONTEXT_EXAMPLES_DICT = {}
 
@@ -147,6 +149,10 @@ def save_example_to_pinecone(query, sql):
     """
     Get embedding for a query
     """
+    new_id = events_db.add_example_with_sql(query, sql)
+    if not new_id:
+        new_id = 'nodb-' + str(uuid.uuid4())
+
     MODEL = "text-embedding-ada-002"
 
     res = openai.Embedding.create(input=[query], engine=MODEL)
@@ -157,7 +163,7 @@ def save_example_to_pinecone(query, sql):
     # NOTE: WE NEED TO GO BACK AND DELETE THE INDEX AND RE-CREATE IT SO IT IGNORE THE ORIGINAL QUERY
     # NOTE: unless it turns out we can weight pinecone in which case math
     status = index.upsert(
-        [(sql, embedding, {"purpose": "example", 'app': 'nbai', 'query': query})])
+        [(new_id, embedding, {"purpose": "example", 'app': 'nbai', 'sql': sql, 'query': query})])
 
     print('status of upsert: ', status)
 
