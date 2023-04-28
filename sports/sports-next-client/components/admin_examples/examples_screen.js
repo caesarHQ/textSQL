@@ -18,9 +18,11 @@ export const ExamplesScreen = () => {
       className="flex flex-col items-center py-2 bg-gray-50 dark:bg-gray-900"
       style={{ height: "100vh" }}
     >
-      <div> Examples Go here</div>
+      <div>
+        {examples.length} example{examples.length == 1 ? "" : "s"}
+      </div>
       <div
-        className="bg-blue-500 text-white py-2 px-4 rounded"
+        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-900 cursor-pointer"
         onClick={() => {
           setExamples([{ query: "", sql: "" }, ...examples]);
         }}
@@ -40,14 +42,14 @@ export const ExamplesScreen = () => {
   );
 };
 
-const ExampleEditor = ({ example, setExample }) => {
+const ExampleEditor = ({ example, setExample, onSave }) => {
   return (
     //give it a nice border
     <div className="flex flex-row g-4 py-2 bg-gray-300 dark:bg-gray-900 rounded my-2 border border-gray-400 w-full items-center">
       <div className="flex flex-col w-full">
         <div>Example</div>
-        <div className="flex flex-row items-center w-full">
-          <div className="flex flex-col items-center justify-center mr-2 w-full">
+        <div className="flex flex-row items-center w-full justify-center">
+          <div className="flex flex-col items-center justify-center mr-2">
             <div>Query</div>
             <textarea
               style={{ width: "300px", height: "100px" }}
@@ -64,6 +66,16 @@ const ExampleEditor = ({ example, setExample }) => {
               value={example.sql}
               onChange={(e) => setExample({ ...example, sql: e.target.value })}
             />
+          </div>
+        </div>
+        <div className="flex flex-row items-center justify-center w-full mt-4">
+          <div
+            className="bg-blue-500 text-white py-2 px-4 rounded w-24 text-center hover:bg-blue-900 cursor-pointer"
+            onClick={() => {
+              onSave(example);
+            }}
+          >
+            Save
           </div>
         </div>
       </div>
