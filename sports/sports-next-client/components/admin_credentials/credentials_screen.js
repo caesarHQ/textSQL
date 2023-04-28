@@ -22,7 +22,7 @@ const CredentialsScreen = () => {
         <ClosableRow title="OpenAI API Key" isGood={isOpenAIAdded}>
           <OpenaiKeyForm />
         </ClosableRow>
-        <ClosableRow title="Pinecone API Key" isGood={false}>
+        <ClosableRow title="Pinecone Credentials" isGood={false}>
           <PineconeKeyForm />
         </ClosableRow>
       </div>
