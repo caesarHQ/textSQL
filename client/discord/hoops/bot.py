@@ -38,11 +38,12 @@ async def on_message(message):
         end_time = time.time()
         time_taken =  "\nTime: "+ str(round(end_time - start_time, 2)) + " seconds"
 
-        if (response_data.startswith("Sorry")):
+        if (response_data is None):
             await message.channel.send(response_data + time_taken)
             return
 
-        await message.channel.send("\n " + message.author.mention +  "``` \n"+ response_data + "\n```" + time_taken)
+        table = format_response_data(response_data)
+        await message.channel.send("\n " + message.author.mention +  "``` \n"+ table + "\n```" + time_taken)
 
 async def fetch_data(natural_language_query): 
     url = "https://nba-gpt-prod.onrender.com/text_to_sql"
@@ -52,11 +53,11 @@ async def fetch_data(natural_language_query):
 
     response = requests.post(url, json=payload, headers=headers)
 
-    if response.json()["result"] is None: 
-        return "Sorry, I couldn't find any results for that query"
-        
-    data = response.json()["result"]["results"]
-    column_names = response.json()["result"]["column_names"]
+    return response.json()["result"]
+
+def format_response_data(result):
+    data = result["results"]
+    column_names = result["column_names"]
 
     table_data = [[d.get(col, "") for col in column_names] for d in data]
     table = tabulate(table_data, headers=column_names)
