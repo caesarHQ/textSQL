@@ -1,6 +1,7 @@
 import json
 from app.generation_engine.streaming_table_selection import get_tables
 from app.generation_engine.streaming_sql_generation import text_to_sql_with_retry
+from app.generation_engine.example_picker import similar_examples_from_pinecone
 
 
 class Engine:
@@ -17,6 +18,8 @@ class Engine:
 
     def run(self):
         yield {"status": "working", "state": "Query Received", "step": "query"}
+
+        # self.get_examples()
 
         for res in self.get_tables():
             if res['status'] == 'error':
@@ -44,7 +47,7 @@ class Engine:
         pass
 
     def get_examples(self):
-        # todo
+        similar_examples = similar_examples_from_pinecone(self.query)
         pass
 
     def get_sql(self):
