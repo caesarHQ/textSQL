@@ -97,7 +97,7 @@ def execute_sql(sql_query: str):
         return result_dict
 
 
-def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=None):
+def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=None, examples=[]):
     """
     Tries to take a natural language query and generate valid SQL to answer it K times
     """
@@ -105,8 +105,8 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     message_history = []
     model = "gpt-3.5-turbo-0301"
 
-    print('checking query: ', natural_language_query,
-          ' using tables: ', table_names)
+    example_messages = [{'role': 'user', 'content': example.get(
+        'query', '')} for example in examples]
 
     if not messages:
         # ask the assistant to rephrase before generating the query
@@ -127,7 +127,8 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
         yield {'status': 'working', 'step': 'sql', 'state': 'Starting SQL Generation Attempt ' + str(_ + 1) + ' of ' + str(k) + '...'}
         try:
             try:
-                payload = schema_message + message_history
+                payload = example_messages[:3] + \
+                    schema_message + message_history
                 assistant_message = get_assistant_message(
                     payload, model=model)
             except Exception as assistant_error:

@@ -9,6 +9,7 @@ class Engine:
     query = ''
     table_selection_method = 'llm'
     tables = []
+    selected_examples = []
 
     def __init__(self, table_selection_method='llm'):
         self.table_selection_method = table_selection_method
@@ -19,12 +20,12 @@ class Engine:
     def run(self):
         yield {"status": "working", "state": "Query Received", "step": "query"}
 
-        # self.get_examples()
-
         for res in self.get_tables():
             if res['status'] == 'error':
                 return res
             yield res
+
+        self.get_examples()
 
         for res in self.get_sql():
             if res['status'] == 'error':
@@ -47,9 +48,9 @@ class Engine:
         pass
 
     def get_examples(self):
-        similar_examples = similar_examples_from_pinecone(self.query)
+        self.selected_examples = similar_examples_from_pinecone(self.query)
         pass
 
     def get_sql(self):
-        for res in text_to_sql_with_retry(self.query, self.tables):
+        for res in text_to_sql_with_retry(self.query, self.tables, examples=self.selected_examples):
             yield res
