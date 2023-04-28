@@ -1,5 +1,6 @@
 from functools import wraps
 import json
+import pinecone
 
 from app.config import CREDS, update_engine, ENV, load_openai_key, CREDS_PATH, start_pinecone
 from . import utils
@@ -199,3 +200,24 @@ def load_enums():
     return {
         'status': 'success', 'enums': enums
     }
+
+
+@localhost_only
+def get_examples():
+    """
+    load the examples from pinecone
+    """
+
+    # check if we have the pinecone credentials (if not, we can't load examples)
+    if not CREDS.get("PINECONE_INDEX") or not CREDS.get("PINECONE_KEY") or not CREDS.get("PINECONE_ENV"):
+        return {
+            'status': 'failure', 'message': 'pinecone is not loaded yet'
+        }
+    index = pinecone.Index(CREDS.get('PINECONE_INDEX'))
+    res = index.query([0]*1536, top_k=10000,
+                      include_metadata=True, filter={'purpose': 'example'})
+
+    formatted_results = [
+        {'text': x['id'], 'sql':x['metadata'].get('sql', '')} for x in res['matches']]
+
+    return {'status': 'success', 'examples': formatted_results}

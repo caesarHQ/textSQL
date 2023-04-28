@@ -82,6 +82,14 @@ def set_pinecone_auth():
     return make_response(jsonify(admin_helper.set_pinecone_credentials(request_body)), 200)
 
 
+@admin_bp.route('/examples', methods=['GET'])
+def get_examples():
+    """
+    Get the list of examples we're able to use
+    """
+    return make_response(jsonify(admin_helper.get_examples()), 200)
+
+
 @admin_bp.route('/tables', methods=['GET'])
 def get_tables():
     """
