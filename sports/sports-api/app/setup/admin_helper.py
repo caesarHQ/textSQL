@@ -1,7 +1,7 @@
 from functools import wraps
 import json
 
-from app.config import CREDS, update_engine, ENV, load_openai_key, CREDS_PATH
+from app.config import CREDS, update_engine, ENV, load_openai_key, CREDS_PATH, start_pinecone
 from . import utils
 
 # wrapper function; if ENV is localhost returns it, else returns None
@@ -83,6 +83,27 @@ def set_openai_credentials(request_body):
             raise Exception(error_msg)
 
     return load_openai_key(openai_credentials["OPENAI_API_KEY"])
+
+
+@localhost_only
+def set_pinecone_credentials(request_body):
+    """
+    Set pinecone credentials in request body
+    """
+
+    pc_index = request_body.get("index")
+    pc_key = request_body.get("key")
+    pc_env = request_body.get("env")
+
+    if not pc_index or not pc_key:
+        error_msg = f"`index` or `key` is missing from request body"
+        raise Exception(error_msg)
+
+    return start_pinecone(
+        pinecone_key=pc_key,
+        pinecone_index=pc_index,
+        pinecone_environment=pc_env
+    )
 
 
 @localhost_only

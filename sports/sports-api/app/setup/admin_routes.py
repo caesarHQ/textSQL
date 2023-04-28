@@ -60,6 +60,28 @@ def set_openai_auth():
     return make_response(jsonify({"status": "success", "message": "openai key loaded"}), 200)
 
 
+@admin_bp.route('/pinecone_auth', methods=['GET'])
+def get_pinecone_auth():
+    """
+    Get openai credentials from storage
+    """
+    return make_response(jsonify({'test': 'route'}), 200)
+
+
+@admin_bp.route('/pinecone_auth', methods=['POST'])
+def set_pinecone_auth():
+    """
+    Set openai credentials in storage
+    """
+    try:
+        request_body = request.get_json()
+    except Exception as e:
+        return make_response(jsonify({"error": 'Unable to parse form'}), 400)
+    # try to connect to database
+
+    return make_response(jsonify(admin_helper.set_pinecone_credentials(request_body)), 200)
+
+
 @admin_bp.route('/tables', methods=['GET'])
 def get_tables():
     """
