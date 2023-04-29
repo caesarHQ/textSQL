@@ -52,27 +52,19 @@ async def on_message(message):
         # Send message that you're working on the query
         bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
 
-        # Call Text to SQL backend and get data for the query
+        # Call Text to SQL backend and update discord with the results
         response = await process_request(natural_language_query, bot_response, message.author.mention)
 
-        # if (response is None or "result" not in response):
-        #     await message.channel.send("Sorry! Couldn't get an answer for that :(" + time_taken)
-        #     return
-
-        # Format data into a table 
-        #table = format_response_data(response)
-
-        # Send results in the discord 
-        # bot_response = await message.channel.send(format_success_message(natural_language_query, table, message.author.mention, time_taken))
-        
-        # await bot_response.edit(content=format_success_message(natural_language_query, table, message.author.mention, time_taken))
+        if (response is None or response['status'] != 'success'):
+            await message.channel.send("Sorry! Couldn't get an answer for that :(")
+            return
 
         # Add emoji reactions to the message
         await bot_response.add_reaction("👍")
         await bot_response.add_reaction("👎")
 
         # Create a thread 
-        thread = await bot_response.create_thread(name="_", auto_archive_duration=60)
+        thread = await bot_response.create_thread(name=natural_language_query, auto_archive_duration=60)
 
         # Reply with SQL query in the thread
         sql_query = format_sql_query(response)
@@ -107,8 +99,9 @@ async def process_request(natural_language_query, bot_response, author):
 
 async def handle_response(response_object, bot_response, nlq, author, time_taken):
     if (response_object['status'] == 'success'):
-        print("\n success nlq", nlq)
+        # Format data into a table 
         formatted_data = get_success_data_as_table(response_object['response'])
+        # Update discord with final results 
         success_message = format_success_message(nlq, formatted_data, author, time_taken)
         await bot_response.edit(content=success_message)
         return
@@ -116,12 +109,11 @@ async def handle_response(response_object, bot_response, nlq, author, time_taken
     if (response_object['state'].lower().startswith('error')):
         return
 
-    print("\n intermediate nlq", nlq)
+    # Update discord with intermediate step
     intermediate_message = format_intermidiate_message(response_object['state'], nlq, time_taken)
     await bot_response.edit(content=intermediate_message)
         
 def get_success_data_as_table(result):
-    print("\n success DATA", result)
     data = result["results"]
     column_names = result["column_names"]
 
