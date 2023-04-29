@@ -109,6 +109,7 @@ Pympler==1.0.1
 pyOpenSSL==23.1.1
 pyrsistent==0.19.3
 python-dateutil==2.8.2
+python-dotenv==1.0.0
 python-helpscout-v2==2.0.0
 python-intercom==3.1.0
 python-json-logger==2.0.4
@@ -134,6 +135,7 @@ sqlparse==0.4.3
 stack-data==0.6.2
 streamlit==1.21.0
 streamlit-vega-lite==0.1.0
+tabulate==0.9.0
 terminado==0.17.1
 tinycss2==1.2.1
 tokenizers==0.13.2
@@ -158,4 +160,3 @@ widgetsnbextension==4.0.5
 yarl==1.8.2
 zenpy==2.0.25
 zipp==3.15.0
-tabulate==0.9.0
