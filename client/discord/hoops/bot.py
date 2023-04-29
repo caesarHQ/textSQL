@@ -33,16 +33,16 @@ async def on_message(message):
         await message.channel.send(f"Working on: ** {message.content[4:].strip()} **")
 
         natural_language_query = user_message.split('/ask ')[-1]
-        response_data = await fetch_data(natural_language_query=natural_language_query)
+        response = await fetch_data(natural_language_query=natural_language_query)
 
         end_time = time.time()
         time_taken =  "\nTime: "+ str(round(end_time - start_time, 2)) + " seconds"
 
-        if (response_data is None):
-            await message.channel.send(response_data + time_taken)
+        if (response is None or response["result"] is None):
+            await message.channel.send("Sorry! Couldn't get an answer for that :(" + time_taken)
             return
 
-        table = format_response_data(response_data)
+        table = format_response_data(response)
         await message.channel.send("\n " + message.author.mention +  "``` \n"+ table + "\n```" + time_taken)
 
 async def fetch_data(natural_language_query): 
@@ -53,15 +53,19 @@ async def fetch_data(natural_language_query):
 
     response = requests.post(url, json=payload, headers=headers)
 
-    return response.json()["result"]
+    return response.json()
 
 def format_response_data(result):
-    data = result["results"]
-    column_names = result["column_names"]
+    data = result["result"]["results"]
+    column_names = result["result"]["column_names"]
 
     table_data = [[d.get(col, "") for col in column_names] for d in data]
     table = tabulate(table_data, headers=column_names)
 
     return table
 
+def format_sql_query(result):
+    sql_query = result["sql_query"]
+    return "\nSQL Code: \n ```" + sql_query + "```"
+    
 bot.run(BOT_TOKEN)
