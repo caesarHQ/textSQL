@@ -33,7 +33,7 @@ async def on_message(message):
         natural_language_query = user_message.split('/ask ')[-1].strip()
 
         # Send message that you're working on the query
-        await message.channel.send(f"Working on: ** {natural_language_query} **")
+        bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
 
         # Call Text to SQL backend and get data for the query
         response = await fetch_data(natural_language_query=natural_language_query)
@@ -49,12 +49,14 @@ async def on_message(message):
         table = format_response_data(response)
 
         # Send results in the discord 
-        bot_response = await message.channel.send(format_success_message(natural_language_query, table, message.author.mention, time_taken))
+        # bot_response = await message.channel.send(format_success_message(natural_language_query, table, message.author.mention, time_taken))
         
+        await bot_response.edit(content=format_success_message(natural_language_query, table, message.author.mention, time_taken))
+
         # Add emoji reactions to the message
         await bot_response.add_reaction("👍")
         await bot_response.add_reaction("👎")
-        
+
         # Create a thread 
         thread = await bot_response.create_thread(name="_", auto_archive_duration=60)
 
