@@ -30,9 +30,9 @@ async def on_message(message):
     if message.content.startswith('/ask'):
         start_time = time.time()
         user_message = str(message.content).lower()
-        await message.channel.send(f"Working on: ** {message.content[4:].strip()} **")
+        natural_language_query = user_message.split('/ask ')[-1].strip()
+        await message.channel.send(f"Working on: ** {natural_language_query} **")
 
-        natural_language_query = user_message.split('/ask ')[-1]
         response = await fetch_data(natural_language_query=natural_language_query)
 
         end_time = time.time()
@@ -43,9 +43,8 @@ async def on_message(message):
             return
 
         table = format_response_data(response)
-        bot_response = await message.channel.send("\n " + message.author.mention + "```"+ table + "\n```" + time_taken)
-
-        thread = await bot_response.create_thread(name="More info: ", auto_archive_duration=60)
+        bot_response = await message.channel.send(format_success_message(natural_language_query, table, message.author.mention, time_taken))
+        thread = await bot_response.create_thread(name="_", auto_archive_duration=60)
         sql_query = format_sql_query(response)
         await thread.send(sql_query)
 
@@ -67,6 +66,11 @@ def format_response_data(result):
     table = tabulate(table_data, headers=column_names)
 
     return table
+
+def format_success_message(natural_language_query, table, author_mention, time_taken):
+    return """\n**{nlq}** asked by {author}
+Answer: ``` {table} ``` {time}
+More Info:""".format(nlq=natural_language_query, table=table, author=author_mention, time=time_taken)
 
 def format_sql_query(result):
     sql_query = result["sql_query"]
