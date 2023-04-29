@@ -5,6 +5,24 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from os import getenv
 import requests
+import json
+
+class BufferedJSONDecoder:
+    def __init__(self):
+        self.buffer = ''
+        self.decoder = json.JSONDecoder()
+
+    def decode(self, data):
+        self.buffer += data
+        try:
+            while self.buffer:
+                obj, index = self.decoder.raw_decode(self.buffer)
+                self.buffer = self.buffer[index:].lstrip()
+                yield obj
+        except json.JSONDecodeError:
+            pass
+
+decoder = BufferedJSONDecoder()
 
 load_dotenv()
 
@@ -28,7 +46,6 @@ async def on_message(message):
         return
 
     if message.content.startswith('/ask'):
-        start_time = time.time()
         user_message = str(message.content).lower()
         natural_language_query = user_message.split('/ask ')[-1].strip()
 
@@ -36,22 +53,19 @@ async def on_message(message):
         bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
 
         # Call Text to SQL backend and get data for the query
-        response = await fetch_data(natural_language_query=natural_language_query)
+        response = await process_request(natural_language_query, bot_response, message.author.mention)
 
-        end_time = time.time()
-        time_taken =  "\nTime: "+ str(round(end_time - start_time, 2)) + " seconds"
-
-        if (response is None or "result" not in response):
-            await message.channel.send("Sorry! Couldn't get an answer for that :(" + time_taken)
-            return
+        # if (response is None or "result" not in response):
+        #     await message.channel.send("Sorry! Couldn't get an answer for that :(" + time_taken)
+        #     return
 
         # Format data into a table 
-        table = format_response_data(response)
+        #table = format_response_data(response)
 
         # Send results in the discord 
         # bot_response = await message.channel.send(format_success_message(natural_language_query, table, message.author.mention, time_taken))
         
-        await bot_response.edit(content=format_success_message(natural_language_query, table, message.author.mention, time_taken))
+        # await bot_response.edit(content=format_success_message(natural_language_query, table, message.author.mention, time_taken))
 
         # Add emoji reactions to the message
         await bot_response.add_reaction("👍")
@@ -64,19 +78,52 @@ async def on_message(message):
         sql_query = format_sql_query(response)
         await thread.send(sql_query)
 
-async def fetch_data(natural_language_query): 
+async def process_request(natural_language_query, bot_response, author): 
+    start_time = time.time()
+
     url = "https://nba-gpt-prod.onrender.com/text_to_sql"
+    payload = {
+        "natural_language_query": natural_language_query,
+        "scope": "sports",
+        "stream": True
+    }
 
-    payload = {"natural_language_query": natural_language_query, "scope": "sports"}
-    headers = {"Content-Type": "application/json"}
+    #streaming backend response
+    for res in requests.post(url, json=payload, stream=True):
+        for obj in decoder.decode(res.decode()):
+            # each step in the stream
+            current_time = time.time()
+            time_taken =  "\nTime: "+ str(round(current_time - start_time, 2)) + " seconds"
+            
+            print('\n intermediate parsed json:', obj)
+            print('\n status', obj['status'])
+            await handle_response(obj, bot_response, natural_language_query, author, time_taken)
 
-    response = requests.post(url, json=payload, headers=headers)
+    print('\nFINAL RESPONSE: ', obj)
+    
+    final_response = obj
 
-    return response.json()
+    return final_response
 
-def format_response_data(result):
-    data = result["result"]["results"]
-    column_names = result["result"]["column_names"]
+async def handle_response(response_object, bot_response, nlq, author, time_taken):
+    if (response_object['status'] == 'success'):
+        print("\n success nlq", nlq)
+        formatted_data = get_success_data_as_table(response_object['response'])
+        success_message = format_success_message(nlq, formatted_data, author, time_taken)
+        await bot_response.edit(content=success_message)
+        return
+    
+    if (response_object['state'].lower().startswith('error')):
+        return
+
+    print("\n intermediate nlq", nlq)
+    intermediate_message = format_intermidiate_message(response_object['state'], nlq, time_taken)
+    await bot_response.edit(content=intermediate_message)
+        
+def get_success_data_as_table(result):
+    print("\n success DATA", result)
+    data = result["results"]
+    column_names = result["column_names"]
 
     table_data = [[d.get(col, "") for col in column_names] for d in data]
     table = tabulate(table_data, headers=column_names)
@@ -90,6 +137,12 @@ def format_success_message(natural_language_query, table, author_mention, time_t
 
 {emoji} Answer: ``` {table} ``` {time}
 More Info:""".format(emoji=basketball_emoji, nlq=natural_language_query, table=table, author=author_mention, time=time_taken)
+
+def format_intermidiate_message(state, natural_language_query, time_taken):
+    return """**{nlq}**
+
+{state}
+{time}""".format(nlq=natural_language_query, state=state, time=time_taken)
 
 def format_sql_query(result):
     sql_query = result["sql_query"]
