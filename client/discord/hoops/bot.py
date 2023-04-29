@@ -43,10 +43,11 @@ async def on_message(message):
             return
 
         table = format_response_data(response)
-        bot_response = await message.channel.send("\n " + message.author.mention + "``` \n"+ table + "\n```" + time_taken)
+        bot_response = await message.channel.send("\n " + message.author.mention + "```"+ table + "\n```" + time_taken)
 
         thread = await bot_response.create_thread(name="More info: ", auto_archive_duration=60)
-        await thread.send("This is a reply in the thread!")
+        sql_query = format_sql_query(response)
+        await thread.send(sql_query)
 
 async def fetch_data(natural_language_query): 
     url = "https://nba-gpt-prod.onrender.com/text_to_sql"
@@ -69,6 +70,6 @@ def format_response_data(result):
 
 def format_sql_query(result):
     sql_query = result["sql_query"]
-    return "\nSQL Code: \n ```" + sql_query + "```"
+    return "\nSQL Code:```" + sql_query + "```"
 
 bot.run(BOT_TOKEN)
