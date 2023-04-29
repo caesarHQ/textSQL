@@ -90,8 +90,6 @@ async def process_request(natural_language_query, bot_response, author):
             print('\n intermediate parsed json:', obj)
             print('\n status', obj['status'])
             await handle_response(obj, bot_response, natural_language_query, author, time_taken)
-
-    print('\nFINAL RESPONSE: ', obj)
     
     final_response = obj
 
