@@ -38,7 +38,7 @@ async def on_message(message):
         end_time = time.time()
         time_taken =  "\nTime: "+ str(round(end_time - start_time, 2)) + " seconds"
 
-        if (response is None or response["result"] is None):
+        if (response is None or "result" not in response):
             await message.channel.send("Sorry! Couldn't get an answer for that :(" + time_taken)
             return
 
@@ -68,9 +68,12 @@ def format_response_data(result):
     return table
 
 def format_success_message(natural_language_query, table, author_mention, time_taken):
+    basketball_emoji = chr(0x1F3C0)
+
     return """\n**{nlq}** asked by {author}
-Answer: ``` {table} ``` {time}
-More Info:""".format(nlq=natural_language_query, table=table, author=author_mention, time=time_taken)
+    
+{emoji} Answer: ``` {table} ``` {time}
+More Info:""".format(emoji=basketball_emoji, nlq=natural_language_query, table=table, author=author_mention, time=time_taken)
 
 def format_sql_query(result):
     sql_query = result["sql_query"]
