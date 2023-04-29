@@ -50,7 +50,11 @@ async def on_message(message):
 
         # Send results in the discord 
         bot_response = await message.channel.send(format_success_message(natural_language_query, table, message.author.mention, time_taken))
-
+        
+        # Add emoji reactions to the message
+        await bot_response.add_reaction("👍")
+        await bot_response.add_reaction("👎")
+        
         # Create a thread 
         thread = await bot_response.create_thread(name="_", auto_archive_duration=60)
 
