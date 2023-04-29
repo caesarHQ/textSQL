@@ -2,10 +2,14 @@ import discord
 import time
 from tabulate import tabulate
 from discord.ext import commands
+from discord import File
 from dotenv import load_dotenv
 from os import getenv
 import requests
 import json
+import pandas as pd
+import io
+import matplotlib.pyplot as plt
 
 class BufferedJSONDecoder:
     def __init__(self):
@@ -44,6 +48,31 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
+
+    if message.content.startswith('/plot_data'):
+        # Sample DataFrame
+        data = {
+            'Category': ['A', 'B', 'C', 'D'],
+            'Values': [25, 50, 75, 100]
+        }
+        df = pd.DataFrame(data)
+
+        # Plot the data
+        ax = df.plot.bar(x='Category', y='Values', rot=0)
+        plt.ylabel('Values')
+
+        # Save the plot to a buffer
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+
+        # Send the plot image as a file
+        image_file = File(buf, filename='plot.png')
+        await message.channel.send(file=image_file)
+
+        # Close the buffer and clear the plot
+        buf.close()
+        plt.clf()
 
     # Check if the message @s the bot
     if bot.user.mentioned_in(message):
