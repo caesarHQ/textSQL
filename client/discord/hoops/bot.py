@@ -45,9 +45,11 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if message.content.startswith('/ask'):
-        user_message = str(message.content).lower()
-        natural_language_query = user_message.split('/ask ')[-1].strip()
+    # Check if the message @s the bot
+    if bot.user.mentioned_in(message):
+
+        # Remove the bot @ from the message content
+        natural_language_query = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
 
         # Send message that you're working on the query
         bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
