@@ -80,7 +80,7 @@ def get_openai_results(
         messages: List[Dict[str, str]],
         model: str = "gpt-3.5-turbo",
         n: int = 1,
-        temperature: float = 0.2,
+        temperature: float = 0.1,
         # model: str = "gpt-4",
 ):
     try:
