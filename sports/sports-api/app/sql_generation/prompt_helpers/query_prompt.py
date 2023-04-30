@@ -35,8 +35,8 @@ General Plan from End to Start: |
   Explain so a five year old can understand how you'll get to the final answer from back to start
 InputAndOutputTypes: |
   Any conversions needed for the input and output to match the user expectations (E.g. need to map id => name)
-Issues with Plan: |
-  Any issues you see with the plan (e.g. potential duplication)
+Non-unique issues to watch for: |
+  Where tables (e.g. nba_player, nba_team) don't have unique constraints so need to be pre-calculated as a CTE
 Final Plan Start to Finish: |
   Walk through the plan from start to finish.
 SQL: |
