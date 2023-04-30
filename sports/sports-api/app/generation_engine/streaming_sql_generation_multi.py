@@ -1,6 +1,7 @@
 
 from collections import OrderedDict
 import re
+import json
 from typing import Dict, List
 
 from app.config import ENGINE
@@ -8,7 +9,7 @@ from sqlalchemy import text
 
 from app.sql_generation.prompt_helpers import schema_prompt, query_prompt
 
-from app.utils import (extract_sql_query_from_yaml, get_assistant_message,
+from app.utils import (safe_get_sql_from_yaml, get_openai_results,
                        get_few_shot_messages)
 
 
@@ -144,20 +145,40 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
                 if attempt_number == 0:
                     payload = example_messages[:3] + payload
 
-                assistant_message = get_assistant_message(
-                    payload, model=model)
+                possible_sql_results = get_openai_results(
+                    payload, model=model, n=2)
+                print('possible sql results: ', possible_sql_results)
             except Exception as assistant_error:
                 print('error getting assistant message', assistant_error)
                 continue
 
-            print('extracting sql query')
-            sql_data = extract_sql_query_from_yaml(
-                assistant_message["message"]["content"])
-            sql_query = sql_data["SQL"]
+            parsed_results = [safe_get_sql_from_yaml(
+                result) for result in possible_sql_results]
 
-            response = execute_sql(sql_query)
+            # Filter out null values
+            parsed_results = [result.get(
+                'SQL') for result in parsed_results if result.get('SQL')]
 
-            # Generated SQL query did not produce exception. Return result
+            yield {'status': 'working', 'step': 'sql', 'state': 'have ' + str(len(parsed_results)) + ' possible SQL queries'}
+
+            executed = False
+
+            last_error = None
+            response = None
+
+            for result in parsed_results:
+                try:
+                    attempted_response = execute_sql(result)
+                    response = attempted_response
+                    sql_query = result
+                    executed = True
+                    break
+                except Exception as e:
+                    last_error = e
+                    continue
+
+            if not executed:
+                raise last_error
 
             yield {'status': 'success', 'final_answer': True, 'step': 'sql', 'response': response, 'sql_query': sql_query}
             return
