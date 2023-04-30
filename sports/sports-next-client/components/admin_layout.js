@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const AdminLayout = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isAdmin } = useContext(AdminContext);
+  const { adminEnabled } = useContext(AdminContext);
 
   const toggleAdminPanel = () => {
     setIsOpen(!isOpen);
@@ -37,7 +37,7 @@ const AdminLayout = ({ children }) => {
         </div>
       )}
       <div className={"flex-1"}>{children}</div>
-      {isAdmin && (
+      {adminEnabled && (
         <button
           onClick={toggleAdminPanel}
           style={{ left: isOpen ? "12rem" : "1rem", zIndex: 100 }}
