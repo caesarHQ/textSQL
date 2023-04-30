@@ -20,17 +20,17 @@ Provide the following YAML. Remember to indent with 4 spaces and use the correct
 RelevantColumns: |
   (tabbed in) Identify the columns that are relevant to the question/command
 IDConversions: |
-  (tabbed in) Wherever Ids need to get converted to names along with date or other limitations
+  (tabbed in) Wherever Ids need to get converted to names along with date or other limitations (what's the minimum string needed for checks too!)
 Plan: |
   (tabbed in)  walk thru each sub-part of the problem to build the final answer, noting any constraints (or lack thereof) and any assumptions made.
   (tabbed in) include what CTEs to run (although this doesn't need to be followed exactly)
 InputAndOutputTypes: |
   (tabbed in) any conversions needed for the input and output to match the user expectations (E.g. need to map id => name)
 SQL: |
-  the final query to run
-  each line should be a single clause and indented an extra 4 spaces
-  each variable should be table.column or table.*
-  Include SQL comments (--) for each part of the plan
+  (tabbed in) the final query to run
+  (tabbed in) each line should be a single clause and indented an extra 4 spaces
+  (tabbed in) each variable should be table.column or table.*
+  (tabbed in) Include SQL comments (--) for each part of the plan
 
 ```
   

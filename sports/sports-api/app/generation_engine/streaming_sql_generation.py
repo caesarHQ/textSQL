@@ -126,6 +126,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
         schema_message[0]['content'] = table_content
 
         content = query_prompt.command_prompt_cte(natural_language_query)
+
         message_history.append({
             "role": "user",
             "content": content
