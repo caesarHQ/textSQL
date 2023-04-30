@@ -168,3 +168,24 @@ def save_example_to_pinecone(query, sql):
     print('status of upsert: ', status)
 
     return True
+
+
+def update_example_in_pinecone(example):
+    """
+    Get embedding for a query
+    """
+    MODEL = "text-embedding-ada-002"
+
+    res = openai.Embedding.create(input=[example['query']], engine=MODEL)
+    embedding = res['data'][0]['embedding']
+
+    index = pinecone.Index(PINECONE_INDEX)
+
+    # NOTE: WE NEED TO GO BACK AND DELETE THE INDEX AND RE-CREATE IT SO IT IGNORE THE ORIGINAL QUERY
+    # NOTE: unless it turns out we can weight pinecone in which case math
+    status = index.upsert(
+        [(example['example_id'], embedding, {"purpose": "example", 'app': 'nbai', 'sql': example['sql'], 'query': example['query']})])
+
+    print('status of upsert: ', status)
+
+    return True

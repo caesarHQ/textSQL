@@ -237,7 +237,12 @@ def save_example(example):
         return {
             'status': 'failure', 'message': 'pinecone is not loaded yet'
         }
+
+    example_id = example.get('example_id')
+    if example_id:
+        utils.update_example_in_pinecone(example)
+        return {'status': 'success'}
     # get the embeddings for the query
-    res = utils.save_example_to_pinecone(query, sql)
+    utils.save_example_to_pinecone(query, sql)
 
     return {'status': 'success'}
