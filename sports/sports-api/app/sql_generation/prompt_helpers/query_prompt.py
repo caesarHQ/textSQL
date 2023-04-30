@@ -17,24 +17,22 @@ USE ilike instead of = when comparing strings
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 
 ```
-RelevantColumns: |
-  (tabbed in) Identify the columns that are relevant to the question/command
-IDConversions: |
-  (tabbed in) Wherever Ids need to get converted to names along with date or other limitations (what's the minimum string needed for checks too!)
-Plan: |
-  (tabbed in)  walk thru each sub-part of the problem to build the final answer, noting any constraints (or lack thereof) and any assumptions made.
-  (tabbed in) include what CTEs to run (although this doesn't need to be followed exactly)
+General Plan: |
+  Walk through the general plan of how you would solve this problem (very high level, not including the columns yet)
 InputAndOutputTypes: |
-  (tabbed in) any conversions needed for the input and output to match the user expectations (E.g. need to map id => name)
+  Any conversions needed for the input and output to match the user expectations (E.g. need to map id => name)
+Issues with Plan: |
+  Any issues you see with the plan (e.g. potential duplication)
+Revised Plan (if needed): |
+  Any revisions to the plan to address the issues
 SQL: |
-  (tabbed in) the final query to run
-  (tabbed in) each line should be a single clause and indented an extra 4 spaces
-  (tabbed in) each variable should be table.column or table.*
-  (tabbed in) Include SQL comments (--) for each part of the plan
-
+    The final query to run
+    Each line should be a single clause and indented an extra 4 spaces
+    Each variable should be table.column or table.*
+    Include SQL comments (--) for each part of the plan
 ```
   
 ENSURE TO PROVIDE A | AFTER EACH YAML KEY SO THE YAML IS NOT INTERPRETED AS A COMMENT. You must provide all values, you cannot provide templates.
-Provide the YAML and only the YAML.
+Provide the YAML and only the YAML. Do not include backticks (```), just include the YAML.
 
 """.format(command)
