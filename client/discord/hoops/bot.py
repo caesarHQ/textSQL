@@ -167,6 +167,7 @@ def format_intermidiate_message(state, natural_language_query, time_taken):
 
 def format_sql_query(result):
     sql_query = result["sql_query"]
-    return "\nCode:```" + sql_query + "```"
+    # ```sql\n adds SQL syntax highlighting
+    return "\nCode: ```sql\n" + sql_query + "```"
 
 bot.run(BOT_TOKEN)
