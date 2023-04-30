@@ -17,6 +17,7 @@ Include SQL comments (--) before each major clause to explain what it does (e.g.
 
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 
+```
 Funky Types: |
   describe any types which are funky so can't use avg etc on them, or write "none"
 Input Types: |
@@ -26,10 +27,14 @@ Likely subquery titles |
 Plan |
   walk thru each sub-part of the problem to build the final answer, noting any constraints (or lack thereof) and any assumptions made.
   include what CTEs to run (although this doesn't need to be followed exactly)
+Identifiers |
+  the related tables and columns where the data will be found based on the schema. Also include how the plan needs to be modified based on the schema.
 SQL |
   the final query to run
   each line should be a single clause and indented an extra 4 spaces
-
+```
+  
 ENSURE TO PROVIDE A | AFTER EACH YAML KEY SO THE YAML IS NOT INTERPRETED AS A COMMENT. You must provide all values, you cannot provide templates.
+Provide the YAML and only the YAML.
 
 """.format(command)

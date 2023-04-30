@@ -16,23 +16,25 @@ def get_retry_message(raw_message):
     error_message = raw_message.split("\n")[0]
     print('parsed error: ', error_message)
     model_message = f"""
-        The SQL query you just generated resulted in the following error message:
-        ---------------------
-        {error_message}
-        ---------------------
+The SQL query you just generated resulted in the following error message:
+---------------------
+{error_message}
+---------------------
 
-        - Provide an explanation of what went wrong and provide the fixed SQL query using the error message above.
+- Provide an explanation of what went wrong and provide the fixed SQL query using the error message above.
 
 
-        Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
-        Explanation: |
-            (tabbed in) why the error happened
-            (tabbed in) how to fix it
-        SQL: | 
-            (tabbbed in) the revised SQL query (only the SQL, no comments)
-            (tabbed in) the rest of the ...
-            
-        PROVIDE A | AFTER EACH YAML KEY SO THE YAML GETS PARSED CORRECTLY"""
+Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
+Explanation: |
+    (tabbed in) why the error happened
+    (tabbed in) how to fix it
+SQL: | 
+    (tabbbed in) the revised SQL query (only the SQL, no comments)
+    (tabbed in) the rest of the ...
+    
+PROVIDE A | AFTER EACH YAML KEY SO THE YAML GETS PARSED CORRECTLY.
+Provide the YAML and only the YAML.
+        """
     return model_message
 
 
