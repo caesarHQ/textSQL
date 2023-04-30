@@ -8,6 +8,8 @@ import { capturePosthog } from "../utils/posthog";
 
 import { SearchContext } from "./contexts/search_context";
 
+import loadShotChart from "../nba/shot_chart";
+
 import {
   DarkModeButton,
   DiscordButton,
@@ -62,6 +64,15 @@ const QueryScreen = (props) => {
       notify(errorMessage);
     }
   }, [errorMessage]);
+
+  useEffect(() => {
+    let playerData = [
+      ["MISS K. Leonard 25' pullup 3PT", -87.0, 235.0, 0],
+      ["MISS K. Leonard 3PT", 230.0, 29.0, 0],
+      ["MISS K. Leonard 28' 3PT", -42.0, 277.0, 0],
+    ];
+    loadShotChart(playerData);
+  }, [])
 
   const clearAll = () => {
     setQuery("");
@@ -203,6 +214,8 @@ const QueryScreen = (props) => {
       className="h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen"
       style={{ position: "relative" }}
     >
+      <div id="shot-chart"/>
+
       <div className="App flex flex-col h-full">
         <link
           href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
