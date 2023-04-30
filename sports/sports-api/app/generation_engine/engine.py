@@ -1,5 +1,6 @@
 from app.generation_engine.streaming_table_selection import get_tables
 from app.generation_engine.streaming_sql_generation import text_to_sql_with_retry
+from app.generation_engine.streaming_sql_generation_multi import text_to_sql_with_retry_multi
 from app.generation_engine.example_picker import similar_examples_from_pinecone
 from app.generation_engine.utils import cleaner
 
@@ -10,6 +11,7 @@ class Engine:
     table_selection_method = 'llm'
     tables = []
     selected_examples = []
+    method = 'multi'
 
     def __init__(self, table_selection_method='llm'):
         self.table_selection_method = table_selection_method
@@ -56,10 +58,20 @@ class Engine:
             pass
 
     def get_sql(self):
-        try:
-            for res in text_to_sql_with_retry(self.query, self.tables, examples=self.selected_examples):
-                yield res
-            print('done with get_sql')
-        except Exception as exc:
-            print('error in get_sql: ', exc)
-            return
+        if self.method == 'multi':
+            try:
+                for res in text_to_sql_with_retry_multi(self.query, self.tables, examples=self.selected_examples):
+                    yield res
+                print('done with get_sql')
+            except Exception as exc:
+                print('error in get_sql: ', exc)
+                return
+
+        else:
+            try:
+                for res in text_to_sql_with_retry(self.query, self.tables, examples=self.selected_examples):
+                    yield res
+                print('done with get_sql')
+            except Exception as exc:
+                print('error in get_sql: ', exc)
+                return
