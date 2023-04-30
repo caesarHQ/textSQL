@@ -76,6 +76,31 @@ def get_assistant_message(
     return assistant_message
 
 
+def get_openai_results(
+        messages: List[Dict[str, str]],
+        model: str = "gpt-3.5-turbo",
+        n: int = 1,
+        temperature: float = 0.2,
+        # model: str = "gpt-4",
+):
+    try:
+        res = openai.ChatCompletion.create(
+            model=model,
+            temperature=temperature,
+            presence_penalty=0,
+            frequency_penalty=0,
+            messages=messages,
+            n=n
+        )
+    except Exception as e:
+        print('OpenAI Error: ', e)
+        print('INPUT: ', messages)
+        return None
+    # completion = res['choices'][0]["message"]["content"]
+    messages = [choice['message']['content'] for choice in res['choices']]
+    return messages
+
+
 def clean_message_content(assistant_message_content):
     """
     Cleans message content to extract the SQL query
@@ -125,6 +150,20 @@ def extract_sql_query_from_yaml(assistant_message_content):
         return data
 
     sql = data['SQL']
+
+    return {"SQL": sql}
+
+
+def safe_get_sql_from_yaml(assistant_message_content):
+
+    print('parsing yaml from: ', assistant_message_content)
+
+    try:
+        data = yaml.safe_load(assistant_message_content)
+        sql = data['SQL']
+
+    except Exception as e:
+        return {"SQL": None, "error_message": str(e)}
 
     return {"SQL": sql}
 
