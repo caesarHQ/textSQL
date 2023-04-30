@@ -18,7 +18,7 @@ Notes on table relationships:
 - nba_player.person_id is not unique. To find a player, you need to select distinct
   you cannot join on nba_players by person_id directly because this will return multiple rows
 
-- nba_team.team_id is not unique. To find a player, you need to do a CTE to select distinct team_id from nba_team and then join on that.
+- nba_team.team_id is not unique. To find a team, search by the team name (not including the city)
   you cannot join on nba_team by team_id directly because this will return multiple rows
 
 - nba_game does not include the winner/loser or the team names.
