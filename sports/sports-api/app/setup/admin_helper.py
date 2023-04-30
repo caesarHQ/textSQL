@@ -218,7 +218,7 @@ def get_examples():
                       include_metadata=True, filter={'purpose': 'example'})
 
     formatted_results = [
-        {'sql': x['metadata'].get('sql', ''), 'query':x['metadata'].get('query', '')} for x in res['matches']]
+        {'sql': x['metadata'].get('sql', ''), 'query':x['metadata'].get('query', ''), 'example_id': x.get('id')} for x in res['matches']]
 
     return {'status': 'success', 'examples': formatted_results}
 
