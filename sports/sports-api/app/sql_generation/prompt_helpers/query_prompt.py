@@ -9,22 +9,11 @@ Provide a properly formatted YAML object with the following information. Ensure 
 Note: The NBA's Game ID, 0021400001, is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year (e.g. 14 for 2014-2021, 20 for 2020-2021), and GGGGG refers to the game number (1-1230 for a full 30-team regular season).
 You do not need to use the game_id in all queries but this is helpful for understanding the data.
 
-
-E.g. to get the last 5 games played by person_id '202329'
-```
-SQL |
-  select * from nba_player_game_stats
-  JOIN nba_game
-  on nba_player_game_stats.game_id=nba_game.game_id
-  where person_id='202329'
-  order by nba_game.game_time_utc desc
-  limit 5
-```
-
 team_id can change over time, so might need to worry about that.
 Do not include any variables/wildcards.
 DO NOT USE THE MINUTES COLUMNS
 USE ilike instead of = when comparing strings
+Include SQL comments (--) before each major clause to explain what it does (e.g. --get the unique X from Y to avoid duplicates)
 
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 
@@ -35,7 +24,8 @@ Input Types: |
 Likely subquery titles | 
   tables to make in the CTE, where certain data (e.g. game time) is only in another table
 Plan |
-  walk thru each sub-part of the problem to build the final answer, noting any constraints (or lack thereof) and any assumptions made
+  walk thru each sub-part of the problem to build the final answer, noting any constraints (or lack thereof) and any assumptions made.
+  include what CTEs to run (although this doesn't need to be followed exactly)
 SQL |
   the final query to run
   each line should be a single clause and indented an extra 4 spaces
