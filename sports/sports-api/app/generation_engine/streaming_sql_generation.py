@@ -28,9 +28,11 @@ Provide the following YAML. Remember to indent with 4 spaces and use the correct
 Explanation: |
     (tabbed in) why the error happened
     (tabbed in) how to fix it
-SQL: | 
-    (tabbbed in) the revised SQL query (only the SQL, no comments)
+SQL: |
+    (tabbed in) --(comment describing what hte SQL does)
+    (tabbbed in) the revised SQL query
     (tabbed in) the rest of the ...
+
     
 PROVIDE A | AFTER EACH YAML KEY SO THE YAML GETS PARSED CORRECTLY.
 Provide the YAML and only the YAML.
@@ -116,8 +118,6 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     example_messages = [{'role': 'user', 'content': 'Question:\n' + example.get(
         'query', '') + '\nAnswer:\n' + example.get('sql', '')} for example in examples if len(example.get('sql', '')) > 10]
 
-    print('example messages: ', example_messages)
-
     if not messages:
         # ask the assistant to rephrase before generating the query
         _, table_content = schema_prompt.get_enums_and_tables(
@@ -134,7 +134,6 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     sql_query = ""
 
     for attempt_number in range(k):
-        print('trying to generate sql')
         yield {'status': 'working', 'step': 'sql', 'state': 'Starting SQL Generation Attempt ' + str(attempt_number + 1) + ' of ' + str(k) + '...'}
         try:
             try:
@@ -142,12 +141,7 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
                 payload = schema_message + message_history
 
                 if attempt_number == 0:
-                    print('adding example messages')
                     payload = example_messages[:3] + payload
-
-                print('>>>>>>>>>>')
-                [print(m.get('content')) for m in payload]
-                print('<<<<<<<<<<')
 
                 assistant_message = get_assistant_message(
                     payload, model=model)

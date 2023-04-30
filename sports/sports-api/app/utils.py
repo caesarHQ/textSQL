@@ -118,10 +118,8 @@ def extract_sql_query_from_yaml(assistant_message_content):
     try:
         data = yaml.safe_load(assistant_message_content)
     except Exception as e:
-        print('e: ', e)
+        print('e: ', str(e).split('\n')[0])
         raise e
-
-    print('data: ', data)
 
     if data.get('MissingData'):
         return data

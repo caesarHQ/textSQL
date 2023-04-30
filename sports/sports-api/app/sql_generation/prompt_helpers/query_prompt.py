@@ -13,25 +13,25 @@ team_id can change over time, so might need to worry about that.
 Do not include any variables/wildcards.
 DO NOT USE THE MINUTES COLUMNS
 USE ilike instead of = when comparing strings
-Include SQL comments (--) before each major clause to explain what it does (e.g. --get the unique X from Y to avoid duplicates)
 
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 
 ```
-Funky Types: |
-  describe any types which are funky so can't use avg etc on them, or write "none"
-Input Types: |
-  a summary of the enums or other conversion that are related to the query
-Likely subquery titles | 
-  tables to make in the CTE, where certain data (e.g. game time) is only in another table
-Plan |
-  walk thru each sub-part of the problem to build the final answer, noting any constraints (or lack thereof) and any assumptions made.
-  include what CTEs to run (although this doesn't need to be followed exactly)
-Identifiers |
-  the related tables and columns where the data will be found based on the schema. Also include how the plan needs to be modified based on the schema.
-SQL |
+RelevantColumns: |
+  (tabbed in) Identify the columns that are relevant to the question/command
+IDConversions: |
+  (tabbed in) Wherever Ids need to get converted to names along with date or other limitations
+Plan: |
+  (tabbed in)  walk thru each sub-part of the problem to build the final answer, noting any constraints (or lack thereof) and any assumptions made.
+  (tabbed in) include what CTEs to run (although this doesn't need to be followed exactly)
+InputAndOutputTypes: |
+  (tabbed in) any conversions needed for the input and output to match the user expectations (E.g. need to map id => name)
+SQL: |
   the final query to run
   each line should be a single clause and indented an extra 4 spaces
+  each variable should be table.column or table.*
+  Include SQL comments (--) for each part of the plan
+
 ```
   
 ENSURE TO PROVIDE A | AFTER EACH YAML KEY SO THE YAML IS NOT INTERPRETED AS A COMMENT. You must provide all values, you cannot provide templates.
