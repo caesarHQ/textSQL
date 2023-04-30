@@ -178,7 +178,7 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
                     continue
 
             if not executed:
-                raise last_error
+                raise Exception(str(last_error))
 
             yield {'status': 'success', 'final_answer': True, 'step': 'sql', 'response': response, 'sql_query': sql_query}
             return
