@@ -7,6 +7,7 @@ Use CTE format for computing subqueries.
 Provide a properly formatted YAML object with the following information. Ensure to escape any special characters so it can be parsed as YAML.
 
 Note: The NBA's Game ID, 0021400001, is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year (e.g. XXX14 for 2014-2015, XXX20 for 2020-2021), and GGGGG refers to the game number (1-1230 for a full 30-team regular season).
+To get seasons, e.g. the 2022-23 season, you need to filter where game_id like '0022%'.
 You do not need to use the game_id in all queries but this is helpful for understanding the data.
 
 team_id can change over time, so might need to worry about that.
