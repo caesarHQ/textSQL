@@ -15,9 +15,6 @@ DO NOT USE THE MINUTES COLUMNS
 USE ilike instead of = when comparing strings
 
 Notes on table relationships:
-- nba_player.person_id is not unique. To find a player, you need to select distinct
-  you cannot join on nba_players by person_id directly because this will return multiple rows
-
 - nba_team.team_id is not unique. To find a team, search by the team name (not including the city)
   you cannot join on nba_team by team_id directly because this will return multiple rows
 
@@ -36,7 +33,7 @@ General Plan from End to Start: |
 InputAndOutputTypes: |
   Any conversions needed for the input and output to match the user expectations (E.g. need to map id => name)
 Non-unique issues to watch for: |
-  Where tables (e.g. nba_player, nba_team) don't have unique constraints so need to be pre-calculated as a CTE
+  Where tables (e.g. nba_team) don't have unique constraints so need to be pre-calculated as a CTE
 Final Plan Start to Finish: |
   Walk through the plan from start to finish.
 SQL: |
