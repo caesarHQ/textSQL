@@ -59,8 +59,11 @@ async def on_message(message):
         # Send message that you're working on the query
         intermediary_bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
 
+        start_time = time.time()
         # Call Text to SQL backend and update discord with the results
         response = await process_request(natural_language_query, intermediary_bot_response, message.author.mention)
+
+        time_taken =  "\nTime: "+ str(round(time.time() - start_time, 2)) + " seconds"
 
         if (response is None or response['status'] != 'success'):
             await message.channel.send("Sorry! Couldn't get an answer for that :(")
@@ -68,8 +71,9 @@ async def on_message(message):
 
         table_image = generate_table_image(response['response'], natural_language_query)
 
-        final_bot_response = await intermediary_bot_response.channel.send(content=f"Asked by: {message.author.mention}\n", file=table_image)
+        final_bot_response = await intermediary_bot_response.channel.send(content=f"Asked by: {message.author.mention}{time_taken}", file=table_image)
 
+        #delete intermidiary messages
         await intermediary_bot_response.delete()
 
         # Add emoji reactions to the message
@@ -175,7 +179,6 @@ def generate_table_image(result, nlq):
 
 async def handle_response(response_object, bot_response, nlq, author, time_taken):
     if (response_object['status'] == 'success'):
-        table_image =  generate_table_image(response_object['response'], nlq)
         # Update discord with final results 
         success_message = format_success_message(nlq, author, time_taken)
         await bot_response.edit(content=success_message)
