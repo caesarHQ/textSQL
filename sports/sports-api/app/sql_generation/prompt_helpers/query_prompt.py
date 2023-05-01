@@ -20,6 +20,11 @@ Notes on table relationships:
   - nba_game does not include the winner/loser or the team names.
     to find a winner, you first need to need to check against nba_team_game_stats to get the final scores for the away/home team based on the game_id and home/away team_id.
 
+  If querying NBA_TEAM_GAME_STATS:
+  - nba_team_game_stats does not include the team names.
+  - nba_team_game_stats will have one row for the home team and one row for the away team for each game.
+    
+
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 
 ```
@@ -28,7 +33,7 @@ Spelled out question: |
 General Plan from End to Start: |
   Explain so a five year old can understand how you'll get to the final answer from back to start
 InputAndOutputTypes: |
-  Any conversions needed for the input and output to match the user expectations (E.g. need to map id => name)
+  Any conversions made so the output will be understandable by the user (e.g. should averages be over game, over season? how would final answers be calculated)
 Final Plan Start to Finish: |
   Walk through the CTEs from start to finish so a five year old can understand why each step is needed.
 SQL: |

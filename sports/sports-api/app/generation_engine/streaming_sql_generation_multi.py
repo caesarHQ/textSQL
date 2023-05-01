@@ -17,23 +17,23 @@ def get_retry_message(raw_message):
     error_message = raw_message.split("\n")[0]
     # print('parsed error: ', error_message)
     model_message = f"""
-The SQL query you just generated resulted in the following error message:
+You are an expert SQL programmer.
+    
+The SQL query your student generated resulted in the following error message:
 ---------------------
 {error_message}
 ---------------------
 
-- Provide an explanation of what went wrong and provide the fixed SQL query using the error message above.
-
+- Provide an explanation of what went wrong and provide a revised query that runs correctly. It should have each table.column specified to avoid ambiguity.
 
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 Explanation: |
     (tabbed in) why the error happened
     (tabbed in) how to fix it
 SQL: |
-    (tabbed in) --(comment describing what hte SQL does)
-    (tabbed in) also include comments on each of the CTE sections for what their purpose is
-    (tabbbed in) the revised SQL query
-    (tabbed in) the rest of the ...
+    (tabbed in) --(comment describing what the SQL does)
+    (tabbed in) the revised SQL query
+    (tabbed in) the rest of the query ...
 
     
 PROVIDE A | AFTER EACH YAML KEY SO THE YAML GETS PARSED CORRECTLY.
