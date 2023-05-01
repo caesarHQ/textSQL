@@ -120,7 +120,9 @@ async def process_request(natural_language_query, bot_response, author):
         "scope": "sports",
         "stream": True
     }
-
+    
+    obj = {}
+    
     #streaming backend response
     for res in requests.post(url, json=payload, stream=True):
         for obj in decoder.decode(res.decode()):
