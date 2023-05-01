@@ -45,31 +45,6 @@ bot = commands.Bot(command_prefix="/", intents=intents)
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
-""" this function was written by GPT. don't ask me how it works. it makes the columns not overflow """
-def adjust_column_width(ax, table, fig, df):
-    num_rows = len(df.index) + 1
-    num_cols = len(df.columns)
-
-    # Split long column names into multiple lines
-    wrapped_columns = [textwrap.fill(column, width=10) for column in df.columns]
-    table.auto_set_column_width(False)
-
-    for col_idx, column in enumerate(wrapped_columns):
-        table[0, col_idx].set_text_props(text=column)
-
-    # Get the renderer and calculate the text width in points
-    renderer = fig.canvas.get_renderer()
-    col_widths = [table[0, col_idx].get_window_extent(renderer).width for col_idx in range(num_cols)]
-
-    # Normalize the column widths
-    total_width = sum(col_widths)
-    col_widths = [width / total_width for width in col_widths]
-
-    # Set the column widths
-    for row_idx in range(num_rows):
-        for col_idx in range(num_cols):
-            table[row_idx, col_idx].set_width(col_widths[col_idx])
-
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
@@ -85,6 +60,7 @@ async def on_message(message):
         }
         df = pd.DataFrame(data)
 
+        # changes the column names from 'lebron_3pt_percentage'  -> 'lebron 3pt percentage' so that the text can wrap without overflowing
         df.columns = [' '.join(col.split('_')) for col in df.columns]
 
         # Create a table plot
@@ -233,3 +209,28 @@ def format_sql_query(result):
     return "\nCode: ```sql\n" + sql_query + "```"
 
 bot.run(BOT_TOKEN)
+
+""" this function was written by GPT. don't ask me how it works. it makes the columns not overflow """
+def adjust_column_width(ax, table, fig, df):
+    num_rows = len(df.index) + 1
+    num_cols = len(df.columns)
+
+    # Split long column names into multiple lines
+    wrapped_columns = [textwrap.fill(column, width=10) for column in df.columns]
+    table.auto_set_column_width(False)
+
+    for col_idx, column in enumerate(wrapped_columns):
+        table[0, col_idx].set_text_props(text=column)
+
+    # Get the renderer and calculate the text width in points
+    renderer = fig.canvas.get_renderer()
+    col_widths = [table[0, col_idx].get_window_extent(renderer).width for col_idx in range(num_cols)]
+
+    # Normalize the column widths
+    total_width = sum(col_widths)
+    col_widths = [width / total_width for width in col_widths]
+
+    # Set the column widths
+    for row_idx in range(num_rows):
+        for col_idx in range(num_cols):
+            table[row_idx, col_idx].set_width(col_widths[col_idx])
