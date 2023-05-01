@@ -107,6 +107,25 @@ def execute_sql(sql_query: str):
         return result_dict
 
 
+def make_example_message(example):
+
+    fake_input = "Question: |\n"
+    for line in example['query'].split('\n'):
+        fake_input += '    ' + line + '\n'
+
+    fake_output = "Answer: |\n"
+    for line in example['query'].split('\n'):
+        fake_output += '    ' + line + '\n'
+
+    return [{
+        'role': 'user',
+        'content': fake_input
+    }, {
+        'role': 'assistant',
+        'content': fake_output
+    }]
+
+
 def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=None, examples=[]):
     """
     Tries to take a natural language query and generate valid SQL to answer it K times
@@ -115,8 +134,8 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     message_history = []
     model = "gpt-3.5-turbo-0301"
 
-    example_messages = [{'role': 'user', 'content': 'Question:\n' + example.get(
-        'query', '') + '\nAnswer:\n' + example.get('sql', '')} for example in examples if len(example.get('sql', '')) > 10]
+    example_messages = [make_example_message(
+        example) for example in examples if len(example.get('sql', '')) > 10]
 
     if not messages:
         # ask the assistant to rephrase before generating the query

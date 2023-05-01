@@ -86,6 +86,8 @@ def get_openai_results(
 ):
     enc = tiktoken.encoding_for_model("gpt-4")
     total_message_length = len(enc.encode(json.dumps(messages)))
+    max_length = 3800 - total_message_length
+
     try:
         res = openai.ChatCompletion.create(
             model=model,
@@ -146,28 +148,28 @@ def extract_sql_query_from_json(assistant_message_content):
 def extract_sql_query_from_yaml(assistant_message_content):
 
     try:
-        data = yaml.safe_load(assistant_message_content)
+        data = assistant_message_content.split('SQL: |')[-1]
+        sql = data.replace('```', '')
     except Exception as e:
         print('e: ', str(e).split('\n')[0])
         raise e
-
-    if data.get('MissingData'):
-        return data
-
-    sql = data['SQL']
 
     return {"SQL": sql}
 
 
 def safe_get_sql_from_yaml(assistant_message_content):
 
-    print('parsing yaml from: ', assistant_message_content)
-
     try:
-        data = yaml.safe_load(assistant_message_content)
-        sql = data['SQL']
+        data = assistant_message_content.split('SQL: |')[-1]
+        sql = data.replace('```', '')
 
     except Exception as e:
+        print('Error parsing yaml: ', str(e).split('\n')[:4])
+        print(f"""---ORIGINAL MESSAGE---
+        
+{assistant_message_content}
+        
+        ---END ORIGINAL MESSAGE---""")
         return {"SQL": None, "error_message": str(e)}
 
     return {"SQL": sql}
