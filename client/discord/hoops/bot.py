@@ -41,31 +41,6 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix="/", intents=intents)
 
-""" this function was written by GPT. don't ask me how it works. it makes the columns not overflow """
-def adjust_column_width(ax, table, fig, df):
-    num_rows = len(df.index) + 1
-    num_cols = len(df.columns)
-
-    # Split long column names into multiple lines
-    wrapped_columns = [textwrap.fill(column, width=10) for column in df.columns]
-    table.auto_set_column_width(False)
-
-    for col_idx, column in enumerate(wrapped_columns):
-        table[0, col_idx].set_text_props(text=column)
-
-    # Get the renderer and calculate the text width in points
-    renderer = fig.canvas.get_renderer()
-    col_widths = [table[0, col_idx].get_window_extent(renderer).width for col_idx in range(num_cols)]
-
-    # Normalize the column widths
-    total_width = sum(col_widths)
-    col_widths = [width / total_width for width in col_widths]
-
-    # Set the column widths
-    for row_idx in range(num_rows):
-        for col_idx in range(num_cols):
-            table[row_idx, col_idx].set_width(col_widths[col_idx])
-
 @bot.event
 async def on_ready():
     print(f'We have logged in as {bot.user}')
@@ -195,13 +170,75 @@ async def process_request(natural_language_query, bot_response, author):
 
     return final_response
 
+""" this function was written by GPT. don't ask me how it works. it makes the columns not overflow """
+def adjust_column_width(ax, table, fig, df):
+    num_rows = len(df.index) + 1
+    num_cols = len(df.columns)
+
+    # Split long column names into multiple lines
+    wrapped_columns = [textwrap.fill(column, width=10) for column in df.columns]
+    table.auto_set_column_width(False)
+
+    for col_idx, column in enumerate(wrapped_columns):
+        table[0, col_idx].set_text_props(text=column)
+
+    # Get the renderer and calculate the text width in points
+    renderer = fig.canvas.get_renderer()
+    col_widths = [table[0, col_idx].get_window_extent(renderer).width for col_idx in range(num_cols)]
+
+    # Normalize the column widths
+    total_width = sum(col_widths)
+    col_widths = [width / total_width for width in col_widths]
+
+    # Set the column widths
+    for row_idx in range(num_rows):
+        for col_idx in range(num_cols):
+            table[row_idx, col_idx].set_width(col_widths[col_idx])
+
+def generate_table_image(result, nlq):
+    df = pd.DataFrame(result["results"], columns=result['column_names'])
+
+    # changes the column names from 'lebron_3pt_percentage'  -> 'lebron 3pt percentage' so that the text can wrap without overflowing
+    df.columns = [' '.join(col.split('_')) for col in df.columns]
+
+    # Create a table plot
+    fig, ax = plt.subplots()
+    ax.axis('off')
+    ax.axis('tight')  # Remove extra whitespace
+    table = ax.table(cellText=df.values, colLabels=df.columns, cellLoc='center', loc='center', bbox=[0, 0, 1, 1])
+
+    # Add table title
+    title_text = nlq
+    ax.set_title(title_text, fontsize=16, fontweight='bold', pad=20)
+
+    # Customize table appearance
+    table.auto_set_font_size(False)
+    table.set_fontsize(14)
+
+    # Adjust column widths
+    adjust_column_width(ax, table, fig, df)
+
+    # Save the table plot to a buffer
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png', bbox_inches='tight', dpi=300)  # Increase dpi for better quality
+    buf.seek(0)
+
+    # Send the table image as a file
+    image_file = File(buf, filename='table.png')
+
+    # Close the buffer and clear the plot
+    buf.close()
+    plt.clf()
+
+    return image_file
+
 async def handle_response(response_object, bot_response, nlq, author, time_taken):
     if (response_object['status'] == 'success'):
-        # Format data into a table 
-        formatted_data = get_success_data_as_table(response_object['response'])
+        table_image =  generate_table_image(response_object['response'], nlq)
         # Update discord with final results 
-        success_message = format_success_message(nlq, formatted_data, author, time_taken)
+        success_message = format_success_message(nlq, author, time_taken)
         await bot_response.edit(content=success_message)
+        await bot_response.channel.send(file=table_image)
         return
     
     if (response_object['state'].lower().startswith('error')):
@@ -220,13 +257,14 @@ def get_success_data_as_table(result):
 
     return table
 
-def format_success_message(natural_language_query, table, author_mention, time_taken):
-    basketball_emoji = chr(0x1F3C0)
+def format_success_message(natural_language_query, author_mention, time_taken):
+    basketball_emoji = "🏀"
 
     return """\n**{nlq}** asked by {author}
+Time: {time}
 
-{emoji} Answer: ``` {table} ``` {time}
-More Info:""".format(emoji=basketball_emoji, nlq=natural_language_query, table=table, author=author_mention, time=time_taken)
+{emoji} Answer:
+More Info:""".format(emoji=basketball_emoji, nlq=natural_language_query, time=time_taken, author=author_mention)
 
 def format_intermidiate_message(state, natural_language_query, time_taken):
     return """**{nlq}**
