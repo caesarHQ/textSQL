@@ -65,6 +65,18 @@ class Engine:
         if self.method == 'multi':
             try:
                 for res in text_to_sql_with_retry_multi(self.query, self.tables, examples=self.selected_examples):
+
+                    if res.get('bad_sql'):
+                        num_rows = None
+                        logging_db.update_input(
+                            self.current_generation_id, num_rows, res['bad_sql'])
+
+                    if res.get('sql_query'):
+                        num_rows = len(
+                            res.get('response', {}).get('results', []))
+                        logging_db.update_input(
+                            self.current_generation_id, num_rows, res['sql_query'])
+
                     yield {'generation_id': self.current_generation_id, **res}
                 print('done with get_sql')
             except Exception as exc:

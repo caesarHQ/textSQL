@@ -15,7 +15,7 @@ from app.utils import (safe_get_sql_from_yaml, get_openai_results,
 
 def get_retry_message(raw_message):
     error_message = raw_message.split("\n")[0]
-    print('parsed error: ', error_message)
+    # print('parsed error: ', error_message)
     model_message = f"""
 The SQL query you just generated resulted in the following error message:
 ---------------------
@@ -148,7 +148,7 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
 
                 possible_sql_results = get_openai_results(
                     payload, model=model, n=2)
-                print('possible sql results: ', possible_sql_results)
+                # print('possible sql results: ', possible_sql_results)
             except Exception as assistant_error:
                 print('error getting assistant message', assistant_error)
                 continue
@@ -186,9 +186,9 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
 
         except Exception as e:
             print('error executing sql')
-            yield {'status': 'working', 'step': 'sql', 'state': 'Error: ' + str(e)}
+            yield {'status': 'working', 'step': 'sql', 'state': 'Error: ' + str(e), 'bad_sql': sql_query}
             try:
-                print('error executing sql: ', e)
+                print('error executing sql: ', str(e).split('\n')[0])
                 message_history.append({
                     "role": "assistant",
                     "content": sql_query

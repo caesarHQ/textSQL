@@ -144,22 +144,22 @@ def log_input(app, query_text):
 
 
 @failsoft
-def update_input(id: str, ran_sql: bool, rows_returned: int, generated_sql: str):
+def update_input(id: str, rows_returned: int, sql_text: str):
 
-    if not EVENTS_ENGINE or not id:
+    if not id:
         return None
 
     params = {
         "id": id,
-        "ran_sql": ran_sql,
         "rows_returned": rows_returned,
-        "generated_sql": generated_sql
+        "sql_text": sql_text
     }
 
     update_query = text("""
-        UPDATE input_classifications SET ran_sql = :ran_sql, rows_returned = :rows_returned, generated_sql = :generated_sql
+        UPDATE queries
+        SET rows_returned = :rows_returned, sql_text = :sql_text
         WHERE id = :id
-    """)
+        """)
 
     with EVENTS_ENGINE.connect() as conn:
         conn.execute(update_query, params)
