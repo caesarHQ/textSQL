@@ -1,8 +1,5 @@
 from app.config import FlaskAppConfig, DB_MANAGED_METADATA
 from app.extensions import db
-# import models to create tables if they don't exist
-from app.models import in_context_examples, table_metadata, type_metadata
-from app.setup.setup_routes import bp as setup_bp
 from app.setup.admin_routes import admin_bp
 from app.sql_explanation.routes import bp as sql_explanation_bp
 from app.sql_generation.generation_routes import bp as sql_gen_bp
@@ -37,7 +34,6 @@ def create_app(config_object=FlaskAppConfig):
     def ping():
         return 'pong'
 
-    app.register_blueprint(setup_bp)
     app.register_blueprint(sql_explanation_bp)
     app.register_blueprint(sql_gen_bp)
     app.register_blueprint(table_selection_bp)
