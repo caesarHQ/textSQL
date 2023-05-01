@@ -68,7 +68,7 @@ async def on_message(message):
 
         table_image = generate_table_image(response['response'], natural_language_query)
 
-        final_bot_response = await intermediary_bot_response.channel.send(file=table_image)
+        final_bot_response = await intermediary_bot_response.channel.send(content=f"Asked by: {message.author.mention}\n", file=table_image)
 
         await intermediary_bot_response.delete()
 
