@@ -81,7 +81,7 @@ async def on_message(message):
 
         # Send raw data as csv in thread
         await send_raw_data_as_csv(response["response"], thread)
-        
+
         # Reply with SQL query in the thread
         sql_query = format_sql_query(response)
         await thread.send(sql_query)
@@ -179,7 +179,6 @@ async def handle_response(response_object, bot_response, nlq, author, time_taken
         # Update discord with final results 
         success_message = format_success_message(nlq, author, time_taken)
         await bot_response.edit(content=success_message)
-        await bot_response.channel.send(file=table_image)
         return
     
     if (response_object['state'].lower().startswith('error')):
@@ -227,7 +226,7 @@ async def send_raw_data_as_csv(result, thread):
     csv_file = discord.File(binary_buf, filename='data.csv')
 
     # Send the CSV file as a Discord bot message
-    await thread.send(file=csv_file)
+    await thread.send(content="Raw Data:", file=csv_file)
     return
 
 def format_sql_query(result):
