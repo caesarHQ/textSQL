@@ -51,7 +51,8 @@ async def on_message(message):
         return
     
     if message.content.startswith('/help'):
-
+        await handle_help(message)
+        return
 
     # Check if the message @s the bot
     if bot.user.mentioned_in(message):
@@ -94,15 +95,16 @@ async def on_message(message):
         await thread.send(sql_query)
 
 async def handle_help(message):
-    help_text == """
-    ## HoopsGPT
+    help_text = """HoopsGPT
 
 Use GPT to analyze NBA stats.
 
-Every Game, Every Play, Every Player since the year 2000.
+**Every Game, Every Play, Every Player** since the year 2000.
 
-Try: What is steph curry's 3pt percentage at home vs away?"""
+Try: `What is steph curry's 3pt percentage at home vs away?`"""
 
+    await message.channel.send(content=help_text)
+    return
 
 async def process_request(natural_language_query, bot_response, author): 
     start_time = time.time()
