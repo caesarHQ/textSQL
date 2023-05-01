@@ -29,8 +29,6 @@ General Plan from End to Start: |
   Explain so a five year old can understand how you'll get to the final answer from back to start
 InputAndOutputTypes: |
   Any conversions needed for the input and output to match the user expectations (E.g. need to map id => name)
-Non-unique issues to watch for: |
-  List anything related to joins to watch out for. Are there any tables that don't actually need to be pre-computed?
 Final Plan Start to Finish: |
   Walk through the CTEs from start to finish so a five year old can understand why each step is needed.
 SQL: |
