@@ -140,6 +140,11 @@ def get_tables():
         for table_name in utils.get_table_names():
             new_table = utils.generate_table_metadata(table_name)
             tables.append(new_table)
+        with open(CREDS_PATH + '/json/table_metadata.json', 'w') as f:
+            reformatted_tables = {}
+            for table in tables:
+                reformatted_tables[table['name']] = table
+            json.dump(reformatted_tables, f, indent=4)
 
     tables = sorted(tables, key=lambda k: k['name'])
 
@@ -194,7 +199,7 @@ def refresh_available_tables():
     """
 
     # get the list of current tables
-    current_tables = utils.get_table_names()
+    current_tables = utils.get_table_names() or {}
     print('current tables: ', current_tables)
 
     # load the current tables from the json file
