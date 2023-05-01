@@ -15,13 +15,14 @@ DO NOT USE THE MINUTES COLUMNS
 USE ilike instead of = when comparing strings
 
 Notes on table relationships:
-- nba_team.team_id is not unique. To find a team, search by the team name (not including the city)
-  you cannot join on nba_team by team_id directly because this will return multiple rows
-
-- nba_game does not include the winner/loser or the team names.
-  to find a winner, you first need to select distinct team_id from the nba_team table via CTE. You then need to check against nba_team_game_stats to get the final scores for the away/home team based on the game_id and home/away team_id.
+  If querying NBA_TEAM:
+  - nba_team.team_id is not unique. To find a team, search by the team name (not including the city)
+  you cannot join on nba_team by team_id directly because this will return multiple rows  
+  - nba_team has team_name and team_city. generally just query against the team_name (e.g. knicks)
   
-- nba_team has team_name and team_city. generally just query against the team_name (e.g. knicks)
+  If querying NBA_GAME:
+  - nba_game does not include the winner/loser or the team names.
+    to find a winner, you first need to select distinct team_id from the nba_team table via CTE. You then need to check against nba_team_game_stats to get the final scores for the away/home team based on the game_id and home/away team_id.
 
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 
@@ -33,9 +34,9 @@ General Plan from End to Start: |
 InputAndOutputTypes: |
   Any conversions needed for the input and output to match the user expectations (E.g. need to map id => name)
 Non-unique issues to watch for: |
-  Where tables (e.g. nba_team) don't have unique constraints so need to be pre-calculated as a CTE
+  List anything related to joins to watch out for. Are there any tables that don't actually need to be pre-computed?
 Final Plan Start to Finish: |
-  Walk through the plan from start to finish.
+  Walk through the CTEs from start to finish so a five year old can understand why each step is needed.
 SQL: |
     The final query to run
     Each line should be a single clause and indented an extra 4 spaces
@@ -44,6 +45,6 @@ SQL: |
 ```
   
 ENSURE TO PROVIDE A | AFTER EACH YAML KEY SO THE YAML IS NOT INTERPRETED AS A COMMENT. You must provide all values, you cannot provide templates.
-Provide the YAML and only the YAML. Do not include backticks (```), just include the YAML.
+Provide the YAML and only the YAML. Do not include backticks (```), just include the YAML. Also, ensure all column references unambiguously provide table.column when using them.
 
 """.format(command)

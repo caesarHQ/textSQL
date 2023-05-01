@@ -27,9 +27,17 @@ const AdminLayout = ({ children }) => {
             >
               Database
             </Link>
+            <Link
+              href="/example_management"
+              className="text-gray-700 hover:text-blue-500"
+            >
+              Example Management
+            </Link>
+
             <Link href="/" className="text-gray-700 hover:text-blue-500">
               Query
             </Link>
+
             <Link href="/nba" className="text-gray-700 hover:text-blue-500">
               NBA Asker
             </Link>

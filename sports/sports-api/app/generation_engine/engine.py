@@ -42,6 +42,7 @@ class Engine:
             new_tables = get_tables(
                 self.query, method=self.table_selection_method)
             self.tables = new_tables
+            print('got tables: ', new_tables)
             yield {"status": "working", "state": "Tables Acquired", "tables": new_tables, "step": "tables"}
         except Exception as e:
             yield {"status": "error", "error": str(e), 'step': 'tables'}
