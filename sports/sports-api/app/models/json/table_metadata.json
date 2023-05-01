@@ -5438,7 +5438,7 @@
             ]
         ],
         "name": "nba_team",
-        "schema": "--WARNING: TEAM_ID IS NOT UNIQUE. YOU NEED TO PRE-QUERY (SELECT 1) TO AVOID DUPLICATIONS.\nCREATE TABLE nba_team (-- table for NBA teams\n    team_id bigint, -- unique identifier for each team\n    team_city text, -- city where the team is located\n    team_name text, -- name of the team (not including the city)\n    team_tricode text -- three-letter code for the team\n);"
+        "schema": "--WARNING: TEAM_ID IS NOT UNIQUE. YOU NEED TO PRE-QUERY (SELECT 1) TO AVOID DUPLICATIONS\nCREATE TABLE nba_team (-- table for NBA teams\n    team_id bigint, -- unique identifier for each team\n    team_city text, -- city where the team is located\n    team_name text, -- name of the team (not including the city)\n    team_tricode text -- three-letter code for the team\n);"
     },
     "nba_team_game_period_scores": {
         "active": true,
