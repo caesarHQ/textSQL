@@ -46,15 +46,6 @@ const QueryScreen = (props) => {
 
   const tableColumns = tableInfo?.columns;
   const tableRows = tableInfo?.rows;
-  // Add system dark mode
-
-  useEffect(() => {
-    localStorage.theme === "dark" ||
-    (!("theme" in localStorage) &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches)
-      ? document.documentElement.classList.add("dark")
-      : document.documentElement.classList.remove("dark");
-  }, []);
 
   useEffect(() => {
     if (errorMessage !== "") {
