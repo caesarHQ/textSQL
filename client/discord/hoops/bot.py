@@ -226,7 +226,7 @@ async def send_raw_data_as_csv(result, thread):
     csv_file = discord.File(binary_buf, filename='data.csv')
 
     # Send the CSV file as a Discord bot message
-    await thread.send(file=csv_file)
+    await thread.send(content="Raw Data:", file=csv_file)
     return
 
 def format_sql_query(result):
