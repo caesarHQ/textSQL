@@ -25,8 +25,27 @@ const loadShotChart = (shotsData) => {
     const legend = svg.append("g")
       .attr("class", "legend")
       .attr("transform", "translate(520, 560)")
-      .html('<text textAnchor="end" fontFamily="Roboto">Miss</text> <path transform="translate(-44, -6)" d="M -5,-5 L 5,5 M 5,-5 L -5,5" fill="rgba(255,255,255, 0.1" stroke="rgba(187, 0, 0, 0.8)" strokeWidth="3"></path> <text transform="translate(-80, 0)" textAnchor="end" fontFamily="Roboto">Made</text> <path transform="translate(-130, -6)" d="M -5, 0 a 5,5 0 1,0 10,0 a 5,5 0 1,0 -10,0" fill="rgba(255,255,255, 0.1" stroke="rgba(10, 158, 117, 0.8)" strokeWidth="3"></path>');
-
+    legend.append("text")
+        .attr("fontFamily", "Roboto")
+        .attr("textAnchor", "end")
+        .text("Miss");
+    legend.append("path")
+        .attr("transform", "translate(-44, -6)")
+        .attr("d", "M -5,-5 L 5,5 M 5,-5 L -5,5")
+        .attr("fill", "rgba(255, 255, 255, 0.1)")
+        .attr("stroke", "rgba(187, 0, 0, 0.8)")
+        .attr("strokeWidth", "3");
+    legend.append("text")
+        .attr("fontFamily", "Roboto")
+        .attr("textAnchor", "end")
+        .attr("transform", "translate(-80, 0)")
+        .text("Made");
+    legend.append("path")
+        .attr("transform", "translate(-130, -6)")
+        .attr("d", "M -5, 0 a 5,5 0 1,0 10,0 a 5,5 0 1,0 -10,0")
+        .attr("fill", "rgba(255, 255, 255, 0.1)")
+        .attr("stroke", "rgba(10, 158, 117, 0.8)")
+        .attr("strokeWidth", "3");
 
     const court = svg.append("g")
         .attr("class", "court")
