@@ -288,7 +288,7 @@ def generate_type_metadata(type_name):
         return None
 
 
-def generate_table_metadata(table_name):
+def generate_table_metadata(table_name, start_selected=True):
     """
     Generate table metadata
     """
@@ -315,7 +315,7 @@ def generate_table_metadata(table_name):
                 columns_metadata.append({
                     "name": row[0],
                     "type": column_type,
-                    "active": True
+                    "active": start_selected
                 })
 
             column_idx_lookup = {}
@@ -332,14 +332,14 @@ def generate_table_metadata(table_name):
                 for row in result:
                     table_head.append([])
                     for idx, column in enumerate(columns):
-                        table_head[-1].append(row[idx])
+                        table_head[-1].append(str(row[idx]))
 
             # TODO: generate table description
             # TODO: generate column description (FK, PK, etc.)
             table_description = ""
             return {
                 "name": table_name,
-                "active": True,
+                "active": start_selected,
                 "description": table_description,
                 "columns": columns_metadata,
                 "head": table_head,

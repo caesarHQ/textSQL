@@ -195,7 +195,31 @@ def refresh_available_tables():
 
     # get the list of current tables
     current_tables = utils.get_table_names()
-    # TODO: Finish this
+    print('current tables: ', current_tables)
+
+    # load the current tables from the json file
+    try:
+        with open(CREDS_PATH + '/json/table_metadata.json', 'r') as f:
+            tables = json.load(f)
+    except:
+        tables = {}
+
+    # list all the tables not in the json file
+    new_tables = []
+    for table in current_tables:
+        if table not in tables:
+            new_tables.append(table)
+
+    # add the new tables to the json file
+    for table in new_tables:
+        new_table = utils.generate_table_metadata(table, start_selected=False)
+        tables[table] = new_table
+
+    # save it
+    with open(CREDS_PATH + '/json/table_metadata.json', 'w') as f:
+        json.dump(tables, f, indent=4)
+
+    return get_tables()
 
 
 @localhost_only
