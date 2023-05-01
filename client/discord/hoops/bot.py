@@ -210,6 +210,23 @@ def format_intermidiate_message(state, natural_language_query, time_taken):
 {state}
 {time}""".format(nlq=natural_language_query, state=state, time=time_taken)
 
+async def send_raw_data_as_csv(result, thread):
+    df = pd.DataFrame(result["results"], columns=result['column_names'])
+    # Save the DataFrame as a CSV to a buffer
+    buf = io.StringIO()
+    df.to_csv(buf, index=False)
+    buf.seek(0)
+
+    # Convert the StringIO buffer to a binary buffer
+    binary_buf = io.BytesIO(buf.getvalue().encode())
+
+    # Create a File object
+    csv_file = discord.File(binary_buf, filename='data.csv')
+
+    # Send the CSV file as a Discord bot message
+    await thread.send(file=csv_file)
+    return
+
 def format_sql_query(result):
     sql_query = result["sql_query"]
     # ```sql\n adds SQL syntax highlighting
