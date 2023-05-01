@@ -46,15 +46,6 @@ const QueryScreen = (props) => {
 
   const tableColumns = tableInfo?.columns;
   const tableRows = tableInfo?.rows;
-  // Add system dark mode
-
-  useEffect(() => {
-    localStorage.theme === "dark" ||
-    (!("theme" in localStorage) &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches)
-      ? document.documentElement.classList.add("dark")
-      : document.documentElement.classList.remove("dark");
-  }, []);
 
   useEffect(() => {
     if (errorMessage !== "") {
@@ -203,6 +194,7 @@ const QueryScreen = (props) => {
       className="h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen"
       style={{ position: "relative" }}
     >
+
       <div className="App flex flex-col h-full">
         <link
           href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
