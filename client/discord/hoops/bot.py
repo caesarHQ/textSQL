@@ -79,6 +79,9 @@ async def on_message(message):
         # Create a thread 
         thread = await final_bot_response.create_thread(name=natural_language_query, auto_archive_duration=60)
 
+        # Send raw data as csv in thread
+        await send_raw_data_as_csv(response["response"], thread)
+        
         # Reply with SQL query in the thread
         sql_query = format_sql_query(response)
         await thread.send(sql_query)
