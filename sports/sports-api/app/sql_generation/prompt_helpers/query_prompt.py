@@ -16,9 +16,24 @@ USE ilike instead of = when comparing strings
 
 Notes on table relationships:
   If querying NBA_TEAM:
-  - nba_team.team_id is not unique. To find a team, search by the team name (not including the city)
+  - nba_team.team_id is not unique. To find a team, search by the team name (not including the city) ahead of time
+    e.g. start off with a CTE as  
+    ```
+    --get the team_id for the knicks
+    with knicks_id as (
+      select distinct team_id from nba_team where team_name ilike 'knicks'
+    )
+    ```
+    or if you don't know the team ahead of time
+    ```
+    -- get all team_ids to prevent duplicates
+    with all_teams as (
+      select distinct team_id, team_name from nba_team
+    )
+    ```
   you cannot join on nba_team by team_id directly because this will return multiple rows  
   - nba_team has team_name and team_city. generally just query against the team_name (e.g. knicks)
+
   
   If querying NBA_GAME:
   - nba_game does not include the winner/loser or the team names.
