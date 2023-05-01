@@ -10,6 +10,7 @@ import json
 import pandas as pd
 import io
 import matplotlib.pyplot as plt
+import textwrap
 
 class BufferedJSONDecoder:
     def __init__(self):
@@ -44,10 +45,71 @@ bot = commands.Bot(command_prefix="/", intents=intents)
 async def on_ready():
     print(f'We have logged in as {bot.user}')
 
+""" this function was written by GPT. don't ask me how it works. it makes the columns not overflow """
+def adjust_column_width(ax, table, fig, df):
+    num_rows = len(df.index) + 1
+    num_cols = len(df.columns)
+
+    # Split long column names into multiple lines
+    wrapped_columns = [textwrap.fill(column, width=10) for column in df.columns]
+    table.auto_set_column_width(False)
+
+    for col_idx, column in enumerate(wrapped_columns):
+        table[0, col_idx].set_text_props(text=column)
+
+    # Get the renderer and calculate the text width in points
+    renderer = fig.canvas.get_renderer()
+    col_widths = [table[0, col_idx].get_window_extent(renderer).width for col_idx in range(num_cols)]
+
+    # Normalize the column widths
+    total_width = sum(col_widths)
+    col_widths = [width / total_width for width in col_widths]
+
+    # Set the column widths
+    for row_idx in range(num_rows):
+        for col_idx in range(num_cols):
+            table[row_idx, col_idx].set_width(col_widths[col_idx])
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
+
+    if message.content.startswith('/table'):
+         # Sample DataFrame
+        data = {
+            'lebron_3pt_percentage': [0.342625, 0.642625],
+            'lebron_3pt_attempts': [7892, 533256],
+            'lebron_avg_points_per_game': [26.7855, 535.7855],
+            'lebron_total_games_played': [1734, 35135]
+        }
+        df = pd.DataFrame(data)
+
+        df.columns = [' '.join(col.split('_')) for col in df.columns]
+
+        # Create a table plot
+        fig, ax = plt.subplots()
+        ax.axis('off')
+        ax.axis('tight')  # Remove extra whitespace
+        table = ax.table(cellText=df.values, colLabels=df.columns, cellLoc='center', loc='center', bbox=[0, 0, 1, 1])
+
+        # Customize table appearance
+        table.auto_set_font_size(False)
+        table.set_fontsize(14)
+        adjust_column_width(ax, table, fig, df)
+
+        # Save the table plot to a buffer
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', bbox_inches='tight', dpi=300)  # Increase dpi for better quality
+        buf.seek(0)
+
+        # Send the table image as a file
+        image_file = File(buf, filename='table.png')
+        await message.channel.send(file=image_file)
+
+        # Close the buffer and clear the plot
+        buf.close()
+        plt.clf()
 
     if message.content.startswith('/plot_data'):
         # Sample DataFrame
