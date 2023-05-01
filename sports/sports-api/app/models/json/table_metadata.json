@@ -4282,6 +4282,238 @@
         "name": "nba_arena",
         "schema": "CREATE TABLE nba_arena (-- table containing information about NBA arenas\n    arena_id bigint, -- unique identifier for each arena\n    arena_city text, -- city where the arena is located\n    arena_country text, -- country where the arena is located\n    arena_name text, -- name of the arena\n    arena_state text, -- state where the arena is located\n    arena_timezone text, -- timezone where the arena is located\n    arena_street_address text, -- street address of the arena\n    arena_postal_code text -- postal code of the arena\n);"
     },
+    "nba_current_player": {
+        "active": true,
+        "columns": [
+            {
+                "active": true,
+                "name": "person_id",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "season_exp",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "team_id",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "from_year",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "to_year",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "school",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "country",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "last_affiliation",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "height",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "weight",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "draft_year",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "jersey",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "position",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "roster_status",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "draft_round",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "draft_number",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "seasons",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "first_name",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "last_name",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "name_i",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "birth_date",
+                "type": "text"
+            }
+        ],
+        "description": "",
+        "head": [
+            [
+                "1000",
+                "Shandon",
+                "Anderson",
+                "S. Anderson",
+                "1973-12-31T00:00:00",
+                "Georgia",
+                "USA",
+                "Georgia/USA",
+                "6-6",
+                "215",
+                "10",
+                "49",
+                "Guard-Forward",
+                "Inactive",
+                "1610612752",
+                "1996",
+                "2005",
+                "1996",
+                "2",
+                "54",
+                "{21996,41996,11997,21997,41997,11998,21998,41998,11999,21999,12000,22000,12001,22001,12002,22002,12003,22003,42003,12004,22004,42004,12005,22005,42005}"
+            ],
+            [
+                "2",
+                "Byron",
+                "Scott",
+                "B. Scott",
+                "1961-03-28T00:00:00",
+                "Arizona State",
+                "USA",
+                "Arizona State/USA",
+                "6-4",
+                "205",
+                "14",
+                "",
+                "Guard",
+                "Inactive",
+                "1610612747",
+                "1983",
+                "1996",
+                "1983",
+                "1",
+                "4",
+                "{21983,41983,21984,41984,21985,41985,21986,41986,21987,41987,21988,41988,21989,41989,21990,41990,21991,41991,21992,41992,21993,41993,21994,41994,21995,21996,41996}"
+            ],
+            [
+                "2000",
+                "Dedric",
+                "Willoughby",
+                "D. Willoughby",
+                "1974-05-27T00:00:00",
+                "Iowa State",
+                "USA",
+                "Iowa State/USA",
+                "6-3",
+                "180",
+                "1",
+                "",
+                "Guard",
+                "Inactive",
+                "0",
+                "1999",
+                "1999",
+                "Undrafted",
+                "Undrafted",
+                "Undrafted",
+                "{11999,21999}"
+            ]
+        ],
+        "name": "nba_current_player",
+        "schema": "CREATE TABLE nba_current_player (-- NBA player roster information\n    person_id bigint, -- unique identifier for each player\n    season_exp bigint, -- number of seasons of experience in the NBA\n    team_id bigint, -- unique identifier for the team the player is currently playing for\n    from_year bigint, -- year the player started playing in the NBA\n    to_year bigint, -- year the player ended playing in the NBA\n    school text, -- name of the school the player attended\n    country text, -- country the player is from\n    last_affiliation text, -- last affiliation of the player before joining the NBA\n    height text, -- height of the player in feet-inches format\n    weight text, -- weight of the player in pounds\n    draft_year text, -- year the player was drafted\n    jersey text, -- jersey number of the player\n    position text, -- position the player plays in\n    roster_status text, -- status of the player in the team's roster\n    draft_round text, -- round the player was drafted in\n    draft_number text, -- number the player was drafted at\n    seasons text, -- list of seasons the player played in the NBA\n    first_name text, -- first name of the player\n    last_name text, -- last name of the player\n    name_i text, -- abbreviated name of the player\n    birth_date text -- date of birth of the player\n);"
+    },
+    "nba_current_team": {
+        "active": true,
+        "columns": [
+            {
+                "active": true,
+                "name": "team_id",
+                "type": "bigint"
+            },
+            {
+                "active": true,
+                "name": "team_city",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "team_name",
+                "type": "text"
+            },
+            {
+                "active": true,
+                "name": "team_tricode",
+                "type": "text"
+            }
+        ],
+        "description": "",
+        "head": [
+            [
+                "Atlanta",
+                "1610612737",
+                "Hawks",
+                "ATL"
+            ],
+            [
+                "Boston",
+                "1610612738",
+                "Celtics",
+                "BOS"
+            ],
+            [
+                "Brooklyn",
+                "1610612751",
+                "Nets",
+                "BKN"
+            ]
+        ],
+        "name": "nba_current_team",
+        "schema": "CREATE TABLE nba_current_team (-- table for current NBA teams\n    team_id bigint, -- unique identifier for each team\n    team_city text, -- city where the team is located\n    team_name text, -- name of the team\n    team_tricode text -- three-letter code for the team\n);"
+    },
     "nba_error": {
         "active": false,
         "columns": [
@@ -5208,192 +5440,8 @@
         "name": "nba_player_game_stats",
         "schema": "CREATE TABLE nba_player_game_stats (-- table for storing game stats of NBA players\n    plus_minus_points bigint, -- plus/minus points of the player in the game\n    team_id bigint, -- id of the team the player belongs to\n    person_id bigint, -- id of the player\n    fouls_personal bigint, -- number of personal fouls committed by the player\n    points bigint, -- total points scored by the player in the game\n    field_goals_made bigint, -- number of field goals made by the player\n    field_goals_attempted bigint, -- number of field goals attempted by the player\n    field_goals_percentage double precision, -- percentage of field goals made by the player\n    three_pointers_made bigint, -- number of three pointers made by the player\n    three_pointers_attempted bigint, -- number of three pointers attempted by the player\n    three_pointers_percentage double precision, -- percentage of three pointers made by the player\n    free_throws_made bigint, -- number of free throws made by the player\n    free_throws_attempted bigint, -- number of free throws attempted by the player\n    free_throws_percentage double precision, -- percentage of free throws made by the player\n    rebounds_offensive bigint, -- number of offensive rebounds by the player\n    rebounds_defensive bigint, -- number of defensive rebounds by the player\n    rebounds_total bigint, -- total number of rebounds by the player\n    assists bigint, -- number of assists made by the player\n    steals bigint, -- number of steals made by the player\n    blocks bigint, -- number of blocks made by the player\n    turnovers bigint, -- number of turnovers committed by the player\n    minutes text, -- total minutes played by the player in the game\n    game_id text --foreign key\n);"
     },
-    "nba_current_player": {
-        "active": true,
-        "columns": [
-            {
-                "active": true,
-                "name": "person_id",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "season_exp",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "team_id",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "from_year",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "to_year",
-                "type": "bigint"
-            },
-            {
-                "active": true,
-                "name": "school",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "country",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "last_affiliation",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "height",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "weight",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "draft_year",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "jersey",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "position",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "roster_status",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "draft_round",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "draft_number",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "seasons",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "first_name",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "last_name",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "name_i",
-                "type": "text"
-            },
-            {
-                "active": true,
-                "name": "birth_date",
-                "type": "text"
-            }
-        ],
-        "description": "",
-        "head": [
-            [
-                "1000",
-                "Shandon",
-                "Anderson",
-                "S. Anderson",
-                "1973-12-31T00:00:00",
-                "Georgia",
-                "USA",
-                "Georgia/USA",
-                "6-6",
-                "215",
-                "10",
-                "49",
-                "Guard-Forward",
-                "Inactive",
-                "1610612752",
-                "1996",
-                "2005",
-                "1996",
-                "2",
-                "54",
-                "{21996,41996,11997,21997,41997,11998,21998,41998,11999,21999,12000,22000,12001,22001,12002,22002,12003,22003,42003,12004,22004,42004,12005,22005,42005}"
-            ],
-            [
-                "2",
-                "Byron",
-                "Scott",
-                "B. Scott",
-                "1961-03-28T00:00:00",
-                "Arizona State",
-                "USA",
-                "Arizona State/USA",
-                "6-4",
-                "205",
-                "14",
-                "",
-                "Guard",
-                "Inactive",
-                "1610612747",
-                "1983",
-                "1996",
-                "1983",
-                "1",
-                "4",
-                "{21983,41983,21984,41984,21985,41985,21986,41986,21987,41987,21988,41988,21989,41989,21990,41990,21991,41991,21992,41992,21993,41993,21994,41994,21995,21996,41996}"
-            ],
-            [
-                "2000",
-                "Dedric",
-                "Willoughby",
-                "D. Willoughby",
-                "1974-05-27T00:00:00",
-                "Iowa State",
-                "USA",
-                "Iowa State/USA",
-                "6-3",
-                "180",
-                "1",
-                "",
-                "Guard",
-                "Inactive",
-                "0",
-                "1999",
-                "1999",
-                "Undrafted",
-                "Undrafted",
-                "Undrafted",
-                "{11999,21999}"
-            ]
-        ],
-        "name": "nba_current_player",
-        "schema": "CREATE TABLE nba_current_player (-- NBA player roster information\n    person_id bigint, -- unique identifier for each player\n    season_exp bigint, -- number of seasons of experience in the NBA\n    team_id bigint, -- unique identifier for the team the player is currently playing for\n    from_year bigint, -- year the player started playing in the NBA\n    to_year bigint, -- year the player ended playing in the NBA\n    school text, -- name of the school the player attended\n    country text, -- country the player is from\n    last_affiliation text, -- last affiliation of the player before joining the NBA\n    height text, -- height of the player in feet-inches format\n    weight text, -- weight of the player in pounds\n    draft_year text, -- year the player was drafted\n    jersey text, -- jersey number of the player\n    position text, -- position the player plays in\n    roster_status text, -- status of the player in the team's roster\n    draft_round text, -- round the player was drafted in\n    draft_number text, -- number the player was drafted at\n    seasons text, -- list of seasons the player played in the NBA\n    first_name text, -- first name of the player\n    last_name text, -- last name of the player\n    name_i text, -- abbreviated name of the player\n    birth_date text -- date of birth of the player\n);"
-    },
     "nba_team": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,

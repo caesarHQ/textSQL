@@ -15,35 +15,16 @@ DO NOT USE THE MINUTES COLUMNS
 USE ilike instead of = when comparing strings
 
 Notes on table relationships:
-  If querying NBA_TEAM:
-  - nba_team.team_id is not unique. To find a team, search by the team name (not including the city) ahead of time
-    e.g. start off with a CTE as  
-    ```
-    --get the team_id for the knicks
-    with knicks_id as (
-      select distinct team_id from nba_team where team_name ilike 'knicks'
-    )
-    ```
-    or if you don't know the team ahead of time
-    ```
-    -- get all team_ids to prevent duplicates
-    with all_teams as (
-      select distinct team_id, team_name from nba_team
-    )
-    ```
-  you cannot join on nba_team by team_id directly because this will return multiple rows  
-  - nba_team has team_name and team_city. generally just query against the team_name (e.g. knicks)
-
   
   If querying NBA_GAME:
   - nba_game does not include the winner/loser or the team names.
-    to find a winner, you first need to select distinct team_id from the nba_team table via CTE. You then need to check against nba_team_game_stats to get the final scores for the away/home team based on the game_id and home/away team_id.
+    to find a winner, you first need to need to check against nba_team_game_stats to get the final scores for the away/home team based on the game_id and home/away team_id.
 
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 
 ```
 Spelled out question: |
-  Spell out the question so a five year old can understand it
+  Spell out the question so a five year old can understand it (include what should be returned at the end)
 General Plan from End to Start: |
   Explain so a five year old can understand how you'll get to the final answer from back to start
 InputAndOutputTypes: |
