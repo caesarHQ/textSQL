@@ -8,8 +8,6 @@ import { capturePosthog } from "../utils/posthog";
 
 import { SearchContext } from "./contexts/search_context";
 
-import loadShotChart from "../nba/shot_chart";
-
 import {
   DarkModeButton,
   DiscordButton,
@@ -64,18 +62,6 @@ const QueryScreen = (props) => {
       notify(errorMessage);
     }
   }, [errorMessage]);
-
-  useEffect(() => {
-    const data = [
-      {
-        x_legacy: -4,
-        y_legacy: 248,
-        description: "Paul 26' 3PT Jump Shot (3 PTS) (Booker 3 AST)",
-        shot_result: "Made",
-      }
-    ];
-    loadShotChart(data);
-  }, []);
 
   const clearAll = () => {
     setQuery("");
@@ -223,9 +209,6 @@ const QueryScreen = (props) => {
           href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
           rel="stylesheet"
         />
-
-        <div id="shot-chart"/>
-
 
         <div className="relative w-full flex flex-col p-6 space-y-1.5 bg-gradient-to-b bg/10 backdrop-blur-sm pb-2.5 from-white dark:from-transparent z-50">
           <div className="inline-flex gap-x-2 align-middle justify-center mb-6">

@@ -1,4 +1,6 @@
 import * as d3 from "d3";
+import { useEffect } from "react";
+
 
 const loadShotChart = (shotsData) => {
     // Select the parent div for the chart
@@ -8,8 +10,6 @@ const loadShotChart = (shotsData) => {
     const svg = chartDiv.append("svg")
       .attr("viewBox", "0,0,540,570")
       .attr("preserveAspectRatio", "xMidYMid meet")
-      .attr("width", "65%")
-      .attr("height", "65%")
       .style("background", "#ffffff");
 
     // Add footer group
@@ -64,7 +64,17 @@ const loadShotChart = (shotsData) => {
             .attr('stroke', `${shotData.shot_result == 'Made' ? made_stroke : missed_stroke}`)
             .attr('stroke-width', '3');
     }
+};
 
-}
 
-export default loadShotChart
+const ShotChart = ({ shotsData }) => {
+    useEffect(() => {
+        loadShotChart(shotsData);
+    }, [shotsData]);
+
+    return (
+        <div id="shot-chart" className="flex flex-grow h-full w-full relative rounded-lg shadow overflow-hidden"/>
+    )
+};
+
+export default ShotChart;
