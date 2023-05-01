@@ -2,7 +2,7 @@ from functools import wraps
 import json
 import pinecone
 
-from app.config import CREDS, update_engine, ENV, load_openai_key, CREDS_PATH, start_pinecone
+from app.config import CREDS, update_engine, ENV, load_openai_key, CREDS_PATH, start_pinecone, PINECONE_INDEX, PINECONE_KEY, PINECONE_ENV
 from app.setup import utils
 from app import utils as app_utils
 
@@ -249,11 +249,11 @@ def get_examples():
     """
 
     # check if we have the pinecone credentials (if not, we can't load examples)
-    if not CREDS.get("PINECONE_INDEX") or not CREDS.get("PINECONE_KEY") or not CREDS.get("PINECONE_ENV"):
+    if not (PINECONE_INDEX and PINECONE_KEY and PINECONE_ENV):
         return {
             'status': 'failure', 'message': 'pinecone is not loaded yet'
         }
-    index = pinecone.Index(CREDS.get('PINECONE_INDEX'))
+    index = pinecone.Index(PINECONE_INDEX)
     res = index.query([0]*1536, top_k=10000,
                       include_metadata=True, filter={'purpose': 'example'})
 
@@ -272,7 +272,7 @@ def save_example(example):
     sql = example['sql']
 
     # check if we have the pinecone credentials (if not, we can't load examples)
-    if not CREDS.get("PINECONE_INDEX") or not CREDS.get("PINECONE_KEY") or not CREDS.get("PINECONE_ENV"):
+    if not (PINECONE_INDEX and PINECONE_KEY and PINECONE_ENV):
         return {
             'status': 'failure', 'message': 'pinecone is not loaded yet'
         }
