@@ -25,6 +25,8 @@ The SQL query your student generated resulted in the following error message:
 ---------------------
 
 - Provide an explanation of what went wrong and provide a revised query that runs correctly. It should have each table.column specified to avoid ambiguity.
+- Note: The NBA's Game ID, 0021400001, is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year (e.g. XXX14 for 2014-2015, XXX20 for 2020-2021), and GGGGG refers to the game number (1-1230 for a full 30-team regular season).
+  You do not need to use the game_id in all queries but this is helpful for understanding the data.
 
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 Explanation: |
@@ -144,7 +146,7 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
                 payload = schema_message + message_history
 
                 if attempt_number == 0:
-                    payload = example_messages[:3] + payload
+                    payload = example_messages[:1] + payload
 
                 possible_sql_results = get_openai_results(
                     payload, model=model, n=2)
