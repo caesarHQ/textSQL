@@ -243,7 +243,6 @@ def load_enums():
     }
 
 
-@localhost_only
 def get_examples():
     """
     load the examples from pinecone
@@ -264,7 +263,6 @@ def get_examples():
     return {'status': 'success', 'examples': formatted_results}
 
 
-@localhost_only
 def save_example(example):
     """
     save example ({query, sql}) to pinecone
