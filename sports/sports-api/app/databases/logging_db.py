@@ -21,8 +21,6 @@ def failsoft(func):
 
 
 def log_apicall(duration, provider, model, input_tokens, output_tokens, service, purpose, session_id=None, success=True, log_message=None):
-    if not EVENTS_ENGINE:
-        return {"status": "no engine"}
     cost = calculate_cost(model, input_tokens, output_tokens)
 
     params = {
@@ -53,8 +51,6 @@ def log_apicall(duration, provider, model, input_tokens, output_tokens, service,
 
 @failsoft
 def log_apicall_failure(duration, provider, model, input_tokens, service, purpose, session_id=None):
-    if not EVENTS_ENGINE:
-        return {"status": "no engine"}
 
     params = {
         "duration": duration,
@@ -100,3 +96,24 @@ def calculate_cost(model, input_tokens, output_tokens):
     cost = costs[base_model]['input'] * input_tokens + \
         costs[base_model]['output'] * output_tokens
     return cost
+
+
+@failsoft
+def create_session(app_name, user_id):
+    parms = {
+        "app_name": app_name,
+        "user_id": user_id,
+    }
+    create_query = text("""
+        INSERT INTO sessions (app_name, user_id)
+        VALUES (:app_name, :user_id)
+        returning id
+    """)
+    with EVENTS_ENGINE.connect() as conn:
+        # get the ID back
+        result = conn.execute(create_query, parms)
+        conn.commit()
+        row = result.fetchone()
+        session_id = row[0]
+
+    return str(session_id)
