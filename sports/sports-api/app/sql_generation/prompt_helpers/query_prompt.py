@@ -30,12 +30,10 @@ Provide the following YAML. Remember to indent with 4 spaces and use the correct
 ```
 Spelled out question: |
   Spell out the question so a five year old can understand it (include what should be returned at the end)
-General Plan from End to Start: |
-  Explain so a five year old can understand how you'll get to the final answer from back to start
 InputAndOutputTypes: |
   Any conversions made so the output will be understandable by the user (e.g. should averages be over game, over season? how would final answers be calculated)
-Final Plan Start to Finish: |
-  Walk through the CTEs from start to finish so a five year old can understand why each step is needed.
+General Plan Start to Finish: |
+  Perform an ELI5 walk through of the plan from the final query to the the start explaining what you'll need for each step
 SQL: |
     The final query to run
     Each line should be a single clause and indented an extra 4 spaces
