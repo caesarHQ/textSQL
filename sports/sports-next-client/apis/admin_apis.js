@@ -1,8 +1,9 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:9000";
-export const IS_LOCALHOST = API_BASE.includes("localhost");
+const ADMIN_BASE_API =
+  (process.env.NEXT_PUBLIC_API_BASE || "http://localhost:9000") + "/admin";
+export const IS_LOCALHOST = ADMIN_BASE_API.includes("localhost");
 
 export const fetchCurrentDatabaseCredentials = async () => {
-  const response = await fetch(`${API_BASE}/db_auth`);
+  const response = await fetch(`${ADMIN_BASE_API}/db_auth`);
   const data = await response.json();
   return data;
 };
@@ -14,7 +15,7 @@ export const verifyDatabaseCredentials = async ({
   password,
   port,
 }) => {
-  const response = await fetch(`${API_BASE}/db_auth`, {
+  const response = await fetch(`${ADMIN_BASE_API}/db_auth`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -32,13 +33,13 @@ export const verifyDatabaseCredentials = async ({
 };
 
 export const fetchCurrentOpenaiCredentials = async () => {
-  const response = await fetch(`${API_BASE}/openai_auth`);
+  const response = await fetch(`${ADMIN_BASE_API}/openai_auth`);
   const data = await response.json();
   return data;
 };
 
 export const verifyOpenaiCredentials = async (openai_key) => {
-  const response = await fetch(`${API_BASE}/openai_auth`, {
+  const response = await fetch(`${ADMIN_BASE_API}/openai_auth`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -52,13 +53,13 @@ export const verifyOpenaiCredentials = async (openai_key) => {
 };
 
 export const fetchCurrentPineconeCredentials = async () => {
-  const response = await fetch(`${API_BASE}/admin/pinecone_auth`);
+  const response = await fetch(`${ADMIN_BASE_API}/pinecone_auth`);
   const data = await response.json();
   return data;
 };
 
 export const verifyPineconeCredentials = async ({ key, index, env }) => {
-  const response = await fetch(`${API_BASE}/admin/pinecone_auth`, {
+  const response = await fetch(`${ADMIN_BASE_API}/pinecone_auth`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -74,13 +75,13 @@ export const verifyPineconeCredentials = async ({ key, index, env }) => {
 };
 
 export const fetchAllTables = async () => {
-  const response = await fetch(`${API_BASE}/admin/tables`);
+  const response = await fetch(`${ADMIN_BASE_API}/tables`);
   const data = await response.json();
   return data;
 };
 
 export const handleSaveTables = async (tables) => {
-  const response = await fetch(`${API_BASE}/admin/tables`, {
+  const response = await fetch(`${ADMIN_BASE_API}/tables`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -94,13 +95,13 @@ export const handleSaveTables = async (tables) => {
 };
 
 export const checkForNewTables = async () => {
-  const response = await fetch(`${API_BASE}/admin/refresh_available_tables`);
+  const response = await fetch(`${ADMIN_BASE_API}/refresh_available_tables`);
   const data = await response.json();
   return data;
 };
 
 export const generateSchema = async ({ table }) => {
-  const response = await fetch(`${API_BASE}/admin/generate_schema`, {
+  const response = await fetch(`${ADMIN_BASE_API}/generate_schema`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -112,7 +113,7 @@ export const generateSchema = async ({ table }) => {
 };
 
 export const saveExample = async ({ example }) => {
-  const response = await fetch(`${API_BASE}/admin/examples`, {
+  const response = await fetch(`${ADMIN_BASE_API}/examples`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -124,7 +125,7 @@ export const saveExample = async ({ example }) => {
 };
 
 export const listExamples = async () => {
-  const response = await fetch(`${API_BASE}/admin/examples`);
+  const response = await fetch(`${ADMIN_BASE_API}/examples`);
   const data = await response.json();
   return data;
 };
