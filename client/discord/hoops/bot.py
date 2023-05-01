@@ -57,21 +57,27 @@ async def on_message(message):
         natural_language_query = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
 
         # Send message that you're working on the query
-        bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
+        intermediary_bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
 
         # Call Text to SQL backend and update discord with the results
-        response = await process_request(natural_language_query, bot_response, message.author.mention)
+        response = await process_request(natural_language_query, intermediary_bot_response, message.author.mention)
 
         if (response is None or response['status'] != 'success'):
             await message.channel.send("Sorry! Couldn't get an answer for that :(")
             return
 
-        # Add emoji reactions to the message
-        await bot_response.add_reaction("👍")
-        await bot_response.add_reaction("👎")
+        table_image = generate_table_image(response['response'], natural_language_query)
 
+        final_bot_response = await intermediary_bot_response.channel.send(file=table_image)
+
+        await intermediary_bot_response.delete()
+
+        # Add emoji reactions to the message
+        await final_bot_response.add_reaction("👍")
+        await final_bot_response.add_reaction("👎")
+        
         # Create a thread 
-        thread = await bot_response.create_thread(name=natural_language_query, auto_archive_duration=60)
+        thread = await final_bot_response.create_thread(name=natural_language_query, auto_archive_duration=60)
 
         # Reply with SQL query in the thread
         sql_query = format_sql_query(response)
