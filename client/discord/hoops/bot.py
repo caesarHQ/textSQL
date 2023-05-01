@@ -59,6 +59,11 @@ async def on_message(message):
 
         # Remove the bot @ from the message content
         natural_language_query = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
+        
+        # Handle help command
+        if natural_language_query.startswith("help"):
+            await handle_help(message)
+            return 
 
         # Send message that you're working on the query
         intermediary_bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
