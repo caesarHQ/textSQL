@@ -1,7 +1,7 @@
 import { useContext, useState, useMemo } from "react";
 import { AdminContext } from "@/contexts/admin_context";
 
-import { handleSaveTables } from "@/apis/admin_apis";
+import { handleSaveTables, checkForNewTables } from "@/apis/admin_apis";
 
 export const TableSelector = () => {
   const [tableFilterTerm, setTableFilterTerm] = useState("");
@@ -24,6 +24,13 @@ export const TableSelector = () => {
     });
     return lookup;
   }, [tables]);
+
+  const getUpdatedTableNames = async () => {
+    const data = await checkForNewTables(tables);
+    if (data?.status === "success") {
+      setTables(data.tables);
+    }
+  };
 
   const massChangeSelection = (action) => {
     //action is either "select" or "deselect" and it should be over the tables in the filteredTables state
@@ -85,6 +92,14 @@ export const TableSelector = () => {
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900 ml-2"
           >
             Deselect All
+          </button>
+        </div>
+        <div className="flex flex-row ml-4">
+          <button
+            onClick={getUpdatedTableNames}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900"
+          >
+            Check for new tables
           </button>
         </div>
       </div>

@@ -3,7 +3,8 @@ import json
 import pinecone
 
 from app.config import CREDS, update_engine, ENV, load_openai_key, CREDS_PATH, start_pinecone
-from app import utils
+from app.setup import utils
+from app import utils as app_utils
 
 # wrapper function; if ENV is localhost returns it, else returns None
 
@@ -187,6 +188,41 @@ def save_tables(new_tables):
 
 
 @localhost_only
+def refresh_available_tables():
+    """
+    check the database for new tables
+    """
+
+    # get the list of current tables
+    current_tables = utils.get_table_names()
+    print('current tables: ', current_tables)
+
+    # load the current tables from the json file
+    try:
+        with open(CREDS_PATH + '/json/table_metadata.json', 'r') as f:
+            tables = json.load(f)
+    except:
+        tables = {}
+
+    # list all the tables not in the json file
+    new_tables = []
+    for table in current_tables:
+        if table not in tables:
+            new_tables.append(table)
+
+    # add the new tables to the json file
+    for table in new_tables:
+        new_table = utils.generate_table_metadata(table, start_selected=False)
+        tables[table] = new_table
+
+    # save it
+    with open(CREDS_PATH + '/json/table_metadata.json', 'w') as f:
+        json.dump(tables, f, indent=4)
+
+    return get_tables()
+
+
+@localhost_only
 def load_enums():
     """
     Load enums from local json file
@@ -240,9 +276,9 @@ def save_example(example):
 
     example_id = example.get('example_id')
     if example_id:
-        utils.update_example_in_pinecone(example)
+        app_utils.update_example_in_pinecone(example)
         return {'status': 'success'}
     # get the embeddings for the query
-    utils.save_example_to_pinecone(query, sql)
+    app_utils.save_example_to_pinecone(query, sql)
 
     return {'status': 'success'}

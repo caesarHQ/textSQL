@@ -93,6 +93,12 @@ export const handleSaveTables = async (tables) => {
   return data;
 };
 
+export const checkForNewTables = async () => {
+  const response = await fetch(`${API_BASE}/admin/refresh_available_tables`);
+  const data = await response.json();
+  return data;
+};
+
 export const generateSchema = async ({ table }) => {
   const response = await fetch(`${API_BASE}/admin/generate_schema`, {
     method: "POST",

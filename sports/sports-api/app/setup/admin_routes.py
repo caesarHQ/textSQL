@@ -116,8 +116,12 @@ def save_tables():
 
 @admin_bp.route('/tables', methods=['DELETE'])
 def delete_tables():
-
     return make_response(jsonify(admin_helper.clear_table_data()), 200)
+
+
+@admin_bp.route('/refresh_available_tables', methods=['GET'])
+def refresh_available_tables():
+    return make_response(jsonify(admin_helper.refresh_available_tables()), 200)
 
 
 @admin_bp.route('/generate_schema', methods=['POST'])
