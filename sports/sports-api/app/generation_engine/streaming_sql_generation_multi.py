@@ -31,6 +31,7 @@ Explanation: |
     (tabbed in) how to fix it
 SQL: |
     (tabbed in) --(comment describing what hte SQL does)
+    (tabbed in) also include comments on each of the CTE sections for what their purpose is
     (tabbbed in) the revised SQL query
     (tabbed in) the rest of the ...
 
