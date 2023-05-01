@@ -50,49 +50,6 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if message.content.startswith('/table'):
-         # Sample DataFrame
-        data = {
-            'lebron_3pt_percentage': [0.342625, 0.642625],
-            'lebron_3pt_attempts': [7892, 533256],
-            'lebron_avg_points_per_game': [26.7855, 535.7855],
-            'lebron_total_games_played': [1734, 35135]
-        }
-        df = pd.DataFrame(data)
-
-        # changes the column names from 'lebron_3pt_percentage'  -> 'lebron 3pt percentage' so that the text can wrap without overflowing
-        df.columns = [' '.join(col.split('_')) for col in df.columns]
-
-        # Create a table plot
-        fig, ax = plt.subplots()
-        ax.axis('off')
-        ax.axis('tight')  # Remove extra whitespace
-        table = ax.table(cellText=df.values, colLabels=df.columns, cellLoc='center', loc='center', bbox=[0, 0, 1, 1])
-
-        # Add table title
-        title_text = "Lebron stats"
-        ax.set_title(title_text, fontsize=16, fontweight='bold', pad=20)
-
-        # Customize table appearance
-        table.auto_set_font_size(False)
-        table.set_fontsize(14)
-
-        # Adjust column widths
-        adjust_column_width(ax, table, fig, df)
-
-        # Save the table plot to a buffer
-        buf = io.BytesIO()
-        plt.savefig(buf, format='png', bbox_inches='tight', dpi=300)  # Increase dpi for better quality
-        buf.seek(0)
-
-        # Send the table image as a file
-        image_file = File(buf, filename='table.png')
-        await message.channel.send(file=image_file)
-
-        # Close the buffer and clear the plot
-        buf.close()
-        plt.clf()
-
     # Check if the message @s the bot
     if bot.user.mentioned_in(message):
 
