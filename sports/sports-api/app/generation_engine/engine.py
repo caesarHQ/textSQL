@@ -3,6 +3,7 @@ from app.generation_engine.streaming_sql_generation import text_to_sql_with_retr
 from app.generation_engine.streaming_sql_generation_multi import text_to_sql_with_retry_multi
 from app.generation_engine.example_picker import similar_examples_from_pinecone
 from app.generation_engine.utils import cleaner
+from app.databases import logging_db
 
 
 class Engine:
@@ -12,12 +13,14 @@ class Engine:
     tables = []
     selected_examples = []
     method = 'multi'
+    current_generation_id = None
 
     def __init__(self, table_selection_method='llm'):
         self.table_selection_method = table_selection_method
 
     def set_query(self, query):
         self.query = cleaner.clean_input(query)
+        self.current_generation_id = logging_db.log_input('nbai', self.query)
 
     def run(self):
         yield {"status": "working", "state": "Query Received", "step": "query"}
@@ -62,7 +65,7 @@ class Engine:
         if self.method == 'multi':
             try:
                 for res in text_to_sql_with_retry_multi(self.query, self.tables, examples=self.selected_examples):
-                    yield res
+                    yield {'generation_id': self.current_generation_id, **res}
                 print('done with get_sql')
             except Exception as exc:
                 print('error in get_sql: ', exc)

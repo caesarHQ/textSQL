@@ -117,3 +117,52 @@ def create_session(app_name, user_id):
         session_id = row[0]
 
     return str(session_id)
+
+
+@failsoft
+def log_input(app, query_text):
+    params = {
+        "app": app,
+        "query_text": query_text,
+    }
+
+    insert_query = text("""
+        INSERT INTO queries (app, query_text)
+        VALUES (:app, :query_text)
+        returning id
+        
+    """)
+
+    with EVENTS_ENGINE.connect() as conn:
+        # get the ID back
+        result = conn.execute(insert_query, params)
+        conn.commit()
+        row = result.fetchone()
+        generation_id = row[0]
+
+    return str(generation_id)
+
+
+@failsoft
+def update_input(id: str, ran_sql: bool, rows_returned: int, generated_sql: str):
+
+    if not EVENTS_ENGINE or not id:
+        return None
+
+    params = {
+        "id": id,
+        "ran_sql": ran_sql,
+        "rows_returned": rows_returned,
+        "generated_sql": generated_sql
+    }
+
+    update_query = text("""
+        UPDATE input_classifications SET ran_sql = :ran_sql, rows_returned = :rows_returned, generated_sql = :generated_sql
+        WHERE id = :id
+    """)
+
+    with EVENTS_ENGINE.connect() as conn:
+        conn.execute(update_query, params)
+        conn.commit()
+
+    return {"status": "success"}

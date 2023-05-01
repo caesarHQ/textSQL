@@ -4,6 +4,7 @@ import yaml
 from typing import Dict, List
 import pinecone
 import uuid
+import tiktoken
 
 import openai
 from app.config import DB_MANAGED_METADATA, PINECONE_INDEX
@@ -83,6 +84,8 @@ def get_openai_results(
         temperature: float = 0,
         # model: str = "gpt-4",
 ):
+    enc = tiktoken.encoding_for_model("gpt-4")
+    total_message_length = len(enc.encode(json.dumps(messages)))
     try:
         res = openai.ChatCompletion.create(
             model=model,
@@ -90,6 +93,7 @@ def get_openai_results(
             presence_penalty=0,
             frequency_penalty=0,
             messages=messages,
+            max_tokens=3800 - total_message_length,
             n=n
         )
     except Exception as e:
@@ -97,6 +101,7 @@ def get_openai_results(
         print('INPUT: ', messages)
         return None
     # completion = res['choices'][0]["message"]["content"]
+
     messages = [choice['message']['content'] for choice in res['choices']]
     return messages
 

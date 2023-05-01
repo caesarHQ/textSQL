@@ -57,6 +57,7 @@ python-dateutil==2.8.2
 python-dotenv==1.0.0
 pytz==2023.3
 PyYAML==6.0
+regex==2023.3.23
 requests==2.28.1
 scikit-learn==1.2.2
 scipy==1.10.1
@@ -65,6 +66,7 @@ snowflake-connector-python==3.0.2
 SQLAlchemy==2.0.9
 tenacity==8.2.2
 threadpoolctl==3.1.0
+tiktoken==0.3.3
 tomli==2.0.1
 tqdm==4.65.0
 types-pytz==2023.3.0.0
