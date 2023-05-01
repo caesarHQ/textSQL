@@ -66,13 +66,16 @@ const QueryScreen = (props) => {
   }, [errorMessage]);
 
   useEffect(() => {
-    let playerData = [
-      ["MISS K. Leonard 25' pullup 3PT", -87.0, 235.0, 0],
-      ["MISS K. Leonard 3PT", 230.0, 29.0, 0],
-      ["MISS K. Leonard 28' 3PT", -42.0, 277.0, 0],
+    const data = [
+      {
+        x_legacy: -4,
+        y_legacy: 248,
+        description: "Paul 26' 3PT Jump Shot (3 PTS) (Booker 3 AST)",
+        shot_result: "Made",
+      }
     ];
-    loadShotChart(playerData);
-  }, [])
+    loadShotChart(data);
+  }, []);
 
   const clearAll = () => {
     setQuery("");
@@ -214,13 +217,15 @@ const QueryScreen = (props) => {
       className="h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen"
       style={{ position: "relative" }}
     >
-      <div id="shot-chart"/>
 
       <div className="App flex flex-col h-full">
         <link
           href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css"
           rel="stylesheet"
         />
+
+        <div id="shot-chart"/>
+
 
         <div className="relative w-full flex flex-col p-6 space-y-1.5 bg-gradient-to-b bg/10 backdrop-blur-sm pb-2.5 from-white dark:from-transparent z-50">
           <div className="inline-flex gap-x-2 align-middle justify-center mb-6">
