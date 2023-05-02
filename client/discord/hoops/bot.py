@@ -165,6 +165,9 @@ def adjust_column_width(ax, table, fig, df):
 
 def generate_table_image(result, nlq):
     df = pd.DataFrame(result["results"], columns=result['column_names'])
+    
+    # Limit to 15 rows in the table image otherwise it looks ugly
+    df = df.head(15)
 
     # changes the column names from 'lebron_3pt_percentage'  -> 'lebron 3pt percentage' so that the text can wrap without overflowing
     df.columns = [' '.join(col.split('_')) for col in df.columns]
