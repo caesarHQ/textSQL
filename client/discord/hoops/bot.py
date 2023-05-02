@@ -64,12 +64,12 @@ async def on_message(message):
         # Check if the message @s the bot
         if bot.user.mentioned_in(message):
             # check if message is in a channel or a thread (now a chat message)
-            if is_message_inside_thread(message):
-                natural_language_query = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
-                print('dealing with a thread message', natural_language_query)
-                intermediary_bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
-                await process_request(natural_language_query, intermediary_bot_response, message.author.mention)
-                return
+            # if is_message_inside_thread(message):
+            #     natural_language_query = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
+            #     print('dealing with a thread message', natural_language_query)
+            #     intermediary_bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
+            #     await process_request(natural_language_query, intermediary_bot_response, message.author.mention)
+            #     return
             # Remove the bot @ from the message content
             natural_language_query = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
             print('NATURAL LANGUAGE QUERY', natural_language_query)
