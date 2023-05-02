@@ -22,7 +22,8 @@ def handle_response(new_input, session_id):
         if ai_message:
             history.append(ai_message)
 
-    print('history', history)
+    history.append(
+        {'role': 'system', 'content': 'You are a basketball fan. You answer questions about basketball.'})
+    history.append({'role': 'user', 'content': new_input})
 
-    print('yielding second response')
     return {"status": "complete", "message": "Thanks for chatting with me!"}

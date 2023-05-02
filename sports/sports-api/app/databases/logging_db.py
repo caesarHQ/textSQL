@@ -1,9 +1,10 @@
 from functools import wraps
-
+import json
 from sqlalchemy import text
 
 # for now, i guess will just use the events engine as the logging engine cause why not
 from app.config import EVENTS_ENGINE
+from app.generation_engine.utils.json_encoder import CustomJSONEncoder
 
 
 def row2dict(row):
@@ -184,7 +185,7 @@ def log_input(app, query_text, session_id=None):
 
 
 @failsoft
-def update_input(id: str, rows_returned: int, sql_text: str, session_id=None):
+def update_input(id: str, rows_returned: int, sql_text: str, session_id=None, output_head: str = None):
 
     if not id:
         return None
@@ -195,11 +196,13 @@ def update_input(id: str, rows_returned: int, sql_text: str, session_id=None):
             "rows_returned": rows_returned,
             "sql_text": sql_text,
             "session_id": session_id,
+            "output_head": json.dumps(output_head, separators=(
+                ",", ":"), cls=CustomJSONEncoder),
         }
 
         update_query = text("""
             UPDATE queries
-            SET rows_returned = :rows_returned, sql_text = :sql_text, session_id = :session_id
+            SET rows_returned = :rows_returned, sql_text = :sql_text, session_id = :session_id, output_head = :output_head
             WHERE id = :id
             """)
 
@@ -228,7 +231,7 @@ def get_inputs_by_session_id(session_id):
         "session_id": session_id,
     }
     select_query = text("""
-        select id, query_text, sql_text, output_text
+        select id, query_text, sql_text, output_text, output_head
         from queries
         where session_id = :session_id
     """)
