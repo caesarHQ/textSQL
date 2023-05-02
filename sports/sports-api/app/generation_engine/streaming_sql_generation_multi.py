@@ -133,6 +133,9 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
         _, table_content = schema_prompt.get_enums_and_tables(
             table_names)
 
+        if len(table_names) > 2:
+            table_content = schema_prompt.remove_sql_comments(table_content)
+
         schema_message[0]['content'] = table_content
 
         content = query_prompt.command_prompt_cte(natural_language_query)

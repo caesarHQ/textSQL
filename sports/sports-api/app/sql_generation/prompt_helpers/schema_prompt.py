@@ -1,6 +1,21 @@
 import json
 from typing import List
 
+import re
+
+
+def remove_sql_comments(query):
+    # The regular expression pattern for comments starting with '--'
+    pattern = r'--.*?$'
+
+    # Replace all occurrences of comments with an empty string
+    stripped_query = re.sub(pattern, '', query, flags=re.MULTILINE)
+
+    # Remove any leading or trailing whitespace
+    stripped_query = stripped_query.strip()
+
+    return stripped_query
+
 
 def get_enums_and_tables(table_names: List[str] = []) -> tuple[str, str]:
     """
