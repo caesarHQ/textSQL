@@ -1,0 +1,11 @@
+.env
+DS_Store
+venv/
+__pycache__/
+scratch/
+
+# ignore the credentials file
+creds.json
+
+# ignore the JSON backups
+app/models/json/backups

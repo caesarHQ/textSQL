@@ -136,6 +136,25 @@ def register_thread(thread_id, session_id, service_name):
 
 
 @failsoft
+def get_session_id_from_thread_id(thread_id):
+    params = {
+        "thread_id": thread_id,
+    }
+    select_query = text("""
+        select session_id
+        from threads
+        where thread_id = :thread_id
+    """)
+    with EVENTS_ENGINE.connect() as conn:
+        result = conn.execute(select_query, params)
+        conn.commit()
+        row = result.fetchone()
+        session_id = row[0]
+
+    return str(session_id)
+
+
+@failsoft
 def log_input(app, query_text):
     params = {
         "app": app,

@@ -76,7 +76,7 @@ async def on_message(message):
 
             time_taken =  "\nTime: "+ str(round(time.time() - start_time, 2)) + " seconds"
 
-            if (response is None or response['status'] != 'success'):
+            if (response is None or response.get('status') != 'success'):
                 await message.channel.send("Sorry! Couldn't get an answer for that :(")
                 return
 
@@ -166,7 +166,7 @@ async def process_request(natural_language_query, bot_response, author):
             time_taken =  "\nTime: "+ str(round(current_time - start_time, 2)) + " seconds"
             
             print('\n intermediate parsed json:', obj)
-            print('\n status', obj['status'])
+            print('\n status', obj.get('status'))
             await handle_response(obj, bot_response, natural_language_query, author, time_taken)
     
     final_response = obj
@@ -239,13 +239,13 @@ def generate_table_image(result, nlq):
     return image_file
 
 async def handle_response(response_object, bot_response, nlq, author, time_taken):
-    if (response_object['status'] == 'success'):
+    if (response_object.get('status') == 'success'):
         # Update discord with final results 
         success_message = format_success_message(nlq, author, time_taken)
         await bot_response.edit(content=success_message)
         return
     
-    if (response_object['state'].lower().startswith('error')):
+    if (response_object.get('state').lower().startswith('error')):
         return
 
     # Update discord with intermediate step

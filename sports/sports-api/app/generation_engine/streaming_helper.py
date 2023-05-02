@@ -25,10 +25,14 @@ class CustomJSONEncoder(json.JSONEncoder):
 def stream_sql_response(request_body):
 
     natural_language_query = request_body.get("natural_language_query")
+    session_id = request_body.get("session_id")
+    thread_id = request_body.get("thread_id")
 
     engine = Engine()
 
     engine.set_query(natural_language_query)
+    engine.set_session_id(session_id)
+    engine.set_thread_id(thread_id)
 
     for res in engine.run():
         try:
