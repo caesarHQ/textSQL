@@ -107,7 +107,7 @@ async def on_message(message):
         await message.channel.send(f"Sorry, something went wrong. \n {e}")
 
 def register_thread_session_to_backend(thread_id, session_id):
-    url = "https://text-sql-be.onrender.com/register_thread"
+    url = "https://nba-gpt-prod.onrender.com/register_thread"
 
     payload = {"thread_id": thread_id, "session_id": session_id, "app_name": "discord"}
     headers = {"Content-Type": "application/json"}
