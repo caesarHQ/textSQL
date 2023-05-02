@@ -94,7 +94,7 @@ async def on_message(message):
             # Create a thread 
             thread = await final_bot_response.create_thread(name=natural_language_query, auto_archive_duration=60)
 
-            register_thread_session(thread.id, response[session_id])
+            register_thread_session(thread.id, response['session_id'])
 
             # Send raw data as csv in thread
             await send_raw_data_as_csv(response["response"], thread)
@@ -109,7 +109,7 @@ async def on_message(message):
 def register_thread_session(thread_id, session_id):
     # register thread and session
     return 
-    
+
 async def handle_help(message):
     example_queries = [
         "What is Steph Curry's 3pt percentage at home vs away?",
