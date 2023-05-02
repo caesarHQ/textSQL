@@ -2,7 +2,6 @@ from app.config import FlaskAppConfig, DB_MANAGED_METADATA
 from app.extensions import db
 from app.setup.admin_routes import admin_bp
 from app.sql_generation.generation_routes import bp as sql_gen_bp
-from app.table_selection.tables_routes import bp as table_selection_bp
 from app.visualization.routes import bp as visualization_bp
 from app.games.games_routes import games_bp
 from flask import Flask
@@ -25,7 +24,6 @@ def create_app(config_object=FlaskAppConfig):
         return 'pong'
 
     app.register_blueprint(sql_gen_bp)
-    app.register_blueprint(table_selection_bp)
     app.register_blueprint(visualization_bp)
     app.register_blueprint(games_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
