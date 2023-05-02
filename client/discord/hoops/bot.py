@@ -122,7 +122,7 @@ async def process_request(natural_language_query, bot_response, author):
     }
     
     obj = {}
-    
+
     #streaming backend response
     for res in requests.post(url, json=payload, stream=True):
         for obj in decoder.decode(res.decode()):
@@ -165,6 +165,9 @@ def adjust_column_width(ax, table, fig, df):
 
 def generate_table_image(result, nlq):
     df = pd.DataFrame(result["results"], columns=result['column_names'])
+    
+    # Limit to 15 rows in the table image otherwise it looks ugly
+    df = df.head(15)
 
     # changes the column names from 'lebron_3pt_percentage'  -> 'lebron 3pt percentage' so that the text can wrap without overflowing
     df.columns = [' '.join(col.split('_')) for col in df.columns]
@@ -240,6 +243,10 @@ def format_intermidiate_message(state, natural_language_query, time_taken):
 
 async def send_raw_data_as_csv(result, thread):
     df = pd.DataFrame(result["results"], columns=result['column_names'])
+
+    #Limit to 99 rows otherwise discord will error out
+    df = df.head(99)
+
     # Save the DataFrame as a CSV to a buffer
     buf = io.StringIO()
     df.to_csv(buf, index=False)
