@@ -13,6 +13,9 @@ import matplotlib.pyplot as plt
 import textwrap
 import random
 
+BASE_API = 'https://nba-gpt-prod.onrender.com'
+# BASE_API = 'http://localhost:9000'
+
 class BufferedJSONDecoder:
     def __init__(self):
         self.buffer = ''
@@ -56,12 +59,21 @@ async def on_message(message):
             await handle_help(message)
             return
 
+        # check if message is in a channel or a thread (now a chat message)
+        if is_message_inside_thread(message):
+            natural_language_query = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
+            print('dealing with a thread message', natural_language_query)
+            intermediary_bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
+            await process_request(natural_language_query, intermediary_bot_response, message.author.mention)
+            return
+
         # Check if the message @s the bot
         if bot.user.mentioned_in(message):
 
             # Remove the bot @ from the message content
             natural_language_query = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
-            
+            print('NATURAL LANGUAGE QUERY', natural_language_query)
+
             # Handle help command
             if natural_language_query.startswith("help"):
                 await handle_help(message)
@@ -120,7 +132,7 @@ async def on_message(message):
         await message.channel.send(f"Sorry, something went wrong. \n {e}")
 
 def register_thread_session_to_backend(thread_id, session_id):
-    url = "https://nba-gpt-prod.onrender.com/register_thread"
+    url = BASE_API + "/register_thread"
 
     payload = {"thread_id": thread_id, "session_id": session_id, "app_name": "discord"}
     headers = {"Content-Type": "application/json"}
@@ -152,7 +164,7 @@ Try: `{random_query}`"""
 async def process_request(natural_language_query, bot_response, author): 
     start_time = time.time()
 
-    url = "https://nba-gpt-prod.onrender.com/text_to_sql"
+    url = BASE_API + "/text_to_sql"
     payload = {
         "natural_language_query": natural_language_query,
         "scope": "sports",
