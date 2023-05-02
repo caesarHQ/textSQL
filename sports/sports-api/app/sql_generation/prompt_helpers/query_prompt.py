@@ -6,8 +6,12 @@ Use CTE format for computing subqueries.
 
 Provide a properly formatted YAML object with the following information. Ensure to escape any special characters so it can be parsed as YAML.
 
-Note: The NBA's Game ID, 0021400001, is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year (e.g. XXX14 for 2014-2015, XXX20 for 2020-2021), and GGGGG refers to the game number (1-1230 for a full 30-team regular season).
-To get seasons, e.g. the 2022-23 season, you need to filter where game_id like '00222%'.
+Note: The NBA's Game ID, 0021400001, is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year.
+To get seasons, 
+e.g. for the current 2022-23 season, you need to filter where game_id like '00222%',
+for the 2021-22 season, you need to filter where game_id like '00221%',
+etc
+
 You do not need to use the game_id in all queries but this is helpful for understanding the data.
 
 team_id can change over time, so might need to worry about that.
@@ -34,11 +38,9 @@ Provide the following YAML. Remember to indent with 4 spaces and use the correct
 Spelled out question: |
   Spell out the question so a five year old can understand it (include what should be returned at the end)
 Reverse Walk Through: |
-  Walk through a plan from the data to get to the start (keep it simple)
-InputAndOutputTypes: |
-  Any conversions made so the output will be understandable by the user (e.g. should averages be over game, over season? how would final answers be calculated)
+  So a child can understand, walk through an natural language plan in reverse order
 General Plan Start to Finish: |
-  Walk through the prompt for a child to understand the plan from the final query to the the start explaining what you'll need for each step
+  Walk through the prompt for a child to understand the plan from the final query to the start, just naming the CTE that is needed (but not the full text)
 SQL: |
     The final query to run
     Each line should be a single clause and indented an extra 4 spaces
@@ -47,6 +49,8 @@ SQL: |
 ```
   
 ENSURE TO PROVIDE A | AFTER EACH YAML KEY SO THE YAML IS NOT INTERPRETED AS A COMMENT. You must provide all values, you cannot provide templates.
-Provide the YAML and only the YAML. Do not include backticks (```), just include the YAML. Also, ensure all column references unambiguously provide table.column when using them.
+Provide the YAML and only the YAML. Do not include backticks (```), just include the YAML. 
+
+FINALLY: ALL QUERIES MUST REFERENCE THE TABLE AND COLUMN FOR EACH QUERY IN TABLE.COLUMN FORMAT. Especially for GAME_ID, ensure that the table that you're referencing is always explicit.
 
 """.format(command)
