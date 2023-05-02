@@ -185,6 +185,32 @@ def log_input(app, query_text, session_id=None):
 
 
 @failsoft
+def log_chat_response(app, query_text, output_text, session_id=None):
+    params = {
+        "app": app,
+        "query_text": query_text,
+        "output_text": output_text,
+        "session_id": session_id,
+    }
+
+    insert_query = text("""
+        INSERT INTO queries (app, query_text, output_text, session_id)
+        VALUES (:app, :query_text, :output_text, :session_id)
+        returning id
+        
+    """)
+
+    with EVENTS_ENGINE.connect() as conn:
+        # get the ID back
+        result = conn.execute(insert_query, params)
+        conn.commit()
+        row = result.fetchone()
+        generation_id = row[0]
+
+    return str(generation_id)
+
+
+@failsoft
 def update_input(id: str, rows_returned: int, sql_text: str, session_id=None, output_head: str = None):
 
     if not id:
