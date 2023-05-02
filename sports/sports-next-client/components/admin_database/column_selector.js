@@ -1,11 +1,20 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { ClosableRow } from "../closable_row";
 import { generateSchema } from "@/apis/admin_apis";
+import { updateColumnSchema } from "@/apis/admin_apis";
 
 export const ColumnSelector = ({ table, setTable }) => {
   const [columnFilterTerm, setColumnFilterTerm] = useState("");
 
   const tableColumns = table?.columns || [];
+
+  const getUpdatedSchema = async () => {
+    const data = await updateColumnSchema({ table });
+    if (data?.status === "success") {
+      console.log("new columns ", table);
+      // setTable(data.table);
+    }
+  };
 
   const filteredColumns = useMemo(() => {
     if (columnFilterTerm === "") {
@@ -90,6 +99,14 @@ export const ColumnSelector = ({ table, setTable }) => {
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900 ml-2"
               >
                 Deselect All
+              </button>
+            </div>
+            <div className="flex flex-row ml-4">
+              <button
+                onClick={getUpdatedSchema}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded active:bg-blue-900"
+              >
+                Check for updated schema
               </button>
             </div>
           </div>

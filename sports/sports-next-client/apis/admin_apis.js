@@ -100,6 +100,14 @@ export const checkForNewTables = async () => {
   return data;
 };
 
+export const checkForNewColumns = async ({ table }) => {
+  const response = await fetch(
+    `${ADMIN_BASE_API}/refresh_available_columns/${table}`
+  );
+  const data = await response.json();
+  return data;
+};
+
 export const generateSchema = async ({ table }) => {
   const response = await fetch(`${ADMIN_BASE_API}/generate_schema`, {
     method: "POST",
