@@ -204,3 +204,8 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
 
     print("Could not generate SQL query after {k} tries.".format(k=k))
     yield {'status': 'error', 'step': 'sql', 'response': None, 'sql_query': None}
+
+
+def run_cached_sql(sql_query):
+    response = execute_sql(sql_query)
+    yield {'status': 'success', 'final_answer': True, 'step': 'sql', 'response': response, 'sql_query': sql_query}

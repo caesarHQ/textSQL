@@ -1,6 +1,6 @@
 from app.generation_engine.streaming_table_selection import get_tables
 from app.generation_engine.streaming_sql_generation import text_to_sql_with_retry
-from app.generation_engine.streaming_sql_generation_multi import text_to_sql_with_retry_multi
+from app.generation_engine import streaming_sql_generation_multi
 from app.generation_engine.example_picker import similar_examples_from_pinecone
 from app.generation_engine.utils import cleaner
 from app.databases import logging_db
@@ -14,6 +14,7 @@ class Engine:
     selected_examples = []
     method = 'multi'
     current_generation_id = None
+    cached_sql = None
 
     def __init__(self, table_selection_method='llm'):
         self.table_selection_method = table_selection_method
@@ -24,6 +25,14 @@ class Engine:
 
     def run(self):
         yield {"status": "working", "state": "Query Received", "step": "query"}
+
+        cached_query = logging_db.check_cached_exists(self.query)
+        if cached_query:
+            self.cached_sql = cached_query
+            print('cached query: ', cached_query)
+            for res in self.run_cached_sql():
+                yield res
+            return
 
         for res in self.get_tables():
             if res['status'] == 'error':
@@ -64,7 +73,7 @@ class Engine:
     def get_sql(self):
         if self.method == 'multi':
             try:
-                for res in text_to_sql_with_retry_multi(self.query, self.tables, examples=self.selected_examples):
+                for res in streaming_sql_generation_multi.text_to_sql_with_retry_multi(self.query, self.tables, examples=self.selected_examples):
 
                     if res.get('bad_sql'):
                         num_rows = None
@@ -91,3 +100,12 @@ class Engine:
             except Exception as exc:
                 print('error in get_sql: ', exc)
                 return
+
+    def run_cached_sql(self):
+        try:
+            for res in streaming_sql_generation_multi.run_cached_sql(self.cached_sql):
+                yield res
+            print('done with get_sql')
+        except Exception as exc:
+            print('error in get_sql: ', exc)
+            return

@@ -166,3 +166,29 @@ def update_input(id: str, rows_returned: int, sql_text: str):
         conn.commit()
 
     return {"status": "success"}
+
+
+def check_cached_exists(some_text):
+    params = {
+        "input_text": some_text,
+    }
+
+    select_query = text("""
+        select query_text, sql_text
+        from queries
+        where query_text = :input_text
+        and sql_text is not null
+        and approved_at is not null
+        and unapproved_at is null
+        limit 1
+    """)
+
+    with EVENTS_ENGINE.connect() as conn:
+        result = conn.execute(select_query, params)
+        conn.commit()
+        row = result.fetchone()
+        if row:
+            # get the sql_text
+            return row[1]
+        else:
+            return False
