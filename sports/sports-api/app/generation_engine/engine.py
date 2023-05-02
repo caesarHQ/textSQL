@@ -4,6 +4,7 @@ from app.generation_engine import streaming_sql_generation_multi
 from app.generation_engine.example_picker import similar_examples_from_pinecone
 from app.generation_engine.utils import cleaner
 from app.databases import logging_db
+from app.generation_engine import streaming_chat
 
 
 class Engine:
@@ -24,8 +25,6 @@ class Engine:
 
     def set_query(self, query):
         self.query = cleaner.clean_input(query)
-        self.current_generation_id = logging_db.log_input(
-            'nbai', self.query, self.session_id)
 
     def set_session_id(self, session_id):
         self.session_id = session_id
@@ -41,9 +40,18 @@ class Engine:
             self.session_id = logging_db.get_session_id_from_thread_id(
                 self.thread_id)
 
+        if self.session_id:
+            print('doing conversation')
+            for resp in self.handle_conversation():
+                yield {**resp, 'session_id': self.session_id}
+            return
+
         if not self.session_id:
             new_id = logging_db.create_session(self.app)
             self.session_id = new_id
+
+        self.current_generation_id = logging_db.log_input(
+            'nbai', self.query, self.session_id)
 
         cached_query = logging_db.check_cached_exists(self.query)
         if cached_query:
@@ -64,6 +72,9 @@ class Engine:
                 print('hit error')
                 return {**res, 'session_id': self.session_id}
             yield {**res, 'session_id': self.session_id}
+
+    def handle_conversation(self):
+        return streaming_chat.handle_response(self.query, self.session_id)
 
     def get_tables(self):
         yield {"status": "working", "state": "Acquiring Tables", "step": "tables"}
