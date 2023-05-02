@@ -6,6 +6,10 @@ from sqlalchemy import text
 from app.config import EVENTS_ENGINE
 
 
+def row2dict(row):
+    return {key: value for key, value in row.items()}
+
+
 def failsoft(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -217,6 +221,28 @@ def update_input(id: str, rows_returned: int, sql_text: str, session_id=None):
         conn.commit()
 
     return {"status": "success"}
+
+
+def get_inputs_by_session_id(session_id):
+    params = {
+        "session_id": session_id,
+    }
+    select_query = text("""
+        select id, query_text, sql_text, output_text
+        from queries
+        where session_id = :session_id
+    """)
+
+    with EVENTS_ENGINE.connect() as conn:
+        result = conn.execute(select_query, params)
+        conn.commit()
+        rows = result.fetchall()
+
+    # convert to a list of dicts
+    rows = [row._mapping for row in rows]
+    rows = [row2dict(row) for row in rows]
+
+    return rows
 
 
 def check_cached_exists(some_text):
