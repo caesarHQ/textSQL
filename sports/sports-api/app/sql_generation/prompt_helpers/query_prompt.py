@@ -56,7 +56,7 @@ Provide the following YAML. Remember to indent with 4 spaces and use the correct
 
 ```
 Spelled out question: |
-  Spell out the question so a five year old can understand it (include what should be returned at the end)
+  Rephrase out the question into who/what/why/when - e.g. "has any" should be "who"
 Reverse Walk Through: |
   So a child can understand, walk through an natural language plan in reverse order
 General Plan Start to Finish: |
