@@ -4,7 +4,7 @@ from app.generation_engine import streaming_sql_generation_multi
 from app.generation_engine.example_picker import similar_examples_from_pinecone
 from app.generation_engine.utils import cleaner
 from app.databases import logging_db
-from app.generation_engine import streaming_chat
+from app.chat import streaming_chat
 
 
 class Engine:
