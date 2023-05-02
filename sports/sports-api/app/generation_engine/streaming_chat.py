@@ -2,7 +2,12 @@ from app.databases import logging_db
 from app.utils import get_openai_results
 
 
-def handle_response(new_input, session_id):
+def route_session_response(new_input, session_id):
+
+    return handle_chat_response(new_input, session_id)
+
+
+def handle_chat_response(new_input, session_id):
     yield {"status": "working", "state": "Building History", "step": "chat"}
     prior_responses = logging_db.get_inputs_by_session_id(session_id)
     history = []

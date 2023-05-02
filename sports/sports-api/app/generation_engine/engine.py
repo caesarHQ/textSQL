@@ -74,7 +74,7 @@ class Engine:
             yield {**res, 'session_id': self.session_id}
 
     def handle_conversation(self):
-        return streaming_chat.handle_response(self.query, self.session_id)
+        return streaming_chat.route_session_response(self.query, self.session_id)
 
     def get_tables(self):
         yield {"status": "working", "state": "Acquiring Tables", "step": "tables"}
