@@ -41,4 +41,6 @@ def handle_response(new_input, session_id):
 
     logging_db.log_chat_response('nbai', query_text, ai_response, session_id)
 
-    return {"status": "complete", "state": ai_response}
+    yield {"status": "complete", "state": ai_response}
+
+    return
