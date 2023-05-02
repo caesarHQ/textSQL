@@ -1,11 +1,10 @@
 from app.utils import get_openai_results
 
 from app.chat import conversational_chat_response
+from app.chat import conversational_lookup_response
 
 
 def classify_input_purpose(input):
-
-    print('input: ', input)
 
     classification_message = f"""You are an expert chatbot. Your goal is to classify the user intent in order to answer their question appropriately.
 You have access to the following databases:
@@ -16,9 +15,9 @@ You have access to the following databases:
 
 Given a chat history, determine whether the user is asking to do another database query or if the user is asking questions that can be answered without a database query.
 
-Provide a response from this list: ["Requires Query", "Does Not Require Query"]
+Provide a response from this list: ["REQUIRES QUERY", "DOES NOT REQUIRE QUERY"]
 
-User Input: {input}
+Message History: {input}
 
 Provide your classification:"""
 
@@ -36,6 +35,9 @@ def route_session_response(new_input, session_id):
 
     input_purpose = classify_input_purpose(new_input)
 
-    print('input purpose: ', input_purpose)
+    print('input_purpose: ', input_purpose)
+
+    if input_purpose == 'REQUIRES QUERY':
+        return conversational_lookup_response.handle_lookup_response(new_input, session_id)
 
     return conversational_chat_response.handle_chat_response(new_input, session_id)
