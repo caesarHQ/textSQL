@@ -91,17 +91,26 @@ async def on_message(message):
             await final_bot_response.add_reaction("👍")
             await final_bot_response.add_reaction("👎")
             
-            # Create a thread 
-            thread = await final_bot_response.create_thread(name=natural_language_query, auto_archive_duration=60)
+            # if original message was inside a thread, send everything in it. otherwise make a new thread
+            if is_message_inside_thread(message):
+                # raw data as csv
+                await send_raw_data_as_csv(response["response"], final_bot_response.channel)
+                # SQL query 
+                sql_query = format_sql_query(response)
+                await final_bot_response.channel.send(sql_query)
+            else:
+                 # Create a thread 
+                thread = await final_bot_response.create_thread(name=natural_language_query, auto_archive_duration=60)
 
-            register_thread_session_to_backend(thread.id, response['session_id'])
+                # register thread to the backend
+                register_thread_session_to_backend(thread.id, response['session_id'])
 
-            # Send raw data as csv in thread
-            await send_raw_data_as_csv(response["response"], thread)
+                # Send raw data as csv in thread
+                await send_raw_data_as_csv(response["response"], thread)
 
-            # Reply with SQL query in the thread
-            sql_query = format_sql_query(response)
-            await thread.send(sql_query)
+                # Reply with SQL query in the thread
+                sql_query = format_sql_query(response)
+                await thread.send(sql_query)
     except Exception as e:
         print(f"Error in on_message: {e}")
         await message.channel.send(f"Sorry, something went wrong. \n {e}")
@@ -287,6 +296,9 @@ async def send_raw_data_as_csv(result, thread):
     # Send the CSV file as a Discord bot message
     await thread.send(content="Raw Data:", file=csv_file)
     return
+
+def is_message_inside_thread(message):
+    return isinstance(message.channel, discord.Thread)
 
 def format_sql_query(result):
     sql_query = result["sql_query"]
