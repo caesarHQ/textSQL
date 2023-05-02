@@ -166,3 +166,54 @@ def update_input(id: str, rows_returned: int, sql_text: str):
         conn.commit()
 
     return {"status": "success"}
+
+
+def check_cached_exists(some_text):
+    params = {
+        "input_text": some_text,
+    }
+
+    select_query = text("""
+        select query_text, sql_text
+        from queries
+        where query_text = :input_text
+        and sql_text is not null
+        and approved_at is not null
+        and unapproved_at is null
+        limit 1
+    """)
+
+    with EVENTS_ENGINE.connect() as conn:
+        result = conn.execute(select_query, params)
+        conn.commit()
+        row = result.fetchone()
+        if row:
+            # get the sql_text
+            return row[1]
+        else:
+            return False
+
+
+@failsoft
+def log_sql_failure(input_text, sql_script, failure_message, attempt_number):
+    if not EVENTS_ENGINE:
+        return {"status": "no engine"}
+
+    params = {
+        "input_text": input_text,
+        "sql_script": sql_script,
+        "failure_message": failure_message,
+        "attempt_number": attempt_number,
+        "app_name": 'nbai',
+    }
+
+    insert_query = text("""
+        INSERT INTO sql_failures (input_text, sql_script, failure_message, attempt_number, app_name)
+        VALUES (:input_text, :sql_script, :failure_message, :attempt_number, :app_name)
+    """)
+
+    with EVENTS_ENGINE.connect() as conn:
+        conn.execute(insert_query, params)
+        conn.commit()
+
+    return {"status": "success"}

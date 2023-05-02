@@ -8,6 +8,7 @@ from app.config import ENGINE
 from sqlalchemy import text
 
 from app.sql_generation.prompt_helpers import schema_prompt, query_prompt
+from app.databases import logging_db
 
 from app.utils import (safe_get_sql_from_yaml, get_openai_results,
                        get_few_shot_messages)
@@ -80,14 +81,19 @@ class NullValueException(Exception):
     pass
 
 
-def execute_sql(sql_query: str):
+def execute_sql(sql_query: str, attempt_number=0, original_text=''):
     if not is_read_only_query(sql_query):
         raise NotReadOnlyException("Only read-only queries are allowed.")
 
     with ENGINE.connect() as connection:
         connection = connection.execution_options(postgresql_readonly=True)
         with connection.begin():
-            result = connection.execute(text(sql_query))
+            try:
+                result = connection.execute(text(sql_query))
+            except Exception as e:
+                logging_db.log_sql_failure(
+                    original_text, sql_query, str(e), attempt_number)
+                raise e
 
         column_names = list(result.keys())
 
@@ -127,6 +133,9 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
         _, table_content = schema_prompt.get_enums_and_tables(
             table_names)
 
+        if len(table_names) > 2:
+            table_content = schema_prompt.remove_sql_comments(table_content)
+
         schema_message[0]['content'] = table_content
 
         content = query_prompt.command_prompt_cte(natural_language_query)
@@ -150,7 +159,6 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
 
                 possible_sql_results = get_openai_results(
                     payload, model=model, n=2)
-                # print('possible sql results: ', possible_sql_results)
             except Exception as assistant_error:
                 print('error getting assistant message', assistant_error)
                 continue
@@ -170,8 +178,10 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
             response = None
 
             for result in parsed_results:
+
                 try:
-                    attempted_response = execute_sql(result)
+                    attempted_response = execute_sql(
+                        result, attempt_number=attempt_number, original_text=natural_language_query)
                     response = attempted_response
                     sql_query = result
                     executed = True
@@ -187,7 +197,7 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
             return
 
         except Exception as e:
-            print('error executing sql')
+
             yield {'status': 'working', 'step': 'sql', 'state': 'Error: ' + str(e), 'bad_sql': sql_query}
             try:
                 print('error executing sql: ', str(e).split('\n')[0])
@@ -204,3 +214,8 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
 
     print("Could not generate SQL query after {k} tries.".format(k=k))
     yield {'status': 'error', 'step': 'sql', 'response': None, 'sql_query': None}
+
+
+def run_cached_sql(sql_query):
+    response = execute_sql(sql_query)
+    yield {'status': 'success', 'final_answer': True, 'step': 'sql', 'response': response, 'sql_query': sql_query}
