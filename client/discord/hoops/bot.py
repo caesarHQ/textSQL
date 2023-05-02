@@ -94,6 +94,8 @@ async def on_message(message):
             # Create a thread 
             thread = await final_bot_response.create_thread(name=natural_language_query, auto_archive_duration=60)
 
+            register_thread_session_to_backend(thread.id, response['session_id'])
+
             # Send raw data as csv in thread
             await send_raw_data_as_csv(response["response"], thread)
 
@@ -103,6 +105,15 @@ async def on_message(message):
     except Exception as e:
         print(f"Error in on_message: {e}")
         await message.channel.send(f"Sorry, something went wrong. \n {e}")
+
+def register_thread_session_to_backend(thread_id, session_id):
+    url = "https://nba-gpt-prod.onrender.com/register_thread"
+
+    payload = {"thread_id": thread_id, "session_id": session_id, "app_name": "discord"}
+    headers = {"Content-Type": "application/json"}
+
+    _ = requests.post(url, json=payload, headers=headers)
+    return 
 
 async def handle_help(message):
     example_queries = [
