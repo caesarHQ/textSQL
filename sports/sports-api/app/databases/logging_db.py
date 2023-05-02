@@ -155,15 +155,16 @@ def get_session_id_from_thread_id(thread_id):
 
 
 @failsoft
-def log_input(app, query_text):
+def log_input(app, query_text, session_id=None):
     params = {
         "app": app,
         "query_text": query_text,
+        "session_id": session_id,
     }
 
     insert_query = text("""
-        INSERT INTO queries (app, query_text)
-        VALUES (:app, :query_text)
+        INSERT INTO queries (app, query_text, session_id)
+        VALUES (:app, :query_text, :session_id)
         returning id
         
     """)
@@ -179,22 +180,37 @@ def log_input(app, query_text):
 
 
 @failsoft
-def update_input(id: str, rows_returned: int, sql_text: str):
+def update_input(id: str, rows_returned: int, sql_text: str, session_id=None):
 
     if not id:
         return None
 
-    params = {
-        "id": id,
-        "rows_returned": rows_returned,
-        "sql_text": sql_text
-    }
+    if session_id:
+        params = {
+            "id": id,
+            "rows_returned": rows_returned,
+            "sql_text": sql_text,
+            "session_id": session_id,
+        }
 
-    update_query = text("""
-        UPDATE queries
-        SET rows_returned = :rows_returned, sql_text = :sql_text
-        WHERE id = :id
-        """)
+        update_query = text("""
+            UPDATE queries
+            SET rows_returned = :rows_returned, sql_text = :sql_text, session_id = :session_id
+            WHERE id = :id
+            """)
+
+    else:
+        params = {
+            "id": id,
+            "rows_returned": rows_returned,
+            "sql_text": sql_text,
+        }
+
+        update_query = text("""
+            UPDATE queries
+            SET rows_returned = :rows_returned, sql_text = :sql_text
+            WHERE id = :id
+            """)
 
     with EVENTS_ENGINE.connect() as conn:
         conn.execute(update_query, params)

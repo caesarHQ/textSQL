@@ -117,7 +117,7 @@ def execute_sql(sql_query: str, attempt_number=0, original_text=''):
         return result_dict
 
 
-def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messages=None, examples=[]):
+def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messages=None, examples=[], session_id=None):
     """
     Tries to take a natural language query and generate valid SQL to answer it K times
     """

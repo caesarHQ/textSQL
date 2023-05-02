@@ -16,6 +16,7 @@ class Engine:
     current_generation_id = None
     cached_sql = None
     session_id = None
+    thread_id = None
 
     def __init__(self, table_selection_method='llm', app='nbai'):
         self.table_selection_method = table_selection_method
@@ -23,7 +24,8 @@ class Engine:
 
     def set_query(self, query):
         self.query = cleaner.clean_input(query)
-        self.current_generation_id = logging_db.log_input('nbai', self.query)
+        self.current_generation_id = logging_db.log_input(
+            'nbai', self.query, self.session_id)
 
     def set_session_id(self, session_id):
         self.session_id = session_id
@@ -84,7 +86,7 @@ class Engine:
     def get_sql(self):
         if self.method == 'multi':
             try:
-                for res in streaming_sql_generation_multi.text_to_sql_with_retry_multi(self.query, self.tables, examples=self.selected_examples):
+                for res in streaming_sql_generation_multi.text_to_sql_with_retry_multi(self.query, self.tables, examples=self.selected_examples, session_id=self.session_id):
 
                     if res.get('bad_sql'):
                         num_rows = None
@@ -95,7 +97,7 @@ class Engine:
                         num_rows = len(
                             res.get('response', {}).get('results', []))
                         logging_db.update_input(
-                            self.current_generation_id, num_rows, res['sql_query'])
+                            self.current_generation_id, num_rows, res['sql_query'], session_id=self.session_id)
 
                     yield {'generation_id': self.current_generation_id, **res}
                 print('done with get_sql')
