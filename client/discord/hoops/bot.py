@@ -152,7 +152,8 @@ async def process_request(natural_language_query, bot_response, author):
     payload = {
         "natural_language_query": natural_language_query,
         "scope": "sports",
-        "stream": True
+        "stream": True,
+        "thread_id": bot_response.channel.id if is_message_inside_thread(bot_response) else None
     }
     
     obj = {}
