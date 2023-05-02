@@ -99,14 +99,14 @@ def calculate_cost(model, input_tokens, output_tokens):
 
 
 @failsoft
-def create_session(app_name, user_id):
+def create_session(app_name):
     parms = {
         "app_name": app_name,
-        "user_id": user_id,
+        "user_id": None,
     }
     create_query = text("""
-        INSERT INTO sessions (app_name, user_id)
-        VALUES (:app_name, :user_id)
+        INSERT INTO sessions (app_name)
+        VALUES (:app_name)
         returning id
     """)
     with EVENTS_ENGINE.connect() as conn:
@@ -117,6 +117,22 @@ def create_session(app_name, user_id):
         session_id = row[0]
 
     return str(session_id)
+
+
+@failsoft
+def register_thread(thread_id, session_id, service_name):
+    params = {
+        "thread_id": thread_id,
+        "session_id": session_id,
+        "service_name": service_name,
+    }
+    create_query = text("""
+        INSERT INTO threads (thread_id, session_id, service_name)
+        VALUES (:thread_id, :session_id, :service_name)
+    """)
+    with EVENTS_ENGINE.connect() as conn:
+        conn.execute(create_query, params)
+        conn.commit()
 
 
 @failsoft
