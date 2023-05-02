@@ -28,7 +28,7 @@ class Engine:
     def set_session_id(self, session_id):
         self.session_id = session_id
 
-    def set_set_thread_id(self, thread_id):
+    def set_thread_id(self, thread_id):
         self.thread_id = thread_id
 
     def run(self):
