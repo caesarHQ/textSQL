@@ -122,7 +122,7 @@ def create_session(app_name):
 @failsoft
 def register_thread(thread_id, session_id, service_name):
     params = {
-        "thread_id": thread_id,
+        "thread_id": str(thread_id),
         "session_id": session_id,
         "service_name": service_name,
     }
@@ -138,7 +138,7 @@ def register_thread(thread_id, session_id, service_name):
 @failsoft
 def get_session_id_from_thread_id(thread_id):
     params = {
-        "thread_id": thread_id,
+        "thread_id": str(thread_id),
     }
     select_query = text("""
         select session_id

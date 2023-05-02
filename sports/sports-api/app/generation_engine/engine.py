@@ -36,6 +36,11 @@ class Engine:
     def run(self):
         yield {"status": "working", "state": "Query Received", "step": "query"}
 
+        if self.thread_id:
+            print('have thread id', self.thread_id)
+            self.session_id = logging_db.get_session_id_from_thread_id(
+                self.thread_id)
+
         if not self.session_id:
             new_id = logging_db.create_session(self.app)
             self.session_id = new_id
