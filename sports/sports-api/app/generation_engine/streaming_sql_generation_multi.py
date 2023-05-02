@@ -117,7 +117,7 @@ def execute_sql(sql_query: str, attempt_number=0, original_text=''):
         return {
             "column_names": df.columns.tolist(),
             "results": df.to_dict(orient='records'),
-            "column_types": df.apply(dtype_to_pytype).tolist()
+            "column_types": [ t.__name__ for t in df.apply(dtype_to_pytype).tolist() ]
         }
 
 
