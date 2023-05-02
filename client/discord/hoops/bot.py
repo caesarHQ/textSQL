@@ -100,7 +100,7 @@ async def on_message(message):
                 await final_bot_response.channel.send(sql_query)
             else:
                  # Create a thread 
-                thread = await final_bot_response.create_thread(name=natural_language_query, auto_archive_duration=60)
+                thread = await final_bot_response.create_thread(name=natural_language_query[:95], auto_archive_duration=60)
 
                 # register thread to the backend
                 register_thread_session_to_backend(thread.id, response['session_id'])
