@@ -15,9 +15,11 @@ class Engine:
     method = 'multi'
     current_generation_id = None
     cached_sql = None
+    session_id = None
 
-    def __init__(self, table_selection_method='llm'):
+    def __init__(self, table_selection_method='llm', app='nbai'):
         self.table_selection_method = table_selection_method
+        self.app = app
 
     def set_query(self, query):
         self.query = cleaner.clean_input(query)
@@ -26,26 +28,29 @@ class Engine:
     def run(self):
         yield {"status": "working", "state": "Query Received", "step": "query"}
 
+        if not self.session_id:
+            new_id = logging_db.create_session(self.app)
+            self.session_id = new_id
+
         cached_query = logging_db.check_cached_exists(self.query)
         if cached_query:
             self.cached_sql = cached_query
-            print('cached query: ', cached_query)
             for res in self.run_cached_sql():
-                yield res
+                yield {**res, 'session_id': self.session_id}
             return
 
         for res in self.get_tables():
             if res['status'] == 'error':
-                return res
-            yield res
+                return {**res, 'session_id': self.session_id}
+            yield {**res, 'session_id': self.session_id}
 
         self.get_examples()
 
         for res in self.get_sql():
             if res['status'] == 'error':
                 print('hit error')
-                return res
-            yield res
+                return {**res, 'session_id': self.session_id}
+            yield {**res, 'session_id': self.session_id}
 
     def get_tables(self):
         yield {"status": "working", "state": "Acquiring Tables", "step": "tables"}
