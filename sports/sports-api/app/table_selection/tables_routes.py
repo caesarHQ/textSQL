@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, make_response, request
 
-from .utils import get_relevant_tables_from_pinecone
+from app.sql_generation.prompt_helpers.table_prompt import get_relevant_tables_from_pinecone
 
 bp = Blueprint('table_selection_bp', __name__)
 

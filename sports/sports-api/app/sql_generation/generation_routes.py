@@ -1,9 +1,8 @@
 from flask import Blueprint, jsonify, make_response, request, stream_with_context, Response
 import json
-from ..config import PINECONE_ENV, PINECONE_KEY
-from ..table_selection.utils import (get_relevant_tables_from_lm,
-                                     get_relevant_tables_from_pinecone)
-from .utils import text_to_sql_with_retry
+from app.config import PINECONE_ENV, PINECONE_KEY
+from app.sql_generation.prompt_helpers.table_prompt import (get_relevant_tables_from_lm,
+                                                            get_relevant_tables_from_pinecone)
 
 from app.generation_engine import streaming_helper
 from app.databases import logging_db

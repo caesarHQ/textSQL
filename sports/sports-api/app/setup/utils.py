@@ -8,9 +8,9 @@ from ..config import ENGINE
 from ..models.in_context_examples import InContextExamples
 from ..models.table_metadata import TableMetadata
 from ..models.type_metadata import TypeMetadata
-from ..table_selection.utils import (ENUMS_METADATA_DICT, TABLES_METADATA_DICT,
-                                     save_enums_metadata_to_json,
-                                     save_tables_metadata_to_json)
+from app.sql_generation.prompt_helpers.table_prompt import (ENUMS_METADATA_DICT, TABLES_METADATA_DICT,
+                                                            save_enums_metadata_to_json,
+                                                            save_tables_metadata_to_json)
 
 # TODO: implement commands for MySQL
 
