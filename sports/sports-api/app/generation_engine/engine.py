@@ -25,6 +25,12 @@ class Engine:
         self.query = cleaner.clean_input(query)
         self.current_generation_id = logging_db.log_input('nbai', self.query)
 
+    def set_session_id(self, session_id):
+        self.session_id = session_id
+
+    def set_set_thread_id(self, thread_id):
+        self.thread_id = thread_id
+
     def run(self):
         yield {"status": "working", "state": "Query Received", "step": "query"}
 
