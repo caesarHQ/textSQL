@@ -109,7 +109,7 @@ async def on_message(message):
 def register_thread_session_to_backend(thread_id, session_id):
     url = "https://text-sql-be.onrender.com/register_thread"
 
-    payload = {"thread_id": thread_id, "session_id": session_id}
+    payload = {"thread_id": thread_id, "session_id": session_id, "app_name": "discord"}
     headers = {"Content-Type": "application/json"}
 
     _ = requests.post(url, json=payload, headers=headers)
