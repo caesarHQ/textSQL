@@ -122,7 +122,7 @@ async def process_request(natural_language_query, bot_response, author):
     }
     
     obj = {}
-    
+
     #streaming backend response
     for res in requests.post(url, json=payload, stream=True):
         for obj in decoder.decode(res.decode()):
@@ -240,6 +240,10 @@ def format_intermidiate_message(state, natural_language_query, time_taken):
 
 async def send_raw_data_as_csv(result, thread):
     df = pd.DataFrame(result["results"], columns=result['column_names'])
+
+    #Limit to 99 rows otherwise discord will error out
+    df = df.head(99)
+
     # Save the DataFrame as a CSV to a buffer
     buf = io.StringIO()
     df.to_csv(buf, index=False)
