@@ -18,6 +18,7 @@ class Engine:
     cached_sql = None
     session_id = None
     thread_id = None
+    labels = []
 
     def __init__(self, table_selection_method='llm', app='nbai'):
         self.table_selection_method = table_selection_method
@@ -80,12 +81,16 @@ class Engine:
         yield {"status": "working", "state": "Acquiring Tables", "step": "tables"}
 
         try:
-            new_tables = get_tables(
+            new_tables, labels = get_tables(
                 self.query, method=self.table_selection_method)
             self.tables = new_tables
+            self.labels = labels
+            self.labels += [t.upper() for t in new_tables]
             print('got tables: ', new_tables)
+            print('got labels: ', labels)
             yield {"status": "working", "state": "Tables Acquired", "tables": new_tables, "step": "tables"}
         except Exception as e:
+            print('error getting tables: ', e)
             yield {"status": "error", "error": str(e), 'step': 'tables'}
 
     def get_enums(self):
@@ -102,7 +107,7 @@ class Engine:
     def get_sql(self):
         if self.method == 'multi':
             try:
-                for res in streaming_sql_generation_multi.text_to_sql_with_retry_multi(self.query, self.tables, examples=self.selected_examples, session_id=self.session_id):
+                for res in streaming_sql_generation_multi.text_to_sql_with_retry_multi(self.query, self.tables, examples=self.selected_examples, session_id=self.session_id, labels=self.labels):
 
                     if res.get('bad_sql'):
                         num_rows = None

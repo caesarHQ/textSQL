@@ -165,6 +165,13 @@ def _get_table_selection_message_with_descriptions(natural_language_query):
 
         Make sure to write your answer in markdown format. Provide the JSON and only the JSON for the response.
         Provide any comments before the JSON, include the JSON object in a markdown code block with nothing afterwards.
+
+        Possible Labels to Choose From:
+            REGULAR: Is this asking about only regular Games?
+            PRESEASON: Is this asking about only Pre Season Games?
+            ALL STAR: Is this asking about only Allstar Games?
+            PRESEASON: Is this asking about only Playoff Games?
+            SEASON: IS this restricted to a time period?
         
         Use this format:
         ```
@@ -175,6 +182,7 @@ def _get_table_selection_message_with_descriptions(natural_language_query):
             "internal relations": string (describe how the required tables relate to one another and how to make sure relevant information is not lost)
             "reasoning": string (Reverse walkthrough from end to start where the information will come from (what joins are needed). Column B.A gives Y, but B doesn't have Z we need to pull D.A to get Z.))
             "double_check": string (Walking through the tables mentioned above, check that each column that will be used to find any missing columns, add any additional tables that could be useful)
+            "labels": string[] //any of the labels above that apply
             "tables": string[] //max 4
         }}
         ```
@@ -244,4 +252,6 @@ def get_relevant_tables_from_lm(natural_language_query, ignore_comments=False):
     allowable_names = get_table_names()
     tables = [t for t in tables if t in allowable_names]
 
-    return tables
+    labels = json.loads(tables_json_str).get("labels")
+
+    return tables, labels

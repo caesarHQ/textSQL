@@ -1,36 +1,56 @@
-def command_prompt_cte(command):
-    return """You are an expert and empathetic database engineer that is generating correct read-only postgres query to answer the following question/command: {}
 
-Ensure to include which table each column is from (table.column)
-Use CTE format for computing subqueries.
 
-Provide a properly formatted YAML object with the following information. Ensure to escape any special characters so it can be parsed as YAML.
+def command_prompt_cte(command, labels=[]):
 
-Note: The NBA's Game ID is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year.
+    query_specific_injects = []
+
+    print('labels: ', labels)
+
+    if 'REGULAR' in labels:
+        query_specific_injects.append(
+            """The prefix 002 is used for regular season games, to query for regular season games, filter on game_id like '002%'""")
+    if 'PLAYOFF' in labels:
+        query_specific_injects.append(
+            """The prefix 004 is used for playoff games, to query for playoff games, filter on game_id like '004%'""")
+    if 'ALL STAR' in labels:
+        query_specific_injects.append(
+            """The prefix 005 is used for all star games, to query for all star games, filter on game_id like '005%'""")
+    if 'PRESEASON' in labels:
+        query_specific_injects.append(
+            """The prefix 001 is used for preseason games, to query for preseason games, filter on game_id like '001%'""")
+
+    if 'SEASON' in labels:
+        query_specific_injects.append('''Note: The NBA's Game ID is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year.
 To get seasons, 
 e.g. for the current 2022-23 season, you need to filter where game_id like '00222%',
 for the 2021-22 season, you need to filter where game_id like '00221%',
 etc
+You do not need to use the game_id in all queries but this is helpful for understanding the data.''')
 
-You do not need to use the game_id in all queries but this is helpful for understanding the data.
-
-team_id can change over time, so might need to worry about that.
-Do not include any variables/wildcards.
-DO NOT USE THE MINUTES COLUMNS
-USE ilike instead of = when comparing strings
-
-Notes on table relationships:
-  
-  If querying NBA_GAME:
+    if 'NBA_GAME' in labels:
+        query_specific_injects.append('''  If querying NBA_GAME:
   - nba_game does not include the winner/loser or the team names.
-    to find a winner, you first need to need to check against nba_team_game_stats to get the final scores for the away/home team based on the game_id and home/away team_id.
+    to find a winner, you first need to need to check against nba_team_game_stats to get the final scores for the away/home team based on the game_id and home/away team_id.''')
 
-  For 
-
-  If querying NBA_TEAM_GAME_STATS:
+    if 'NBA_TEAM_GAME_STATS' in labels:
+        query_specific_injects.append('''    If querying NBA_TEAM_GAME_STATS:
   - nba_team_game_stats does not include the team names.
-  - nba_team_game_stats will have one row for the home team and one row for the away team for each game.
-    
+  - nba_team_game_stats will have one row for the home team and one row for the away team for each game.''')
+
+    if len(query_specific_injects) > 0:
+        query_specific_injects = [''] + query_specific_injects + ['']
+    query_specific_injects = '\n'.join(query_specific_injects)
+
+    return f"""You are an expert and empathetic database engineer that is generating correct read-only postgres query to answer the following question/command: {command}
+
+Ensure to include which table each column is from (table.column)
+Use CTE format for computing subqueries.
+{query_specific_injects}
+Provide a properly formatted YAML object with the following information. Ensure to escape any special characters so it can be parsed as YAML.
+
+Do not include any variables/wildcards.
+
+USE ilike instead of = when comparing strings
 
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 
@@ -53,4 +73,4 @@ Provide the YAML and only the YAML. Do not include backticks (```), just include
 
 FINALLY: ALL QUERIES MUST REFERENCE THE TABLE AND COLUMN FOR EACH QUERY IN TABLE.COLUMN FORMAT. Especially for GAME_ID, ensure that the table that you're referencing is always explicit.
 
-""".format(command)
+"""
