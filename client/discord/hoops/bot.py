@@ -11,6 +11,7 @@ import pandas as pd
 import io
 import matplotlib.pyplot as plt
 import textwrap
+import random
 
 class BufferedJSONDecoder:
     def __init__(self):
@@ -104,13 +105,23 @@ async def on_message(message):
         await message.channel.send(f"Sorry, something went wrong. \n {e}")
 
 async def handle_help(message):
-    help_text = """HoopsGPT
+    example_queries = [
+        "What is Steph Curry's 3pt percentage at home vs away?",
+        "Who has the most triple-doubles in NBA history?",
+        "What is the average points per game for LeBron James?",
+        "Which team has the highest win percentage this season?",
+        "What is the all-time record for most points scored in a single NBA game?",
+    ]
+
+    random_query = random.choice(example_queries)
+    
+    help_text = f"""HoopsGPT
 
 Use GPT to analyze NBA stats.
 
 **Every Game, Every Play, Every Player** since the year 2000.
 
-Try: `What is steph curry's 3pt percentage at home vs away?`"""
+Try: `{random_query}`"""
 
     await message.channel.send(content=help_text)
     return
