@@ -8,9 +8,9 @@ Provide a properly formatted YAML object with the following information. Ensure 
 
 Note: The NBA's Game ID is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year.
 To get seasons, 
-e.g. for the current 2022-23 year regular season games, you need to filter where game_id like '00222%',
-for the 2021-22 year playoff season games, you need to filter where game_id like '00421%',
-etc
+e.g. for the current 2022-23 year regular season games, you need to filter where game_id like '00222%'.
+for the 2021-22 year playoff season games, you need to filter where game_id like '00421%'.
+for playoff games for all years, you need to filter where game_id like '004%' etc
 
 You do not need to use the game_id in all queries but this is helpful for understanding the data.
 
