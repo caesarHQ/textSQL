@@ -79,6 +79,10 @@ async def on_message(message):
             if (response is None or response.get('status') != 'success'):
                 await message.channel.send("Sorry! Couldn't get an answer for that :(")
                 return
+            
+            if (is_empty_table(response["response"])):
+                await message.channel.send("Returned an empty table :(")
+                return 
 
             table_image = generate_table_image(response['response'], natural_language_query)
 
@@ -172,6 +176,10 @@ async def process_request(natural_language_query, bot_response, author):
     final_response = obj
 
     return final_response
+
+def is_empty_table(result):
+    df = pd.DataFrame(result["results"], columns=result['column_names'])
+    return df.empty
 
 """ this function was written by GPT. don't ask me how it works. it makes the columns not overflow """
 def adjust_column_width(ax, table, fig, df):
