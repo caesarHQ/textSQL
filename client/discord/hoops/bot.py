@@ -135,8 +135,7 @@ async def handle_help(message):
 
     random_query = random.choice(example_queries)
     
-    help_text = f"""HoopsGPT
-
+    help_text = f"""
 Use GPT to analyze NBA stats.
 
 **Every Game, Every Play, Every Player** since the year 2000.
