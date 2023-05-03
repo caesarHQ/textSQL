@@ -1,17 +1,16 @@
 
-from collections import OrderedDict
-import re
 import json
+import re
+from collections import OrderedDict
 from typing import Dict, List
 
+import pandas as pd
 from app.config import ENGINE
-from sqlalchemy import text
-
-from app.sql_generation.prompt_helpers import schema_prompt, query_prompt
 from app.databases import logging_db
-
-from app.utils import (safe_get_sql_from_yaml, get_openai_results,
-                       get_few_shot_messages)
+from app.sql_generation.prompt_helpers import query_prompt, schema_prompt
+from app.utils import (dtype_to_pytype, get_few_shot_messages,
+                       get_openai_results, safe_get_sql_from_yaml)
+from sqlalchemy import text
 
 
 def get_retry_message(raw_message):
@@ -90,31 +89,17 @@ def execute_sql(sql_query: str, attempt_number=0, original_text=''):
         with connection.begin():
             try:
                 result = connection.execute(text(sql_query))
+                df = pd.DataFrame(result.fetchall())
             except Exception as e:
                 logging_db.log_sql_failure(
                     original_text, sql_query, str(e), attempt_number)
                 raise e
 
-        column_names = list(result.keys())
-
-        rows = [list(r) for r in result.all()]
-
-        results = []
-        for row in rows:
-            result = OrderedDict()
-            for i, column_name in enumerate(column_names):
-                result[column_name] = row[i]
-            results.append(result)
-
-        result_dict = {
-            "column_names": column_names,
-            "results": results,
+        return {
+            "column_names": df.columns.tolist(),
+            "results": df.to_dict(orient='records'),
+            "column_types": df.apply(dtype_to_pytype).tolist()
         }
-        if results:
-            result_dict["column_types"] = [
-                type(r).__name__ for r in results[0]]
-
-        return result_dict
 
 
 def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, n=2, messages=None, examples=[], session_id=None, labels=[]):

@@ -15,6 +15,25 @@ from app.databases import events_db
 IN_CONTEXT_EXAMPLES_DICT = {}
 
 
+def dtype_to_pytype(column):
+    if column.dtype.kind == 'i':
+        return int.__name__
+    elif column.dtype.kind == 'f':
+        return float.__name__
+    elif column.dtype.kind == 'O':
+        # Check if all elements in the column are strings
+        if column.apply(lambda x: isinstance(x, str) or pd.isna(x)).all():
+            return str.__name__
+        else:
+            return object.__name__
+    elif column.dtype.kind == 'b':
+        return bool.__name__
+    elif column.dtype.kind == 'M':
+        return pd.Timestamp.__name__
+    else:
+        return column.dtype.name
+
+
 def load_in_context_examples():
     """
     Setup in context examples dict
