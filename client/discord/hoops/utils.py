@@ -135,6 +135,26 @@ def expand_acronyms(text):
         "fg%": "field goal percentage (made field goals / attempted field goals)",
         "apg": "assists per game",
         "3s": "three point shots",
+        "2pa": "2 point attempts",
+        "3pa": "3 point attempts",
+        "2p": "made 2 point shots",
+        "2p%": "2 point percentage (made two point field goals / attempted two point field goals)",
+        "3p": "made 3 point shots",
+        "3p%": "3 point percentage (made three point field goals / attempted three point field goals)",
+        "three's": "three point shots",
+        "ast": "assists",
+        "blk": "blocks",
+        "bpm": "box plus-minus",
+        "drb": "defensive rebounds",
+        "orb": "offensive rebounds",
+        "ft": "free throw",
+        "ft's": "free throws",
+        "fta": "free throw attempts",
+        "ft%": "free throw percentage (made free throws / attempted free throws)",
+        "pts": "points",
+        "ppg": "points per game",
+        "stl": "steals",
+        "tov": "turnovers"
     }
 
     for keyword, replacement in keywords.items():
