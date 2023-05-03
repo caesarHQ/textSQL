@@ -25,7 +25,6 @@ with ENGINE.connect() as conn:
         '''))
     current_teams_df = pd.DataFrame(query.fetchall())
     current_teams_df.drop_duplicates(inplace=True)
-    
 
 
 class Engine:
@@ -102,8 +101,10 @@ class Engine:
         yield {"status": "working", "state": "Acquiring Tables", "step": "tables"}
 
         try:
-            new_tables, labels = get_tables(
+            new_tables, labels, new_query = get_tables(
                 self.query, method=self.table_selection_method)
+            print('new query: ', new_query)
+            self.query = new_query
             self.tables = new_tables
             self.labels = labels
             self.labels += [t.upper() for t in new_tables]
@@ -125,32 +126,35 @@ class Engine:
         except:
             pass
 
-
     def get_enriched_df(self, response):
         column_names = response.get('column_names', [])
         results = response.get('results', [])
 
         df = pd.DataFrame.from_records(results, columns=column_names)
-        
+
         if 'game_id' in column_names and 'game_code' not in column_names:
             # Merge the DataFrames on the common column, e.g., 'game_id'
-            df = df.merge(games_df[['game_id', 'game_code']], on='game_id', how='left')
+            df = df.merge(games_df[['game_id', 'game_code']],
+                          on='game_id', how='left')
         if 'game_code' in df.columns.tolist():
             # Transform the 'game_code' column by splitting it on '/' and getting the contents after the character
             # Then insert ' @ ' in the middle of the resulting string
             df['game_code'] = df['game_code'].apply(
-                lambda x: x.split('/')[-1][:len(x.split('/')[-1])//2] + ' @ ' + x.split('/')[-1][len(x.split('/')[-1])//2:] if pd.notna(x) else None
+                lambda x: x.split('/')[-1][:len(x.split('/')[-1])//2] + ' @ ' + x.split(
+                    '/')[-1][len(x.split('/')[-1])//2:] if pd.notna(x) else None
             )
         if 'game_id' in column_names and 'game_time_et' not in column_names:
-            df = df.merge(games_df[['game_id', 'game_time_et']], on='game_id', how='left')
+            df = df.merge(
+                games_df[['game_id', 'game_time_et']], on='game_id', how='left')
 
         if 'team_id' in column_names and 'team_city' not in column_names:
-            df = df.merge(current_teams_df[['team_id', 'team_city']], on='team_id', how='left')
+            df = df.merge(
+                current_teams_df[['team_id', 'team_city']], on='team_id', how='left')
         if 'team_id' in column_names and 'team_name' not in column_names:
-            df = df.merge(current_teams_df[['team_id', 'team_name']], on='team_id', how='left')
+            df = df.merge(
+                current_teams_df[['team_id', 'team_name']], on='team_id', how='left')
 
         return df
-
 
     def get_sql(self):
         if self.method == 'multi':
@@ -172,7 +176,7 @@ class Engine:
 
                         logging_db.update_input(
                             self.current_generation_id, num_rows, res['sql_query'], session_id=self.session_id, output_head=head)
-                    
+
                     df = self.get_enriched_df(res.get('response', {}))
                     yield {
                         'generation_id': self.current_generation_id,

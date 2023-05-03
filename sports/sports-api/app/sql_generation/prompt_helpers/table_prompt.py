@@ -183,8 +183,9 @@ def get_relevant_tables_from_lm(natural_language_query, ignore_comments=False):
     tables = [t for t in tables if t in allowable_names]
 
     labels = json.loads(tables_json_str).get("labels")
+    rephrased_input = json.loads(tables_json_str).get("rephrased_input")
 
-    return tables, labels
+    return tables, labels, rephrased_input
 
 
 def _get_table_selection_message_with_descriptions(natural_language_query):
@@ -214,12 +215,13 @@ def _get_table_selection_message_with_descriptions(natural_language_query):
         Use this format:
         ```
         {{
-            "Rephrased Input": string (any assumptions about words in the input and what they refer to)
-            "required answer": string[] (the final variables that will be needed)
-            "input conversions": string[] (the variables/tables that will be needed to interpret the input)
-            "internal relations": string (describe how the required tables relate to one another and how to make sure relevant information is not lost)
+            "formal_input": string (rewrite the input into a fully fleshed out question)
+            "season_constraints": string REGULAR | PRESEASON | ALL STAR | PLAYOFF | ANY
+            "rephrased_input": string (the formal output + season constraints)
+            "required_answer": string[] (the final variables that will be needed)
+            "input_conversions": string[] (the variables/tables that will be needed to interpret the input)
+            "internal_relations": string (describe how the required tables relate to one another and how to make sure relevant information is not lost)
             "reasoning": string (Reverse walkthrough from end to start where the information will come from (what joins are needed). Column B.A gives Y, but B doesn't have Z we need to pull D.A to get Z.))
-            "double_check": string (Walking through the tables mentioned above, check that each column that will be used to find any missing columns, add any additional tables that could be useful)
             "labels": string[] //any of the labels above that apply
             "tables": string[] //max 4
         }}
