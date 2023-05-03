@@ -4326,7 +4326,7 @@
                 "type": "text"
             },
             {
-                "active": true,
+                "active": false,
                 "name": "height",
                 "type": "text"
             },
@@ -4389,6 +4389,16 @@
                 "active": true,
                 "name": "birth_date",
                 "type": "text"
+            },
+            {
+                "active": true,
+                "name": "active",
+                "type": "boolean"
+            },
+            {
+                "active": true,
+                "name": "height_in_ft",
+                "type": "double precision"
             }
         ],
         "description": "",
@@ -4464,7 +4474,7 @@
             ]
         ],
         "name": "nba_current_player",
-        "schema": "CREATE TABLE nba_current_player (-- NBA player roster information\n    person_id bigint, -- unique identifier for each player\n    season_exp bigint, -- number of seasons of experience in the NBA\n    team_id bigint, -- unique identifier for the team the player is currently playing for\n    from_year bigint, -- year the player started playing in the NBA\n    to_year bigint, -- year the player ended playing in the NBA\n    school text, -- name of the school the player attended\n    country text, -- country the player is from\n    last_affiliation text, -- last affiliation of the player before joining the NBA\n    height text, -- height of the player in feet-inches format\n    weight text, -- weight of the player in pounds\n    draft_year text, -- year the player was drafted\n    jersey text, -- jersey number of the player\n    position text, -- position the player plays in\n    roster_status text, -- status of the player in the team's roster\n    draft_round text, -- round the player was drafted in\n    draft_number text, -- number the player was drafted at\n    seasons text, -- list of seasons the player played in the NBA\n    first_name text, -- first name of the player\n    last_name text, -- last name of the player\n    name_i text, -- abbreviated name of the player\n    birth_date text -- date of birth of the player\n);"
+        "schema": "CREATE TABLE nba_current_player (-- NBA player roster information\n    person_id bigint, -- unique identifier for each player\n    season_exp bigint, -- number of seasons of experience in the NBA\n    team_id bigint, -- unique identifier for the team the player is currently playing for\n    from_year bigint, -- year the player started playing in the NBA\n    to_year bigint, -- year the player ended playing in the NBA\n    school text, -- name of the school the player attended\n    country text, -- country the player is from\n    last_affiliation text, -- last affiliation of the player before joining the NBA\n    height_in_ft float, -- height of the player in feet\n    weight text, -- weight of the player in pounds\n    draft_year text, -- year the player was drafted\n    jersey text, -- jersey number of the player\n    position text, -- position the player plays in\n    roster_status text, -- status of the player in the team's roster\n    draft_round text, -- round the player was drafted in\n    draft_number text, -- number the player was drafted at\n    seasons text, -- list of seasons the player played in the NBA\n    first_name text, -- first name of the player\n    last_name text, -- last name of the player\n    name_i text, -- abbreviated name of the player\n    birth_date text -- date of birth of the player\n);"
     },
     "nba_current_team": {
         "active": true,
