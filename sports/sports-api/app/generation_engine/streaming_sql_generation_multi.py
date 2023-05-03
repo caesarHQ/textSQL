@@ -82,21 +82,21 @@ class NullValueException(Exception):
 
 def dtype_to_pytype(column):
     if column.dtype.kind == 'i':
-        return int
+        return int.__name__
     elif column.dtype.kind == 'f':
-        return float
+        return float.__name__
     elif column.dtype.kind == 'O':
         # Check if all elements in the column are strings
         if column.apply(lambda x: isinstance(x, str) or pd.isna(x)).all():
-            return str
+            return str.__name__
         else:
-            return object
+            return object.__name__
     elif column.dtype.kind == 'b':
-        return bool
+        return bool.__name__
     elif column.dtype.kind == 'M':
-        return pd.Timestamp
+        return pd.Timestamp.__name__
     else:
-        return column.dtype
+        return column.dtype.name
 
 
 def execute_sql(sql_query: str, attempt_number=0, original_text=''):
@@ -117,7 +117,7 @@ def execute_sql(sql_query: str, attempt_number=0, original_text=''):
         return {
             "column_names": df.columns.tolist(),
             "results": df.to_dict(orient='records'),
-            "column_types": [ t.__name__ for t in df.apply(dtype_to_pytype).tolist() ]
+            "column_types": df.apply(dtype_to_pytype).tolist()
         }
 
 
