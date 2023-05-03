@@ -28,6 +28,9 @@ To get from '20 to '21, filter substring(game_id, 4, 2) = '20'
 ...
 To get from '00 to '01, filter substring(game_id, 4, 2) = '00'
 etc
+
+Likewise, you need to query on prefix of (002, 004, 005, 001) to get regular, playoff, all star, preseason games. Assume it's regular (002) unless otherwise specified.
+
 You do not need to use the game_id in all queries but this is helpful for understanding the data.''')
 
     if 'PLAYER' in labels:
