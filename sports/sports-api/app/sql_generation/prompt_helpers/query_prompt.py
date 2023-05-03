@@ -38,6 +38,13 @@ You do not need to use the game_id in all queries but this is helpful for unders
     - player does not include the player's team name.
     - you need to query on nba_current_roster.first_name and nba_current_roster.last_name to get the player's person_id.''')
 
+    if 'TEAM' in labels:
+        query_specific_injects.append("""  If querying TEAM:
+    Query the team using the nba_current_team table.
+    - nba_current_team.team_name does not include the team's city. only include the team's name in the query,
+        e.g. to find LOS ANGELES LAKERS query... WHERE nba_current_team.team_name ilike 'LAKERS'
+    """)
+
     if 'NBA_GAME' in labels:
         query_specific_injects.append('''  If querying NBA_GAME:
   - nba_game does not include the winner/loser or the team names.
