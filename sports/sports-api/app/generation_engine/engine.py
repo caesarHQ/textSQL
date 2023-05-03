@@ -143,6 +143,16 @@ class Engine:
     def run_cached_sql(self):
         try:
             for res in streaming_sql_generation_multi.run_cached_sql(self.cached_sql):
+                if res.get('sql_query'):
+                    num_rows = len(
+                        res.get('response', {}).get('results', []))
+                    head = {
+                        'columns: ': res.get('response', {}).get('column_names', []),
+                        'rows': res.get('response', {}).get('results', [])[:5]
+                    }
+                    logging_db.update_input(
+                        self.current_generation_id, num_rows, res['sql_query'], session_id=self.session_id, output_head=head)
+
                 yield res
             print('done with get_sql')
         except Exception as exc:

@@ -117,11 +117,11 @@ def execute_sql(sql_query: str, attempt_number=0, original_text=''):
         return result_dict
 
 
-def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messages=None, examples=[], session_id=None, labels=[]):
+def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, n=2, messages=None, examples=[], session_id=None, labels=[]):
     """
     Tries to take a natural language query and generate valid SQL to answer it K times
     """
-    schema_message = [{'role': 'user', 'content': ''}]
+    schema_message = [{'role': 'user', 'content': ''}] if not messages else []
     message_history = []
     model = "gpt-3.5-turbo-0301"
 
@@ -145,6 +145,12 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
             "role": "user",
             "content": content
         })
+    else:
+        message_history.append({
+            "role": "user",
+            "content": query_prompt.simple_followup_prompt_cte(natural_language_query)
+        })
+
     assistant_message = None
     sql_query = ""
 
@@ -155,11 +161,15 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, messa
 
                 payload = schema_message + message_history
 
-                if attempt_number == 0:
+                if attempt_number == 0 and not messages:
                     payload = example_messages[:1] + payload
 
+                if messages:
+                    payload = messages + payload
+
                 possible_sql_results = get_openai_results(
-                    payload, model=model, n=2)
+                    payload, model=model, n=n)
+
             except Exception as assistant_error:
                 print('error getting assistant message', assistant_error)
                 continue
