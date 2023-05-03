@@ -6,9 +6,6 @@ def command_prompt_cte(command, labels=[]):
 
     print('labels: ', labels)
 
-    if 'REGULAR' in labels:
-        query_specific_injects.append(
-            """The prefix 002 is used for regular season games, to query for regular season games, filter on game_id like '002%'""")
     if 'PLAYOFF' in labels:
         query_specific_injects.append(
             """The prefix 004 is used for playoff games, to query for playoff games, filter on game_id like '004%'""")
@@ -23,7 +20,7 @@ def command_prompt_cte(command, labels=[]):
         query_specific_injects.append('''Note: The NBA's Game ID is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year.
 TO GET SEASONS, FILTER ON GAME_ID BY THE 4,2 SUBSTRING:
 To get from '22 to '23, filter substring(game_id, 4, 2) = '22'
-To get from '21 to '22, filter substring(game_id, 4, 2) = '21'
+To get from 2021-22, filter substring(game_id, 4, 2) = '21'
 To get from '20 to '21, filter substring(game_id, 4, 2) = '20'
 ...
 To get from '00 to '01, filter substring(game_id, 4, 2) = '00'
@@ -55,6 +52,10 @@ You do not need to use the game_id in all queries but this is helpful for unders
   - nba_team_game_stats does not include the team names.
   - nba_team_game_stats will have one row for the home team and one row for the away team for each game.''')
 
+    if 'AVERAGES' in labels and 'PLAYER' in labels:
+        query_specific_injects.append('''    If querying AVERAGES:
+        - To check player averages against NBA_PLAYER_GAME_STATS you need to filter where nba_player_game_stats.minutes > 0''')
+
     if len(query_specific_injects) > 0:
         query_specific_injects = [''] + query_specific_injects + ['']
     query_specific_injects = '\n'.join(query_specific_injects)
@@ -64,6 +65,11 @@ You do not need to use the game_id in all queries but this is helpful for unders
 Ensure to include which table each column is from (table.column)
 Use CTE format for computing subqueries.
 {query_specific_injects}
+
+NOTE: Assume all queries are regular season games unless otherwise specified.
+The prefix 002 is used for regular season games.
+To query for regular season games, filter on substring(game_id, 1, 3) = '002'.
+
 Provide a properly formatted YAML object with the following information. Ensure to escape any special characters so it can be parsed as YAML.
 
 Do not include any variables/wildcards.
@@ -73,6 +79,10 @@ USE ilike instead of = when comparing strings
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 
 ```
+People Tags: |
+  A list of tags for people, teams, and the season (if applicable). str[]
+Results Tags: | 
+  A list of tags for avg, total, etc requests. str[]
 Spelled out question: |
   Rephrase out the question into who/what/why/when - e.g. "has any" should be "who"
 Reverse Walk Through: |

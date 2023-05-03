@@ -209,6 +209,7 @@ def _get_table_selection_message_with_descriptions(natural_language_query):
             SEASON: IS this restricted to a time period?
             PLAYER: Is this asking about a specific player?
             TEAM: Is this asking about a specific team?
+            AVERAGES: Is this asking about averages per game/season?
         
         Use this format:
         ```

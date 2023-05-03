@@ -4690,7 +4690,7 @@
         "schema": "CREATE TABLE nba_game (-- table for NBA game information\n    home_team_id bigint, -- ID of the home team\n    attendance bigint, -- number of people in attendance\n    sellout bigint, -- whether the game was a sellout or not\n    period bigint, -- current period of the game\n    game_clock bigint, -- current game clock time\n    game_time_utc timestamp with time zone, -- game time in UTC\n    game_et timestamp with time zone, -- game time in ET\n    away_team_id bigint, -- ID of the away team\n    series_text text, -- text description of the series\n    game_code text, -- code for the game\n    duration text, -- duration of the game\n    series_game_number text, -- number of the game in the series\n    game_id text -- ID of the game\n);"
     },
     "nba_play_by_play": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -4890,160 +4890,160 @@
         "schema": "CREATE TABLE nba_play_by_play (-- play by play data for NBA games\n    score_away bigint, -- score of the away team after the play\n    points_total bigint, -- total points scored after the play\n    person_id bigint, -- ID of the person involved in the play\n    period bigint, -- period of the game when the play occurred\n    team_id bigint, -- ID of the team involved in the play\n    x_legacy bigint, -- legacy x-coordinate of the play\n    video_available bigint, -- flag indicating if video is available for the play\n    action_id bigint, -- ID of the action in the play\n    action_number bigint, -- number of the action in the play\n    y_legacy bigint, -- legacy y-coordinate of the play\n    shot_distance bigint, -- distance of the shot in the play\n    clock bigint, -- time on the game clock when the play occurred\n    is_field_goal bigint, -- flag indicating if the play is a field goal\n    score_home bigint, -- score of the home team after the play\n    game_id text, -- ID of the game\n    team_tricode text, -- tricode of the team involved in the play\n    shot_result text, -- result of the shot in the play\n    location text, -- location of the play\n    description text, -- description of the play\n    action_type text, -- type of the action in the play\n    sub_type text -- sub-type of the action in the play\n);"
     },
     "nba_play_by_play_enhanced": {
-        "active": false,
+        "active": true,
         "columns": [
             {
-                "active": false,
+                "active": true,
                 "name": "assisted_by",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "clock",
                 "type": "interval"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "period",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "team_id",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "points_total",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "video_available",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "action_id",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "points",
                 "type": "double precision"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "blocked_by",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "blocked",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "stolen_by",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "stolen_from",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "assisted",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "action_number",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "person_id",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "x_legacy",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "y_legacy",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "shot_distance",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "is_field_goal",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "score_home",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "score_away",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "team_tricode",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "game_id",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "player_name",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "player_name_i",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "rebound_type",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "location",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "description",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "shot_result",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "action_type",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "sub_type",
                 "type": "text"
             }
@@ -5150,7 +5150,8 @@
                 "None"
             ]
         ],
-        "name": "nba_play_by_play_enhanced"
+        "name": "nba_play_by_play_enhanced",
+        "schema": "CREATE TABLE nba_play_by_play_enhanced (-- NBA play by play enhanced data\n    assisted_by bigint, -- player ID of the player who assisted the scoring play\n    clock interval, -- time remaining in the period in the format of minutes:seconds\n    period bigint, -- period number\n    team_id bigint, -- team ID of the team that scored the points\n    points_total bigint, -- total points scored in the game at the time of the play\n    video_available bigint, -- indicates whether video is available for the play\n    action_id bigint, -- unique ID for the play\n    points double precision, -- number of points scored on the play\n    blocked_by bigint, -- player ID of the player who blocked the shot\n    blocked bigint, -- indicates whether the shot was blocked\n    stolen_by bigint, -- player ID of the player who stole the ball\n    stolen_from bigint, -- player ID of the player who had the ball stolen from them\n    assisted bigint, -- indicates whether the scoring play was assisted\n    action_number bigint, -- number of the play in the game\n    person_id bigint, -- player ID of the player involved in the play\n    x_legacy bigint, -- x-coordinate of the location of the play\n    y_legacy bigint, -- y-coordinate of the location of the play\n    shot_distance bigint, -- distance of the shot in feet\n    is_field_goal bigint, -- indicates whether the play was a field goal\n    score_home bigint, -- score of the home team at the time of the play\n    score_away bigint, -- score of the away team at the time of the play\n    team_tricode text, -- team tricode of the team that scored the points\n    game_id text, -- unique ID for the game\n    player_name text, -- name of the player involved in the play\n    player_name_i text, -- international name of the player involved in the play\n    rebound_type text, -- type of rebound (e.g. offensive, defensive)\n    location text, -- location of the play in the format of x,y\n    description text, -- description of the play\n    shot_result text, -- result of the shot (e.g. made, missed)\n    action_type text, -- type of play (e.g. shot, rebound)\n    sub_type text -- sub-type of the play (e.g. jump shot, offensive rebound)\n);"
     },
     "nba_player": {
         "active": false,
@@ -5453,7 +5454,7 @@
             ]
         ],
         "name": "nba_player_game_stats",
-        "schema": "CREATE TABLE nba_player_game_stats (-- table for storing game stats of NBA players\n    plus_minus_points bigint, -- plus minus points of the player in the game\n    team_id bigint, -- id of the team the player belongs to\n    person_id bigint, -- id of the player\n    fouls_personal bigint, -- number of personal fouls committed by the player\n    points bigint, -- total points scored by the player in the game\n    field_goals_made bigint, -- number of field goals made by the player\n    field_goals_attempted bigint, -- number of field goals attempted by the player\n    field_goals_percentage double precision, -- percentage of field goals made by the player\n    three_pointers_made bigint, -- number of three pointers made by the player\n    three_pointers_attempted bigint, -- number of three pointers attempted by the player\n    three_pointers_percentage double precision, -- percentage of three pointers made by the player\n    free_throws_made bigint, -- number of free throws made by the player\n    free_throws_attempted bigint, -- number of free throws attempted by the player\n    free_throws_percentage double precision, -- percentage of free throws made by the player\n    rebounds_offensive bigint, -- number of offensive rebounds by the player\n    rebounds_defensive bigint, -- number of defensive rebounds by the player\n    rebounds_total bigint, -- total number of rebounds by the player\n    assists bigint, -- number of assists by the player\n    steals bigint, -- number of steals by the player\n    blocks bigint, -- number of blocks by the player\n    turnovers bigint, -- number of turnovers by the player\n    minutes text, -- total minutes played by the player in the game\n    game_id text, -- id of the game\n    is_at_home boolean, -- whether the game was played at home or not\n    is_win boolean, -- whether the game was won by the player's team or not\n    season_year bigint -- year of the season the game was played in\n);"
+        "schema": "CREATE TABLE nba_player_game_stats (-- table for storing game stats of NBA players\n    plus_minus_points bigint, -- plus minus points of the player in the game\n    team_id bigint, -- id of the team the player belongs to\n    person_id bigint, -- id of the player\n    fouls_personal bigint, -- number of personal fouls committed by the player\n    points bigint, -- total points scored by the player in the game\n    field_goals_made bigint, -- number of field goals made by the player\n    field_goals_attempted bigint, -- number of field goals attempted by the player\n    field_goals_percentage double precision, -- percentage of field goals made by the player\n    three_pointers_made bigint, -- number of three pointers made by the player\n    three_pointers_attempted bigint, -- number of three pointers attempted by the player\n    three_pointers_percentage double precision, -- percentage of three pointers made by the player\n    free_throws_made bigint, -- number of free throws made by the player\n    free_throws_attempted bigint, -- number of free throws attempted by the player\n    free_throws_percentage double precision, -- percentage of free throws made by the player\n    rebounds_offensive bigint, -- number of offensive rebounds by the player\n    rebounds_defensive bigint, -- number of defensive rebounds by the player\n    rebounds_total bigint, -- total number of rebounds by the player\n    assists bigint, -- number of assists by the player\n    steals bigint, -- number of steals by the player\n    blocks bigint, -- number of blocks by the player\n    turnovers bigint, -- number of turnovers by the player\n    minutes float, -- total minutes played by the player in the game\n    game_id text, -- id of the game\n    is_at_home boolean, -- whether the game was played at home or not\n    is_win boolean, -- whether the game was won by the player's team or not\n    season_year bigint -- year of the season the game was played in\n);"
     },
     "nba_team": {
         "active": false,
@@ -6014,7 +6015,7 @@
             ]
         ],
         "name": "nba_team_game_stats",
-        "schema": "CREATE TABLE nba_team_game_stats (-- NBA team game stats\n    player_pts_leader_pts bigint, -- points scored by the player who scored the most points in the game\n    team_id bigint, -- unique identifier for the team\n    score bigint, -- final score of the game\n    timeouts_remaining bigint, -- number of timeouts remaining for the team\n    rebounds_team bigint, -- total number of rebounds by the team\n    points_from_turnovers bigint, -- total points scored from turnovers by the team\n    bench_points bigint, -- total points scored by the team's bench players\n    player_pts_leader_id bigint, -- unique identifier for the player who scored the most points in the game\n    player_reb_leader_id bigint, -- unique identifier for the player who had the most rebounds in the game\n    player_reb_leader_reb bigint, -- number of rebounds by the player who had the most rebounds in the game\n    player_ast_leader_id bigint, -- unique identifier for the player who had the most assists in the game\n    player_ast_leader_ast bigint, -- number of assists by the player who had the most assists in the game\n    player_blk_leader_id bigint, -- unique identifier for the player who had the most blocks in the game\n    player_blk_leader_blk bigint, -- number of blocks by the player who had the most blocks in the game\n    field_goals_made bigint, -- total number of field goals made by the team\n    field_goals_attempted bigint, -- total number of field goals attempted by the team\n    field_goals_percentage double precision, -- percentage of field goals made by the team\n    three_pointers_made bigint, -- total number of three-pointers made by the team\n    three_pointers_attempted bigint, -- total number of three-pointers attempted by the team\n    three_pointers_percentage double precision, -- percentage of three-pointers made by the team\n    free_throws_made bigint, -- total number of free throws made by the team\n    free_throws_attempted bigint, -- total number of free throws attempted by the team\n    free_throws_percentage double precision, -- percentage of free throws made by the team\n    rebounds_offensive bigint, -- total number of offensive rebounds by the team\n    rebounds_defensive bigint, -- total number of defensive rebounds by the team\n    rebounds_total bigint, -- total number of rebounds by the team\n    assists bigint, -- total number of assists by the team\n    steals bigint, -- total number of steals by the team\n    blocks bigint, -- total number of blocks by the team\n    turnovers bigint, -- total number of turnovers by the team\n    fouls_personal bigint, -- total number of personal fouls by the team\n    points bigint, -- total number of points scored by the team\n    plus_minus_points bigint, -- point differential for the team\n    points_in_the_paint bigint, -- total number of points scored in the paint by the team\n    points_second_chance bigint, -- total number of points scored on second chance opportunities by the team\n    points_fast_break bigint, -- total number of points scored on fast breaks by the team\n    biggest_lead bigint, -- biggest lead by the team in the game\n    lead_changes bigint, -- total number of lead changes in the game\n    times_tied bigint, -- total number of times the game was tied\n    biggest_scoring_run bigint, -- biggest scoring run by the team in the game\n    turnovers_team bigint, -- total number of turnovers by the team\n    turnovers_total bigint, -- total number of turnovers in the game\n    minutes text, -- total minutes played by the team\n    player_reb_leader_family_name text, -- family name of the player who had the most rebounds in the game\n    player_blk_leader_first_name text, -- first name of the player who had the most blocks in the game\n    player_blk_leader_family_name text, -- family name of the player who had the most blocks in the game\n    player_ast_leader_first_name text, -- first name of the player who had the most assists in the game\n    player_pts_leader_first_name text, -- first name of the player who scored the most points in the game\n    player_pts_leader_family_name text, -- family name of the player who scored the most points in the game\n    player_ast_leader_family_name text, -- family name of the player who had the most assists in the game\n    game_id text, -- unique identifier for the game\n    player_reb_leader_first_name text, -- first name of the player who had the most rebounds in the game\n    home boolean, -- indicates if the team is playing at home or away\n    win boolean, -- indicates if the team won the game\n    season_year bigint, -- year of the season\n    is_at_home boolean, -- indicates if the team is playing at home\n    is_win boolean -- indicates if the team won the game\n);"
+        "schema": "CREATE TABLE nba_team_game_stats (-- NBA team game stats\n    player_pts_leader_pts bigint, -- points scored by the player who scored the most points in the game\n    team_id bigint, -- unique identifier for the team\n    score bigint, -- final score of the game\n    timeouts_remaining bigint, -- number of timeouts remaining for the team\n    rebounds_team bigint, -- total number of rebounds by the team\n    points_from_turnovers bigint, -- total points scored from turnovers by the team\n    bench_points bigint, -- total points scored by the team's bench players\n    player_pts_leader_id bigint, -- unique identifier for the player who scored the most points in the game\n    player_reb_leader_id bigint, -- unique identifier for the player who had the most rebounds in the game\n    player_reb_leader_reb bigint, -- number of rebounds by the player who had the most rebounds in the game\n    player_ast_leader_id bigint, -- unique identifier for the player who had the most assists in the game\n    player_ast_leader_ast bigint, -- number of assists by the player who had the most assists in the game\n    player_blk_leader_id bigint, -- unique identifier for the player who had the most blocks in the game\n    player_blk_leader_blk bigint, -- number of blocks by the player who had the most blocks in the game\n    field_goals_made bigint, -- total number of field goals made by the team\n    field_goals_attempted bigint, -- total number of field goals attempted by the team\n    field_goals_percentage double precision, -- percentage of field goals made by the team\n    three_pointers_made bigint, -- total number of three-pointers made by the team\n    three_pointers_attempted bigint, -- total number of three-pointers attempted by the team\n    three_pointers_percentage double precision, -- percentage of three-pointers made by the team\n    free_throws_made bigint, -- total number of free throws made by the team\n    free_throws_attempted bigint, -- total number of free throws attempted by the team\n    free_throws_percentage double precision, -- percentage of free throws made by the team\n    rebounds_offensive bigint, -- total number of offensive rebounds by the team\n    rebounds_defensive bigint, -- total number of defensive rebounds by the team\n    rebounds_total bigint, -- total number of rebounds by the team\n    assists bigint, -- total number of assists by the team\n    steals bigint, -- total number of steals by the team\n    blocks bigint, -- total number of blocks by the team\n    turnovers bigint, -- total number of turnovers by the team\n    fouls_personal bigint, -- total number of personal fouls by the team\n    points bigint, -- total number of points scored by the team\n    plus_minus_points bigint, -- point differential for the team\n    points_in_the_paint bigint, -- total number of points scored in the paint by the team\n    points_second_chance bigint, -- total number of points scored on second chance opportunities by the team\n    points_fast_break bigint, -- total number of points scored on fast breaks by the team\n    biggest_lead bigint, -- biggest lead by the team in the game\n    lead_changes bigint, -- total number of lead changes in the game\n    times_tied bigint, -- total number of times the game was tied\n    biggest_scoring_run bigint, -- biggest scoring run by the team in the game\n    turnovers_team bigint, -- total number of turnovers by the team\n    turnovers_total bigint, -- total number of turnovers in the game\n    minutes float, -- total minutes played by the team\n    player_reb_leader_family_name text, -- family name of the player who had the most rebounds in the game\n    player_blk_leader_first_name text, -- first name of the player who had the most blocks in the game\n    player_blk_leader_family_name text, -- family name of the player who had the most blocks in the game\n    player_ast_leader_first_name text, -- first name of the player who had the most assists in the game\n    player_pts_leader_first_name text, -- first name of the player who scored the most points in the game\n    player_pts_leader_family_name text, -- family name of the player who scored the most points in the game\n    player_ast_leader_family_name text, -- family name of the player who had the most assists in the game\n    game_id text, -- unique identifier for the game\n    player_reb_leader_first_name text, -- first name of the player who had the most rebounds in the game\n    home boolean, -- indicates if the team is playing at home or away\n    win boolean, -- indicates if the team won the game\n    season_year bigint, -- year of the season\n    is_at_home boolean, -- indicates if the team is playing at home\n    is_win boolean -- indicates if the team won the game\n);"
     },
     "population_by_age": {
         "active": false,

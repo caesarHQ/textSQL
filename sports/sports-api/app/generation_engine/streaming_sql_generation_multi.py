@@ -102,7 +102,7 @@ def execute_sql(sql_query: str, attempt_number=0, original_text=''):
         }
 
 
-def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, n=2, messages=None, examples=[], session_id=None, labels=[]):
+def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, n=1, messages=None, examples=[], session_id=None, labels=[]):
     """
     Tries to take a natural language query and generate valid SQL to answer it K times
     """
@@ -136,7 +136,6 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, n=2, 
             "content": query_prompt.simple_followup_prompt_cte(natural_language_query)
         })
 
-    assistant_message = None
     sql_query = ""
 
     for attempt_number in range(k):
@@ -174,7 +173,6 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, n=2, 
             response = None
 
             for result in parsed_results:
-
                 try:
                     attempted_response = execute_sql(
                         result, attempt_number=attempt_number, original_text=natural_language_query)
@@ -183,6 +181,7 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, n=2, 
                     executed = True
                     break
                 except Exception as e:
+                    sql_query = result
                     last_error = e
                     continue
 
@@ -197,6 +196,7 @@ def text_to_sql_with_retry_multi(natural_language_query, table_names, k=3, n=2, 
             yield {'status': 'working', 'step': 'sql', 'state': 'Error: ' + str(e), 'bad_sql': sql_query}
             try:
                 print('error executing sql: ', str(e).split('\n')[0])
+                print('bad sql: ', sql_query)
                 message_history.append({
                     "role": "assistant",
                     "content": sql_query
