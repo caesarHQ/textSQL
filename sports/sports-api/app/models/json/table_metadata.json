@@ -4690,7 +4690,7 @@
         "schema": "CREATE TABLE nba_game (-- table for NBA game information\n    home_team_id bigint, -- ID of the home team\n    attendance bigint, -- number of people in attendance\n    sellout bigint, -- whether the game was a sellout or not\n    period bigint, -- current period of the game\n    game_clock bigint, -- current game clock time\n    game_time_utc timestamp with time zone, -- game time in UTC\n    game_et timestamp with time zone, -- game time in ET\n    away_team_id bigint, -- ID of the away team\n    series_text text, -- text description of the series\n    game_code text, -- code for the game\n    duration text, -- duration of the game\n    series_game_number text, -- number of the game in the series\n    game_id text -- ID of the game\n);"
     },
     "nba_play_by_play": {
-        "active": true,
+        "active": false,
         "columns": [
             {
                 "active": true,
@@ -4890,160 +4890,160 @@
         "schema": "CREATE TABLE nba_play_by_play (-- play by play data for NBA games\n    score_away bigint, -- score of the away team after the play\n    points_total bigint, -- total points scored after the play\n    person_id bigint, -- ID of the person involved in the play\n    period bigint, -- period of the game when the play occurred\n    team_id bigint, -- ID of the team involved in the play\n    x_legacy bigint, -- legacy x-coordinate of the play\n    video_available bigint, -- flag indicating if video is available for the play\n    action_id bigint, -- ID of the action in the play\n    action_number bigint, -- number of the action in the play\n    y_legacy bigint, -- legacy y-coordinate of the play\n    shot_distance bigint, -- distance of the shot in the play\n    clock bigint, -- time on the game clock when the play occurred\n    is_field_goal bigint, -- flag indicating if the play is a field goal\n    score_home bigint, -- score of the home team after the play\n    game_id text, -- ID of the game\n    team_tricode text, -- tricode of the team involved in the play\n    shot_result text, -- result of the shot in the play\n    location text, -- location of the play\n    description text, -- description of the play\n    action_type text, -- type of the action in the play\n    sub_type text -- sub-type of the action in the play\n);"
     },
     "nba_play_by_play_enhanced": {
-        "active": false,
+        "active": true,
         "columns": [
             {
-                "active": false,
+                "active": true,
                 "name": "assisted_by",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "clock",
                 "type": "interval"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "period",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "team_id",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "points_total",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "video_available",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "action_id",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "points",
                 "type": "double precision"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "blocked_by",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "blocked",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "stolen_by",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "stolen_from",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "assisted",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "action_number",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "person_id",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "x_legacy",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "y_legacy",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "shot_distance",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "is_field_goal",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "score_home",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "score_away",
                 "type": "bigint"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "team_tricode",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "game_id",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "player_name",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "player_name_i",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "rebound_type",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "location",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "description",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "shot_result",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "action_type",
                 "type": "text"
             },
             {
-                "active": false,
+                "active": true,
                 "name": "sub_type",
                 "type": "text"
             }
@@ -5150,7 +5150,8 @@
                 "None"
             ]
         ],
-        "name": "nba_play_by_play_enhanced"
+        "name": "nba_play_by_play_enhanced",
+        "schema": "CREATE TABLE nba_play_by_play_enhanced (-- NBA play by play enhanced data\n    assisted_by bigint, -- player ID of the player who assisted the scoring play\n    clock interval, -- time remaining in the period in the format of minutes:seconds\n    period bigint, -- period number\n    team_id bigint, -- team ID of the team that scored the points\n    points_total bigint, -- total points scored in the game at the time of the play\n    video_available bigint, -- indicates whether video is available for the play\n    action_id bigint, -- unique ID for the play\n    points double precision, -- number of points scored on the play\n    blocked_by bigint, -- player ID of the player who blocked the shot\n    blocked bigint, -- indicates whether the shot was blocked\n    stolen_by bigint, -- player ID of the player who stole the ball\n    stolen_from bigint, -- player ID of the player who had the ball stolen from them\n    assisted bigint, -- indicates whether the scoring play was assisted\n    action_number bigint, -- number of the play in the game\n    person_id bigint, -- player ID of the player involved in the play\n    x_legacy bigint, -- x-coordinate of the location of the play\n    y_legacy bigint, -- y-coordinate of the location of the play\n    shot_distance bigint, -- distance of the shot in feet\n    is_field_goal bigint, -- indicates whether the play was a field goal\n    score_home bigint, -- score of the home team at the time of the play\n    score_away bigint, -- score of the away team at the time of the play\n    team_tricode text, -- team tricode of the team that scored the points\n    game_id text, -- unique ID for the game\n    player_name text, -- name of the player involved in the play\n    player_name_i text, -- international name of the player involved in the play\n    rebound_type text, -- type of rebound (e.g. offensive, defensive)\n    location text, -- location of the play in the format of x,y\n    description text, -- description of the play\n    shot_result text, -- result of the shot (e.g. made, missed)\n    action_type text, -- type of play (e.g. shot, rebound)\n    sub_type text -- sub-type of the play (e.g. jump shot, offensive rebound)\n);"
     },
     "nba_player": {
         "active": false,

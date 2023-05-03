@@ -6,9 +6,6 @@ def command_prompt_cte(command, labels=[]):
 
     print('labels: ', labels)
 
-    if 'REGULAR' in labels:
-        query_specific_injects.append(
-            """The prefix 002 is used for regular season games, to query for regular season games, filter on game_id like '002%'""")
     if 'PLAYOFF' in labels:
         query_specific_injects.append(
             """The prefix 004 is used for playoff games, to query for playoff games, filter on game_id like '004%'""")
@@ -23,7 +20,7 @@ def command_prompt_cte(command, labels=[]):
         query_specific_injects.append('''Note: The NBA's Game ID is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year.
 TO GET SEASONS, FILTER ON GAME_ID BY THE 4,2 SUBSTRING:
 To get from '22 to '23, filter substring(game_id, 4, 2) = '22'
-To get from '21 to '22, filter substring(game_id, 4, 2) = '21'
+To get from 2021-22, filter substring(game_id, 4, 2) = '21'
 To get from '20 to '21, filter substring(game_id, 4, 2) = '20'
 ...
 To get from '00 to '01, filter substring(game_id, 4, 2) = '00'
@@ -68,6 +65,11 @@ You do not need to use the game_id in all queries but this is helpful for unders
 Ensure to include which table each column is from (table.column)
 Use CTE format for computing subqueries.
 {query_specific_injects}
+
+NOTE: Assume all queries are regular season games unless otherwise specified.
+The prefix 002 is used for regular season games.
+To query for regular season games, filter on substring(game_id, 1, 3) = '002'.
+
 Provide a properly formatted YAML object with the following information. Ensure to escape any special characters so it can be parsed as YAML.
 
 Do not include any variables/wildcards.
