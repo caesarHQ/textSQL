@@ -55,6 +55,10 @@ You do not need to use the game_id in all queries but this is helpful for unders
   - nba_team_game_stats does not include the team names.
   - nba_team_game_stats will have one row for the home team and one row for the away team for each game.''')
 
+    if 'AVERAGES' in labels and 'PLAYER' in labels:
+        query_specific_injects.append('''    If querying AVERAGES:
+        - To check player averages against NBA_PLAYER_GAME_STATS you need to filter where nba_player_game_stats.minutes > 0''')
+
     if len(query_specific_injects) > 0:
         query_specific_injects = [''] + query_specific_injects + ['']
     query_specific_injects = '\n'.join(query_specific_injects)
