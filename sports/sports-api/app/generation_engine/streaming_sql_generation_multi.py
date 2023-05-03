@@ -8,8 +8,8 @@ import pandas as pd
 from app.config import ENGINE
 from app.databases import logging_db
 from app.sql_generation.prompt_helpers import query_prompt, schema_prompt
-from app.utils import (get_few_shot_messages, get_openai_results,
-                       safe_get_sql_from_yaml)
+from app.utils import (dtype_to_pytype, get_few_shot_messages,
+                       get_openai_results, safe_get_sql_from_yaml)
 from sqlalchemy import text
 
 
@@ -78,25 +78,6 @@ class NotReadOnlyException(Exception):
 
 class NullValueException(Exception):
     pass
-
-
-def dtype_to_pytype(column):
-    if column.dtype.kind == 'i':
-        return int.__name__
-    elif column.dtype.kind == 'f':
-        return float.__name__
-    elif column.dtype.kind == 'O':
-        # Check if all elements in the column are strings
-        if column.apply(lambda x: isinstance(x, str) or pd.isna(x)).all():
-            return str.__name__
-        else:
-            return object.__name__
-    elif column.dtype.kind == 'b':
-        return bool.__name__
-    elif column.dtype.kind == 'M':
-        return pd.Timestamp.__name__
-    else:
-        return column.dtype.name
 
 
 def execute_sql(sql_query: str, attempt_number=0, original_text=''):
