@@ -57,71 +57,73 @@ async def on_message(message):
             await handle_help(message)
             return
 
-
-
-        # Check if the message @s the bot
         if bot.user.mentioned_in(message):
-            # Remove the bot @ from the message content
-            natural_language_query = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
-            print('NATURAL LANGUAGE QUERY', natural_language_query)
-
-            # Handle help command
-            if natural_language_query.startswith("help"):
-                await handle_help(message)
-                return 
-
-            # Send message that you're working on the query
-            intermediary_bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
-
-            start_time = time.time()
-            # Call Text to SQL backend and update discord with the results
-            response = await process_request(natural_language_query, intermediary_bot_response, message.author.mention)
-
-            time_taken =  "\nTime: "+ str(round(time.time() - start_time, 2)) + " seconds"
-
-            if (response is None or response.get('status') != 'success'):
-                await message.channel.send("Sorry! Couldn't get an answer for that :(")
-                return
-            
-            if (is_empty_table(response["response"])):
-                await message.channel.send("Returned an empty table :(")
-                return 
-
-            table_image = generate_table_image(response['response'], natural_language_query)
-
-            final_bot_response = await intermediary_bot_response.channel.send(content=f"Asked by: {message.author.mention}{time_taken}", file=table_image)
-
-            #delete intermidiary messages
-            await intermediary_bot_response.delete()
-
-            # Add emoji reactions to the message
-            await final_bot_response.add_reaction("👍")
-            await final_bot_response.add_reaction("👎")
-            
-            # if original message was inside a thread, send everything in it. otherwise make a new thread
-            if is_message_inside_thread(message):
-                # raw data as csv
-                await send_raw_data_as_csv(response["response"], final_bot_response.channel)
-                # SQL query 
-                sql_query = format_sql_query(response)
-                await final_bot_response.channel.send(sql_query)
-            else:
-                 # Create a thread 
-                thread = await final_bot_response.create_thread(name=natural_language_query[:95], auto_archive_duration=60)
-
-                # register thread to the backend
-                register_thread_session_to_backend(thread.id, response['session_id'])
-
-                # Send raw data as csv in thread
-                await send_raw_data_as_csv(response["response"], thread)
-
-                # Reply with SQL query in the thread
-                sql_query = format_sql_query(response)
-                await thread.send(sql_query)
+            await process_mentioned_message(message)
+            return
+           
     except Exception as e:
         print(f"Error in on_message: {e}")
         await message.channel.send(f"Sorry, something went wrong. \n {e}")
 
+async def process_mentioned_message(message):
+    # Remove the bot @ from the message content
+    natural_language_query = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
+    print('\n NATURAL LANGUAGE QUERY', natural_language_query)
+
+    # Handle help command
+    if natural_language_query.startswith("help"):
+        await handle_help(message)
+        return 
+
+    # Send message that you're working on the query
+    intermediary_bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
+
+    start_time = time.time()
+    # Call Text to SQL backend and update discord with the results
+    response = await process_request(natural_language_query, intermediary_bot_response, message.author.mention)
+
+    time_taken =  "\nTime: "+ str(round(time.time() - start_time, 2)) + " seconds"
+
+    if (response is None or response.get('status') != 'success'):
+        await message.channel.send("Sorry! Couldn't get an answer for that :(")
+        return
+    
+    if (is_empty_table(response["response"])):
+        await message.channel.send("Returned an empty table :(")
+        return 
+
+    table_image = generate_table_image(response['response'], natural_language_query)
+
+    final_bot_response = await intermediary_bot_response.channel.send(content=f"Asked by: {message.author.mention}{time_taken}", file=table_image)
+
+    #delete intermidiary messages
+    await intermediary_bot_response.delete()
+
+    # Add emoji reactions to the message
+    await final_bot_response.add_reaction("👍")
+    await final_bot_response.add_reaction("👎")
+    
+    # if original message was inside a thread, send everything in it. otherwise make a new thread
+    if is_message_inside_thread(message):
+        # raw data as csv
+        await send_raw_data_as_csv(response["response"], final_bot_response.channel)
+        # SQL query 
+        sql_query = format_sql_query(response)
+        await final_bot_response.channel.send(sql_query)
+    else:
+        # Create a thread 
+        thread = await final_bot_response.create_thread(name=natural_language_query[:95], auto_archive_duration=60)
+
+        # register thread to the backend
+        register_thread_session_to_backend(thread.id, response['session_id'])
+
+        # Send raw data as csv in thread
+        await send_raw_data_as_csv(response["response"], thread)
+
+        # Reply with SQL query in the thread
+        sql_query = format_sql_query(response)
+        await thread.send(sql_query)
+    
 def register_thread_session_to_backend(thread_id, session_id):
     url = BASE_API + "/register_thread"
 
