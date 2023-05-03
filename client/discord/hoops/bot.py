@@ -63,13 +63,6 @@ async def on_message(message):
 
         # Check if the message @s the bot
         if bot.user.mentioned_in(message):
-            # check if message is in a channel or a thread (now a chat message)
-            # if is_message_inside_thread(message):
-            #     natural_language_query = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
-            #     print('dealing with a thread message', natural_language_query)
-            #     intermediary_bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
-            #     await process_request(natural_language_query, intermediary_bot_response, message.author.mention)
-            #     return
             # Remove the bot @ from the message content
             natural_language_query = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
             print('NATURAL LANGUAGE QUERY', natural_language_query)
@@ -219,44 +212,48 @@ def adjust_column_width(ax, table, fig, df):
             table[row_idx, col_idx].set_width(col_widths[col_idx])
 
 def generate_table_image(result, nlq):
-    df = pd.DataFrame(result["results"], columns=result['column_names'])
-    
-    # Limit to 15 rows in the table image otherwise it looks ugly
-    df = df.head(15)
+    try:
+        df = pd.DataFrame(result["results"], columns=result['column_names'])
+        
+        # Limit to 15 rows in the table image otherwise it looks ugly
+        df = df.head(15)
 
-    # changes the column names from 'lebron_3pt_percentage'  -> 'lebron 3pt percentage' so that the text can wrap without overflowing
-    df.columns = [' '.join(col.split('_')) for col in df.columns]
+        # changes the column names from 'lebron_3pt_percentage'  -> 'lebron 3pt percentage' so that the text can wrap without overflowing
+        df.columns = [' '.join(col.split('_')) for col in df.columns]
 
-    # Create a table plot
-    fig, ax = plt.subplots()
-    ax.axis('off')
-    ax.axis('tight')  # Remove extra whitespace
-    table = ax.table(cellText=df.values, colLabels=df.columns, cellLoc='center', loc='center', bbox=[0, 0, 1, 1])
+        # Create a table plot
+        fig, ax = plt.subplots()
+        ax.axis('off')
+        ax.axis('tight')  # Remove extra whitespace
+        table = ax.table(cellText=df.values, colLabels=df.columns, cellLoc='center', loc='center', bbox=[0, 0, 1, 1])
 
-    # Add table title
-    title_text = nlq
-    ax.set_title(title_text, fontsize=16, fontweight='bold', pad=20)
+        # Add table title
+        title_text = nlq
+        ax.set_title(title_text, fontsize=16, fontweight='bold', pad=20)
 
-    # Customize table appearance
-    table.auto_set_font_size(False)
-    table.set_fontsize(14)
+        # Customize table appearance
+        table.auto_set_font_size(False)
+        table.set_fontsize(14)
 
-    # Adjust column widths
-    adjust_column_width(ax, table, fig, df)
+        # Adjust column widths
+        adjust_column_width(ax, table, fig, df)
 
-    # Save the table plot to a buffer
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight', dpi=300)  # Increase dpi for better quality
-    buf.seek(0)
+        # Save the table plot to a buffer
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', bbox_inches='tight', dpi=300)  # Increase dpi for better quality
+        buf.seek(0)
 
-    # Send the table image as a file
-    image_file = File(buf, filename='table.png')
+        # Send the table image as a file
+        image_file = File(buf, filename='table.png')
 
-    # Close the buffer and clear the plot
-    buf.close()
-    plt.clf()
+        # Close the buffer and clear the plot
+        buf.close()
+        plt.clf()
 
-    return image_file
+        return image_file
+
+    except Exception as e:
+        print(f"Error in Table Generation: {e}")
 
 async def handle_response(response_object, bot_response, nlq, author, time_taken):
     if (response_object.get('status') == 'success'):
