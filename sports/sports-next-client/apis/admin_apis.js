@@ -102,7 +102,7 @@ export const checkForNewTables = async () => {
 
 export const checkForNewColumns = async ({ table }) => {
   const response = await fetch(
-    `${ADMIN_BASE_API}/refresh_available_columns/${table}`
+    `${ADMIN_BASE_API}/refresh_available_columns/${table.name}`
   );
   const data = await response.json();
   return data;

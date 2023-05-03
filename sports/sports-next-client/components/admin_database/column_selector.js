@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { ClosableRow } from "../closable_row";
 import { generateSchema } from "@/apis/admin_apis";
-import { updateColumnSchema } from "@/apis/admin_apis";
+import { checkForNewColumns } from "@/apis/admin_apis";
 
 export const ColumnSelector = ({ table, setTable }) => {
   const [columnFilterTerm, setColumnFilterTerm] = useState("");
@@ -9,7 +9,7 @@ export const ColumnSelector = ({ table, setTable }) => {
   const tableColumns = table?.columns || [];
 
   const getUpdatedSchema = async () => {
-    const data = await updateColumnSchema({ table });
+    const data = await checkForNewColumns({ table });
     if (data?.status === "success") {
       console.log("new columns ", table);
       // setTable(data.table);
