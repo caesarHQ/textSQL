@@ -33,7 +33,7 @@ You do not need to use the game_id in all queries but this is helpful for unders
     if 'PLAYER' in labels:
         query_specific_injects.append('''  If querying PLAYER:
     - player does not include the player's team name.
-    - you need to query on nba_current_roster.first_name and nba_current_roster.last_name to get the player's person_id.''')
+    - you need to query on nba_current_player.first_name and nba_current_player.last_name to get the player's person_id.''')
 
     if 'TEAM' in labels:
         query_specific_injects.append("""  If querying TEAM:
