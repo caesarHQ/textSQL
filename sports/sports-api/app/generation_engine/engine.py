@@ -16,9 +16,16 @@ with ENGINE.connect() as conn:
     with conn.begin():
         query = conn.execute(text(f'''
             SELECT * FROM nba_game;
-        '''))         
-games_df = pd.DataFrame(query.fetchall())
-games_df.drop_duplicates(inplace=True)
+        '''))
+    games_df = pd.DataFrame(query.fetchall())
+    games_df.drop_duplicates(inplace=True)
+    with conn.begin():
+        query = conn.execute(text(f'''
+            SELECT * FROM nba_current_team;
+        '''))
+    current_teams_df = pd.DataFrame(query.fetchall())
+    current_teams_df.drop_duplicates(inplace=True)
+    
 
 
 class Engine:
@@ -136,6 +143,11 @@ class Engine:
             )
         if 'game_id' in column_names and 'game_time_et' not in column_names:
             df = df.merge(games_df[['game_id', 'game_time_et']], on='game_id', how='left')
+
+        if 'team_id' in column_names and 'team_city' not in column_names:
+            df = df.merge(current_teams_df[['team_id', 'team_city']], on='team_id', how='left')
+        if 'team_id' in column_names and 'team_name' not in column_names:
+            df = df.merge(current_teams_df[['team_id', 'team_name']], on='team_id', how='left')
 
         return df
 
