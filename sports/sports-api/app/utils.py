@@ -1,16 +1,18 @@
 import json
 import re
-import yaml
-from typing import Dict, List
-import pinecone
 import uuid
-import tiktoken
+from typing import Dict, List
 
 import openai
+import pandas as pd
+import pinecone
+import tiktoken
+import yaml
+
 from app.config import DB_MANAGED_METADATA, PINECONE_INDEX
+from app.databases import events_db
 from app.extensions import db
 from app.models.in_context_examples import InContextExamples
-from app.databases import events_db
 
 IN_CONTEXT_EXAMPLES_DICT = {}
 
