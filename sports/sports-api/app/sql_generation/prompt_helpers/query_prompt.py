@@ -21,11 +21,19 @@ def command_prompt_cte(command, labels=[]):
 
     if 'SEASON' in labels:
         query_specific_injects.append('''Note: The NBA's Game ID is a 10-digit code: XXXYYGGGGG, where XXX refers to a season prefix, YY is the season year.
-To get seasons, 
-e.g. for the current 2022-23 season, you need to filter where game_id like '00222%',
-for the 2021-22 season, you need to filter where game_id like '00221%',
+TO GET SEASONS, FILTER ON GAME_ID BY THE 4,2 SUBSTRING:
+To get from '22 to '23, filter substring(game_id, 4, 2) = '22'
+To get from '21 to '22, filter substring(game_id, 4, 2) = '21'
+To get from '20 to '21, filter substring(game_id, 4, 2) = '20'
+...
+To get from '00 to '01, filter substring(game_id, 4, 2) = '00'
 etc
 You do not need to use the game_id in all queries but this is helpful for understanding the data.''')
+
+    if 'PLAYER' in labels:
+        query_specific_injects.append('''  If querying PLAYER:
+    - player does not include the player's team name.
+    - you need to query on nba_current_roster.first_name and nba_current_roster.last_name to get the player's person_id.''')
 
     if 'NBA_GAME' in labels:
         query_specific_injects.append('''  If querying NBA_GAME:
