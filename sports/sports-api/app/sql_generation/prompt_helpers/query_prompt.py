@@ -79,6 +79,10 @@ USE ilike instead of = when comparing strings
 Provide the following YAML. Remember to indent with 4 spaces and use the correct YAML syntax using the following format:
 
 ```
+People Tags: |
+  A list of tags for people, teams, and the season (if applicable). str[]
+Results Tags: | 
+  A list of tags for avg, total, etc requests. str[]
 Spelled out question: |
   Rephrase out the question into who/what/why/when - e.g. "has any" should be "who"
 Reverse Walk Through: |
