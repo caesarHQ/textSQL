@@ -4697,7 +4697,7 @@
             ]
         ],
         "name": "nba_game",
-        "schema": "CREATE TABLE nba_game (-- table for NBA game information\n    home_team_id bigint, -- ID of the home team\n    attendance bigint, -- number of people in attendance\n    sellout bigint, -- whether the game was a sellout or not\n    period bigint, -- current period of the game\n    game_clock bigint, -- current game clock time\n    game_time_utc timestamp with time zone, -- game time in UTC\n    game_et timestamp with time zone, -- game time in ET\n    away_team_id bigint, -- ID of the away team\n    series_text text, -- text description of the series\n    game_code text, -- code for the game\n    duration text, -- duration of the game\n    series_game_number text, -- number of the game in the series\n    game_id text -- ID of the game\n);"
+        "schema": "CREATE TABLE nba_game (-- table for NBA game information\n    home_team_id bigint, -- ID of the home team\n    attendance bigint, -- number of people in attendance\n    sellout bigint, -- whether the game was a sellout or not\n    period bigint, -- current period of the game\n    game_clock bigint, -- current game clock time\n    game_time_utc timestamp with time zone, -- game time in UTC\n    game_et timestamp with time zone, -- game time in ET\n    away_team_id bigint, -- ID of the away team\n    series_text text, -- text description of the series\n    game_code text, -- code for the game\n    duration text, -- duration of the game\n    series_game_number int, -- number of the game in the series\n    game_id text -- ID of the game\n);"
     },
     "nba_play_by_play": {
         "active": false,
