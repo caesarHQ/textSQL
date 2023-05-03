@@ -8,7 +8,7 @@ import requests
 import json
 import pandas as pd
 import random
-from utils import (generate_table_image, format_success_message,
+from utils import (expand_acronyms, generate_table_image, format_success_message,
                    format_intermidiate_message, send_raw_data_as_csv, is_message_inside_thread, format_sql_query)
 
 BASE_API = 'https://nba-gpt-prod.onrender.com'
@@ -62,25 +62,29 @@ async def on_message(message):
             return
            
     except Exception as e:
-        print(f"Error in on_message: {e}")
+        print(f"\n Error in on_message: {e}")
         await message.channel.send(f"Sorry, something went wrong. \n {e}")
 
 async def process_mentioned_message(message):
     # Remove the bot @ from the message content
-    natural_language_query = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
-    print('\n NATURAL LANGUAGE QUERY', natural_language_query)
+    nlq = message.clean_content.replace(f"@{bot.user.name}", "").strip().lower()
+    print('\n NATURAL LANGUAGE QUERY', nlq)
 
     # Handle help command
-    if natural_language_query.startswith("help"):
+    if nlq.startswith("help"):
         await handle_help(message)
         return 
 
     # Send message that you're working on the query
-    intermediary_bot_response = await message.channel.send(f"Working on: ** {natural_language_query} **")
+    intermediary_bot_response = await message.channel.send(f"Working on: ** {nlq} **")
 
     start_time = time.time()
+
+    enriched_nlq = expand_acronyms(nlq)
+    print('\n ENRICHED NATURAL LANGUAGE QUERY', nlq)
+
     # Call Text to SQL backend and update discord with the results
-    response = await process_request(natural_language_query, intermediary_bot_response, message.author.mention)
+    response = await process_request(enriched_nlq, intermediary_bot_response, message.author.mention)
 
     time_taken =  "\nTime: "+ str(round(time.time() - start_time, 2)) + " seconds"
 
@@ -92,7 +96,7 @@ async def process_mentioned_message(message):
         await message.channel.send("Returned an empty table :(")
         return 
 
-    table_image = generate_table_image(response['response'], natural_language_query)
+    table_image = generate_table_image(response['response'], nlq)
 
     final_bot_response = await intermediary_bot_response.channel.send(content=f"Asked by: {message.author.mention}{time_taken}", file=table_image)
 
@@ -112,7 +116,7 @@ async def process_mentioned_message(message):
         await final_bot_response.channel.send(sql_query)
     else:
         # Create a thread 
-        thread = await final_bot_response.create_thread(name=natural_language_query[:95], auto_archive_duration=60)
+        thread = await final_bot_response.create_thread(name=nlq[:95], auto_archive_duration=60)
 
         # register thread to the backend
         register_thread_session_to_backend(thread.id, response['session_id'])
@@ -154,12 +158,12 @@ Try: `{random_query}`"""
     await message.channel.send(content=help_text)
     return
 
-async def process_request(natural_language_query, bot_response, author): 
+async def process_request(nlq, bot_response, author): 
     start_time = time.time()
 
     url = BASE_API + "/text_to_sql"
     payload = {
-        "natural_language_query": natural_language_query,
+        "natural_language_query": nlq,
         "scope": "sports",
         "stream": True,
         "thread_id": bot_response.channel.id if is_message_inside_thread(bot_response) else None
@@ -176,7 +180,7 @@ async def process_request(natural_language_query, bot_response, author):
             
             print('\n intermediate parsed json:', obj)
             print('\n status', obj.get('status'))
-            await handle_response(obj, bot_response, natural_language_query, author, time_taken)
+            await handle_response(obj, bot_response, nlq, author, time_taken)
     
     final_response = obj
 

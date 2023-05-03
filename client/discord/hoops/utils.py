@@ -127,3 +127,17 @@ def format_sql_query(result):
     sql_query = result["sql_query"]
     # ```sql\n adds SQL syntax highlighting
     return "\nCode: ```sql\n" + sql_query + "```"
+
+def expand_acronyms(text):
+    keywords = {
+        "fg": "field goal",
+        "fgs": "field goals",
+        "fg%": "field goal percentage (made field goals / attempted field goals)",
+        "apg": "assists per game",
+        "3s": "three point shots",
+    }
+
+    for keyword, replacement in keywords.items():
+        text = text.replace(keyword, replacement)
+
+    return text
