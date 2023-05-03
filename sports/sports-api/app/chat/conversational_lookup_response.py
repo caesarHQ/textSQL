@@ -1,8 +1,8 @@
 from app.databases import logging_db
-from app.utils import get_openai_results
+from app.generation_engine import streaming_sql_generation_multi
 
 
-def handle_chat_response(new_input, session_id):
+def handle_lookup_response(new_input, session_id):
     yield {"status": "working", "state": "Building History", "step": "chat"}
     prior_responses = logging_db.get_inputs_by_session_id(session_id)
     history = []
@@ -34,16 +34,23 @@ def handle_chat_response(new_input, session_id):
         if ai_message:
             history.append(ai_message)
 
-    print('history: ', history)
-    print(f'----HISTORY LENGTH IS {len(history)}------')
+    current_generation_id = logging_db.log_input('nbai', new_input, session_id)
+    for res in streaming_sql_generation_multi.text_to_sql_with_retry_multi(new_input, [], examples=[], session_id=session_id, labels=[], messages=history):
 
-    message_prefix = "You are a helpful basketball fan continuing the conversation above. You already went into the database and retried some results for the user. Now you are answering followup questions. Provide the best answer you can.\n\n"
-    history.append({'role': 'user', 'content': message_prefix + new_input})
+        if res.get('bad_sql'):
+            num_rows = None
+            logging_db.update_input(
+                current_generation_id, num_rows, res['bad_sql'])
 
-    ai_response = get_openai_results(history, n=1, temperature=.4)[0]
+        if res.get('sql_query'):
+            num_rows = len(
+                res.get('response', {}).get('results', []))
+            head = {
+                'columns: ': res.get('response', {}).get('column_names', []),
+                'rows': res.get('response', {}).get('results', [])[:5]
+            }
 
-    logging_db.log_chat_response('nbai', query_text, ai_response, session_id)
+            logging_db.update_input(
+                current_generation_id, num_rows, res['sql_query'], session_id=session_id, output_head=head)
 
-    yield {"status": "complete", "state": ai_response}
-
-    return
+        yield {'generation_id': current_generation_id, **res}
