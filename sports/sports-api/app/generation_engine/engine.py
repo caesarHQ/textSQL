@@ -12,9 +12,11 @@ from app.utils import dtype_to_pytype
 from sqlalchemy import text
 
 with ENGINE.connect() as conn:
-    query = conn.execute(text(f'''
-        SELECT * FROM nba_game;
-    '''))         
+    conn = conn.execution_options(postgresql_readonly=True)
+    with conn.begin():
+        query = conn.execute(text(f'''
+            SELECT * FROM nba_game;
+        '''))         
 games_df = pd.DataFrame(query.fetchall())
 games_df.drop_duplicates(inplace=True)
 
