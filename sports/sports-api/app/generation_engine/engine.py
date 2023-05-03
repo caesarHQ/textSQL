@@ -1,10 +1,22 @@
-from app.generation_engine.streaming_table_selection import get_tables
-from app.generation_engine.streaming_sql_generation import text_to_sql_with_retry
+import pandas as pd
+from app.chat import streaming_chat
+from app.config import ENGINE
+from app.databases import logging_db
 from app.generation_engine import streaming_sql_generation_multi
 from app.generation_engine.example_picker import similar_examples_from_pinecone
+from app.generation_engine.streaming_sql_generation import \
+    text_to_sql_with_retry
+from app.generation_engine.streaming_table_selection import get_tables
 from app.generation_engine.utils import cleaner
-from app.databases import logging_db
-from app.chat import streaming_chat
+from app.utils import dtype_to_pytype
+from sqlalchemy import text
+
+with ENGINE.connect() as conn:
+    query = conn.execute(text(f'''
+        SELECT * FROM nba_game;
+    '''))         
+games_df = pd.DataFrame(query.fetchall())
+games_df.drop_duplicates(inplace=True)
 
 
 class Engine:
@@ -104,6 +116,28 @@ class Engine:
         except:
             pass
 
+
+    def get_enriched_df(self, response):
+        column_names = response.get('column_names', [])
+        results = response.get('results', [])
+
+        df = pd.DataFrame.from_records(results, columns=column_names)
+        
+        if 'game_id' in column_names and 'game_code' not in column_names:
+            # Merge the DataFrames on the common column, e.g., 'game_id'
+            df = df.merge(games_df[['game_id', 'game_code']], on='game_id', how='left')
+        if 'game_code' in df.columns.tolist():
+            # Transform the 'game_code' column by splitting it on '/' and getting the contents after the character
+            # Then insert ' @ ' in the middle of the resulting string
+            df['game_code'] = df['game_code'].apply(
+                lambda x: x.split('/')[-1][:len(x.split('/')[-1])//2] + ' @ ' + x.split('/')[-1][len(x.split('/')[-1])//2:] if pd.notna(x) else None
+            )
+        if 'game_id' in column_names and 'game_time_et' not in column_names:
+            df = df.merge(games_df[['game_id', 'game_time_et']], on='game_id', how='left')
+
+        return df
+
+
     def get_sql(self):
         if self.method == 'multi':
             try:
@@ -124,8 +158,17 @@ class Engine:
 
                         logging_db.update_input(
                             self.current_generation_id, num_rows, res['sql_query'], session_id=self.session_id, output_head=head)
-
-                    yield {'generation_id': self.current_generation_id, **res}
+                    
+                    df = self.get_enriched_df(res.get('response', {}))
+                    yield {
+                        'generation_id': self.current_generation_id,
+                        **res,
+                        'response': {
+                            "column_names": df.columns.tolist(),
+                            "results": df.to_dict(orient='records'),
+                            "column_types": df.apply(dtype_to_pytype).tolist()
+                        },
+                    }
                 print('done with get_sql')
             except Exception as exc:
                 print('error in get_sql: ', exc)

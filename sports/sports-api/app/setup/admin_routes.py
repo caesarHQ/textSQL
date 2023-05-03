@@ -124,6 +124,11 @@ def refresh_available_tables():
     return make_response(jsonify(admin_helper.refresh_available_tables()), 200)
 
 
+@admin_bp.route('/refresh_available_columns/<table_name>', methods=['GET'])
+def refresh_available_columns(table_name):
+    return make_response(jsonify(admin_helper.refresh_available_columns(table_name)), 200)
+
+
 @admin_bp.route('/generate_schema', methods=['POST'])
 def generate_schema():
     # given a table schema and a (later) head, make a query to create the table.

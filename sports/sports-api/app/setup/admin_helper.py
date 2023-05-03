@@ -228,6 +228,42 @@ def refresh_available_tables():
 
 
 @localhost_only
+def refresh_available_columns(table):
+    """
+    check the database for new columns
+    """
+
+    # load the current columns from the json file
+    try:
+        with open(CREDS_PATH + '/json/table_metadata.json', 'r') as f:
+            tables = json.load(f)
+    except:
+        tables = {}
+
+    current_table = tables.get(table)
+
+    # remote_table
+    remote_table = utils.generate_table_metadata(table)
+
+    print('current_table: ', current_table)
+
+    print('remote_table: ', remote_table)
+
+    current_columns = [x['name'] for x in current_table['columns']]
+
+    for column in remote_table['columns']:
+        if column['name'] not in current_columns:
+            print('new column: ', column)
+            current_table['columns'].append(column)
+
+    # save it
+    with open(CREDS_PATH + '/json/table_metadata.json', 'w') as f:
+        json.dump(tables, f, indent=4)
+
+    return get_tables()
+
+
+@localhost_only
 def load_enums():
     """
     Load enums from local json file
