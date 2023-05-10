@@ -39,9 +39,9 @@ def text_to_sql_with_retry(natural_language_query, table_names, k=3, messages=No
     Tries to take a natural language query and generate valid SQL to answer it K times
     """
     if scope == "SF":
-        model = "gpt-3.5-turbo-0301"
+        model = "gpt-3.5-turbo"
     else:
-        model = "gpt-3.5-turbo-0301"
+        model = "gpt-3.5-turbo"
 
     example_messages = []
     enums_message = [{'role': 'user', 'content': ''}]
