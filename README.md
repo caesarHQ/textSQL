@@ -1,3 +1,7 @@
+## 🚨 Check out the latest project from the creators of textSQL: [Julius.ai](https://julius.ai?utm_source=github&utm_campaign=textSQL) 🚨
+
+###
+
 # Natural Language → SQL
 
 ### 
