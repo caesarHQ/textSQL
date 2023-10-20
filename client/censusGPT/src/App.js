@@ -9,6 +9,7 @@ import { FeedContext } from './contexts/feedContext'
 import LoadingSpinner from './components/loadingSpinner'
 import ExamplesFeed from './components/examplesFeed'
 import Examples from './components/examples'
+import PromoBanner from './components/banner'
 
 import { ResultsContainer } from './components/results/resultsContainer'
 
@@ -842,6 +843,8 @@ function App(props) {
             className="h-screen bg-white dark:bg-dark-900 dark:text-white overflow-y-auto max-h-screen"
             style={{ position: 'relative' }}
         >
+            <PromoBanner />
+
             {showExplanationModal && (
                 <ExplanationModal
                     showExplanationModal={showExplanationModal}
